@@ -1,0 +1,19 @@
+{
+    "name": "Project.Managers",
+    "rootNamespace": "",
+    "references": [
+        "Project.Core",
+        "Project.Data",
+        "Project.Gameplay",
+        "Project.UI"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
