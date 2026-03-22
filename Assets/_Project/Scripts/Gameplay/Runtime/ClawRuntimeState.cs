@@ -8,6 +8,7 @@ namespace Project.Gameplay.Runtime
     [Serializable]
     public class ClawRuntimeState
     {
+        /// <summary>로봇 팔의 현재 내구도 상태</summary>
         [SerializeField] private ClawStatsSO baseStats; // 로봇 팔 기본 스탯 데이터
         [SerializeField] private float currentDurability; // 현재 팔 내구도
 

@@ -1,5 +1,7 @@
 ﻿namespace Project.Core.Events
 {
+    #region GameMode
+
     /// <summary>게임 모드 변경 이벤트</summary>
     public readonly struct GameModeChangedEvent : IEvent
     {
@@ -24,6 +26,8 @@
     {
     }
 
+    #endregion
+
     /// <summary>로봇 팔 투하 시작 이벤트</summary>
     public readonly struct ClawDropStartedEvent : IEvent
     {
@@ -44,6 +48,8 @@
             SuccessChance = successChance;
         }
     }
+
+    #region Inventory
 
     /// <summary>인벤토리 아이템 추가 이벤트</summary>
     public readonly struct InventoryItemAddedEvent : IEvent
@@ -77,6 +83,10 @@
     public readonly struct InventoryChangedEvent : IEvent
     {
     }
+
+    #endregion
+
+    #region Runtime
 
     /// <summary>배터리 상태 변경 이벤트</summary>
     public readonly struct BatteryChangedEvent : IEvent
@@ -120,6 +130,8 @@
         }
     }
 
+    #endregion
+
     /// <summary>업그레이드 구매 이벤트</summary>
     public readonly struct UpgradePurchasedEvent : IEvent
     {
@@ -131,4 +143,45 @@
             UpgradeId = upgradeId;
         }
     }
+
+    #region Harvest
+
+    /// <summary>채집 시도 시작 이벤트</summary>
+    public readonly struct HarvestAttemptStartedEvent : IEvent
+    {
+        public readonly string ItemId; // 대상 아이템 ID
+        public readonly float PreviewChance; // 사전 표시 확률
+
+        /// <summary>채집 시도 시작 정보 생성</summary>
+        public HarvestAttemptStartedEvent(string itemId, float previewChance)
+        {
+            ItemId = itemId; // 대상 저장
+            PreviewChance = previewChance; // 확률 저장
+        }
+    }
+
+    /// <summary>채집 시도 완료 이벤트</summary>
+    public readonly struct HarvestAttemptResolvedEvent : IEvent
+    {
+        public readonly string ItemId; // 대상 아이템 ID
+        public readonly bool IsSuccess; // 성공 여부
+        public readonly float FinalChance; // 최종 성공 확률
+        public readonly bool AddedToInventory; // 인벤토리 적재 성공 여부
+
+        /// <summary>채집 시도 완료 정보 생성</summary>
+        public HarvestAttemptResolvedEvent(string itemId, bool isSuccess, float finalChance, bool addedToInventory)
+        {
+            ItemId = itemId; // 대상 저장
+            IsSuccess = isSuccess; // 성공 여부 저장
+            FinalChance = finalChance; // 확률 저장
+            AddedToInventory = addedToInventory; // 인벤토리 적재 결과 저장
+        }
+    }
+
+    /// <summary>배터리 방전으로 인한 채집 종료 이벤트</summary>
+    public readonly struct HarvestForceExitedByBatteryEvent : IEvent
+    {
+    }
+
+    #endregion
 }
