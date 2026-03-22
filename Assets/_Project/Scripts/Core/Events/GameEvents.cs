@@ -92,14 +92,28 @@
         }
     }
 
-    /// <summary>내구도 상태 변경 이벤트</summary>
-    public readonly struct DurabilityChangedEvent : IEvent
+    /// <summary>선체 내구도 상태 변경 이벤트</summary>
+    public readonly struct HullDurabilityChangedEvent : IEvent
     {
-        public readonly float CurrentDurability; // 현재 내구도
-        public readonly float MaxDurability; // 최대 내구도
+        public readonly float CurrentDurability; // 현재 선체 내구도
+        public readonly float MaxDurability; // 최대 선체 내구도
 
-        /// <summary>내구도 상태 변경 정보 생성</summary>
-        public DurabilityChangedEvent(float currentDurability, float maxDurability)
+        /// <summary>선체 내구도 변경 정보 생성</summary>
+        public HullDurabilityChangedEvent(float currentDurability, float maxDurability)
+        {
+            CurrentDurability = currentDurability;
+            MaxDurability = maxDurability;
+        }
+    }
+
+    /// <summary>로봇 팔 내구도 상태 변경 이벤트</summary>
+    public readonly struct ClawDurabilityChangedEvent : IEvent
+    {
+        public readonly float CurrentDurability; // 현재 팔 내구도
+        public readonly float MaxDurability; // 최대 팔 내구도
+
+        /// <summary>로봇 팔 내구도 변경 정보 생성</summary>
+        public ClawDurabilityChangedEvent(float currentDurability, float maxDurability)
         {
             CurrentDurability = currentDurability;
             MaxDurability = maxDurability;
