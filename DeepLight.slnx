@@ -3,5 +3,4 @@
   <Project Path="Project.Data.csproj" />
   <Project Path="Project.Core.csproj" />
   <Project Path="Project.Managers.csproj" />
-  <Project Path="Project.UI.csproj" />
 </Solution>

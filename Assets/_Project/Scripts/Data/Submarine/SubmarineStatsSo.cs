@@ -11,6 +11,7 @@ namespace Project.Data.Submarine
         [SerializeField] private float baseTurnSpeed = 90f; // 기본 선회 속도
 
         [Header("Capacity")]
+        [SerializeField] private SubmarineInventoryLayoutSO inventoryLayout; // 인벤토리 레이아웃 데이터
         [SerializeField] private int inventoryWidth = 8; // 인벤토리 가로 칸 수
         [SerializeField] private int inventoryHeight = 6; // 인벤토리 세로 칸 수
         [SerializeField] private float maxCargoWeight = 100f; // 최대 적재 중량
@@ -28,6 +29,7 @@ namespace Project.Data.Submarine
 
         public float BaseMoveSpeed => baseMoveSpeed;
         public float BaseTurnSpeed => baseTurnSpeed;
+        public SubmarineInventoryLayoutSO InventoryLayout => inventoryLayout;
         public int InventoryWidth => inventoryWidth;
         public int InventoryHeight => inventoryHeight;
         public float MaxCargoWeight => maxCargoWeight;

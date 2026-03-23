@@ -2,10 +2,10 @@
 using TMPro;
 using UnityEngine;
 
-namespace Project.UI.Debug
+namespace Project.Gameplay.DebugView
 {
     /// <summary>채집 세션 상태를 텍스트 디버깅</summary>
-    public class HarvestSessionPresenter : MonoBehaviour
+    public class HarvestSessionDebugPresenter : MonoBehaviour
     {
         [SerializeField] private TMP_Text modeText; // 현재 모드 텍스트
         [SerializeField] private TMP_Text sessionText; // 세션 상태 텍스트

@@ -1,10 +1,10 @@
 ﻿using Project.Core.Events;
 using UnityEngine;
 
-namespace Project.UI.Debug
+namespace Project.Gameplay.DebugView
 {
     /// <summary>채집 관련 이벤트 디버깅</summary>
-    public class HarvestDebugEventLogger : MonoBehaviour
+    public class HarvestEventDebugLogger : MonoBehaviour
     {
         /// <summary>이벤트 구독을 등록</summary>
         private void OnEnable()

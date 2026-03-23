@@ -24,26 +24,40 @@ namespace Project.Gameplay.Runtime
         /// <summary>잠수함 런타임 상태 생성</summary>
         public SubmarineRuntimeState(SubmarineStatsSO baseStats)
         {
+            // 기본 데이터 저장
             this.baseStats = baseStats;
+
+            // 초기 상태 설정
             currentBattery = baseStats.MaxBattery;
             currentHullDurability = baseStats.MaxHullDurability;
+
+            // 인벤토리 생성
             inventoryGrid = new InventoryGridData(baseStats.InventoryWidth, baseStats.InventoryHeight);
+
+            // 레이아웃 우선 적용
+            if (baseStats.InventoryLayout != null && baseStats.InventoryLayout.IsValid())
+                inventoryGrid.Initialize(baseStats.InventoryLayout);
         }
 
         /// <summary>잠수함 런타임 상태 초기화</summary>
         public void Initialize(SubmarineStatsSO newBaseStats)
         {
+            // 데이터 교체
             baseStats = newBaseStats;
+
+            // 상태 초기화
             currentBattery = baseStats.MaxBattery;
             currentHullDurability = baseStats.MaxHullDurability;
 
+            // 인벤토리 없으면 새로 생성
             if (inventoryGrid == null)
-            {
                 inventoryGrid = new InventoryGridData(baseStats.InventoryWidth, baseStats.InventoryHeight);
-                return;
-            }
 
-            inventoryGrid.Initialize(baseStats.InventoryWidth, baseStats.InventoryHeight);
+            // 레이아웃 우선 초기화
+            if (baseStats.InventoryLayout != null && baseStats.InventoryLayout.IsValid())
+                inventoryGrid.Initialize(baseStats.InventoryLayout);
+            else
+                inventoryGrid.Initialize(baseStats.InventoryWidth, baseStats.InventoryHeight);
         }
 
         /// <summary>배터리 소비</summary>

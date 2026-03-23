@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Data::Project.Data.Submarine.SubmarineStatsSO
   baseMoveSpeed: 5
   baseTurnSpeed: 90
+  inventoryLayout: {fileID: 11400000, guid: 424fa94d161211141bfb6215ab490170, type: 2}
   inventoryWidth: 8
   inventoryHeight: 6
   maxCargoWeight: 100
