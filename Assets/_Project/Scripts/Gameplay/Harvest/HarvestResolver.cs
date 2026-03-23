@@ -81,8 +81,10 @@ namespace Project.Gameplay.Harvest
             // 방전 시 강제 종료 처리
             if (submarineRuntimeState.CurrentBattery <= 0f)
             {
-                EventBus.Publish(new HarvestForceExitedByBatteryEvent());
+                string targetId = targetData.TargetId; // 현재 대상
+                EventBus.Publish(new HarvestSessionForcedEndedByBatteryEvent(targetId)); // 강제 종료
                 EventBus.Publish(new HarvestAttemptResolvedEvent(itemData.ItemId, false, previewChance, false));
+
                 return new HarvestResolveResult(itemData.ItemId, false, previewChance, false, true);
             }
 
