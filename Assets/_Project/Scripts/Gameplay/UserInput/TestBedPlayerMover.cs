@@ -1,111 +1,195 @@
-﻿using UnityEngine;
+﻿using Project.Core.Events;
+using Project.Gameplay.CameraSystem;
+using UnityEngine;
 
 namespace Project.Gameplay.UserInput
 {
-    /// <summary>테스트베드에서 배그식 스로틀 기반 평면 이동을 담당하는 클래스</summary>
+    /// <summary>테스트베드에서 탐사 모드 전용 잠수함 이동을 담당하는 클래스</summary>
     [RequireComponent(typeof(CharacterController))]
     public class TestBedPlayerMover : MonoBehaviour
     {
-        [Header("Speed")]
-        [SerializeField] private float maxForwardSpeed = 6f; // 최대 전진 속도
-        [SerializeField] private float maxReverseSpeed = 3f; // 최대 후진 속도
-        [SerializeField] private float forwardAcceleration = 8f; // 전진 기본 가속도
-        [SerializeField] private float reverseAcceleration = 6f; // 후진 기본 가속도
-        [SerializeField] private float idleDeceleration = 5f; // 입력 없을 때 감속도
-        [SerializeField] private float brakeDeceleration = 10f; // 반대 방향 입력 시 제동 감속도
+        [Header("References")]
+        [SerializeField] private ExplorationFollowCameraController explorationCameraController; // 탐사 카메라 컨트롤러
+
+        [Header("Throttle")]
+        [SerializeField] private float maxForwardSpeed = 7f; // 최대 전진 속도
+        [SerializeField] private float maxReverseSpeed = 3.5f; // 최대 후진 속도
+        [SerializeField] private float forwardAcceleration = 6f; // 전진 기본 가속도
+        [SerializeField] private float reverseAcceleration = 4.5f; // 후진 기본 가속도
+        [SerializeField] private float idleDrag = 1.5f; // 입력 없을 때 자연 감속도
+        [SerializeField] private float brakeDeceleration = 10f; // 반대 방향 입력 시 감속도
+        [SerializeField] private float boostMultiplier = 1.6f; // Shift 가속 배율
 
         [Header("Launch Resistance")]
-        [SerializeField] private float minLaunchAccelerationMultiplier = 0.28f; // 정지 출발 시 최소 가속 배율
-        [SerializeField] private float launchResistanceReleaseSpeed = 2.25f; // 무거운 출발감이 풀리는 속도
-        [SerializeField] private float reverseLaunchResistanceReleaseSpeed = 1.4f; // 후진 출발감이 풀리는 속도
+        [SerializeField] private float minLaunchAccelerationMultiplier = 0.22f; // 정지 출발 시 최소 가속 배율
+        [SerializeField] private float launchResistanceReleaseSpeed = 3f; // 전진 출발 저항이 풀리는 속도
+        [SerializeField] private float reverseLaunchResistanceReleaseSpeed = 1.8f; // 후진 출발 저항이 풀리는 속도
 
-        [Header("Steering")]
-        [SerializeField] private float maxSteerAnglePerSecond = 120f; // 최대 초당 선회량
-        [SerializeField] private float minSteerSpeedThreshold = 0.2f; // 조향이 먹기 시작하는 최소 속도
-        [SerializeField] private bool invertSteeringWhenReversing = true; // 후진 시 조향 반전 여부
+        [Header("Rotation")]
+        [SerializeField] private float yawSpeed = 85f; // 기본 좌우 조향 속도
+        [SerializeField] private float cameraAlignSpeed = 120f; // 카메라 방향 정렬 속도
+        [SerializeField] private float steeringAssistStrength = 0.65f; // 카메라 방향 보조 강도
 
-        [Header("Planar Movement")]
-        [SerializeField] private float lateralDamping = 8f; // 측면 미끄러짐 보정값
-        [SerializeField] private bool lockYPosition = true; // Y축 고정 여부
-        [SerializeField] private float lockedY = 0f; // 고정할 Y값
+        [Header("Vertical Movement")]
+        [SerializeField] private float ascendSpeed = 3f; // 부상 속도
+        [SerializeField] private float descendSpeed = 3f; // 하강 속도
+        [SerializeField] private float verticalSmoothTime = 0.08f; // 수직 이동 보간 시간
 
         private CharacterController characterController; // 캐릭터 컨트롤러 참조
         private float currentForwardSpeed; // 현재 전후진 속도
+        private float currentVerticalSpeed; // 현재 수직 속도
+        private float verticalVelocityRef; // 수직 보간용 참조값
+        private bool isHarvestMode; // 현재 채집 모드 여부
 
         /// <summary>필수 컴포넌트를 캐싱한다</summary>
         private void Awake()
         {
-            // 캐릭터 컨트롤러 캐싱
             characterController = GetComponent<CharacterController>();
-
-            // 시작 Y값 캐싱
-            if (lockYPosition)
-                lockedY = transform.position.y;
         }
 
-        /// <summary>입력 기반 이동과 조향을 처리한다</summary>
+        /// <summary>이벤트 구독을 등록한다</summary>
+        private void OnEnable()
+        {
+            EventBus.Subscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
+            EventBus.Subscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
+        }
+
+        /// <summary>이벤트 구독을 해제한다</summary>
+        private void OnDisable()
+        {
+            EventBus.Unsubscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
+            EventBus.Unsubscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
+        }
+
+        /// <summary>탐사 모드에서만 잠수함 이동을 처리한다</summary>
         private void Update()
         {
+            // 채집 모드면 이동 금지
+            if (isHarvestMode)
+            {
+                currentForwardSpeed = Mathf.MoveTowards(currentForwardSpeed, 0f, brakeDeceleration * Time.deltaTime);
+                currentVerticalSpeed = Mathf.MoveTowards(currentVerticalSpeed, 0f, brakeDeceleration * Time.deltaTime);
+                return;
+            }
+
             float deltaTime = Time.deltaTime; // 프레임 시간 캐싱
-            float throttleInput = GetThrottleInput(); // 스로틀 입력 계산
-            float steerInput = GetSteerInput(); // 조향 입력 계산
+            float throttleInput = GetThrottleInput(); // 엔진 출력 입력 계산
+            float yawInput = GetYawInput(); // 좌우 회전 입력 계산
+            float verticalInput = GetVerticalInput(); // 수직 이동 입력 계산
+            bool isBoostPressed = IsBoostPressed(); // 가속 입력 계산
 
-            // 전후진 속도 갱신
-            UpdateForwardSpeed(throttleInput, deltaTime);
+            // 회전 적용
+            UpdateYaw(yawInput, throttleInput, deltaTime);
 
-            // 조향 적용
-            UpdateSteering(steerInput, deltaTime);
+            // 엔진 출력 적용
+            UpdateThrottle(throttleInput, isBoostPressed, deltaTime);
+
+            // 수직 이동 적용
+            UpdateVerticalMovement(verticalInput);
 
             // 실제 이동 적용
             Move(deltaTime);
-
-            // Y축 강제 고정
-            if (lockYPosition)
-                ForceLockY();
         }
 
-        /// <summary>전후진 스로틀 입력을 반환한다</summary>
+        /// <summary>채집 모드 진입 시 잠수함 이동을 잠근다</summary>
+        private void OnHarvestModeEntered(HarvestModeEnteredEvent publishedEvent)
+        {
+            isHarvestMode = true;
+            StopImmediately();
+        }
+
+        /// <summary>채집 모드 종료 시 잠수함 이동을 해제한다</summary>
+        private void OnHarvestModeExited(HarvestModeExitedEvent publishedEvent)
+        {
+            isHarvestMode = false;
+        }
+
+        /// <summary>전후진 엔진 출력 입력값을 반환한다</summary>
         private float GetThrottleInput()
         {
-            // 전진 입력 검사
             if (UnityEngine.Input.GetKey(KeyCode.W))
                 return 1f;
 
-            // 후진 입력 검사
             if (UnityEngine.Input.GetKey(KeyCode.S))
                 return -1f;
 
             return 0f;
         }
 
-        /// <summary>좌우 조향 입력을 반환한다</summary>
-        private float GetSteerInput()
+        /// <summary>좌우 조향 입력값을 반환한다</summary>
+        private float GetYawInput()
         {
-            // 좌조향 입력 검사
             if (UnityEngine.Input.GetKey(KeyCode.A))
                 return -1f;
 
-            // 우조향 입력 검사
             if (UnityEngine.Input.GetKey(KeyCode.D))
                 return 1f;
 
             return 0f;
         }
 
-        /// <summary>스로틀 입력 기준 전후진 속도를 갱신한다</summary>
-        private void UpdateForwardSpeed(float throttleInput, float deltaTime)
+        /// <summary>수직 이동 입력값을 반환한다</summary>
+        private float GetVerticalInput()
         {
-            // 입력 없으면 자연 감속
+            if (UnityEngine.Input.GetKey(KeyCode.Space))
+                return 1f;
+
+            if (UnityEngine.Input.GetKey(KeyCode.LeftControl) || UnityEngine.Input.GetKey(KeyCode.RightControl))
+                return -1f;
+
+            return 0f;
+        }
+
+        /// <summary>가속 입력 여부를 반환한다</summary>
+        private bool IsBoostPressed()
+        {
+            return UnityEngine.Input.GetKey(KeyCode.LeftShift) || UnityEngine.Input.GetKey(KeyCode.RightShift);
+        }
+
+        /// <summary>카메라 방향 보조를 포함한 Yaw 회전을 갱신한다</summary>
+        private void UpdateYaw(float yawInput, float throttleInput, float deltaTime)
+        {
+            // 수동 조향
+            if (!Mathf.Approximately(yawInput, 0f))
+                transform.Rotate(0f, yawInput * yawSpeed * deltaTime, 0f);
+
+            // 자유시야 중이면 카메라 정렬 금지
+            if (explorationCameraController == null || explorationCameraController.IsFreeLookActive)
+                return;
+
+            // 추진 중일 때만 카메라 방향 보조 적용
+            if (Mathf.Approximately(throttleInput, 0f))
+                return;
+
+            Vector3 desiredForward = explorationCameraController.GetPlanarForward(); // 카메라 수평 전방
+            if (desiredForward.sqrMagnitude <= 0.0001f)
+                return;
+
+            Quaternion desiredRotation = Quaternion.LookRotation(desiredForward, Vector3.up); // 목표 회전 계산
+            float appliedAlignSpeed = cameraAlignSpeed * Mathf.Clamp01(Mathf.Abs(throttleInput) + Mathf.Abs(yawInput) * steeringAssistStrength); // 정렬 속도 계산
+
+            // 카메라 방향 정렬
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                desiredRotation,
+                appliedAlignSpeed * deltaTime);
+        }
+
+        /// <summary>엔진 출력과 가속을 반영해 전후진 속도를 갱신한다</summary>
+        private void UpdateThrottle(float throttleInput, bool isBoostPressed, float deltaTime)
+        {
+            // 출력 없으면 자연 감속
             if (Mathf.Approximately(throttleInput, 0f))
             {
-                currentForwardSpeed = Mathf.MoveTowards(currentForwardSpeed, 0f, idleDeceleration * deltaTime);
+                currentForwardSpeed = Mathf.MoveTowards(currentForwardSpeed, 0f, idleDrag * deltaTime);
                 return;
             }
 
-            // 전진 입력 처리
+            float appliedBoostMultiplier = isBoostPressed ? boostMultiplier : 1f; // 부스트 배율 적용
+
+            // 전진 처리
             if (throttleInput > 0f)
             {
-                // 후진 중이면 먼저 강한 제동
                 if (currentForwardSpeed < 0f)
                 {
                     currentForwardSpeed = Mathf.MoveTowards(currentForwardSpeed, 0f, brakeDeceleration * deltaTime);
@@ -113,125 +197,79 @@ namespace Project.Gameplay.UserInput
                 }
 
                 float accelMultiplier = EvaluateForwardLaunchAccelerationMultiplier(); // 출발 저항 배율 계산
-                float appliedAcceleration = forwardAcceleration * accelMultiplier; // 최종 가속도 계산
-
-                // 전진 가속
-                currentForwardSpeed = Mathf.MoveTowards(currentForwardSpeed, maxForwardSpeed, appliedAcceleration * deltaTime);
+                float appliedAcceleration = forwardAcceleration * accelMultiplier * appliedBoostMultiplier; // 최종 전진 가속도 계산
+                currentForwardSpeed = Mathf.MoveTowards(currentForwardSpeed, maxForwardSpeed * appliedBoostMultiplier, appliedAcceleration * deltaTime);
                 return;
             }
 
-            // 후진 입력 처리
+            // 후진 처리
             if (currentForwardSpeed > 0f)
             {
-                // 전진 중이면 먼저 강한 제동
                 currentForwardSpeed = Mathf.MoveTowards(currentForwardSpeed, 0f, brakeDeceleration * deltaTime);
                 return;
             }
 
             float reverseAccelMultiplier = EvaluateReverseLaunchAccelerationMultiplier(); // 후진 출발 저항 배율 계산
             float appliedReverseAcceleration = reverseAcceleration * reverseAccelMultiplier; // 최종 후진 가속도 계산
-
-            // 후진 가속
             currentForwardSpeed = Mathf.MoveTowards(currentForwardSpeed, -maxReverseSpeed, appliedReverseAcceleration * deltaTime);
+        }
+
+        /// <summary>수직 이동 속도를 갱신한다</summary>
+        private void UpdateVerticalMovement(float verticalInput)
+        {
+            float targetVerticalSpeed = 0f; // 목표 수직 속도
+
+            if (verticalInput > 0f)
+                targetVerticalSpeed = ascendSpeed;
+
+            if (verticalInput < 0f)
+                targetVerticalSpeed = -descendSpeed;
+
+            currentVerticalSpeed = Mathf.SmoothDamp(
+                currentVerticalSpeed,
+                targetVerticalSpeed,
+                ref verticalVelocityRef,
+                verticalSmoothTime);
+        }
+
+        /// <summary>현재 엔진 출력과 수직 속도를 기준으로 이동을 적용한다</summary>
+        private void Move(float deltaTime)
+        {
+            Vector3 forwardVelocity = transform.forward * currentForwardSpeed; // 엔진 추진 이동 벡터
+            Vector3 verticalVelocity = Vector3.up * currentVerticalSpeed; // 수직 이동 벡터
+            Vector3 finalVelocity = forwardVelocity + verticalVelocity; // 최종 이동 벡터 조합
+
+            characterController.Move(finalVelocity * deltaTime);
         }
 
         /// <summary>전진 시작 저항을 고려한 가속 배율을 반환한다</summary>
         private float EvaluateForwardLaunchAccelerationMultiplier()
         {
-            float absSpeed = Mathf.Abs(currentForwardSpeed); // 현재 절대 속도
+            float absSpeed = Mathf.Abs(currentForwardSpeed);
             if (launchResistanceReleaseSpeed <= 0f)
                 return 1f;
 
-            float normalized = Mathf.Clamp01(absSpeed / launchResistanceReleaseSpeed); // 저항 해제 비율 계산
+            float normalized = Mathf.Clamp01(absSpeed / launchResistanceReleaseSpeed);
             return Mathf.Lerp(minLaunchAccelerationMultiplier, 1f, normalized);
         }
 
         /// <summary>후진 시작 저항을 고려한 가속 배율을 반환한다</summary>
         private float EvaluateReverseLaunchAccelerationMultiplier()
         {
-            float absSpeed = Mathf.Abs(currentForwardSpeed); // 현재 절대 속도
+            float absSpeed = Mathf.Abs(currentForwardSpeed);
             if (reverseLaunchResistanceReleaseSpeed <= 0f)
                 return 1f;
 
-            float normalized = Mathf.Clamp01(absSpeed / reverseLaunchResistanceReleaseSpeed); // 저항 해제 비율 계산
+            float normalized = Mathf.Clamp01(absSpeed / reverseLaunchResistanceReleaseSpeed);
             return Mathf.Lerp(minLaunchAccelerationMultiplier, 1f, normalized);
-        }
-
-        /// <summary>현재 속도 기준 조향을 적용한다</summary>
-        private void UpdateSteering(float steerInput, float deltaTime)
-        {
-            // 조향 입력 없으면 중단
-            if (Mathf.Approximately(steerInput, 0f))
-                return;
-
-            float absSpeed = Mathf.Abs(currentForwardSpeed); // 절대 속도 계산
-            if (absSpeed < minSteerSpeedThreshold)
-                return;
-
-            float speedRatio; // 속도 비율 계산
-            if (currentForwardSpeed >= 0f)
-                speedRatio = Mathf.Clamp01(absSpeed / maxForwardSpeed);
-            else
-                speedRatio = Mathf.Clamp01(absSpeed / maxReverseSpeed);
-
-            float appliedSteerInput = steerInput; // 실제 조향 입력값
-            if (invertSteeringWhenReversing && currentForwardSpeed < 0f)
-                appliedSteerInput *= -1f;
-
-            float yawDelta = appliedSteerInput * maxSteerAnglePerSecond * speedRatio * deltaTime; // 최종 Yaw 계산
-
-            // 회전 적용
-            transform.Rotate(0f, yawDelta, 0f);
-        }
-
-        /// <summary>현재 속도 기준 평면 이동을 적용한다</summary>
-        private void Move(float deltaTime)
-        {
-            Vector3 forwardVelocity = transform.forward * currentForwardSpeed; // 전방 속도 벡터 계산
-            Vector3 localVelocity = transform.InverseTransformDirection(forwardVelocity); // 로컬 속도 계산
-
-            // 측면 미끄러짐 보정
-            localVelocity.x = Mathf.MoveTowards(localVelocity.x, 0f, lateralDamping * deltaTime);
-
-            Vector3 planarVelocity = transform.TransformDirection(localVelocity); // 월드 이동 벡터 복원
-            planarVelocity.y = 0f; // Y축 제거
-
-            // 실제 이동 적용
-            characterController.Move(planarVelocity * deltaTime);
-        }
-
-        /// <summary>Y축 위치를 강제로 고정한다</summary>
-        private void ForceLockY()
-        {
-            Vector3 currentPosition = transform.position; // 현재 위치 가져오기
-            currentPosition.y = lockedY; // Y값 고정
-            transform.position = currentPosition; // 위치 반영
-        }
-
-        /// <summary>현재 전후진 속도를 반환한다</summary>
-        public float GetCurrentForwardSpeed()
-        {
-            return currentForwardSpeed;
-        }
-
-        /// <summary>현재 전후진 속도를 강제로 설정한다</summary>
-        public void SetCurrentForwardSpeed(float newSpeed)
-        {
-            // 전진 상한 제한
-            if (newSpeed > maxForwardSpeed)
-                newSpeed = maxForwardSpeed;
-
-            // 후진 하한 제한
-            if (newSpeed < -maxReverseSpeed)
-                newSpeed = -maxReverseSpeed;
-
-            currentForwardSpeed = newSpeed;
         }
 
         /// <summary>즉시 정지한다</summary>
         public void StopImmediately()
         {
-            currentForwardSpeed = 0f; // 속도 초기화
+            currentForwardSpeed = 0f;
+            currentVerticalSpeed = 0f;
+            verticalVelocityRef = 0f;
         }
     }
 }

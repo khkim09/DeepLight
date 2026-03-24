@@ -2,6 +2,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Project.Core.Events;
+using Project.Gameplay.Harvest;
 using UnityEngine;
 
 namespace Project.Gameplay.CameraSystem
@@ -15,6 +16,7 @@ namespace Project.Gameplay.CameraSystem
         [SerializeField] private Camera transitionCamera; // 전환용 카메라
         [SerializeField] private ExplorationFollowCameraController explorationFollowCameraController; // 탐사 카메라 컨트롤러
         [SerializeField] private HarvestCinematicCameraController harvestCinematicCameraController; // 채집 카메라 컨트롤러
+        [SerializeField] private HarvestModePresentationController harvestModePresentationController; // 채집 표시 보정 컨트롤러
 
         [Header("Transition")]
         [SerializeField] private float transitionDuration = 0.9f; // 전환 시간
@@ -50,7 +52,8 @@ namespace Project.Gameplay.CameraSystem
         /// <summary>채집 모드 진입 시 시네마틱 전환을 시작한다</summary>
         private void OnHarvestModeEntered(HarvestModeEnteredEvent publishedEvent)
         {
-            if (isHarvestMode) return;
+            if (isHarvestMode)
+                return;
 
             isHarvestMode = true;
             StartTransitionToHarvestAsync().Forget();
@@ -59,7 +62,8 @@ namespace Project.Gameplay.CameraSystem
         /// <summary>채집 모드 종료 시 시네마틱 전환을 시작한다</summary>
         private void OnHarvestModeExited(HarvestModeExitedEvent publishedEvent)
         {
-            if (!isHarvestMode) return;
+            if (!isHarvestMode)
+                return;
 
             isHarvestMode = false;
             StartTransitionToExplorationAsync().Forget();
@@ -68,6 +72,9 @@ namespace Project.Gameplay.CameraSystem
         /// <summary>탐사 카메라 상태를 즉시 적용한다</summary>
         private void SetExplorationViewImmediate()
         {
+            if (explorationFollowCameraController != null)
+                explorationFollowCameraController.SnapToTarget();
+
             if (explorationCamera != null)
                 explorationCamera.gameObject.SetActive(true);
 
@@ -118,9 +125,16 @@ namespace Project.Gameplay.CameraSystem
             if (harvestCinematicCameraController != null)
                 harvestCinematicCameraController.GetDesiredPose(out targetPosition, out targetRotation);
 
+            // 표시 보정과 카메라 전환을 동시에 실행
+            UniTask presentationTask = harvestModePresentationController != null
+                ? harvestModePresentationController.EnterPresentationAsync(transitionDuration, token)
+                : UniTask.CompletedTask;
+
+            UniTask cameraTask = PlayTransitionAsync(sourceCamera, targetPosition, targetRotation, harvestCamera, token);
+
             try
             {
-                await PlayTransitionAsync(sourceCamera, targetPosition, targetRotation, harvestCamera, token);
+                await UniTask.WhenAll(cameraTask, presentationTask);
             }
             catch (OperationCanceledException) { }
         }
@@ -141,13 +155,24 @@ namespace Project.Gameplay.CameraSystem
             if (sourceCamera == null)
                 sourceCamera = harvestCamera;
 
+            // 탐사 카메라 목표 포즈를 현재 탐사 로직 기준으로 먼저 갱신
+            if (explorationFollowCameraController != null)
+                explorationFollowCameraController.SnapToTarget();
+
             // 탐사 목표 포즈 계산
             Vector3 targetPosition = explorationCamera.transform.position;
             Quaternion targetRotation = explorationCamera.transform.rotation;
 
+            // 표시 복귀와 카메라 전환을 동시에 실행
+            UniTask presentationTask = harvestModePresentationController != null
+                ? harvestModePresentationController.ExitPresentationAsync(transitionDuration, token)
+                : UniTask.CompletedTask;
+
+            UniTask cameraTask = PlayTransitionAsync(sourceCamera, targetPosition, targetRotation, explorationCamera, token);
+
             try
             {
-                await PlayTransitionAsync(sourceCamera, targetPosition, targetRotation, explorationCamera, token);
+                await UniTask.WhenAll(cameraTask, presentationTask);
             }
             catch (OperationCanceledException) { }
         }
@@ -269,6 +294,10 @@ namespace Project.Gameplay.CameraSystem
             if (targetCamera == harvestCamera && harvestCinematicCameraController != null)
                 harvestCinematicCameraController.SnapToDesiredPose();
 
+            // 탐사 카메라면 최신 추적 포즈 반영
+            if (targetCamera == explorationCamera && explorationFollowCameraController != null)
+                explorationFollowCameraController.SnapToTarget();
+
             targetCamera.gameObject.SetActive(true);
             transitionCamera.gameObject.SetActive(false);
 
@@ -279,7 +308,8 @@ namespace Project.Gameplay.CameraSystem
         private void CancelCurrentTransition()
         {
             // 토큰 없으면 중단
-            if (transitionCts == null) return;
+            if (transitionCts == null)
+                return;
 
             // 취소 요청
             if (!transitionCts.IsCancellationRequested)
@@ -294,7 +324,8 @@ namespace Project.Gameplay.CameraSystem
         private void DisposeCurrentTransitionToken()
         {
             // 토큰 없으면 중단
-            if (transitionCts == null) return;
+            if (transitionCts == null)
+                return;
 
             transitionCts.Dispose();
             transitionCts = null;
