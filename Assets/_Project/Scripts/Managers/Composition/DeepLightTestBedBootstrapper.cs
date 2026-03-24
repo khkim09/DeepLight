@@ -28,10 +28,11 @@ namespace Project.Managers.Composition
         [SerializeField] private TestHarvestInvoker testHarvestInvoker; // 테스트용 강제 진입 컴포넌트
 
         [Header("Camera References")]
+        [SerializeField] private PerspectiveSwapController perspectiveSwapController; // 카메라 전환 컨트롤러
         [SerializeField] private ExplorationFollowCameraController explorationFollowCameraController; // 탐사 카메라 컨트롤러
         [SerializeField] private HarvestCinematicCameraController harvestCinematicCameraController; // 채집 카메라 컨트롤러
 
-        [Header("UI References")]
+        [Header("Debug View References")]
         [SerializeField] private InventoryGridDebugView inventoryGridDebugView; // 인벤토리 그리드 디버그 UI
 
         private SubmarineRuntimeState submarineRuntimeState; // 잠수함 상태
@@ -48,31 +49,31 @@ namespace Project.Managers.Composition
             // 데이터 누락 검사
             if (submarineStats == null || clawStats == null)
             {
-                UnityEngine.Debug.LogError("[DeepLight] Bootstrap data is missing.");
-                enabled = false;
+                Debug.LogError("[DeepLight] Bootstrap data is missing.");
+                enabled = false; // 이후 처리 중단
                 return;
             }
 
             // 상태 생성
-            submarineRuntimeState = new SubmarineRuntimeState(submarineStats);
-            clawRuntimeState = new ClawRuntimeState(clawStats);
+            submarineRuntimeState = new SubmarineRuntimeState(submarineStats); // 잠수함 상태 생성
+            clawRuntimeState = new ClawRuntimeState(clawStats); // 로봇 팔 상태 생성
 
             // 서비스 생성
-            inventoryService = new InventoryService(submarineRuntimeState);
-            harvestResolver = new HarvestResolver(submarineRuntimeState, clawRuntimeState, inventoryService);
-            gameModeService = new GameModeService(GameModeType.Exploration3D);
-            harvestModeSession = new HarvestModeSession();
-            harvestModeCoordinator = new HarvestModeCoordinator(gameModeService, harvestModeSession);
+            inventoryService = new InventoryService(submarineRuntimeState); // 인벤토리 서비스 생성
+            harvestResolver = new HarvestResolver(submarineRuntimeState, clawRuntimeState, inventoryService); // 채집 해석기 생성
+            gameModeService = new GameModeService(GameModeType.Exploration3D); // 초기 게임 모드 생성
+            harvestModeSession = new HarvestModeSession(); // 채집 세션 생성
+            harvestModeCoordinator = new HarvestModeCoordinator(gameModeService, harvestModeSession); // 채집 조정기 생성
 
             // 상호작용 브리지 주입
             if (harvestPointInteractor != null)
                 harvestPointInteractor.Initialize(harvestModeCoordinator);
 
-            // 채집 시도 입력 브리지 주입
+            // 채집 입력 브리지 주입
             if (harvestAttemptInputController != null)
                 harvestAttemptInputController.Initialize(harvestModeSession, harvestResolver);
 
-            // 테스트 진입 브리지 주입
+            // 테스트용 진입 브리지 주입
             if (testHarvestInvoker != null)
                 testHarvestInvoker.Initialize(harvestModeCoordinator);
 
@@ -80,11 +81,19 @@ namespace Project.Managers.Composition
             if (explorationFollowCameraController != null && playerTransform != null)
                 explorationFollowCameraController.SetTarget(playerTransform);
 
-            // 채집 카메라 타깃 주입
-            if (harvestCinematicCameraController != null && playerTransform != null)
-                harvestCinematicCameraController.SetTarget(playerTransform);
+            // 채집 카메라 고정 포즈 스냅
+            if (harvestCinematicCameraController != null)
+                harvestCinematicCameraController.SnapToDesiredPose();
 
-            // 인벤토리 UI 초기화
+            // 카메라 전환 컨트롤러 참조 주입
+            if (perspectiveSwapController != null)
+            {
+                // 별도 look target은 이제 직접 따라보지 않지만, 추후 확장 대비 playerTransform을 연결
+                // inspector에서 참조가 이미 연결되어 있더라도 안전하게 유지
+                // 현재 구조상 PerspectiveSwapController는 각 카메라 컨트롤러에서 목표 포즈를 얻는다.
+            }
+
+            // 인벤토리 디버그 UI 초기화
             if (inventoryGridDebugView != null)
                 inventoryGridDebugView.Initialize(submarineRuntimeState);
         }
@@ -93,16 +102,11 @@ namespace Project.Managers.Composition
         private void Start()
         {
             // 비정상 초기화면 중단
-            if (!enabled)
-                return;
+            if (!enabled) return;
 
-            // 초기 배터리 상태 동기화
+            // 초기 상태 동기화
             EventBus.Publish(new BatteryChangedEvent(submarineRuntimeState.CurrentBattery, submarineStats.MaxBattery));
-
-            // 초기 선체 내구도 상태 동기화
             EventBus.Publish(new HullDurabilityChangedEvent(submarineRuntimeState.CurrentHullDurability, submarineStats.MaxHullDurability));
-
-            // 초기 로봇 팔 내구도 상태 동기화
             EventBus.Publish(new ClawDurabilityChangedEvent(clawRuntimeState.CurrentDurability, clawStats.MaxDurability));
         }
 
@@ -116,16 +120,13 @@ namespace Project.Managers.Composition
         /// <summary>이벤트 구독을 해제한다</summary>
         private void OnDisable()
         {
-            // 구독 정리
             EventBus.Unsubscribe<HarvestSessionForcedEndedByBatteryEvent>(OnHarvestSessionForcedEndedByBattery);
         }
 
         /// <summary>방전 시 채집 모드를 종료한다</summary>
         private void OnHarvestSessionForcedEndedByBattery(HarvestSessionForcedEndedByBatteryEvent publishedEvent)
         {
-            // 조정기 없으면 중단
-            if (harvestModeCoordinator == null)
-                return;
+            if (harvestModeCoordinator == null) return;
 
             // 탐사 모드로 복귀
             harvestModeCoordinator.ExitHarvestMode();

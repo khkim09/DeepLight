@@ -2,76 +2,52 @@
 
 namespace Project.Gameplay.CameraSystem
 {
-    /// <summary>채집 모드에서 사이드뷰 시네마틱 추적을 담당하는 클래스</summary>
+    /// <summary>채집 모드에서 고정된 2.5D 카메라 포즈를 제공하는 클래스</summary>
     public class HarvestCinematicCameraController : MonoBehaviour
     {
-        [SerializeField] private Transform target; // 추적 대상
-        [SerializeField] private Vector3 baseOffset = new Vector3(10f, 1f, 0f); // 기본 옆면 오프셋
-        [SerializeField] private float followSmoothTimeX = 0.15f; // X축 추적 보간 시간
-        [SerializeField] private float followSmoothTimeY = 0.25f; // Y축 추적 보간 시간
-        [SerializeField] private float followSmoothTimeZ = 0.15f; // Z축 추적 보간 시간
-        [SerializeField] private float leftBiasWorld = 1.5f; // 왼쪽 1/3 느낌 보정값
-        [SerializeField] private bool useRotationLock = true; // 회전 고정 여부
-        [SerializeField] private Vector3 lockedEulerAngles = new Vector3(0f, -90f, 0f); // 고정 회전값
+        [SerializeField] private bool cacheAuthoredPoseOnAwake = true; // 시작 시 작성된 포즈를 캐시할지 여부
 
-        private Vector3 currentVelocity; // 추적 속도
+        private Vector3 authoredPosition; // 작성된 고정 위치
+        private Quaternion authoredRotation; // 작성된 고정 회전
+        private bool hasCachedPose; // 캐시 여부
 
-        /// <summary>카메라 추적 대상을 설정한다</summary>
-        public void SetTarget(Transform newTarget)
+        /// <summary>초기 고정 포즈를 캐시한다</summary>
+        private void Awake()
         {
-            target = newTarget;
+            // 캐시 옵션 꺼져 있으면 중단
+            if (!cacheAuthoredPoseOnAwake) return;
+
+            // 현재 포즈 캐시
+            authoredPosition = transform.position;
+            authoredRotation = transform.rotation;
+            hasCachedPose = true;
         }
 
-        /// <summary>활성화 시 현재 타깃 위치로 즉시 스냅한다</summary>
-        private void OnEnable()
+        /// <summary>고정된 목표 포즈를 반환한다</summary>
+        public void GetDesiredPose(out Vector3 position, out Quaternion rotation)
         {
-            SnapToTarget();
-        }
-
-        /// <summary>채집 카메라를 갱신한다</summary>
-        private void LateUpdate()
-        {
-            if (target == null) return;
-
-            // 목표 위치 계산
-            Vector3 desiredPosition = target.position + baseOffset;
-
-            // 좌측 1/3 느낌 보정
-            desiredPosition.z += leftBiasWorld;
-
-            // 각 축별 부드러운 추적
-            float nextX = Mathf.SmoothDamp(transform.position.x, desiredPosition.x, ref currentVelocity.x, followSmoothTimeX);
-            float nextY = Mathf.SmoothDamp(transform.position.y, desiredPosition.y, ref currentVelocity.y, followSmoothTimeY);
-            float nextZ = Mathf.SmoothDamp(transform.position.z, desiredPosition.z, ref currentVelocity.z, followSmoothTimeZ);
-
-            transform.position = new Vector3(nextX, nextY, nextZ);
-
-            // 회전 처리
-            if (useRotationLock)
+            // 캐시 포즈가 있으면 반환
+            if (hasCachedPose)
             {
-                transform.rotation = Quaternion.Euler(lockedEulerAngles);
+                position = authoredPosition;
+                rotation = authoredRotation;
                 return;
             }
 
-            // 타깃 쪽으로 회전
-            transform.LookAt(target.position);
+            // 현재 포즈 반환
+            position = transform.position;
+            rotation = transform.rotation;
         }
 
-        /// <summary>현재 타깃 위치로 즉시 스냅한다</summary>
-        public void SnapToTarget()
+        /// <summary>고정 포즈를 즉시 적용한다</summary>
+        public void SnapToDesiredPose()
         {
-            if (target == null) return;
+            // 목표 포즈 계산
+            GetDesiredPose(out Vector3 position, out Quaternion rotation);
 
-            // 기본 위치 반영
-            Vector3 snappedPosition = target.position + baseOffset;
-            snappedPosition.z += leftBiasWorld;
-            transform.position = snappedPosition;
-
-            // 회전 반영
-            if (useRotationLock)
-                transform.rotation = Quaternion.Euler(lockedEulerAngles);
-            else
-                transform.LookAt(target.position);
+            // 즉시 반영
+            transform.position = position;
+            transform.rotation = rotation;
         }
     }
 }
