@@ -43,7 +43,7 @@ namespace Project.Gameplay.Interaction
                 return;
 
             // 입력 없으면 중단
-            if (!UnityEngine.Input.GetKeyDown(interactKey))
+            if (!Input.GetKeyDown(interactKey))
                 return;
 
             // 채집 모드 진입 시도

@@ -1,6 +1,7 @@
 ﻿using Project.Data.Items;
 using Project.Gameplay.Inventory;
 using Project.Gameplay.Runtime;
+using UnityEngine;
 
 namespace Project.Gameplay.Services
 {
@@ -29,7 +30,7 @@ namespace Project.Gameplay.Services
         }
 
         /// <summary>아이템 수동 배치 시도</summary>
-        public bool TryAddItem(ItemSO itemData, UnityEngine.Vector2Int originPosition, bool isRotated, out InventoryItemInstance itemInstance)
+        public bool TryAddItem(ItemSO itemData, Vector2Int originPosition, bool isRotated, out InventoryItemInstance itemInstance)
         {
             itemInstance = null;
 

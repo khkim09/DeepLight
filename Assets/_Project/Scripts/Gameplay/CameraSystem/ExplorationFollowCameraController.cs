@@ -19,7 +19,7 @@ namespace Project.Gameplay.CameraSystem
         private float yaw; // 누적 Yaw
         private float pitch = 20f; // 누적 Pitch
 
-        public bool IsFreeLookActive => UnityEngine.Input.GetKey(freeLookKey); // 자유시야 활성 여부
+        public bool IsFreeLookActive => Input.GetKey(freeLookKey); // 자유시야 활성 여부
 
         /// <summary>카메라 추적 대상을 설정한다</summary>
         public void SetTarget(Transform newTarget)
@@ -65,8 +65,8 @@ namespace Project.Gameplay.CameraSystem
                 return;
 
             // 마우스 입력 읽기
-            float mouseX = UnityEngine.Input.GetAxis("Mouse X");
-            float mouseY = UnityEngine.Input.GetAxis("Mouse Y");
+            float mouseX = Input.GetAxis("Mouse X");
+            float mouseY = Input.GetAxis("Mouse Y");
 
             // 회전 누적
             yaw += mouseX * mouseSensitivityX * Time.deltaTime;

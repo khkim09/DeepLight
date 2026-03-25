@@ -9,36 +9,33 @@ using Project.Gameplay.Harvest;
 using Project.Gameplay.Interaction;
 using Project.Gameplay.Runtime;
 using Project.Gameplay.Services;
-using Project.Gameplay.UserInput;
 using UnityEngine;
 
 namespace Project.Managers.Composition
 {
-    /// <summary>테스트베드 씬에서 런타임 서비스와 입력 브리지를 조립하는 클래스</summary>
+    /// <summary>테스트베드 씬에서 런타임 서비스와 카메라 전환을 조립하는 클래스</summary>
     public class DeepLightTestBedBootstrapper : MonoBehaviour
     {
         [Header("Data")]
         [SerializeField] private SubmarineStatsSO submarineStats; // 잠수함 기본 데이터
-        [SerializeField] private ClawStatsSO clawStats; // 로봇 팔 기본 데이터
+        [SerializeField] private ClawStatsSO clawStats; // 기존 클로우 데이터(임시 유지)
 
         [Header("Scene References")]
         [SerializeField] private Transform playerTransform; // 플레이어 Transform
         [SerializeField] private HarvestPointInteractor harvestPointInteractor; // E키 진입 컴포넌트
-        [SerializeField] private HarvestAttemptInputController harvestAttemptInputController; // 스페이스 시도 컴포넌트
         [SerializeField] private TestHarvestInvoker testHarvestInvoker; // 테스트용 강제 진입 컴포넌트
-        [SerializeField] private HarvestClawController harvestClawController; // 채집 모드용 로봇팔 이동 컨트롤러
-        [SerializeField] private HarvestModePresentationController harvestModePresentationController; // 채집 모드 표준 배치 컨트롤러
 
         [Header("Camera References")]
         [SerializeField] private PerspectiveSwapController perspectiveSwapController; // 카메라 전환 컨트롤러
         [SerializeField] private ExplorationFollowCameraController explorationFollowCameraController; // 탐사 카메라 컨트롤러
-        [SerializeField] private HarvestCinematicCameraController harvestCinematicCameraController; // 채집 카메라 컨트롤러
+        [SerializeField] private HarvestConsoleCameraController harvestConsoleCameraController; // 회수 콘솔 카메라 컨트롤러
+        [SerializeField] private Transform cockpitViewAnchor; // 조종실 1인칭 시점 앵커
 
         [Header("Debug View References")]
         [SerializeField] private InventoryGridDebugView inventoryGridDebugView; // 인벤토리 그리드 디버그 UI
 
         private SubmarineRuntimeState submarineRuntimeState; // 잠수함 상태
-        private ClawRuntimeState clawRuntimeState; // 로봇 팔 상태
+        private ClawRuntimeState clawRuntimeState; // 기존 클로우 상태(임시 유지)
         private InventoryService inventoryService; // 인벤토리 서비스
         private HarvestResolver harvestResolver; // 채집 해석기
         private GameModeService gameModeService; // 게임 모드 서비스
@@ -50,7 +47,7 @@ namespace Project.Managers.Composition
         {
             if (submarineStats == null || clawStats == null)
             {
-                UnityEngine.Debug.LogError("[DeepLight] Bootstrap data is missing.");
+                Debug.LogError("[DeepLight] Bootstrap data is missing.");
                 enabled = false;
                 return;
             }
@@ -70,10 +67,6 @@ namespace Project.Managers.Composition
             if (harvestPointInteractor != null)
                 harvestPointInteractor.Initialize(harvestModeCoordinator);
 
-            // 채집 입력 브리지 주입
-            if (harvestAttemptInputController != null)
-                harvestAttemptInputController.Initialize(harvestModeSession, harvestResolver);
-
             // 테스트용 진입 브리지 주입
             if (testHarvestInvoker != null)
                 testHarvestInvoker.Initialize(harvestModeCoordinator);
@@ -82,13 +75,9 @@ namespace Project.Managers.Composition
             if (explorationFollowCameraController != null && playerTransform != null)
                 explorationFollowCameraController.SetTarget(playerTransform);
 
-            // 채집 카메라 타깃 주입
-            if (harvestCinematicCameraController != null && playerTransform != null)
-                harvestCinematicCameraController.SetTarget(playerTransform);
-
-            // 채집 표시 보정 컨트롤러 주입
-            if (harvestModePresentationController != null)
-                harvestModePresentationController.Initialize(harvestModeSession, playerTransform);
+            // 회수 콘솔 카메라 앵커 주입
+            if (harvestConsoleCameraController != null && cockpitViewAnchor != null)
+                harvestConsoleCameraController.SetCockpitViewAnchor(cockpitViewAnchor);
 
             // 카메라 전환 컨트롤러는 inspector 참조 기준 사용
             if (perspectiveSwapController != null)
@@ -124,7 +113,7 @@ namespace Project.Managers.Composition
             EventBus.Unsubscribe<HarvestSessionForcedEndedByBatteryEvent>(OnHarvestSessionForcedEndedByBattery);
         }
 
-        /// <summary>방전 시 채집 모드를 종료한다</summary>
+        /// <summary>방전 시 회수 콘솔 모드를 종료한다</summary>
         private void OnHarvestSessionForcedEndedByBattery(HarvestSessionForcedEndedByBatteryEvent publishedEvent)
         {
             if (harvestModeCoordinator == null)

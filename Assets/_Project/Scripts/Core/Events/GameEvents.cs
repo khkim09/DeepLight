@@ -68,6 +68,49 @@
         }
     }
 
+    /// <summary>회수 콘솔 센서 모드 변경 이벤트</summary>
+    public readonly struct HarvestScanModeChangedEvent : IEvent
+    {
+        public readonly int ScanMode; // HarvestScanMode int 값
+
+        /// <summary>센서 모드 변경 정보 생성</summary>
+        public HarvestScanModeChangedEvent(int scanMode)
+        {
+            ScanMode = scanMode;
+        }
+    }
+
+    /// <summary>회수 포인트가 드러났음을 알리는 이벤트</summary>
+    public readonly struct HarvestPointRevealedEvent : IEvent
+    {
+        public readonly string PointId; // 포인트 ID
+
+        /// <summary>포인트 공개 정보 생성</summary>
+        public HarvestPointRevealedEvent(string pointId)
+        {
+            PointId = pointId;
+        }
+    }
+
+    /// <summary>회수 포인트 선택 이벤트</summary>
+    public readonly struct HarvestPointSelectedEvent : IEvent
+    {
+        public readonly string PointId; // 포인트 ID
+        public readonly int SequenceIndex; // 선택 순서
+
+        /// <summary>포인트 선택 정보 생성</summary>
+        public HarvestPointSelectedEvent(string pointId, int sequenceIndex)
+        {
+            PointId = pointId;
+            SequenceIndex = sequenceIndex;
+        }
+    }
+
+    /// <summary>회수 계획 확정 이벤트</summary>
+    public readonly struct HarvestRecoveryCommittedEvent : IEvent
+    {
+    }
+
     #endregion
 
     #region HarvestAttempt
@@ -101,31 +144,6 @@
             IsSuccess = isSuccess;
             FinalChance = finalChance;
             AddedToInventory = addedToInventory;
-        }
-    }
-
-    #endregion
-
-    #region Claw
-
-    /// <summary>로봇 팔 투하 시작 이벤트</summary>
-    public readonly struct ClawDropStartedEvent : IEvent
-    {
-    }
-
-    /// <summary>로봇 팔 집기 결과 이벤트</summary>
-    public readonly struct ClawCatchResolvedEvent : IEvent
-    {
-        public readonly bool IsSuccess; // 채집 성공 여부
-        public readonly string ItemId; // 대상 아이템 ID
-        public readonly float SuccessChance; // 최종 성공 확률
-
-        /// <summary>로봇 팔 집기 결과 생성</summary>
-        public ClawCatchResolvedEvent(bool isSuccess, string itemId, float successChance)
-        {
-            IsSuccess = isSuccess;
-            ItemId = itemId;
-            SuccessChance = successChance;
         }
     }
 

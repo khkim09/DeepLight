@@ -107,10 +107,10 @@ namespace Project.Gameplay.UserInput
         /// <summary>전후진 엔진 출력 입력값을 반환한다</summary>
         private float GetThrottleInput()
         {
-            if (UnityEngine.Input.GetKey(KeyCode.W))
+            if (Input.GetKey(KeyCode.W))
                 return 1f;
 
-            if (UnityEngine.Input.GetKey(KeyCode.S))
+            if (Input.GetKey(KeyCode.S))
                 return -1f;
 
             return 0f;
@@ -119,10 +119,10 @@ namespace Project.Gameplay.UserInput
         /// <summary>좌우 조향 입력값을 반환한다</summary>
         private float GetYawInput()
         {
-            if (UnityEngine.Input.GetKey(KeyCode.A))
+            if (Input.GetKey(KeyCode.A))
                 return -1f;
 
-            if (UnityEngine.Input.GetKey(KeyCode.D))
+            if (Input.GetKey(KeyCode.D))
                 return 1f;
 
             return 0f;
@@ -131,10 +131,10 @@ namespace Project.Gameplay.UserInput
         /// <summary>수직 이동 입력값을 반환한다</summary>
         private float GetVerticalInput()
         {
-            if (UnityEngine.Input.GetKey(KeyCode.Space))
+            if (Input.GetKey(KeyCode.Space))
                 return 1f;
 
-            if (UnityEngine.Input.GetKey(KeyCode.LeftControl) || UnityEngine.Input.GetKey(KeyCode.RightControl))
+            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
                 return -1f;
 
             return 0f;
@@ -143,7 +143,7 @@ namespace Project.Gameplay.UserInput
         /// <summary>가속 입력 여부를 반환한다</summary>
         private bool IsBoostPressed()
         {
-            return UnityEngine.Input.GetKey(KeyCode.LeftShift) || UnityEngine.Input.GetKey(KeyCode.RightShift);
+            return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
         }
 
         /// <summary>카메라 방향 보조를 포함한 Yaw 회전을 갱신한다</summary>
