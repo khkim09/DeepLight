@@ -8,22 +8,15 @@ namespace Project.Gameplay.GameModes
     public class HarvestModeSession
     {
         private IHarvestTarget currentTarget; // 현재 채집 대상
-
-        // 신규 회수 콘솔 상태
         private HarvestScanMode currentScanMode; // 현재 센서 모드
-        private readonly List<string> revealedPointIds = new List<string>(); // 밝혀진 포인트 ID 목록
-        private readonly List<string> selectedPointSequence = new List<string>(); // 선택한 포인트 순서
+        private readonly List<string> revealedPointIds = new List<string>(); // 밝혀진 포인트 ID
+        private readonly List<string> selectedPointSequence = new List<string>(); // 선택된 포인트 순서
         private float estimatedRecoveryChance; // 추정 회수 성공률
         private float estimatedBatteryCost; // 추정 배터리 소모량
         private float estimatedDurabilityCost; // 추정 내구도 소모량
-        private bool isCommitted; // 회수 시퀀스 확정 여부
-        private bool isResolved; // 회수 결과 확정 여부
-
-        // 레거시 호환 필드
-        private IHarvestTarget latchedTarget; // 레거시 포획 대상
-        private bool isAttemptInProgress; // 레거시 시도 진행 여부
-        private float cachedPreviewChance; // 레거시 사전 확률
-        private float latchQuality01; // 레거시 조작 정확도
+        private int scanPulseCount; // 현재 세션에서 사용한 스캔 횟수
+        private bool isCommitted; // 회수 계획 확정 여부
+        private bool isResolved; // 회수 완료 여부
 
         public IHarvestTarget CurrentTarget => currentTarget;
         public HarvestScanMode CurrentScanMode => currentScanMode;
@@ -32,23 +25,16 @@ namespace Project.Gameplay.GameModes
         public float EstimatedRecoveryChance => estimatedRecoveryChance;
         public float EstimatedBatteryCost => estimatedBatteryCost;
         public float EstimatedDurabilityCost => estimatedDurabilityCost;
+        public int ScanPulseCount => scanPulseCount;
         public bool IsCommitted => isCommitted;
         public bool IsResolved => isResolved;
-
-        // 레거시 호환 프로퍼티
-        public IHarvestTarget LatchedTarget => latchedTarget;
         public bool HasTarget => currentTarget != null;
-        public bool HasLatchedTarget => latchedTarget != null;
-        public bool IsAttemptInProgress => isAttemptInProgress;
-        public float CachedPreviewChance => cachedPreviewChance;
-        public float LatchQuality01 => latchQuality01;
 
         /// <summary>채집 대상 설정과 세션 초기화를 수행한다</summary>
         public void SetTarget(IHarvestTarget target)
         {
             currentTarget = target; // 대상 저장
-            ResetConsoleState(); // 회수 콘솔 상태 초기화
-            ResetLegacyAttemptState(); // 레거시 상태 초기화
+            ResetConsoleState(); // 콘솔 상태 초기화
         }
 
         /// <summary>현재 센서 모드를 변경한다</summary>
@@ -57,7 +43,13 @@ namespace Project.Gameplay.GameModes
             currentScanMode = scanMode; // 센서 모드 저장
         }
 
-        /// <summary>밝혀진 포인트 ID를 추가한다</summary>
+        /// <summary>스캔 펄스 사용 횟수를 증가시킨다</summary>
+        public void AddScanPulse()
+        {
+            scanPulseCount++; // 사용 횟수 증가
+        }
+
+        /// <summary>포인트를 공개 상태에 추가한다</summary>
         public void AddRevealedPoint(string pointId)
         {
             if (string.IsNullOrWhiteSpace(pointId))
@@ -69,7 +61,7 @@ namespace Project.Gameplay.GameModes
             revealedPointIds.Add(pointId);
         }
 
-        /// <summary>선택한 포인트 순서를 추가한다</summary>
+        /// <summary>포인트를 선택 순서에 추가한다</summary>
         public void AddSelectedPoint(string pointId)
         {
             if (string.IsNullOrWhiteSpace(pointId))
@@ -78,7 +70,7 @@ namespace Project.Gameplay.GameModes
             selectedPointSequence.Add(pointId);
         }
 
-        /// <summary>선택한 포인트 순서를 모두 비운다</summary>
+        /// <summary>선택 포인트 순서를 비운다</summary>
         public void ClearSelectedPoints()
         {
             selectedPointSequence.Clear();
@@ -93,7 +85,7 @@ namespace Project.Gameplay.GameModes
             estimatedDurabilityCost = durabilityCost;
         }
 
-        /// <summary>현재 회수 시퀀스를 확정 상태로 전환한다</summary>
+        /// <summary>현재 회수 계획을 확정 상태로 전환한다</summary>
         public void CommitRecoveryPlan()
         {
             isCommitted = true;
@@ -110,39 +102,6 @@ namespace Project.Gameplay.GameModes
         {
             currentTarget = null;
             ResetConsoleState();
-            ResetLegacyAttemptState();
-        }
-
-        /// <summary>레거시 채집 시도를 시작한다</summary>
-        public void BeginAttempt(float previewChance)
-        {
-            isAttemptInProgress = true;
-            cachedPreviewChance = previewChance;
-            latchedTarget = null;
-            latchQuality01 = 0f;
-        }
-
-        /// <summary>레거시 포획 대상과 정확도를 기록한다</summary>
-        public void SetLatchedTarget(IHarvestTarget target, float quality01)
-        {
-            latchedTarget = target;
-            latchQuality01 = quality01;
-        }
-
-        /// <summary>레거시 포획 대상을 제거한다</summary>
-        public void ClearLatchedTarget()
-        {
-            latchedTarget = null;
-            latchQuality01 = 0f;
-        }
-
-        /// <summary>레거시 채집 시도를 종료한다</summary>
-        public void CompleteAttempt()
-        {
-            isAttemptInProgress = false;
-            cachedPreviewChance = 0f;
-            latchedTarget = null;
-            latchQuality01 = 0f;
         }
 
         /// <summary>회수 콘솔 상태를 초기화한다</summary>
@@ -154,17 +113,9 @@ namespace Project.Gameplay.GameModes
             estimatedRecoveryChance = 0f;
             estimatedBatteryCost = 0f;
             estimatedDurabilityCost = 0f;
+            scanPulseCount = 0;
             isCommitted = false;
             isResolved = false;
-        }
-
-        /// <summary>레거시 로봇팔 상태를 초기화한다</summary>
-        private void ResetLegacyAttemptState()
-        {
-            latchedTarget = null;
-            isAttemptInProgress = false;
-            cachedPreviewChance = 0f;
-            latchQuality01 = 0f;
         }
     }
 }

@@ -31,6 +31,9 @@ namespace Project.Managers.Composition
         [SerializeField] private HarvestConsoleCameraController harvestConsoleCameraController; // 회수 콘솔 카메라 컨트롤러
         [SerializeField] private Transform cockpitViewAnchor; // 조종실 1인칭 시점 앵커
 
+        [Header("Input References")]
+        [SerializeField] private HarvestConsoleController harvestConsoleController; // 회수 콘솔 입력 컨트롤러
+
         [Header("Debug View References")]
         [SerializeField] private InventoryGridDebugView inventoryGridDebugView; // 인벤토리 그리드 디버그 UI
 
@@ -78,6 +81,11 @@ namespace Project.Managers.Composition
             // 회수 콘솔 카메라 앵커 주입
             if (harvestConsoleCameraController != null && cockpitViewAnchor != null)
                 harvestConsoleCameraController.SetCockpitViewAnchor(cockpitViewAnchor);
+
+            // 회수 콘솔 입력 컨트롤러 초기화
+            if (harvestConsoleController != null)
+                harvestConsoleController.Initialize(
+                    harvestModeSession, harvestResolver, harvestModeCoordinator);
 
             // 카메라 전환 컨트롤러는 inspector 참조 기준 사용
             if (perspectiveSwapController != null)

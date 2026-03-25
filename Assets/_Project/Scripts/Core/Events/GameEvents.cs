@@ -80,7 +80,21 @@
         }
     }
 
-    /// <summary>회수 포인트가 드러났음을 알리는 이벤트</summary>
+    /// <summary>스캔 펄스 사용 이벤트</summary>
+    public readonly struct HarvestScanPulseEvent : IEvent
+    {
+        public readonly int ScanMode; // HarvestScanMode int 값
+        public readonly int PulseCount; // 누적 스캔 횟수
+
+        /// <summary>스캔 펄스 정보 생성</summary>
+        public HarvestScanPulseEvent(int scanMode, int pulseCount)
+        {
+            ScanMode = scanMode;
+            PulseCount = pulseCount;
+        }
+    }
+
+    /// <summary>회수 포인트 공개 이벤트</summary>
     public readonly struct HarvestPointRevealedEvent : IEvent
     {
         public readonly string PointId; // 포인트 ID
@@ -106,9 +120,43 @@
         }
     }
 
+    /// <summary>회수 추정치 갱신 이벤트</summary>
+    public readonly struct HarvestRecoveryPreviewUpdatedEvent : IEvent
+    {
+        public readonly float RecoveryChance; // 추정 성공률
+        public readonly float BatteryCost; // 추정 배터리 소모량
+        public readonly float DurabilityCost; // 추정 내구도 소모량
+
+        /// <summary>추정치 갱신 정보 생성</summary>
+        public HarvestRecoveryPreviewUpdatedEvent(float recoveryChance, float batteryCost, float durabilityCost)
+        {
+            RecoveryChance = recoveryChance;
+            BatteryCost = batteryCost;
+            DurabilityCost = durabilityCost;
+        }
+    }
+
     /// <summary>회수 계획 확정 이벤트</summary>
     public readonly struct HarvestRecoveryCommittedEvent : IEvent
     {
+    }
+
+    /// <summary>회수 콘솔 결과 이벤트</summary>
+    public readonly struct HarvestRecoveryResolvedEvent : IEvent
+    {
+        public readonly string ItemId; // 대상 아이템 ID
+        public readonly bool IsSuccess; // 성공 여부
+        public readonly float FinalChance; // 최종 성공률
+        public readonly bool AddedToInventory; // 인벤토리 적재 여부
+
+        /// <summary>회수 결과 정보 생성</summary>
+        public HarvestRecoveryResolvedEvent(string itemId, bool isSuccess, float finalChance, bool addedToInventory)
+        {
+            ItemId = itemId;
+            IsSuccess = isSuccess;
+            FinalChance = finalChance;
+            AddedToInventory = addedToInventory;
+        }
     }
 
     #endregion

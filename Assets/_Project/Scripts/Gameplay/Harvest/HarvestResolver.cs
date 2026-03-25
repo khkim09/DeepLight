@@ -1,4 +1,7 @@
-﻿using Project.Core.Events;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Project.Core.Events;
+using Project.Data.Enums;
 using Project.Data.Harvest;
 using Project.Data.Items;
 using Project.Gameplay.GameModes;
@@ -10,42 +13,42 @@ using Random = UnityEngine.Random;
 
 namespace Project.Gameplay.Harvest
 {
-    /// <summary>채집 확률 계산과 결과 반영을 담당하는 클래스</summary>
+    /// <summary>회수 콘솔의 추정 계산과 최종 회수 결과를 담당하는 클래스</summary>
     public class HarvestResolver
     {
         private readonly SubmarineRuntimeState submarineRuntimeState; // 잠수함 런타임 상태
-        private readonly ClawRuntimeState clawRuntimeState; // 로봇 팔 런타임 상태
+        private readonly ClawRuntimeState clawRuntimeState; // 기존 장비 내구도 상태(임시 재사용)
         private readonly InventoryService inventoryService; // 인벤토리 서비스
 
         public SubmarineRuntimeState SubmarineRuntimeState => submarineRuntimeState;
         public ClawRuntimeState ClawRuntimeState => clawRuntimeState;
 
-        /// <summary>채집 해석기 생성</summary>
+        /// <summary>회수 해석기 생성</summary>
         public HarvestResolver(
             SubmarineRuntimeState submarineRuntimeState,
             ClawRuntimeState clawRuntimeState,
             InventoryService inventoryService)
         {
-            this.submarineRuntimeState = submarineRuntimeState; // 잠수함 상태 보관
-            this.clawRuntimeState = clawRuntimeState; // 팔 상태 보관
-            this.inventoryService = inventoryService; // 인벤토리 서비스 보관
+            this.submarineRuntimeState = submarineRuntimeState;
+            this.clawRuntimeState = clawRuntimeState;
+            this.inventoryService = inventoryService;
         }
 
-        /// <summary>현재 상태 기준 채집 예상 확률을 반환한다</summary>
-        public float EvaluatePreviewChance(IHarvestTarget harvestTarget)
+        /// <summary>대상의 기본 회수 성공률을 계산한다</summary>
+        public float EvaluateBaseRecoveryChance(IHarvestTarget harvestTarget)
         {
-            if (harvestTarget == null) return 0f;
-            if (!harvestTarget.IsAvailable) return 0f;
+            if (harvestTarget == null || !harvestTarget.IsAvailable)
+                return 0f;
 
-            HarvestTargetSO targetData = harvestTarget.TargetData; // 대상 데이터
+            HarvestTargetSO targetData = harvestTarget.TargetData;
             if (targetData == null || !targetData.IsValid())
                 return 0f;
 
-            ItemSO itemData = targetData.ItemData; // 아이템 데이터
+            ItemSO itemData = targetData.ItemData;
             if (itemData == null || !itemData.IsValid())
                 return 0f;
 
-            float totalDifficulty = Mathf.Clamp01(itemData.BaseCatchDifficulty + targetData.AdditionalDifficulty); // 총 난이도
+            float totalDifficulty = Mathf.Clamp01(itemData.BaseCatchDifficulty + targetData.AdditionalDifficulty);
 
             return clawRuntimeState.BaseStats.EvaluateCatchChance(
                 itemData.Weight,
@@ -55,152 +58,131 @@ namespace Project.Gameplay.Harvest
                 clawRuntimeState.CurrentDurability);
         }
 
-        /// <summary>드롭 시도를 시작할 수 있으면 세션 상태와 배터리를 갱신한다</summary>
-        public bool TryBeginAttempt(HarvestModeSession harvestModeSession)
+        /// <summary>스캔 펄스에 필요한 배터리 소모량을 계산한다</summary>
+        public float GetScanPulseBatteryCost(HarvestScanMode scanMode)
         {
-            if (harvestModeSession == null)
-                return false;
+            float baseCost = Mathf.Max(0.5f, clawRuntimeState.BaseStats.BatteryCostPerDrop * 0.35f);
 
-            if (harvestModeSession.IsAttemptInProgress)
-                return false;
+            return scanMode switch
+            {
+                HarvestScanMode.Sonar => baseCost,
+                HarvestScanMode.Lidar => baseCost * 1.2f,
+                _ => 0f
+            };
+        }
 
-            IHarvestTarget currentTarget = harvestModeSession.CurrentTarget; // 현재 대상
-            if (currentTarget == null || !currentTarget.IsAvailable)
-                return false;
+        /// <summary>세션 상태를 기준으로 추정 회수 수치를 계산한다</summary>
+        public void EvaluateRecoveryPlan(HarvestModeSession harvestModeSession, IReadOnlyList<HarvestScanPoint> allPoints)
+        {
+            if (harvestModeSession == null || harvestModeSession.CurrentTarget == null)
+                return;
 
-            HarvestTargetSO targetData = currentTarget.TargetData; // 대상 데이터
+            float baseChance = EvaluateBaseRecoveryChance(harvestModeSession.CurrentTarget); // 대상 기본 성공률
+            int revealedCount = harvestModeSession.RevealedPointIds.Count; // 공개 포인트 수
+            int selectedCount = harvestModeSession.SelectedPointSequence.Count; // 선택 포인트 수
+
+            float revealBonus = Mathf.Min(0.15f, revealedCount * 0.04f); // 공개 정보 보너스
+            float sequenceBonus = 0f; // 선택 순서 보너스
+            float sequenceRiskPenalty = 0f; // 순서 위험 페널티
+
+            if (allPoints != null && selectedCount > 0)
+            {
+                Dictionary<string, HarvestScanPoint> pointMap = allPoints
+                    .Where(point => point != null)
+                    .GroupBy(point => point.PointId)
+                    .ToDictionary(group => group.Key, group => group.First());
+
+                for (int i = 0; i < harvestModeSession.SelectedPointSequence.Count; i++)
+                {
+                    string pointId = harvestModeSession.SelectedPointSequence[i];
+                    if (!pointMap.TryGetValue(pointId, out HarvestScanPoint point))
+                        continue;
+
+                    if (i == 0)
+                        sequenceBonus += point.FirstAnchorBias * 0.12f; // 첫 점 안정 보너스
+                    else
+                        sequenceBonus += point.SequenceBias * 0.08f; // 후속 점 보너스
+
+                    sequenceBonus += point.BaseStability * 0.05f; // 기본 안정성 보너스
+                    sequenceRiskPenalty += point.RiskWeight * 0.04f; // 위험도 패널티
+                }
+            }
+
+            float finalChance = Mathf.Clamp01(baseChance + revealBonus + sequenceBonus - sequenceRiskPenalty); // 추정 최종 확률
+            float batteryCost = harvestModeSession.ScanPulseCount * 0.5f + selectedCount * 0.75f; // 추정 배터리 비용
+            float durabilityCost = Mathf.Max(0f, selectedCount * 0.4f + sequenceRiskPenalty * 10f); // 추정 내구도 비용
+
+            harvestModeSession.SetEstimatedOutcome(finalChance, batteryCost, durabilityCost);
+
+            EventBus.Publish(new HarvestRecoveryPreviewUpdatedEvent(
+                harvestModeSession.EstimatedRecoveryChance,
+                harvestModeSession.EstimatedBatteryCost,
+                harvestModeSession.EstimatedDurabilityCost));
+        }
+
+        /// <summary>현재 세션의 회수 계획을 확정하고 최종 결과를 계산한다</summary>
+        public HarvestResolveResult ResolveCommittedRecovery(HarvestModeSession harvestModeSession, IReadOnlyList<HarvestScanPoint> allPoints)
+        {
+            if (harvestModeSession == null || harvestModeSession.CurrentTarget == null)
+                return new HarvestResolveResult(string.Empty, false, 0f, false, false);
+
+            IHarvestTarget harvestTarget = harvestModeSession.CurrentTarget;
+            if (!harvestTarget.IsAvailable)
+                return new HarvestResolveResult(string.Empty, false, 0f, false, false);
+
+            HarvestTargetSO targetData = harvestTarget.TargetData;
             if (targetData == null || !targetData.IsValid())
-                return false;
+                return new HarvestResolveResult(string.Empty, false, 0f, false, false);
 
-            ItemSO itemData = targetData.ItemData; // 아이템 데이터
+            ItemSO itemData = targetData.ItemData;
             if (itemData == null || !itemData.IsValid())
-                return false;
+                return new HarvestResolveResult(string.Empty, false, 0f, false, false);
 
-            float previewChance = EvaluatePreviewChance(currentTarget); // 현재 기준 사전 확률
+            // 최신 추정치 재계산
+            EvaluateRecoveryPlan(harvestModeSession, allPoints);
 
-            // 시도 시작 이벤트 발행
-            EventBus.Publish(new HarvestAttemptStartedEvent(itemData.ItemId, previewChance));
+            float finalChance = harvestModeSession.EstimatedRecoveryChance;
+            float batteryCost = harvestModeSession.EstimatedBatteryCost;
+            float durabilityCost = harvestModeSession.EstimatedDurabilityCost;
 
-            // 세션 시도 시작
-            harvestModeSession.BeginAttempt(previewChance);
+            // 실제 자원 소모 적용
+            submarineRuntimeState.ConsumeBattery(batteryCost);
+            clawRuntimeState.Damage(durabilityCost);
 
-            // 배터리 소모
-            submarineRuntimeState.ConsumeBattery(clawRuntimeState.BaseStats.BatteryCostPerDrop);
-
-            // 방전 시 즉시 실패 처리
+            // 방전 시 즉시 실패
             if (submarineRuntimeState.CurrentBattery <= 0f)
             {
                 EventBus.Publish(new HarvestSessionForcedEndedByBatteryEvent(targetData.TargetId));
+                EventBus.Publish(new HarvestRecoveryResolvedEvent(itemData.ItemId, false, 0f, false));
                 EventBus.Publish(new HarvestAttemptResolvedEvent(itemData.ItemId, false, 0f, false));
 
-                harvestModeSession.CompleteAttempt();
-                return false;
+                harvestModeSession.MarkResolved();
+                return new HarvestResolveResult(itemData.ItemId, false, 0f, false, false);
             }
 
-            return true;
-        }
-
-        /// <summary>복귀 완료 후 실제 잡기 결과를 해석한다</summary>
-        public HarvestResolveResult ResolveReturnedCatch(HarvestModeSession harvestModeSession)
-        {
-            if (harvestModeSession == null)
-                return new HarvestResolveResult(string.Empty, false, 0f, false, false);
-
-            IHarvestTarget currentTarget = harvestModeSession.CurrentTarget; // 세션 대상
-            if (currentTarget == null || !currentTarget.IsAvailable)
-            {
-                harvestModeSession.CompleteAttempt();
-                return new HarvestResolveResult(string.Empty, false, 0f, false, false);
-            }
-
-            HarvestTargetSO currentTargetData = currentTarget.TargetData; // 대상 데이터
-            if (currentTargetData == null || !currentTargetData.IsValid())
-            {
-                harvestModeSession.CompleteAttempt();
-                return new HarvestResolveResult(string.Empty, false, 0f, false, false);
-            }
-
-            ItemSO currentItemData = currentTargetData.ItemData; // 아이템 데이터
-            string itemId = currentItemData != null ? currentItemData.ItemId : string.Empty; // 기본 아이템 ID
-
-            // 실제로 아무것도 못 걸었으면 즉시 실패
-            if (!harvestModeSession.HasLatchedTarget)
-            {
-                EventBus.Publish(new HarvestAttemptResolvedEvent(itemId, false, 0f, false));
-
-                harvestModeSession.CompleteAttempt();
-                return new HarvestResolveResult(itemId, false, 0f, false, false);
-            }
-
-            IHarvestTarget latchedTarget = harvestModeSession.LatchedTarget; // 실제 포획 대상
-            HarvestTargetSO latchedTargetData = latchedTarget.TargetData; // 실제 포획 대상 데이터
-            if (latchedTargetData == null || !latchedTargetData.IsValid())
-            {
-                EventBus.Publish(new HarvestAttemptResolvedEvent(itemId, false, 0f, false));
-
-                harvestModeSession.CompleteAttempt();
-                return new HarvestResolveResult(itemId, false, 0f, false, false);
-            }
-
-            ItemSO latchedItemData = latchedTargetData.ItemData; // 실제 포획 아이템 데이터
-            if (latchedItemData == null || !latchedItemData.IsValid())
-            {
-                EventBus.Publish(new HarvestAttemptResolvedEvent(itemId, false, 0f, false));
-
-                harvestModeSession.CompleteAttempt();
-                return new HarvestResolveResult(itemId, false, 0f, false, false);
-            }
-
-            itemId = latchedItemData.ItemId; // 실제 포획한 아이템 ID 사용
-
-            // 조작 정확도에 따라 최종 확률 보정
-            float finalChance = CalculateFinalChance(
-                harvestModeSession.CachedPreviewChance,
-                harvestModeSession.LatchQuality01);
-
-            float roll = Random.value; // 0~1 랜덤값
-            bool chanceSuccess = roll <= finalChance; // 최종 성공 여부
+            float roll = Random.value; // 최종 랜덤값
+            bool chanceSuccess = roll <= finalChance; // 성공 여부
 
             if (!chanceSuccess)
             {
-                EventBus.Publish(new HarvestAttemptResolvedEvent(itemId, false, finalChance, false));
+                EventBus.Publish(new HarvestRecoveryResolvedEvent(itemData.ItemId, false, finalChance, false));
+                EventBus.Publish(new HarvestAttemptResolvedEvent(itemData.ItemId, false, finalChance, false));
 
-                harvestModeSession.CompleteAttempt();
-                return new HarvestResolveResult(itemId, false, finalChance, false, false);
+                harvestModeSession.MarkResolved();
+                return new HarvestResolveResult(itemData.ItemId, false, finalChance, false, false);
             }
 
-            bool addedToInventory = inventoryService.TryAddItem(latchedItemData, out InventoryItemInstance itemInstance); // 인벤토리 적재 시도
-            bool finalSuccess = addedToInventory; // 최종 성공은 적재 완료 기준
+            bool addedToInventory = inventoryService.TryAddItem(itemData, out InventoryItemInstance instance); // 인벤토리 적재 시도
+            bool finalSuccess = addedToInventory;
 
-            if (finalSuccess && latchedTargetData.ConsumeOnSuccess)
-                latchedTarget.Consume(); // 성공 시 대상 소비
+            if (finalSuccess && targetData.ConsumeOnSuccess)
+                harvestTarget.Consume();
 
-            EventBus.Publish(new HarvestAttemptResolvedEvent(itemId, finalSuccess, finalChance, addedToInventory));
+            EventBus.Publish(new HarvestRecoveryResolvedEvent(itemData.ItemId, finalSuccess, finalChance, addedToInventory));
+            EventBus.Publish(new HarvestAttemptResolvedEvent(itemData.ItemId, finalSuccess, finalChance, addedToInventory));
 
-            harvestModeSession.CompleteAttempt();
-            return new HarvestResolveResult(itemId, finalSuccess, finalChance, addedToInventory, false);
-        }
-
-        /// <summary>조작 정확도를 반영해 최종 성공 확률을 계산한다</summary>
-        private float CalculateFinalChance(float previewChance, float latchQuality01)
-        {
-            // 조작 정확도에 따라 최대 20% 감점 / 25% 가점
-            float qualityMultiplier = Mathf.Lerp(0.8f, 1.25f, Mathf.Clamp01(latchQuality01));
-
-            // 최종 확률 보정
-            return Mathf.Clamp01(previewChance * qualityMultiplier);
-        }
-
-        /// <summary>장애물 충돌 시 팔 내구도 감소를 처리한다</summary>
-        public void ApplyObstacleCollision(IHarvestTarget harvestTarget)
-        {
-            if (harvestTarget == null) return;
-
-            HarvestTargetSO targetData = harvestTarget.TargetData; // 대상 데이터
-            if (targetData == null) return;
-
-            clawRuntimeState.Damage(targetData.CollisionDamage); // 내구도 감소
-            harvestTarget.OnClawCollision(); // 반응 호출
+            harvestModeSession.MarkResolved();
+            return new HarvestResolveResult(itemData.ItemId, finalSuccess, finalChance, addedToInventory, false);
         }
     }
 }

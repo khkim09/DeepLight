@@ -281,6 +281,70 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &220459198
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 220459199}
+  - component: {fileID: 220459200}
+  m_Layer: 0
+  m_Name: ScanPoint_A
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &220459199
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 220459198}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -1, z: -0, w: 0.00000058114523}
+  m_LocalPosition: {x: -0.358, y: 0, z: -0.5045}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 861603056}
+  m_Father: {fileID: 854683258}
+  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
+--- !u!114 &220459200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 220459198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ad8b4a0383ac0c44bde31ee9662d3b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestScanPoint
+  pointId: A
+  displayOrder: 0
+  displayLabel: A
+  baseStability: 0.75
+  firstAnchorBias: 0.85
+  sequenceBias: 0.45
+  riskWeight: 0.25
+  sonarSignature: 0.8
+  lidarSignature: 0.35
+  pointVisualRoot: {fileID: 861603055}
+  pointSpriteRenderer: {fileID: 861603057}
+  hiddenSprite: {fileID: 21300000, guid: 0378b9a42fc0a0d48a7f2b2a13a9ca1f, type: 3}
+  revealedSprite: {fileID: 21300000, guid: 7e9e3fdbb16b573409e514ba9e325f2c, type: 3}
+  hiddenColor: {r: 0.25, g: 0.25, b: 0.25, a: 1}
+  revealedColor: {r: 0.8, g: 0.95, b: 1, a: 1}
+  hoveredColor: {r: 1, g: 0.95, b: 0.5, a: 1}
+  selectedColor: {r: 0.3, g: 1, b: 0.3, a: 1}
+  hoveredScaleMultiplier: 1.2
+  selectedScaleMultiplier: 1.25
 --- !u!1 &258099652
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,7 +446,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 311
+    m_Bits: 55
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -409,6 +473,115 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &407589656
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 407589657}
+  - component: {fileID: 407589658}
+  - component: {fileID: 407589659}
+  m_Layer: 8
+  m_Name: RingVisual
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &407589657
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 407589656}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1455594047}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &407589658
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 407589656}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 21300000, guid: 7e9e3fdbb16b573409e514ba9e325f2c, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 0.64, y: 0.64}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
+--- !u!114 &407589659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 407589656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b9ae8af4b2200f4fa1f5a5cf83eab3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
+  normalReference: {fileID: 1455594047}
+  targetCamera: {fileID: 652069767}
+  edgeOnThreshold: 0.12
+  edgeJitterAngle: 18
+  edgeScaleMultiplier: 1.6
 --- !u!1 &516876648
 GameObject:
   m_ObjectHideFlags: 0
@@ -546,6 +719,158 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 516876648}
   m_CullTransparentMesh: 1
+--- !u!1 &652069766
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 652069771}
+  - component: {fileID: 652069767}
+  - component: {fileID: 652069770}
+  - component: {fileID: 652069769}
+  - component: {fileID: 652069768}
+  m_Layer: 0
+  m_Name: Camera_HarvestPointOverlay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!20 &652069767
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 652069766}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 4
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 256
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!114 &652069768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 652069766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 274ce60e3fc9a1f49ab48f63efbc0a51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.CameraSystem.HarvestConsoleCameraController
+  cockpitViewAnchor: {fileID: 1507362926}
+  followAnchorContinuously: 1
+--- !u!114 &652069769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 652069766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 1
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
+--- !u!81 &652069770
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 652069766}
+  m_Enabled: 1
+--- !u!4 &652069771
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 652069766}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
+  m_LocalPosition: {x: 0, y: 5, z: -8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
 --- !u!1 &665811152
 GameObject:
   m_ObjectHideFlags: 0
@@ -581,12 +906,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestTargetBehaviour
   targetData: {fileID: 11400000, guid: ff78c5a0ccb79c9468a718ac2b1490f4, type: 2}
   isAvailable: 1
-  defaultLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
-  harvestingLayerMask:
-    serializedVersion: 2
-    m_Bits: 256
+  scanPoints: []
 --- !u!65 &665811154
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -674,7 +994,7 @@ Transform:
   m_GameObject: {fileID: 665811152}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 0, z: 7.19}
+  m_LocalPosition: {x: 5, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -780,12 +1100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestTargetBehaviour
   targetData: {fileID: 11400000, guid: d306d15bda0ae1848a838c3cabf17038, type: 2}
   isAvailable: 1
-  defaultLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
-  harvestingLayerMask:
-    serializedVersion: 2
-    m_Bits: 256
+  scanPoints: []
 --- !u!65 &854683255
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -873,10 +1188,13 @@ Transform:
   m_GameObject: {fileID: 854683253}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 7.19}
+  m_LocalPosition: {x: 0, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 220459199}
+  - {fileID: 1455594047}
+  - {fileID: 1472749642}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &854683259
@@ -895,6 +1213,115 @@ MonoBehaviour:
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   highlightedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   useMaterialInstance: 1
+--- !u!1 &861603055
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 861603056}
+  - component: {fileID: 861603057}
+  - component: {fileID: 861603058}
+  m_Layer: 8
+  m_Name: RingVisual
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &861603056
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861603055}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 220459199}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &861603057
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861603055}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 21300000, guid: 7e9e3fdbb16b573409e514ba9e325f2c, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 0.64, y: 0.64}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
+--- !u!114 &861603058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861603055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b9ae8af4b2200f4fa1f5a5cf83eab3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
+  normalReference: {fileID: 220459199}
+  targetCamera: {fileID: 652069767}
+  edgeOnThreshold: 0.2
+  edgeJitterAngle: 28
+  edgeScaleMultiplier: 1.6
 --- !u!1 &862883676
 GameObject:
   m_ObjectHideFlags: 0
@@ -1155,6 +1582,7 @@ GameObject:
   - component: {fileID: 993118219}
   - component: {fileID: 993118218}
   - component: {fileID: 993118225}
+  - component: {fileID: 993118226}
   - component: {fileID: 993118217}
   - component: {fileID: 993118223}
   m_Layer: 0
@@ -1176,7 +1604,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 762692b3797497b4da02575fbe5ff255, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Interaction.HarvestPointInteractor
-  interactKey: 101
+  interactKey: 102
   interactRange: 3
   harvestLayerMask:
     serializedVersion: 2
@@ -1346,6 +1774,25 @@ MonoBehaviour:
   ascendSpeed: 3
   descendSpeed: 3
   verticalSmoothTime: 0.08
+--- !u!114 &993118226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993118216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dea6f6102651314bbd3ae90b1e39727, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestConsoleController
+  scanKey: 102
+  switchSensorKey: 114
+  commitKey: 32
+  exitKey: 120
+  pointSelectRadiusPixels: 80
+  pointHoverRadiusPixels: 120
+  harvestConsoleCamera: {fileID: 1981470076}
 --- !u!1 &1004242908
 GameObject:
   m_ObjectHideFlags: 0
@@ -1385,6 +1832,7 @@ MonoBehaviour:
   explorationFollowCameraController: {fileID: 870650683}
   harvestConsoleCameraController: {fileID: 1981470073}
   cockpitViewAnchor: {fileID: 1507362926}
+  harvestConsoleController: {fileID: 993118226}
   inventoryGridDebugView: {fileID: 1884288012}
 --- !u!4 &1004242910
 Transform:
@@ -2075,6 +2523,115 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1281245501}
   m_CullTransparentMesh: 1
+--- !u!1 &1294778646
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1294778647}
+  - component: {fileID: 1294778648}
+  - component: {fileID: 1294778649}
+  m_Layer: 8
+  m_Name: RingVisual
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1294778647
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294778646}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1472749642}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &1294778648
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294778646}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 21300000, guid: 7e9e3fdbb16b573409e514ba9e325f2c, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 0.64, y: 0.64}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
+--- !u!114 &1294778649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294778646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b9ae8af4b2200f4fa1f5a5cf83eab3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
+  normalReference: {fileID: 1472749642}
+  targetCamera: {fileID: 652069767}
+  edgeOnThreshold: 0.12
+  edgeJitterAngle: 18
+  edgeScaleMultiplier: 1.6
 --- !u!1 &1358170508
 GameObject:
   m_ObjectHideFlags: 0
@@ -2305,6 +2862,70 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1455594046
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1455594047}
+  - component: {fileID: 1455594048}
+  m_Layer: 0
+  m_Name: ScanPoint_B
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1455594047
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455594046}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0.5056, y: 0, z: 0.198}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 407589657}
+  m_Father: {fileID: 854683258}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &1455594048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455594046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ad8b4a0383ac0c44bde31ee9662d3b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestScanPoint
+  pointId: B
+  displayOrder: 1
+  displayLabel: B
+  baseStability: 0.45
+  firstAnchorBias: 0.25
+  sequenceBias: 0.85
+  riskWeight: 0.5
+  sonarSignature: 0.4
+  lidarSignature: 0.8
+  pointVisualRoot: {fileID: 407589656}
+  pointSpriteRenderer: {fileID: 407589658}
+  hiddenSprite: {fileID: 21300000, guid: 0378b9a42fc0a0d48a7f2b2a13a9ca1f, type: 3}
+  revealedSprite: {fileID: 21300000, guid: 7e9e3fdbb16b573409e514ba9e325f2c, type: 3}
+  hiddenColor: {r: 0.25, g: 0.25, b: 0.25, a: 1}
+  revealedColor: {r: 0.8, g: 0.95, b: 1, a: 1}
+  hoveredColor: {r: 1, g: 0.95, b: 0.5, a: 1}
+  selectedColor: {r: 0.3, g: 1, b: 0.3, a: 1}
+  hoveredScaleMultiplier: 1.2
+  selectedScaleMultiplier: 1.25
 --- !u!1 &1469270430
 GameObject:
   m_ObjectHideFlags: 0
@@ -2442,6 +3063,70 @@ RectTransform:
   m_AnchoredPosition: {x: -100, y: -25}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1472749641
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1472749642}
+  - component: {fileID: 1472749643}
+  m_Layer: 0
+  m_Name: ScanPoint_C
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1472749642
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1472749641}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.70710677, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -0.358, y: 0.508, z: -0.0010004044}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 1294778647}
+  m_Father: {fileID: 854683258}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!114 &1472749643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1472749641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ad8b4a0383ac0c44bde31ee9662d3b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestScanPoint
+  pointId: C
+  displayOrder: 2
+  displayLabel: C
+  baseStability: 0.55
+  firstAnchorBias: 0.4
+  sequenceBias: 0.6
+  riskWeight: 0.7
+  sonarSignature: 0.65
+  lidarSignature: 0.55
+  pointVisualRoot: {fileID: 1294778646}
+  pointSpriteRenderer: {fileID: 0}
+  hiddenSprite: {fileID: 21300000, guid: 0378b9a42fc0a0d48a7f2b2a13a9ca1f, type: 3}
+  revealedSprite: {fileID: 21300000, guid: 7e9e3fdbb16b573409e514ba9e325f2c, type: 3}
+  hiddenColor: {r: 0.25, g: 0.25, b: 0.25, a: 1}
+  revealedColor: {r: 0.8, g: 0.95, b: 1, a: 1}
+  hoveredColor: {r: 1, g: 0.95, b: 0.5, a: 1}
+  selectedColor: {r: 0.3, g: 1, b: 0.3, a: 1}
+  hoveredScaleMultiplier: 1.2
+  selectedScaleMultiplier: 1.25
 --- !u!1 &1507362925
 GameObject:
   m_ObjectHideFlags: 0
@@ -3165,7 +3850,8 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
-  m_Cameras: []
+  m_Cameras:
+  - {fileID: 652069767}
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
@@ -3240,7 +3926,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 183
+    m_Bits: 4294967295
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -3390,12 +4076,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestTargetBehaviour
   targetData: {fileID: 11400000, guid: 87ce122319cc6e247b2df06f548e3cb3, type: 2}
   isAvailable: 1
-  defaultLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
-  harvestingLayerMask:
-    serializedVersion: 2
-    m_Bits: 256
+  scanPoints: []
 --- !u!65 &2074224334
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3483,7 +4164,7 @@ Transform:
   m_GameObject: {fileID: 2074224332}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2, y: 0, z: 7.19}
+  m_LocalPosition: {x: -5, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3652,6 +4333,7 @@ SceneRoots:
   - {fileID: 1434104322}
   - {fileID: 870650682}
   - {fileID: 1981470077}
+  - {fileID: 652069771}
   - {fileID: 258099655}
   - {fileID: 1358170512}
   - {fileID: 1253510379}
