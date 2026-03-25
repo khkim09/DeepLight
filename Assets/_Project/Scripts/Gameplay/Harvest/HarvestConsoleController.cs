@@ -396,7 +396,6 @@ namespace Project.Gameplay.Harvest
                 return;
 
             // 회수 계획 확정
-            harvestModeSession.CommitRecoveryPlan();
             EventBus.Publish(new HarvestRecoveryCommittedEvent());
 
             // 실제 회수 결과 계산

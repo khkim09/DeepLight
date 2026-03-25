@@ -15,7 +15,6 @@ namespace Project.Gameplay.GameModes
         private float estimatedBatteryCost; // 추정 배터리 소모량
         private float estimatedDurabilityCost; // 추정 내구도 소모량
         private int scanPulseCount; // 현재 세션에서 사용한 스캔 횟수
-        private bool isCommitted; // 회수 계획 확정 여부
         private bool isResolved; // 회수 완료 여부
 
         public IHarvestTarget CurrentTarget => currentTarget;
@@ -26,7 +25,6 @@ namespace Project.Gameplay.GameModes
         public float EstimatedBatteryCost => estimatedBatteryCost;
         public float EstimatedDurabilityCost => estimatedDurabilityCost;
         public int ScanPulseCount => scanPulseCount;
-        public bool IsCommitted => isCommitted;
         public bool IsResolved => isResolved;
         public bool HasTarget => currentTarget != null;
 
@@ -74,7 +72,6 @@ namespace Project.Gameplay.GameModes
         public void ClearSelectedPoints()
         {
             selectedPointSequence.Clear();
-            isCommitted = false;
         }
 
         /// <summary>추정 회수 수치를 갱신한다</summary>
@@ -83,12 +80,6 @@ namespace Project.Gameplay.GameModes
             estimatedRecoveryChance = recoveryChance;
             estimatedBatteryCost = batteryCost;
             estimatedDurabilityCost = durabilityCost;
-        }
-
-        /// <summary>현재 회수 계획을 확정 상태로 전환한다</summary>
-        public void CommitRecoveryPlan()
-        {
-            isCommitted = true;
         }
 
         /// <summary>회수 결과가 확정되었음을 표시한다</summary>
@@ -114,7 +105,6 @@ namespace Project.Gameplay.GameModes
             estimatedBatteryCost = 0f;
             estimatedDurabilityCost = 0f;
             scanPulseCount = 0;
-            isCommitted = false;
             isResolved = false;
         }
     }
