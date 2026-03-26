@@ -18,6 +18,7 @@ namespace Project.Gameplay.DebugView
         private float lastChance;
         private float lastBatteryCost;
         private float lastDurabilityCost;
+        private string lastResultText = "Result : -";
 
         /// <summary>이벤트 구독을 등록한다</summary>
         private void OnEnable()
@@ -27,6 +28,7 @@ namespace Project.Gameplay.DebugView
             EventBus.Subscribe<HarvestSessionEndedEvent>(OnHarvestSessionEnded);
             EventBus.Subscribe<HarvestSessionForcedEndedByBatteryEvent>(OnHarvestSessionForcedEndedByBattery);
             EventBus.Subscribe<HarvestScanModeChangedEvent>(OnHarvestScanModeChanged);
+            EventBus.Subscribe<HarvestScanPulseEvent>(OnHarvestScanPulseEvent);
             EventBus.Subscribe<HarvestPointRevealedEvent>(OnHarvestPointRevealed);
             EventBus.Subscribe<HarvestPointSelectedEvent>(OnHarvestPointSelected);
             EventBus.Subscribe<HarvestRecoveryPreviewUpdatedEvent>(OnHarvestRecoveryPreviewUpdated);
@@ -41,6 +43,7 @@ namespace Project.Gameplay.DebugView
             EventBus.Unsubscribe<HarvestSessionEndedEvent>(OnHarvestSessionEnded);
             EventBus.Unsubscribe<HarvestSessionForcedEndedByBatteryEvent>(OnHarvestSessionForcedEndedByBattery);
             EventBus.Unsubscribe<HarvestScanModeChangedEvent>(OnHarvestScanModeChanged);
+            EventBus.Unsubscribe<HarvestScanPulseEvent>(OnHarvestScanPulseEvent);
             EventBus.Unsubscribe<HarvestPointRevealedEvent>(OnHarvestPointRevealed);
             EventBus.Unsubscribe<HarvestPointSelectedEvent>(OnHarvestPointSelected);
             EventBus.Unsubscribe<HarvestRecoveryPreviewUpdatedEvent>(OnHarvestRecoveryPreviewUpdated);
@@ -50,17 +53,16 @@ namespace Project.Gameplay.DebugView
         /// <summary>초기 텍스트를 설정한다</summary>
         private void Start()
         {
+            ResetConsoleDebugState();
+
             if (modeText != null)
                 modeText.text = "Mode : Exploration3D";
 
             if (sessionText != null)
                 sessionText.text = "Session : None";
 
-            if (previewText != null)
-                previewText.text = "Preview : -";
-
-            if (resultText != null)
-                resultText.text = "Result : -";
+            RefreshPreviewText();
+            RefreshResultText();
         }
 
         /// <summary>모드 텍스트를 갱신한다</summary>
@@ -73,17 +75,14 @@ namespace Project.Gameplay.DebugView
         /// <summary>세션 시작 텍스트를 갱신한다</summary>
         private void OnHarvestSessionStarted(HarvestSessionStartedEvent publishedEvent)
         {
-            currentSensorText = "Sensor=Sonar"; // 기본 시작 센서
-            revealedText = "Revealed=-";
-            selectedText = "Order=-";
-            lastChance = 0f;
-            lastBatteryCost = 0f;
-            lastDurabilityCost = 0f;
+            ResetConsoleDebugState();
+            currentSensorText = "Sensor=Sonar";
 
             if (sessionText != null)
                 sessionText.text = $"Session : Target={publishedEvent.TargetId}, Item={publishedEvent.ItemId}";
 
-            RefreshPreviewText(); // 즉시 HUD 반영
+            RefreshPreviewText();
+            RefreshResultText();
         }
 
         /// <summary>세션 종료 텍스트를 갱신한다</summary>
@@ -91,6 +90,9 @@ namespace Project.Gameplay.DebugView
         {
             if (sessionText != null)
                 sessionText.text = $"Session : Ended ({publishedEvent.TargetId})";
+
+            RefreshPreviewText();
+            RefreshResultText();
         }
 
         /// <summary>방전 종료 텍스트를 갱신한다</summary>
@@ -98,13 +100,22 @@ namespace Project.Gameplay.DebugView
         {
             if (sessionText != null)
                 sessionText.text = $"Session : Forced End by Battery ({publishedEvent.TargetId})";
+
+            RefreshPreviewText();
+            RefreshResultText();
         }
 
-        /// <summary>센서 변경 텍스트를 갱신한다</summary>
+        /// <summary>센서 변경 텍스트를 즉시 갱신한다</summary>
         private void OnHarvestScanModeChanged(HarvestScanModeChangedEvent publishedEvent)
         {
             currentSensorText = publishedEvent.ScanMode == 1 ? "Sensor=Sonar" : "Sensor=Lidar";
-            RefreshPreviewText(); // 이벤트 직후 즉시 텍스트 갱신
+            RefreshPreviewText();
+        }
+
+        /// <summary>스캔 펄스 이벤트 직후 텍스트를 다시 그린다</summary>
+        private void OnHarvestScanPulseEvent(HarvestScanPulseEvent publishedEvent)
+        {
+            RefreshPreviewText();
         }
 
         /// <summary>공개 포인트 텍스트를 갱신한다</summary>
@@ -115,7 +126,7 @@ namespace Project.Gameplay.DebugView
             else
                 revealedText += $", {publishedEvent.PointId}";
 
-            RefreshPreviewText(); // 즉시 갱신
+            RefreshPreviewText();
         }
 
         /// <summary>선택 순서 텍스트를 갱신한다</summary>
@@ -126,24 +137,27 @@ namespace Project.Gameplay.DebugView
             else
                 selectedText += $" -> {publishedEvent.PointId}";
 
-            RefreshPreviewText(); // 즉시 갱신
+            RefreshPreviewText();
         }
 
         /// <summary>추정 회수 수치를 갱신한다</summary>
         private void OnHarvestRecoveryPreviewUpdated(HarvestRecoveryPreviewUpdatedEvent publishedEvent)
         {
-            lastChance = publishedEvent.RecoveryChance; // 최신 추정 성공률 저장
-            lastBatteryCost = publishedEvent.BatteryCost; // 최신 추정 배터리 비용 저장
-            lastDurabilityCost = publishedEvent.DurabilityCost; // 최신 추정 내구도 비용 저장
+            lastChance = publishedEvent.RecoveryChance;
+            lastBatteryCost = publishedEvent.BatteryCost;
+            lastDurabilityCost = publishedEvent.DurabilityCost;
 
-            RefreshPreviewText(); // 즉시 갱신
+            RefreshPreviewText();
         }
 
         /// <summary>최종 결과 텍스트를 갱신한다</summary>
         private void OnHarvestRecoveryResolved(HarvestRecoveryResolvedEvent publishedEvent)
         {
-            if (resultText != null)
-                resultText.text = $"Result : Item={publishedEvent.ItemId}, Success={publishedEvent.IsSuccess}, Added={publishedEvent.AddedToInventory}, Chance={(publishedEvent.FinalChance * 100f):0.0}%";
+            lastResultText =
+                $"Result : Item={publishedEvent.ItemId}, Success={publishedEvent.IsSuccess}, Added={publishedEvent.AddedToInventory}, Chance={(publishedEvent.FinalChance * 100f):0.0}%";
+
+            RefreshResultText();
+            RefreshPreviewText();
         }
 
         /// <summary>현재 상태를 기준으로 preview 텍스트를 다시 그린다</summary>
@@ -157,6 +171,27 @@ namespace Project.Gameplay.DebugView
                 $"{revealedText}\n" +
                 $"{selectedText}\n" +
                 $"Chance={(lastChance * 100f):0.0}% / Battery={lastBatteryCost:0.0} / Durability={lastDurabilityCost:0.0}";
+        }
+
+        /// <summary>현재 결과 텍스트를 다시 그린다</summary>
+        private void RefreshResultText()
+        {
+            if (resultText == null)
+                return;
+
+            resultText.text = lastResultText;
+        }
+
+        /// <summary>콘솔 디버그 상태를 초기화한다</summary>
+        private void ResetConsoleDebugState()
+        {
+            currentSensorText = "Sensor=None";
+            revealedText = "Revealed=-";
+            selectedText = "Order=-";
+            lastChance = 0f;
+            lastBatteryCost = 0f;
+            lastDurabilityCost = 0f;
+            lastResultText = "Result : -";
         }
     }
 }

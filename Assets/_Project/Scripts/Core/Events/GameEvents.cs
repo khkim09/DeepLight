@@ -1,4 +1,6 @@
-﻿namespace Project.Core.Events
+﻿using UnityEngine;
+
+namespace Project.Core.Events
 {
     #region Mode
 
@@ -19,6 +21,13 @@
     /// <summary>채집 모드 진입 이벤트</summary>
     public readonly struct HarvestModeEnteredEvent : IEvent
     {
+        public readonly Transform Target; // 상호작용(채집) 대상의 Transform
+
+        /// <summary>채집 모드 진입 이벤트 정보 생성</summary>
+        public HarvestModeEnteredEvent(Transform target)
+        {
+            Target = target;
+        }
     }
 
     /// <summary>채집 모드 종료 이벤트</summary>
@@ -258,20 +267,6 @@
 
         /// <summary>선체 내구도 변경 정보 생성</summary>
         public HullDurabilityChangedEvent(float currentDurability, float maxDurability)
-        {
-            CurrentDurability = currentDurability;
-            MaxDurability = maxDurability;
-        }
-    }
-
-    /// <summary>로봇 팔 내구도 상태 변경 이벤트</summary>
-    public readonly struct ClawDurabilityChangedEvent : IEvent
-    {
-        public readonly float CurrentDurability; // 현재 팔 내구도
-        public readonly float MaxDurability; // 최대 팔 내구도
-
-        /// <summary>로봇 팔 내구도 변경 정보 생성</summary>
-        public ClawDurabilityChangedEvent(float currentDurability, float maxDurability)
         {
             CurrentDurability = currentDurability;
             MaxDurability = maxDurability;

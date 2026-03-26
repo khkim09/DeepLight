@@ -16,21 +16,16 @@ namespace Project.Gameplay.Harvest
     /// <summary>회수 콘솔의 추정 계산과 최종 회수 결과를 담당하는 클래스</summary>
     public class HarvestResolver
     {
-        private readonly SubmarineRuntimeState submarineRuntimeState; // 잠수함 런타임 상태
-        private readonly ClawRuntimeState clawRuntimeState; // 기존 장비 내구도 상태(임시 재사용)
-        private readonly InventoryService inventoryService; // 인벤토리 서비스
+        private readonly SubmarineRuntimeState submarineRuntimeState;
+        private readonly InventoryService inventoryService;
 
         public SubmarineRuntimeState SubmarineRuntimeState => submarineRuntimeState;
-        public ClawRuntimeState ClawRuntimeState => clawRuntimeState;
 
-        /// <summary>회수 해석기 생성</summary>
         public HarvestResolver(
             SubmarineRuntimeState submarineRuntimeState,
-            ClawRuntimeState clawRuntimeState,
             InventoryService inventoryService)
         {
             this.submarineRuntimeState = submarineRuntimeState;
-            this.clawRuntimeState = clawRuntimeState;
             this.inventoryService = inventoryService;
         }
 
@@ -48,25 +43,25 @@ namespace Project.Gameplay.Harvest
             if (itemData == null || !itemData.IsValid())
                 return 0f;
 
-            float totalDifficulty = Mathf.Clamp01(itemData.BaseCatchDifficulty + targetData.AdditionalDifficulty);
+            float difficulty = Mathf.Clamp01(itemData.BaseCatchDifficulty + targetData.AdditionalDifficulty);
 
-            return clawRuntimeState.BaseStats.EvaluateCatchChance(
-                itemData.Weight,
-                totalDifficulty,
-                submarineRuntimeState.CurrentBattery,
-                submarineRuntimeState.BaseStats.MaxBattery,
-                clawRuntimeState.CurrentDurability);
+            float batteryRatio = submarineRuntimeState.BaseStats.MaxBattery <= 0f
+                ? 0f
+                : submarineRuntimeState.CurrentBattery / submarineRuntimeState.BaseStats.MaxBattery;
+
+            float batteryBonus = Mathf.Lerp(-0.15f, 0.1f, batteryRatio);
+            float weightPenalty = Mathf.Clamp01(itemData.Weight / 100f) * 0.12f;
+
+            return Mathf.Clamp01(0.78f - difficulty * 0.45f + batteryBonus - weightPenalty);
         }
 
         /// <summary>스캔 펄스에 필요한 배터리 소모량을 계산한다</summary>
         public float GetScanPulseBatteryCost(HarvestScanMode scanMode)
         {
-            float baseCost = Mathf.Max(0.5f, clawRuntimeState.BaseStats.BatteryCostPerDrop * 0.35f);
-
             return scanMode switch
             {
-                HarvestScanMode.Sonar => baseCost,
-                HarvestScanMode.Lidar => baseCost * 1.2f,
+                HarvestScanMode.Sonar => 0.6f,
+                HarvestScanMode.Lidar => 0.9f,
                 _ => 0f
             };
         }
@@ -77,13 +72,13 @@ namespace Project.Gameplay.Harvest
             if (harvestModeSession == null || harvestModeSession.CurrentTarget == null)
                 return;
 
-            float baseChance = EvaluateBaseRecoveryChance(harvestModeSession.CurrentTarget); // 대상 기본 성공률
-            int revealedCount = harvestModeSession.RevealedPointIds.Count; // 공개 포인트 수
-            int selectedCount = harvestModeSession.SelectedPointSequence.Count; // 선택 포인트 수
+            float baseChance = EvaluateBaseRecoveryChance(harvestModeSession.CurrentTarget);
+            int revealedCount = harvestModeSession.RevealedPointIds.Count;
+            int selectedCount = harvestModeSession.SelectedPointSequence.Count;
 
-            float revealBonus = Mathf.Min(0.15f, revealedCount * 0.04f); // 공개 정보 보너스
-            float sequenceBonus = 0f; // 선택 순서 보너스
-            float sequenceRiskPenalty = 0f; // 순서 위험 페널티
+            float revealBonus = Mathf.Min(0.18f, revealedCount * 0.045f);
+            float sequenceBonus = 0f;
+            float sequenceRiskPenalty = 0f;
 
             if (allPoints != null && selectedCount > 0)
             {
@@ -99,18 +94,18 @@ namespace Project.Gameplay.Harvest
                         continue;
 
                     if (i == 0)
-                        sequenceBonus += point.FirstAnchorBias * 0.12f; // 첫 점 안정 보너스
+                        sequenceBonus += point.FirstAnchorBias * 0.13f;
                     else
-                        sequenceBonus += point.SequenceBias * 0.08f; // 후속 점 보너스
+                        sequenceBonus += point.SequenceBias * 0.09f;
 
-                    sequenceBonus += point.BaseStability * 0.05f; // 기본 안정성 보너스
-                    sequenceRiskPenalty += point.RiskWeight * 0.04f; // 위험도 패널티
+                    sequenceBonus += point.BaseStability * 0.05f;
+                    sequenceRiskPenalty += point.RiskWeight * 0.05f;
                 }
             }
 
-            float finalChance = Mathf.Clamp01(baseChance + revealBonus + sequenceBonus - sequenceRiskPenalty); // 추정 최종 확률
-            float batteryCost = harvestModeSession.ScanPulseCount * 0.5f + selectedCount * 0.75f; // 추정 배터리 비용
-            float durabilityCost = Mathf.Max(0f, selectedCount * 0.4f + sequenceRiskPenalty * 10f); // 추정 내구도 비용
+            float finalChance = Mathf.Clamp01(baseChance + revealBonus + sequenceBonus - sequenceRiskPenalty);
+            float batteryCost = harvestModeSession.ScanPulseCount * 0.6f + selectedCount * 0.8f;
+            float durabilityCost = 0f;
 
             harvestModeSession.SetEstimatedOutcome(finalChance, batteryCost, durabilityCost);
 
@@ -138,18 +133,13 @@ namespace Project.Gameplay.Harvest
             if (itemData == null || !itemData.IsValid())
                 return new HarvestResolveResult(string.Empty, false, 0f, false, false);
 
-            // 최신 추정치 재계산
             EvaluateRecoveryPlan(harvestModeSession, allPoints);
 
             float finalChance = harvestModeSession.EstimatedRecoveryChance;
             float batteryCost = harvestModeSession.EstimatedBatteryCost;
-            float durabilityCost = harvestModeSession.EstimatedDurabilityCost;
 
-            // 실제 자원 소모 적용
             submarineRuntimeState.ConsumeBattery(batteryCost);
-            clawRuntimeState.Damage(durabilityCost);
 
-            // 방전 시 즉시 실패
             if (submarineRuntimeState.CurrentBattery <= 0f)
             {
                 EventBus.Publish(new HarvestSessionForcedEndedByBatteryEvent(targetData.TargetId));
@@ -160,9 +150,7 @@ namespace Project.Gameplay.Harvest
                 return new HarvestResolveResult(itemData.ItemId, false, 0f, false, false);
             }
 
-            float roll = Random.value; // 최종 랜덤값
-            bool chanceSuccess = roll <= finalChance; // 성공 여부
-
+            bool chanceSuccess = Random.value <= finalChance;
             if (!chanceSuccess)
             {
                 EventBus.Publish(new HarvestRecoveryResolvedEvent(itemData.ItemId, false, finalChance, false));
@@ -172,7 +160,7 @@ namespace Project.Gameplay.Harvest
                 return new HarvestResolveResult(itemData.ItemId, false, finalChance, false, false);
             }
 
-            bool addedToInventory = inventoryService.TryAddItem(itemData, out InventoryItemInstance instance); // 인벤토리 적재 시도
+            bool addedToInventory = inventoryService.TryAddItem(itemData, out InventoryItemInstance instance);
             bool finalSuccess = addedToInventory;
 
             if (finalSuccess && targetData.ConsumeOnSuccess)
