@@ -90,7 +90,6 @@ namespace Project.Gameplay.Interaction
                 ? transitionLetterboxPresenter.ShowAsync() : UniTask.CompletedTask;
 
             // 선체 본체 이동 및 회전 연출
-            Debug.LogError($"도착위치:{desiredPosition}, 회전:{desiredRotation}, 연출시간:{finalDuration}");
             UniTask approachTask = PlayApproachAsync(desiredPosition, desiredRotation, finalDuration, token);
 
             // 카메라는 선체와 분리되어 타겟을 향해 독립적으로 회전
