@@ -1,4 +1,5 @@
 ﻿using Project.Core.Events;
+using Project.Data.Harvest;
 using Project.Data.Submarine;
 using Project.Gameplay.CameraSystem;
 using Project.Gameplay.DebugView;
@@ -16,6 +17,7 @@ namespace Project.Managers.Composition
     {
         [Header("Data")]
         [SerializeField] private SubmarineStatsSO submarineStats; // 잠수함 기본 데이터
+        [SerializeField] private HarvestRecoveryTuningSO harvestRecoveryTuning; // 회수 계산 튜닝
 
         [Header("Scene References")]
         [SerializeField] private Transform playerTransform; // 플레이어 Transform
@@ -54,7 +56,7 @@ namespace Project.Managers.Composition
             submarineRuntimeState = new SubmarineRuntimeState(submarineStats);
 
             inventoryService = new InventoryService(submarineRuntimeState);
-            harvestResolver = new HarvestResolver(submarineRuntimeState, inventoryService);
+            harvestResolver = new HarvestResolver(submarineRuntimeState, inventoryService, harvestRecoveryTuning);
             gameModeService = new GameModeService(GameModeType.Exploration3D);
             harvestModeSession = new HarvestModeSession();
             harvestModeCoordinator = new HarvestModeCoordinator(gameModeService, harvestModeSession);

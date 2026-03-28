@@ -2,6 +2,7 @@
 using System.Linq;
 using Project.Core.Events;
 using Project.Data.Enums;
+using Project.Data.Harvest;
 using Project.Gameplay.GameModes;
 using UnityEngine;
 
@@ -10,6 +11,9 @@ namespace Project.Gameplay.Harvest
     /// <summary>회수 콘솔 모드에서 센서 사용과 포인트 선택 입력을 담당하는 클래스</summary>
     public class HarvestConsoleController : MonoBehaviour
     {
+        [Header("Data")]
+        [SerializeField] private HarvestScanRevealTuningSO scanRevealTuning; // 포인트 선택/공개 튜닝
+
         [Header("Keys")]
         [SerializeField] private KeyCode scanKey = KeyCode.F; // 채집 모드 내 스캔 실행 키
         [SerializeField] private KeyCode switchSensorKey = KeyCode.R; // 센서 전환 키
@@ -248,7 +252,7 @@ namespace Project.Gameplay.Harvest
                 float distance = Vector2.Distance(mousePosition, screenPosition);
 
                 // hover 허용 반경 밖이면 제외
-                if (distance > pointHoverRadiusPixels)
+                if (scanRevealTuning == null || distance > scanRevealTuning.PointHoverRadiusPixels)
                     continue;
 
                 if (distance >= bestDistance)
@@ -278,7 +282,7 @@ namespace Project.Gameplay.Harvest
             Vector3 screenPosition = harvestConsoleCamera.WorldToScreenPoint(hoveredPoint.transform.position);
             float distance = Vector2.Distance(Input.mousePosition, screenPosition);
 
-            if (distance > pointSelectRadiusPixels)
+            if (scanRevealTuning == null || distance > scanRevealTuning.PointSelectRadiusPixels)
                 return;
 
             hoveredPoint.Select(); // 포인트를 실제 선택 상태로 전환
@@ -347,7 +351,14 @@ namespace Project.Gameplay.Harvest
                     continue;
 
                 float signature = scanMode == HarvestScanMode.Sonar ? point.SonarSignature : point.LidarSignature;
-                float revealChance = Mathf.Lerp(0.15f, 0.75f, signature); // 반응도가 높을수록 더 잘 드러남
+
+                if (scanRevealTuning == null)
+                    return revealed;
+
+                float revealChance = Mathf.Lerp(
+                    scanRevealTuning.MinRevealChance,
+                    scanRevealTuning.MaxRevealChance,
+                    signature);
 
                 if (Random.value > revealChance)
                     continue;

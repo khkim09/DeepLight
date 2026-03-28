@@ -229,13 +229,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Interaction.HarvestInteractionZone
   targetBehaviour: {fileID: 854683254}
-  interactionRadiusMultiplier: 1.35
-  interactionRadiusPadding: 1.2
-  minInteractionRadius: 3
-  maxInteractionRadius: 10
-  radiusPadding: 1.25
-  minFramingDistance: 3.5
-  maxFramingDistance: 12
+  tuning: {fileID: 0}
 --- !u!135 &17446733
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -368,8 +362,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.CameraSystem.HarvestTransitionLetterboxPresenter
   topBar: {fileID: 1032723068}
   bottomBar: {fileID: 151822538}
-  shownHeight: 90
-  animateDuration: 0.18
+  tuning: {fileID: 0}
 --- !u!1 &151822537
 GameObject:
   m_ObjectHideFlags: 0
@@ -2007,13 +2000,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.CameraSystem.ExplorationFollowCameraController
   target: {fileID: 8892471190458576195}
-  defaultOffset: {x: 0, y: 2.5, z: -7}
-  followSmoothTime: 0.3
+  defaultOffsetY: 2
+  rotationFollowSpeed: 10
+  idleDistanceZ: -6
+  normalForwardDistanceZ: -7.5
+  boostForwardDistanceZ: -9
+  normalBackwardDistanceZ: -5
+  boostBackwardDistanceZ: -4
+  distanceSmoothTime: 0.3
   freeLookTopOffset: {x: 0, y: 6, z: -1}
   mouseSensitivityX: 100
   mouseSensitivityY: 60
-  minPitch: -60
-  maxPitch: 30
+  minPitch: -90
+  maxPitch: 20
   returnSpeed: 8
   freeLookKey: 308
   lockCursorOnPlay: 1
@@ -2320,6 +2319,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Project.Managers::Project.Managers.Composition.DeepLightTestBedBootstrapper
   submarineStats: {fileID: 11400000, guid: 0ff294c54a11f1247a5893e861c351ac, type: 2}
+  harvestRecoveryTuning: {fileID: 0}
   playerTransform: {fileID: 8892471190458576195}
   harvestPointInteractor: {fileID: 8892471190458576200}
   harvestWorldVisibilityController: {fileID: 82749865}
@@ -3625,32 +3625,7 @@ MonoBehaviour:
   submarineTransform: {fileID: 8892471190458576195}
   transitionGuide: {fileID: 1125879775}
   cockpitTransitionTarget: {fileID: 1507362926}
-  transitionDuration: 1.2
-  transitionCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  guideReachTime: 0.4
+  tuning: {fileID: 0}
 --- !u!4 &1434104322
 Transform:
   m_ObjectHideFlags: 0
@@ -4377,13 +4352,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Interaction.HarvestInteractionZone
   targetBehaviour: {fileID: 2074224333}
-  interactionRadiusMultiplier: 1.35
-  interactionRadiusPadding: 1.2
-  minInteractionRadius: 3
-  maxInteractionRadius: 10
-  radiusPadding: 1.25
-  minFramingDistance: 3.5
-  maxFramingDistance: 12
+  tuning: {fileID: 0}
 --- !u!135 &1650790030
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4805,13 +4774,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Interaction.HarvestInteractionZone
   targetBehaviour: {fileID: 665811153}
-  interactionRadiusMultiplier: 1.35
-  interactionRadiusPadding: 1.2
-  minInteractionRadius: 3
-  maxInteractionRadius: 10
-  radiusPadding: 1.25
-  minFramingDistance: 3.5
-  maxFramingDistance: 12
+  tuning: {fileID: 0}
 --- !u!135 &1838763353
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -5873,8 +5836,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8080504202031134713}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0.00000037252897, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.000000001804218, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5925,12 +5888,14 @@ MonoBehaviour:
   idleDrag: 1.5
   brakeDeceleration: 10
   boostMultiplier: 1.6
-  yawSpeed: 60
-  pitchSpeed: 100
-  maxPitchAngle: 100
+  yawSpeed: 1.5
+  pitchSpeed: 1
+  maxPitchAngle: 50
+  rotationSmoothTime: 0.15
+  loopRotationSpeed: 50
   ascendSpeed: 3
   descendSpeed: 3
-  verticalSmoothTime: 0.3
+  verticalSmoothTime: 0.2
 --- !u!54 &8892471190458576198
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5957,7 +5922,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 64
-  m_CollisionDetection: 2
+  m_CollisionDetection: 1
 --- !u!114 &8892471190458576200
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5984,6 +5949,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dea6f6102651314bbd3ae90b1e39727, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestConsoleController
+  scanRevealTuning: {fileID: 0}
   scanKey: 102
   switchSensorKey: 114
   commitKey: 32

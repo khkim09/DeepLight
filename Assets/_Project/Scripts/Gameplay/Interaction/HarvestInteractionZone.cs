@@ -1,32 +1,23 @@
-﻿using Project.Gameplay.Harvest;
+﻿using Project.Data.Harvest;
+using Project.Gameplay.Harvest;
 using UnityEngine;
 
 namespace Project.Gameplay.Interaction
 {
-    /// <summary>채집 대상 주변의 상호작용 가능 영역과 접근 프레이밍 정보를 제공하는 클래스</summary>
+    /// <summary>채집 타깃의 상호작용 존과 프레이밍 거리를 계산하는 클래스</summary>
     [RequireComponent(typeof(SphereCollider))]
     public class HarvestInteractionZone : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private HarvestTargetBehaviour targetBehaviour; // 부모 채집 타깃 참조
+        [SerializeField] private HarvestTargetBehaviour targetBehaviour; // 부모 타깃 참조
+        [SerializeField] private HarvestInteractionTuningSO tuning; // 상호작용 존 튜닝
 
-        [Header("Interaction Radius")]
-        [SerializeField] private float interactionRadiusMultiplier = 1.35f; // 타깃 반경 대비 상호작용 반경 배율
-        [SerializeField] private float interactionRadiusPadding = 1.2f; // 상호작용 반경 추가 여유
-        [SerializeField] private float minInteractionRadius = 3f; // 최소 상호작용 반경
-        [SerializeField] private float maxInteractionRadius = 10f; // 최대 상호작용 반경
+        private SphereCollider cachedSphereCollider; // 스피어 콜라이더 캐시
 
-        [Header("Framing Distance")]
-        [SerializeField] private float radiusPadding = 1.25f; // 콘솔 진입 연출용 추가 거리
-        [SerializeField] private float minFramingDistance = 3.5f; // 최소 접근 거리
-        [SerializeField] private float maxFramingDistance = 12f; // 최대 접근 거리
+        public HarvestTargetBehaviour TargetBehaviour => targetBehaviour;
+        public IHarvestTarget HarvestTarget => targetBehaviour;
 
-        private SphereCollider cachedSphereCollider; // 트리거 스피어 캐싱
-
-        public HarvestTargetBehaviour TargetBehaviour => targetBehaviour; // 외부 접근용 타깃 참조
-        public IHarvestTarget HarvestTarget => targetBehaviour; // 인터페이스 형태의 타깃 참조
-
-        /// <summary>필수 참조를 자동 보정한다</summary>
+        /// <summary>기본 참조를 자동 보정한다</summary>
         private void Reset()
         {
             cachedSphereCollider = GetComponent<SphereCollider>();
@@ -38,7 +29,7 @@ namespace Project.Gameplay.Interaction
             RebuildZone();
         }
 
-        /// <summary>런타임 시작 시 트리거와 반경을 보정한다</summary>
+        /// <summary>런타임 시작 시 존 정보를 갱신한다</summary>
         private void Awake()
         {
             cachedSphereCollider = GetComponent<SphereCollider>();
@@ -50,23 +41,26 @@ namespace Project.Gameplay.Interaction
             RebuildZone();
         }
 
-        /// <summary>타깃 바운드를 기준으로 상호작용 반경을 다시 계산한다</summary>
+        /// <summary>타깃 바운드 기준으로 상호작용 존을 다시 계산한다</summary>
         [ContextMenu("Rebuild Interaction Zone")]
         public void RebuildZone()
         {
             if (cachedSphereCollider == null)
                 cachedSphereCollider = GetComponent<SphereCollider>();
 
+            if (tuning == null)
+                return;
+
             Bounds bounds = GetTargetBounds();
 
-            // 현재 오브젝트 local 기준으로 center 환산
+            // 타깃 중심을 현재 존 로컬 기준으로 맞춘다.
             Vector3 localCenter = transform.InverseTransformPoint(bounds.center);
             cachedSphereCollider.center = localCenter;
 
-            // 시각적 타깃 크기에 맞춰 trigger 반경 계산
+            // 타깃 시각 크기에 맞춰 존 반경을 자동 조절한다.
             float targetRadius = Mathf.Max(bounds.extents.x, bounds.extents.y, bounds.extents.z);
-            float computedRadius = targetRadius * interactionRadiusMultiplier + interactionRadiusPadding;
-            cachedSphereCollider.radius = Mathf.Clamp(computedRadius, minInteractionRadius, maxInteractionRadius);
+            float computedRadius = targetRadius * tuning.InteractionRadiusMultiplier + tuning.InteractionRadiusPadding;
+            cachedSphereCollider.radius = Mathf.Clamp(computedRadius, tuning.MinInteractionRadius, tuning.MaxInteractionRadius);
         }
 
         /// <summary>타깃 중심점을 반환한다</summary>
@@ -75,13 +69,13 @@ namespace Project.Gameplay.Interaction
             return GetTargetBounds().center;
         }
 
-        /// <summary>타깃의 월드 바운드를 반환한다</summary>
+        /// <summary>타깃 전체 월드 바운드를 반환한다</summary>
         public Bounds GetTargetBounds()
         {
             if (targetBehaviour == null)
                 return new Bounds(transform.position, Vector3.one);
 
-            Renderer[] renderers = targetBehaviour.GetComponentsInChildren<Renderer>();
+            Renderer[] renderers = targetBehaviour.GetComponentsInChildren<Renderer>(true);
             if (renderers.Length > 0)
             {
                 Bounds combined = renderers[0].bounds;
@@ -91,7 +85,7 @@ namespace Project.Gameplay.Interaction
                 return combined;
             }
 
-            Collider[] colliders = targetBehaviour.GetComponentsInChildren<Collider>();
+            Collider[] colliders = targetBehaviour.GetComponentsInChildren<Collider>(true);
             if (colliders.Length > 0)
             {
                 Bounds combined = colliders[0].bounds;
@@ -104,17 +98,21 @@ namespace Project.Gameplay.Interaction
             return new Bounds(targetBehaviour.transform.position, Vector3.one);
         }
 
-        /// <summary>카메라 FOV와 타깃 크기를 기준으로 자연스러운 접근 거리를 계산한다</summary>
+        /// <summary>카메라 FOV 기준의 적정 프레이밍 거리를 계산한다</summary>
         public float EvaluateFramingDistance(Camera referenceCamera)
         {
             Bounds bounds = GetTargetBounds();
             float visualRadius = Mathf.Max(bounds.extents.magnitude, 0.5f);
 
+            // FOV 기준으로 화면에 타깃이 적절히 들어오도록 거리 계산
             float fov = referenceCamera != null ? referenceCamera.fieldOfView : 60f;
             float distance = visualRadius / Mathf.Tan(fov * 0.5f * Mathf.Deg2Rad);
-            distance += radiusPadding;
 
-            return Mathf.Clamp(distance, minFramingDistance, maxFramingDistance);
+            if (tuning == null)
+                return distance;
+
+            distance += tuning.RadiusPadding;
+            return Mathf.Clamp(distance, tuning.MinFramingDistance, tuning.MaxFramingDistance);
         }
     }
 }
