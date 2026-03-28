@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Project.Core.Events;
 using Project.Data.Harvest;
+using Project.Data.Input;
 using Project.Data.Items;
 using Project.Gameplay.GameModes;
 using Project.Gameplay.Harvest;
@@ -8,82 +9,82 @@ using UnityEngine;
 
 namespace Project.Gameplay.Interaction
 {
-    /// <summary>트리거 존 기반으로 채집 대상을 감지하고 Harvest 진입 입력을 처리하는 클래스</summary>
+    /// <summary>트리거 존 기반으로 채집 대상을 감지하고 Harvest 진입 입력을 처리하는 클래스이다.</summary>
     public class HarvestPointInteractor : MonoBehaviour
     {
-        [Header("Keys")]
-        [SerializeField] private KeyCode interactKey = KeyCode.F; // 채집 진입 키
+        [Header("Data")]
+        [SerializeField] private GameInputBindingsSO inputBindings; // 공용 입력 바인딩 SO
 
         [Header("References")]
         [SerializeField] private HarvestApproachController approachController; // 자연스러운 접근 연출 제어기
 
-        private HarvestModeCoordinator harvestModeCoordinator; // 채집 모드 조정기
-        private readonly List<HarvestInteractionZone> overlappedZones = new List<HarvestInteractionZone>(); // 현재 겹친 상호작용 존들
-        private IHarvestTarget currentTarget; // 현재 선택된 채집 대상
-        private HarvestInteractionZone currentZone; // 현재 선택된 상호작용 존
-        private HarvestTargetHighlightController currentHighlight; // 현재 하이라이트 대상
-        private bool isHarvestMode; // 현재 채집 모드 여부
+        private HarvestModeCoordinator harvestModeCoordinator;
+        private readonly List<HarvestInteractionZone> overlappedZones = new();
+        private IHarvestTarget currentTarget;
+        private HarvestInteractionZone currentZone;
+        private HarvestTargetHighlightController currentHighlight;
+        private bool isHarvestMode;
 
-        public KeyCode InteractKey => interactKey; // 외부 표시용 진입 키
-        public IHarvestTarget CurrentTarget => currentTarget; // 외부 UI용 현재 대상
+        /// <summary>현재 채집 진입 키를 반환한다.</summary>
+        public KeyCode InteractKey => inputBindings != null ? inputBindings.InteractHarvestKey : KeyCode.None;
 
-        /// <summary>채집 모드 조정기를 주입한다</summary>
+        /// <summary>현재 대상 정보를 반환한다.</summary>
+        public IHarvestTarget CurrentTarget => currentTarget;
+
+        /// <summary>채집 모드 조정기를 주입한다.</summary>
         public void Initialize(HarvestModeCoordinator newHarvestModeCoordinator)
         {
             harvestModeCoordinator = newHarvestModeCoordinator;
         }
 
-        /// <summary>이벤트 구독을 등록한다</summary>
+        /// <summary>Harvest 모드 이벤트를 구독한다.</summary>
         private void OnEnable()
         {
             EventBus.Subscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
             EventBus.Subscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
         }
 
-        /// <summary>이벤트 구독을 해제한다</summary>
+        /// <summary>Harvest 모드 이벤트 구독을 해제한다.</summary>
         private void OnDisable()
         {
             EventBus.Unsubscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
             EventBus.Unsubscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
         }
 
-        /// <summary>탐사 모드에서 현재 상호작용 대상을 갱신하고 입력을 처리한다</summary>
+        /// <summary>탐사 모드에서 현재 상호작용 대상을 갱신하고 입력을 처리한다.</summary>
         private void Update()
         {
-            // 채집 모드 중에는 탐사 상호작용 완전 차단
             if (isHarvestMode)
                 return;
 
             UpdateCurrentZone();
 
-            if (harvestModeCoordinator == null)
+            if (harvestModeCoordinator == null || inputBindings == null)
                 return;
 
             if (!HasAvailableTarget())
                 return;
 
-            if (!Input.GetKeyDown(interactKey))
+            if (!Input.GetKeyDown(inputBindings.InteractHarvestKey))
                 return;
 
-            // 접근 연출 컨트롤러가 없으면 즉시 진입
             if (approachController == null)
             {
                 harvestModeCoordinator.TryEnterHarvestMode(currentTarget);
                 return;
             }
 
-            // Forget() 확장 메서드 의존 없이 fire-and-forget 실행
             _ = approachController.TryApproachAndEnterHarvestAsync(currentZone, harvestModeCoordinator);
         }
 
-        /// <summary>채집 모드 진입 시 탐사 상호작용을 잠근다</summary>
+        /// <summary>Harvest 진입 시 탐사 상호작용을 잠근다.</summary>
         private void OnHarvestModeEntered(HarvestModeEnteredEvent publishedEvent)
         {
             isHarvestMode = true;
             ClearCurrentHighlight();
         }
 
-        /// <summary>채집 모드 종료 시 조종실 시점 보정과 탐사 상호작용을 복구한다</summary>
+        /// <summary>Harvest 종료 시 탐사 상호작용을 복구한다.</summary>
         private void OnHarvestModeExited(HarvestModeExitedEvent publishedEvent)
         {
             isHarvestMode = false;
@@ -92,7 +93,7 @@ namespace Project.Gameplay.Interaction
                 approachController.EndApproachLook();
         }
 
-        /// <summary>현재 유효한 채집 대상 존재 여부를 반환한다</summary>
+        /// <summary>현재 유효한 채집 대상 존재 여부를 반환한다.</summary>
         public bool HasAvailableTarget()
         {
             if (currentTarget == null)
@@ -110,7 +111,7 @@ namespace Project.Gameplay.Interaction
             return true;
         }
 
-        /// <summary>현재 대상의 표시 이름을 반환한다</summary>
+        /// <summary>현재 대상의 표시 이름을 반환한다.</summary>
         public string GetCurrentTargetDisplayName()
         {
             if (!HasAvailableTarget())
@@ -127,7 +128,7 @@ namespace Project.Gameplay.Interaction
             return itemData.ItemId;
         }
 
-        /// <summary>겹친 트리거 존 중 현재 상호작용할 대상을 선정한다</summary>
+        /// <summary>겹친 존 중 현재 상호작용할 대상을 선정한다.</summary>
         private void UpdateCurrentZone()
         {
             ClearCurrentHighlight();
@@ -152,7 +153,7 @@ namespace Project.Gameplay.Interaction
 
                 Vector3 direction = toTarget.normalized;
 
-                // 정면 우선 + 가까운 대상 우선 점수
+                // 정면 우선 + 가까운 대상 우선
                 float alignment = Vector3.Dot(transform.forward, direction);
                 float score = alignment * 2f - distance * 0.15f;
 
@@ -168,7 +169,7 @@ namespace Project.Gameplay.Interaction
                 ApplyCurrentHighlight();
         }
 
-        /// <summary>현재 선택된 타깃에 하이라이트를 적용한다</summary>
+        /// <summary>현재 타깃에 하이라이트를 적용한다.</summary>
         private void ApplyCurrentHighlight()
         {
             HarvestTargetBehaviour targetBehaviour = currentZone != null ? currentZone.TargetBehaviour : null;
@@ -183,7 +184,7 @@ namespace Project.Gameplay.Interaction
                 currentHighlight.SetHighlight(true);
         }
 
-        /// <summary>현재 하이라이트를 해제한다</summary>
+        /// <summary>현재 하이라이트를 해제한다.</summary>
         private void ClearCurrentHighlight()
         {
             if (currentHighlight == null)
@@ -193,7 +194,7 @@ namespace Project.Gameplay.Interaction
             currentHighlight = null;
         }
 
-        /// <summary>상호작용 존에 진입한 경우 후보 목록에 추가한다</summary>
+        /// <summary>상호작용 존 진입 시 후보 목록에 추가한다.</summary>
         private void OnTriggerEnter(Collider other)
         {
             HarvestInteractionZone zone = other.GetComponent<HarvestInteractionZone>();
@@ -204,7 +205,7 @@ namespace Project.Gameplay.Interaction
                 overlappedZones.Add(zone);
         }
 
-        /// <summary>상호작용 존을 벗어난 경우 후보 목록에서 제거한다</summary>
+        /// <summary>상호작용 존 이탈 시 후보 목록에서 제거한다.</summary>
         private void OnTriggerExit(Collider other)
         {
             HarvestInteractionZone zone = other.GetComponent<HarvestInteractionZone>();

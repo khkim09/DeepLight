@@ -4,7 +4,9 @@ using UnityEngine;
 namespace Project.Data.Items
 {
     /// <summary>아이템 ID 기반 조회를 담당하는 데이터베이스</summary>
-    [CreateAssetMenu(fileName = "ItemDatabase", menuName = "Project/Data/Item Database")]
+    [CreateAssetMenu(
+        fileName = "ItemDatabase",
+        menuName = "Project/Item/Item Database")]
     public class ItemDatabaseSO : ScriptableObject
     {
         [SerializeField] private List<ItemSO> items = new(); // 전체 아이템 목록

@@ -4,7 +4,9 @@ using UnityEngine;
 namespace Project.Data.Harvest
 {
     /// <summary>채집 포인트 정적 설정을 담당</summary>
-    [CreateAssetMenu(fileName = "HarvestTarget_", menuName = "Project/Data/Harvest Target")]
+    [CreateAssetMenu(
+        fileName = "HarvestTarget_",
+        menuName = "Project/Harvest/Harvest Target")]
     public class HarvestTargetSO : ScriptableObject
     {
         [SerializeField] private string targetId; // 채집 포인트 고유 ID

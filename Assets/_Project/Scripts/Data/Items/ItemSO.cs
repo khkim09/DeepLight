@@ -5,7 +5,9 @@ using UnityEngine;
 namespace Project.Data.Items
 {
     /// <summary>정적 정의</summary>
-    [CreateAssetMenu(fileName = "Item_", menuName = "Project/Data/Item")]
+    [CreateAssetMenu(
+        fileName = "Item_",
+        menuName = "Project/Item/Item")]
     public class ItemSO : ScriptableObject
     {
         [Header("Identity")]

@@ -4,7 +4,9 @@ using UnityEngine;
 namespace Project.Data.Submarine
 {
     /// <summary>배 모양 인벤토리 레이아웃을 정의하는 데이터 클래스</summary>
-    [CreateAssetMenu(fileName = "SubmarineInventoryLayout_", menuName = "Project/Data/Submarine Inventory Layout")]
+    [CreateAssetMenu(
+        fileName = "SubmarineInventoryLayout_",
+        menuName = "Project/Submarine/Submarine Inventory Layout")]
     public class SubmarineInventoryLayoutSO : ScriptableObject
     {
         [SerializeField] private Vector2Int gridSize = new Vector2Int(8, 8); // 전체 그리드 크기

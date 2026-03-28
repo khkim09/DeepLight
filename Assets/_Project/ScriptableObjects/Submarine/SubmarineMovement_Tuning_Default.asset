@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dae0a7e7265c0d644b58f0bddf11eace, type: 3}
+  m_Name: SubmarineMovement_Tuning_Default
+  m_EditorClassIdentifier: Project.Data::Project.Data.Submarine.SubmarineMovementTuningSO
+  fixedMovement:
+    maxForwardSpeed: 7
+    maxReverseSpeed: 3.5
+    forwardAcceleration: 6
+    reverseAcceleration: 4.5
+    boostMultiplier: 1.6
+    ascendSpeed: 3
+    descendSpeed: 3
+    idleDrag: 1.5
+    brakeDeceleration: 10
+    maxPitchAngle: 50
+    rotationSmoothTime: 0.15
+    loopRotationSpeed: 50
+    verticalSmoothTime: 0.2
+  defaultInputSensitivity:
+    yawSensitivity: 1.5
+    pitchSensitivity: 1

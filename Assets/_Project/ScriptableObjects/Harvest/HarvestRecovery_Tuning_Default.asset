@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d36e10fdeac25a4f9be10241234360e, type: 3}
+  m_Name: HarvestRecovery_Tuning_Default
+  m_EditorClassIdentifier: Project.Data::Project.Data.Harvest.HarvestRecoveryTuningSO
+  baseRecoveryChance: 0.55
+  difficultyPenaltyMultiplier: 0.55
+  batteryBonusAtEmpty: -0.1
+  batteryBonusAtFull: 0.1
+  weightNormalization: 30
+  weightPenaltyMultiplier: 0.2
+  sonarPulseBatteryCost: 3
+  lidarPulseBatteryCost: 5
+  revealBonusPerPoint: 0.05
+  maxRevealBonus: 0.2
+  firstAnchorBiasMultiplier: 0.12
+  sequenceBiasMultiplier: 0.08
+  baseStabilityMultiplier: 0.08
+  riskPenaltyMultiplier: 0.1
+  selectedPointBatteryCost: 1
+  selectedPointDurabilityCost: 0.5
+  riskPenaltyToDurabilityMultiplier: 3

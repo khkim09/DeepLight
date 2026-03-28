@@ -3,7 +3,9 @@
 namespace Project.Data.Submarine
 {
     /// <summary>잠수함 스탯(런타임과 분리)</summary>
-    [CreateAssetMenu(fileName = "SubmarineStats_", menuName = "Project/Data/Submarine Stats")]
+    [CreateAssetMenu(
+        fileName = "SubmarineStats_",
+        menuName = "Project/Submarine/Submarine Stats")]
     public class SubmarineStatsSO : ScriptableObject
     {
         [Header("Movement")]

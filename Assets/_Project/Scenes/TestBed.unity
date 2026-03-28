@@ -229,7 +229,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Interaction.HarvestInteractionZone
   targetBehaviour: {fileID: 854683254}
-  tuning: {fileID: 0}
+  tuning: {fileID: 11400000, guid: 8c97ecf6e128dbf44a7c863ead7a4ab2, type: 2}
 --- !u!135 &17446733
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -362,7 +362,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.CameraSystem.HarvestTransitionLetterboxPresenter
   topBar: {fileID: 1032723068}
   bottomBar: {fileID: 151822538}
-  tuning: {fileID: 0}
+  tuning: {fileID: 11400000, guid: 8d956437f70ad764990b7586a7c71cc2, type: 2}
 --- !u!1 &151822537
 GameObject:
   m_ObjectHideFlags: 0
@@ -725,9 +725,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
   normalReference: {fileID: 161155322}
   targetCamera: {fileID: 652069767}
-  edgeOnThreshold: 0.12
-  edgeJitterAngle: 18
-  edgeScaleMultiplier: 1.6
+  tuning: {fileID: 11400000, guid: 05d639960df9b364ba211a69fdf350bc, type: 2}
 --- !u!212 &242763239
 SpriteRenderer:
   serializedVersion: 2
@@ -834,9 +832,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
   normalReference: {fileID: 889119100}
   targetCamera: {fileID: 652069767}
-  edgeOnThreshold: 0.12
-  edgeJitterAngle: 18
-  edgeScaleMultiplier: 1.6
+  tuning: {fileID: 11400000, guid: 05d639960df9b364ba211a69fdf350bc, type: 2}
 --- !u!212 &314251142
 SpriteRenderer:
   serializedVersion: 2
@@ -1002,9 +998,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
   normalReference: {fileID: 1455594047}
   targetCamera: {fileID: 652069767}
-  edgeOnThreshold: 0.12
-  edgeJitterAngle: 18
-  edgeScaleMultiplier: 1.6
+  tuning: {fileID: 11400000, guid: 05d639960df9b364ba211a69fdf350bc, type: 2}
 --- !u!1 &494334549
 GameObject:
   m_ObjectHideFlags: 0
@@ -1803,9 +1797,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
   normalReference: {fileID: 220459199}
   targetCamera: {fileID: 652069767}
-  edgeOnThreshold: 0.2
-  edgeJitterAngle: 28
-  edgeScaleMultiplier: 1.6
+  tuning: {fileID: 11400000, guid: 05d639960df9b364ba211a69fdf350bc, type: 2}
 --- !u!1 &862883676
 GameObject:
   m_ObjectHideFlags: 0
@@ -2000,22 +1992,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.CameraSystem.ExplorationFollowCameraController
   target: {fileID: 8892471190458576195}
-  defaultOffsetY: 2
-  rotationFollowSpeed: 10
-  idleDistanceZ: -6
-  normalForwardDistanceZ: -7.5
-  boostForwardDistanceZ: -9
-  normalBackwardDistanceZ: -5
-  boostBackwardDistanceZ: -4
-  distanceSmoothTime: 0.3
-  freeLookTopOffset: {x: 0, y: 6, z: -1}
-  mouseSensitivityX: 100
-  mouseSensitivityY: 60
-  minPitch: -90
-  maxPitch: 20
-  returnSpeed: 8
-  freeLookKey: 308
-  lockCursorOnPlay: 1
+  cameraTuning: {fileID: 11400000, guid: a5892cb768675a94bbb04a2dfe80ae15, type: 2}
+  inputBindings: {fileID: 11400000, guid: 8ca3f5116a61dce4b8c5f70bf7f70b39, type: 2}
+  userSettings:
+    yawSensitivityMultiplier: 0
+    pitchSensitivityMultiplier: 0
 --- !u!1 &880037987
 GameObject:
   m_ObjectHideFlags: 0
@@ -2162,9 +2143,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
   normalReference: {fileID: 1423853481}
   targetCamera: {fileID: 652069767}
-  edgeOnThreshold: 0.12
-  edgeJitterAngle: 18
-  edgeScaleMultiplier: 1.6
+  tuning: {fileID: 11400000, guid: 05d639960df9b364ba211a69fdf350bc, type: 2}
 --- !u!212 &891511338
 SpriteRenderer:
   serializedVersion: 2
@@ -2847,9 +2826,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
   normalReference: {fileID: 14730623}
   targetCamera: {fileID: 652069767}
-  edgeOnThreshold: 0.12
-  edgeJitterAngle: 18
-  edgeScaleMultiplier: 1.6
+  tuning: {fileID: 11400000, guid: 05d639960df9b364ba211a69fdf350bc, type: 2}
 --- !u!212 &1138098505
 SpriteRenderer:
   serializedVersion: 2
@@ -3172,9 +3149,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
   normalReference: {fileID: 494334550}
   targetCamera: {fileID: 652069767}
-  edgeOnThreshold: 0.12
-  edgeJitterAngle: 18
-  edgeScaleMultiplier: 1.6
+  tuning: {fileID: 11400000, guid: 05d639960df9b364ba211a69fdf350bc, type: 2}
 --- !u!212 &1283188710
 SpriteRenderer:
   serializedVersion: 2
@@ -3340,9 +3315,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
   normalReference: {fileID: 1472749642}
   targetCamera: {fileID: 652069767}
-  edgeOnThreshold: 0.12
-  edgeJitterAngle: 18
-  edgeScaleMultiplier: 1.6
+  tuning: {fileID: 11400000, guid: 05d639960df9b364ba211a69fdf350bc, type: 2}
 --- !u!1 &1358170508
 GameObject:
   m_ObjectHideFlags: 0
@@ -3625,7 +3598,7 @@ MonoBehaviour:
   submarineTransform: {fileID: 8892471190458576195}
   transitionGuide: {fileID: 1125879775}
   cockpitTransitionTarget: {fileID: 1507362926}
-  tuning: {fileID: 0}
+  tuning: {fileID: 11400000, guid: 8d956437f70ad764990b7586a7c71cc2, type: 2}
 --- !u!4 &1434104322
 Transform:
   m_ObjectHideFlags: 0
@@ -3953,9 +3926,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
   normalReference: {fileID: 1731174039}
   targetCamera: {fileID: 652069767}
-  edgeOnThreshold: 0.12
-  edgeJitterAngle: 18
-  edgeScaleMultiplier: 1.6
+  tuning: {fileID: 11400000, guid: 05d639960df9b364ba211a69fdf350bc, type: 2}
 --- !u!212 &1499400987
 SpriteRenderer:
   serializedVersion: 2
@@ -4059,7 +4030,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85444b6b7762fb49ae0721a9134e656, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.CameraSystem.CockpitTargetLookController
-  rotationSpeed: 8
+  tuning: {fileID: 11400000, guid: 8321534f0bb791c4d8f3583380dc7e25, type: 2}
 --- !u!1 &1573711390
 GameObject:
   m_ObjectHideFlags: 0
@@ -4107,9 +4078,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
   normalReference: {fileID: 1009219707}
   targetCamera: {fileID: 652069767}
-  edgeOnThreshold: 0.12
-  edgeJitterAngle: 18
-  edgeScaleMultiplier: 1.6
+  tuning: {fileID: 11400000, guid: 05d639960df9b364ba211a69fdf350bc, type: 2}
 --- !u!212 &1573711393
 SpriteRenderer:
   serializedVersion: 2
@@ -4352,7 +4321,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Interaction.HarvestInteractionZone
   targetBehaviour: {fileID: 2074224333}
-  tuning: {fileID: 0}
+  tuning: {fileID: 11400000, guid: 8c97ecf6e128dbf44a7c863ead7a4ab2, type: 2}
 --- !u!135 &1650790030
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4774,7 +4743,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Interaction.HarvestInteractionZone
   targetBehaviour: {fileID: 665811153}
-  tuning: {fileID: 0}
+  tuning: {fileID: 11400000, guid: 8c97ecf6e128dbf44a7c863ead7a4ab2, type: 2}
 --- !u!135 &1838763353
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4843,9 +4812,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
   normalReference: {fileID: 1746206477}
   targetCamera: {fileID: 652069767}
-  edgeOnThreshold: 0.12
-  edgeJitterAngle: 18
-  edgeScaleMultiplier: 1.6
+  tuning: {fileID: 11400000, guid: 05d639960df9b364ba211a69fdf350bc, type: 2}
 --- !u!212 &1851329679
 SpriteRenderer:
   serializedVersion: 2
@@ -5286,9 +5253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
   normalReference: {fileID: 943054534}
   targetCamera: {fileID: 652069767}
-  edgeOnThreshold: 0.12
-  edgeJitterAngle: 18
-  edgeScaleMultiplier: 1.6
+  tuning: {fileID: 11400000, guid: 05d639960df9b364ba211a69fdf350bc, type: 2}
 --- !u!212 &2006365095
 SpriteRenderer:
   serializedVersion: 2
@@ -5547,9 +5512,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestPointBillboard
   normalReference: {fileID: 1359865958}
   targetCamera: {fileID: 652069767}
-  edgeOnThreshold: 0.12
-  edgeJitterAngle: 18
-  edgeScaleMultiplier: 1.6
+  tuning: {fileID: 11400000, guid: 05d639960df9b364ba211a69fdf350bc, type: 2}
 --- !u!212 &2076399893
 SpriteRenderer:
   serializedVersion: 2
@@ -5746,15 +5709,179 @@ RectTransform:
   m_AnchoredPosition: {x: 170, y: -150}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!33 &5532598456501314278
-MeshFilter:
+--- !u!1 &8080504202031134713
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8892471190458576195}
+  - component: {fileID: 8892471190458576203}
+  - component: {fileID: 8892471190458576205}
+  - component: {fileID: 8892471190458576204}
+  - component: {fileID: 8892471190458576196}
+  - component: {fileID: 8892471190458576198}
+  - component: {fileID: 8892471190458576197}
+  - component: {fileID: 8892471190458576201}
+  - component: {fileID: 8892471190458576200}
+  - component: {fileID: 8892471190458576202}
+  m_Layer: 0
+  m_Name: Submarine
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8892471190458576195
+Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8080504202031134713}
-  m_Mesh: {fileID: 9037020146243657503, guid: 040447b5cad6c3641921552db3afe8bb, type: 3}
---- !u!23 &7720097415708169772
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.00000037252897, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1507362926}
+  - {fileID: 1125879775}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &8892471190458576196
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8080504202031134713}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Height: 4.5
+  m_Direction: 2
+  m_Center: {x: 0.0021488369, y: 0, z: 0.0019247532}
+--- !u!114 &8892471190458576197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8080504202031134713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82d12636c7ae54b4c9deb681ab9fecf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.UserInput.TestBedPlayerMover
+  explorationCameraController: {fileID: 870650683}
+  movementTuning: {fileID: 11400000, guid: e0d9470cc40081049973f7b57b6e5482, type: 2}
+  inputBindings: {fileID: 11400000, guid: 8ca3f5116a61dce4b8c5f70bf7f70b39, type: 2}
+  userSettings:
+    yawSensitivityMultiplier: 0
+    pitchSensitivityMultiplier: 0
+--- !u!54 &8892471190458576198
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8080504202031134713}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.2
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 64
+  m_CollisionDetection: 1
+--- !u!114 &8892471190458576200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8080504202031134713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 762692b3797497b4da02575fbe5ff255, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Interaction.HarvestPointInteractor
+  inputBindings: {fileID: 11400000, guid: 8ca3f5116a61dce4b8c5f70bf7f70b39, type: 2}
+  approachController: {fileID: 8892471190458576202}
+--- !u!114 &8892471190458576201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8080504202031134713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dea6f6102651314bbd3ae90b1e39727, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestConsoleController
+  scanRevealTuning: {fileID: 11400000, guid: 5be8ea6d1c18f1f4a92bbbcd26cb4632, type: 2}
+  inputBindings: {fileID: 11400000, guid: 8ca3f5116a61dce4b8c5f70bf7f70b39, type: 2}
+  harvestConsoleCamera: {fileID: 1981470076}
+--- !u!114 &8892471190458576202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8080504202031134713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb568e53dc377eb4b986d6ec164f6fb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Interaction.HarvestApproachController
+  controlledRigidbody: {fileID: 8892471190458576198}
+  playerMover: {fileID: 8892471190458576197}
+  explorationCameraController: {fileID: 870650683}
+  cockpitTargetLookController: {fileID: 1507362927}
+  transitionLetterboxPresenter: {fileID: 82749867}
+  approachTuning: {fileID: 11400000, guid: 942dcfa1f805af5489e18054a49971b9, type: 2}
+  runtimeUpgradeOverrides:
+    approachMoveSpeed:
+      additive: 0
+      multiplier: 0
+    approachRotationSpeed:
+      additive: 0
+      multiplier: 0
+--- !u!81 &8892471190458576203
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8080504202031134713}
+  m_Enabled: 1
+--- !u!23 &8892471190458576204
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5803,214 +5930,14 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &8080504202031134713
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8892471190458576195}
-  - component: {fileID: 8892471190458576203}
-  - component: {fileID: 5532598456501314278}
-  - component: {fileID: 7720097415708169772}
-  - component: {fileID: 8892471190458576196}
-  - component: {fileID: 8892471190458576198}
-  - component: {fileID: 8892471190458576197}
-  - component: {fileID: 8892471190458576201}
-  - component: {fileID: 8892471190458576200}
-  - component: {fileID: 8892471190458576202}
-  m_Layer: 0
-  m_Name: Submarine
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8892471190458576195
-Transform:
+--- !u!33 &8892471190458576205
+MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8080504202031134713}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.00000037252897, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.000000001804218, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1507362926}
-  - {fileID: 1125879775}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &8892471190458576196
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8080504202031134713}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1
-  m_Height: 4.5
-  m_Direction: 2
-  m_Center: {x: 0.0021488369, y: 0, z: 0.0019247532}
---- !u!114 &8892471190458576197
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8080504202031134713}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82d12636c7ae54b4c9deb681ab9fecf0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.UserInput.TestBedPlayerMover
-  explorationCameraController: {fileID: 870650683}
-  maxForwardSpeed: 7
-  maxReverseSpeed: 3.5
-  forwardAcceleration: 6
-  reverseAcceleration: 4.5
-  idleDrag: 1.5
-  brakeDeceleration: 10
-  boostMultiplier: 1.6
-  yawSpeed: 1.5
-  pitchSpeed: 1
-  maxPitchAngle: 50
-  rotationSmoothTime: 0.15
-  loopRotationSpeed: 50
-  ascendSpeed: 3
-  descendSpeed: 3
-  verticalSmoothTime: 0.2
---- !u!54 &8892471190458576198
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8080504202031134713}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.2
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 64
-  m_CollisionDetection: 1
---- !u!114 &8892471190458576200
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8080504202031134713}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 762692b3797497b4da02575fbe5ff255, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Interaction.HarvestPointInteractor
-  interactKey: 102
-  approachController: {fileID: 8892471190458576202}
---- !u!114 &8892471190458576201
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8080504202031134713}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dea6f6102651314bbd3ae90b1e39727, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestConsoleController
-  scanRevealTuning: {fileID: 0}
-  scanKey: 102
-  switchSensorKey: 114
-  commitKey: 32
-  exitKey: 120
-  pointSelectRadiusPixels: 50
-  pointHoverRadiusPixels: 50
-  harvestConsoleCamera: {fileID: 1981470076}
---- !u!114 &8892471190458576202
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8080504202031134713}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb568e53dc377eb4b986d6ec164f6fb5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Interaction.HarvestApproachController
-  controlledRigidbody: {fileID: 8892471190458576198}
-  playerMover: {fileID: 8892471190458576197}
-  explorationCameraController: {fileID: 870650683}
-  cockpitTargetLookController: {fileID: 1507362927}
-  transitionLetterboxPresenter: {fileID: 82749867}
-  approachMoveSpeed: 8
-  approachRotationSpeed: 90
-  minApproachDuration: 0.5
-  stopDistancePadding: 0.35
-  preserveCurrentDepth: 0
-  approachCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
---- !u!81 &8892471190458576203
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8080504202031134713}
-  m_Enabled: 1
+  m_Mesh: {fileID: 9037020146243657503, guid: 040447b5cad6c3641921552db3afe8bb, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
