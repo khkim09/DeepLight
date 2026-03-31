@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69bd2f985f0af5b4c9e7982d86224f3c, type: 3}
+  m_Name: HarvestPointOrderVisualSetSO
+  m_EditorClassIdentifier: Project.Data::Project.Data.Harvest.HarvestPointOrderVisualSetSO
+  hiddenRingColor: {r: 0.15, g: 0.15, b: 0.15, a: 0.8}
+  revealedRingColor: {r: 1, g: 1, b: 1, a: 1}
+  hoverRingColor: {r: 1, g: 0.95, b: 0.55, a: 1}
+  orderFillSprites:
+  - {fileID: 21300000, guid: 99385f51bd4dedf4794f0b6f573fe726, type: 3}
+  - {fileID: 21300000, guid: 3f1d00555e0e3cf419cfc69c765a44f0, type: 3}
+  - {fileID: 21300000, guid: 2c1381d6ea4d8c44ba15e2d17000f460, type: 3}
+  - {fileID: 21300000, guid: c7a9a0f81e29d464c92091aa4299571e, type: 3}
+  - {fileID: 21300000, guid: 723ef181fab93be4eb132ca2db833878, type: 3}
+  - {fileID: 21300000, guid: fe0910a88c2766c4183baf4967be9798, type: 3}
+  hoveredScaleMultiplier: 1.15

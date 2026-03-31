@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73f8f81ca1b25434595c4b71f5ee6bf9, type: 3}
+  m_Name: Item_AluminumPipe
+  m_EditorClassIdentifier: Project.Data::Project.Data.Items.ItemSO
+  itemId: itm_res_aluminum_pipe
+  displayName: Aluminum Pipe
+  description: A lightweight aluminum pipe section salvaged from ship interiors.
+  icon: {fileID: 0}
+  worldPrefab: {fileID: 0}
+  category: 0
+  rarity: 1
+  sellPrice: 27
+  weight: 1
+  baseCatchDifficulty: 0.25
+  shapeBounds: {x: 3, y: 1}
+  occupiedCells:
+  - Position: {x: 0, y: 0}
+  - Position: {x: 1, y: 0}
+  - Position: {x: 2, y: 0}
+  canRotate: 1

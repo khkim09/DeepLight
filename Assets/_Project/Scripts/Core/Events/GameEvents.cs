@@ -168,6 +168,65 @@ namespace Project.Core.Events
         }
     }
 
+    /// <summary>현재 회수 콘솔 타깃 표시 정보 이벤트</summary>
+    public readonly struct HarvestConsoleTargetPreparedEvent : IEvent
+    {
+        public readonly string DisplayName; // 현재 표시 이름
+        public readonly int TotalPointCount; // 총 포인트 수
+
+        /// <summary>회수 콘솔 타깃 표시 정보 생성</summary>
+        public HarvestConsoleTargetPreparedEvent(string displayName, int totalPointCount)
+        {
+            DisplayName = displayName;
+            TotalPointCount = totalPointCount;
+        }
+    }
+
+    /// <summary>현재 선택 순서 개수 변경 이벤트</summary>
+    public readonly struct HarvestSelectionSequenceChangedEvent : IEvent
+    {
+        public readonly int SelectedCount; // 현재 선택된 개수
+        public readonly int TotalCount; // 총 개수
+
+        /// <summary>선택 순서 개수 정보 생성</summary>
+        public HarvestSelectionSequenceChangedEvent(int selectedCount, int totalCount)
+        {
+            SelectedCount = selectedCount;
+            TotalCount = totalCount;
+        }
+    }
+
+    /// <summary>현재 hover 중인 회수 포인트 정보 이벤트</summary>
+    public readonly struct HarvestHoveredPointChangedEvent : IEvent
+    {
+        public readonly bool HasPoint; // 현재 hover 포인트 존재 여부
+        public readonly string PointId; // 포인트 ID
+        public readonly string DisplayLabel; // 표시 라벨
+        public readonly int AssignedOrder; // 할당 순번
+        public readonly float SonarSignature; // 소나 반응도
+        public readonly float LidarSignature; // 라이다 반응도
+        public readonly Vector2 ScreenPosition; // 툴팁 배치용 스크린 좌표
+
+        /// <summary>hover 포인트 정보 생성</summary>
+        public HarvestHoveredPointChangedEvent(
+            bool hasPoint,
+            string pointId,
+            string displayLabel,
+            int assignedOrder,
+            float sonarSignature,
+            float lidarSignature,
+            Vector2 screenPosition)
+        {
+            HasPoint = hasPoint;
+            PointId = pointId;
+            DisplayLabel = displayLabel;
+            AssignedOrder = assignedOrder;
+            SonarSignature = sonarSignature;
+            LidarSignature = lidarSignature;
+            ScreenPosition = screenPosition;
+        }
+    }
+
     #endregion
 
     #region HarvestAttempt

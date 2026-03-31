@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13c1cdfcca7edc24895287c36f8eb809, type: 3}
+  m_Name: ScanPoint_C
+  m_EditorClassIdentifier: Project.Data::Project.Data.Harvest.HarvestScanPointPresetSO
+  pointId: C
+  displayOrder: 2
+  displayLabel: C
+  baseStabilityRange:
+    min: 0.52
+    max: 0.72
+  firstAnchorBiasRange:
+    min: 0.3
+    max: 0.48
+  sequenceBiasRange:
+    min: 0.5
+    max: 0.72
+  riskWeightRange:
+    min: 0.08
+    max: 0.18
+  sonarSignatureRange:
+    min: 0.25
+    max: 0.45
+  lidarSignatureRange:
+    min: 0.72
+    max: 0.92
+  allowedFaces: -1
+  orderVisualSet: {fileID: 11400000, guid: b510c0b23de943d4aaf5289aa2aa0fcb, type: 2}

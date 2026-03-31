@@ -140,7 +140,6 @@ namespace Project.Gameplay.Harvest
                 List<Behaviour> collectedBehaviours = new List<Behaviour>();
                 collectedBehaviours.AddRange(target.GetComponentsInChildren<HarvestInteractionZone>(true));
                 collectedBehaviours.AddRange(target.GetComponentsInChildren<HarvestTargetHighlightController>(true));
-                collectedBehaviours.AddRange(target.GetComponentsInChildren<HarvestPointBillboard>(true));
                 behaviours = collectedBehaviours.Where(component => component != null).Distinct().ToArray();
 
                 scanPoints = target.GetComponentsInChildren<HarvestScanPoint>(true);

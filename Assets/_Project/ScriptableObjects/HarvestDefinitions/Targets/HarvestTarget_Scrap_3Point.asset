@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fe20f9140c97414595909acb454d576, type: 3}
+  m_Name: HarvestTarget_Scrap_3Point
+  m_EditorClassIdentifier: Project.Data::Project.Data.Harvest.HarvestTargetSO
+  targetId: harvest_scrap_3p
+  previewNamePool: {fileID: 11400000, guid: ed3dc8afbb6c5fc458e677c8e2646a2c, type: 2}
+  itemPool:
+  - item: {fileID: 11400000, guid: ab271615eece65d41bd04f0bc00d29e6, type: 2}
+    weight: 6
+  - item: {fileID: 11400000, guid: b30fce4358268b345ac476e89ea85b06, type: 2}
+    weight: 6
+  - item: {fileID: 11400000, guid: 97c91a6c4158c3548a89c22f3c57c56a, type: 2}
+    weight: 6
+  - item: {fileID: 11400000, guid: 6ba9157dc9bfca044816e566f03ad708, type: 2}
+    weight: 6
+  - item: {fileID: 11400000, guid: 7544ba83df29620458187b67cb0271a9, type: 2}
+    weight: 6
+  - item: {fileID: 11400000, guid: 65090ffd850697747bfdeaec24562cfc, type: 2}
+    weight: 5
+  - item: {fileID: 11400000, guid: 5d7fce7de7d4d254dabe28150cc0f4ea, type: 2}
+    weight: 8
+  - item: {fileID: 11400000, guid: 7fd8171da99aff1438d24b4915ada88d, type: 2}
+    weight: 8
+  - item: {fileID: 11400000, guid: 4f44ad19cd45c0448b1883e5931c4a56, type: 2}
+    weight: 8
+  - item: {fileID: 11400000, guid: 3dc3ba7f81b59264faa6ef1f0abbbb7e, type: 2}
+    weight: 8
+  - item: {fileID: 11400000, guid: e24a94966f356074098c0c3236d5e83a, type: 2}
+    weight: 4
+  - item: {fileID: 11400000, guid: e9c4a591a3fef4c4d84f4cfb307a79b0, type: 2}
+    weight: 4
+  additionalDifficulty: 0.05
+  collisionDamage: 9
+  consumeOnSuccess: 1
+  scanPointPrefab: {fileID: 2247648178097122297, guid: b2d691e1a50027846bbf0020d300a87c, type: 3}
+  pointPresets:
+  - {fileID: 11400000, guid: 97eabed49f80b404d905314ddbe4e1aa, type: 2}
+  - {fileID: 11400000, guid: 844e92912f1577542a904433ee2a46a2, type: 2}
+  - {fileID: 11400000, guid: 65c3f9314d3f0944b964c9992f66e28e, type: 2}
+  faceSurfaceOffset: 0.501
+  planarMin: -0.405
+  planarMax: 0.405
+  minPointSpacing: 0.2025

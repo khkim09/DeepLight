@@ -1,8 +1,8 @@
 ﻿<Solution>
-  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Project.Gameplay.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="Project.Data.csproj" />
+  <Project Path="Project.UI.csproj" />
   <Project Path="Project.Core.csproj" />
   <Project Path="Project.Managers.csproj" />
 </Solution>

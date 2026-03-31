@@ -2,7 +2,6 @@
 using Project.Core.Events;
 using Project.Data.Harvest;
 using Project.Data.Input;
-using Project.Data.Items;
 using Project.Gameplay.GameModes;
 using Project.Gameplay.Harvest;
 using UnityEngine;
@@ -18,12 +17,12 @@ namespace Project.Gameplay.Interaction
         [Header("References")]
         [SerializeField] private HarvestApproachController approachController; // 자연스러운 접근 연출 제어기
 
-        private HarvestModeCoordinator harvestModeCoordinator;
-        private readonly List<HarvestInteractionZone> overlappedZones = new();
-        private IHarvestTarget currentTarget;
-        private HarvestInteractionZone currentZone;
-        private HarvestTargetHighlightController currentHighlight;
-        private bool isHarvestMode;
+        private HarvestModeCoordinator harvestModeCoordinator; // 채집 모드 조정기
+        private readonly List<HarvestInteractionZone> overlappedZones = new(); // 현재 겹친 상호작용 존 목록
+        private IHarvestTarget currentTarget; // 현재 상호작용 대상
+        private HarvestInteractionZone currentZone; // 현재 선택된 상호작용 존
+        private HarvestTargetHighlightController currentHighlight; // 현재 하이라이트 컨트롤러
+        private bool isHarvestMode; // Harvest 모드 여부
 
         /// <summary>현재 채집 진입 키를 반환한다.</summary>
         public KeyCode InteractKey => inputBindings != null ? inputBindings.InteractHarvestKey : KeyCode.None;
@@ -57,6 +56,7 @@ namespace Project.Gameplay.Interaction
             if (isHarvestMode)
                 return;
 
+            // 현재 겹친 존 중 가장 적절한 대상을 재선정한다.
             UpdateCurrentZone();
 
             if (harvestModeCoordinator == null || inputBindings == null)
@@ -68,6 +68,7 @@ namespace Project.Gameplay.Interaction
             if (!Input.GetKeyDown(inputBindings.InteractHarvestKey))
                 return;
 
+            // 접근 연출이 없으면 즉시 진입한다.
             if (approachController == null)
             {
                 harvestModeCoordinator.TryEnterHarvestMode(currentTarget);
@@ -117,15 +118,22 @@ namespace Project.Gameplay.Interaction
             if (!HasAvailableTarget())
                 return string.Empty;
 
+            // 위장 이름은 런타임에서 확정된 이름을 우선 사용한다.
+            if (currentTarget is HarvestTargetBehaviour targetBehaviour)
+            {
+                if (!string.IsNullOrWhiteSpace(targetBehaviour.RuntimePreviewDisplayName))
+                    return targetBehaviour.RuntimePreviewDisplayName;
+            }
+
             HarvestTargetSO targetData = currentTarget.TargetData;
-            ItemSO itemData = targetData.ItemData;
-            if (itemData == null)
+            if (targetData == null)
                 return string.Empty;
 
-            if (!string.IsNullOrWhiteSpace(itemData.DisplayName))
-                return itemData.DisplayName;
+            // fallback은 target id로 둔다.
+            if (!string.IsNullOrWhiteSpace(targetData.TargetId))
+                return targetData.TargetId;
 
-            return itemData.ItemId;
+            return string.Empty;
         }
 
         /// <summary>겹친 존 중 현재 상호작용할 대상을 선정한다.</summary>

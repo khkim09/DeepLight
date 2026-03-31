@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Project.Gameplay.Runtime
 {
-    /// <summary>현재 배터리, 내구도, 적재 중량 등 상태 보관</summary>
+    /// <summary>현재 배터리, 내구도, 인벤토리 상태를 보관한다.</summary>
     [Serializable]
     public class SubmarineRuntimeState
     {
@@ -19,22 +19,20 @@ namespace Project.Gameplay.Runtime
         public float CurrentBattery => currentBattery;
         public float CurrentHullDurability => currentHullDurability;
         public InventoryGridData InventoryGrid => inventoryGrid;
-        public float CurrentCargoWeight => inventoryGrid != null ? inventoryGrid.CalculateTotalWeight() : 0f;
+
+        // 총중량 시스템은 제거했으므로 항상 0으로 본다.
+        public float CurrentCargoWeight => 0f;
 
         /// <summary>잠수함 런타임 상태 생성</summary>
         public SubmarineRuntimeState(SubmarineStatsSO baseStats)
         {
-            // 기본 데이터 저장
             this.baseStats = baseStats;
 
-            // 초기 상태 설정
             currentBattery = baseStats.MaxBattery;
             currentHullDurability = baseStats.MaxHullDurability;
 
-            // 인벤토리 생성
             inventoryGrid = new InventoryGridData(baseStats.InventoryWidth, baseStats.InventoryHeight);
 
-            // 레이아웃 우선 적용
             if (baseStats.InventoryLayout != null && baseStats.InventoryLayout.IsValid())
                 inventoryGrid.Initialize(baseStats.InventoryLayout);
         }
@@ -42,62 +40,58 @@ namespace Project.Gameplay.Runtime
         /// <summary>잠수함 런타임 상태 초기화</summary>
         public void Initialize(SubmarineStatsSO newBaseStats)
         {
-            // 데이터 교체
             baseStats = newBaseStats;
 
-            // 상태 초기화
             currentBattery = baseStats.MaxBattery;
             currentHullDurability = baseStats.MaxHullDurability;
 
-            // 인벤토리 없으면 새로 생성
             if (inventoryGrid == null)
                 inventoryGrid = new InventoryGridData(baseStats.InventoryWidth, baseStats.InventoryHeight);
 
-            // 레이아웃 우선 초기화
             if (baseStats.InventoryLayout != null && baseStats.InventoryLayout.IsValid())
                 inventoryGrid.Initialize(baseStats.InventoryLayout);
             else
                 inventoryGrid.Initialize(baseStats.InventoryWidth, baseStats.InventoryHeight);
         }
 
-        /// <summary>배터리 소비</summary>
+        /// <summary>배터리를 소비한다.</summary>
         public void ConsumeBattery(float amount)
         {
             currentBattery = Mathf.Max(0f, currentBattery - amount);
             EventBus.Publish(new BatteryChangedEvent(currentBattery, baseStats.MaxBattery));
         }
 
-        /// <summary>배터리 회복</summary>
+        /// <summary>배터리를 회복한다.</summary>
         public void RestoreBattery(float amount)
         {
             currentBattery = Mathf.Min(baseStats.MaxBattery, currentBattery + amount);
             EventBus.Publish(new BatteryChangedEvent(currentBattery, baseStats.MaxBattery));
         }
 
-        /// <summary>선체 내구도 감소</summary>
+        /// <summary>선체 내구도를 감소시킨다.</summary>
         public void DamageHull(float amount)
         {
             currentHullDurability = Mathf.Max(0f, currentHullDurability - amount);
             EventBus.Publish(new HullDurabilityChangedEvent(currentHullDurability, baseStats.MaxHullDurability));
         }
 
-        /// <summary>선체 내구도 회복</summary>
+        /// <summary>선체 내구도를 회복한다.</summary>
         public void RepairHull(float amount)
         {
             currentHullDurability = Mathf.Min(baseStats.MaxHullDurability, currentHullDurability + amount);
             EventBus.Publish(new HullDurabilityChangedEvent(currentHullDurability, baseStats.MaxHullDurability));
         }
 
-        /// <summary>현재 적재 중량 기준 이동 속도 반환</summary>
+        /// <summary>현재 이동 속도를 반환한다.</summary>
         public float GetCurrentMoveSpeed()
         {
-            return baseStats.GetMoveSpeed(CurrentCargoWeight);
+            return baseStats.GetMoveSpeed(0f);
         }
 
-        /// <summary>현재 적재 중량 기준 선회 속도 반환</summary>
+        /// <summary>현재 선회 속도를 반환한다.</summary>
         public float GetCurrentTurnSpeed()
         {
-            return baseStats.GetTurnSpeed(CurrentCargoWeight);
+            return baseStats.GetTurnSpeed(0f);
         }
     }
 }

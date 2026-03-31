@@ -20,10 +20,12 @@ namespace Project.Data.Input
         [SerializeField] private KeyCode interactHarvestKey = KeyCode.F;  // 채집 진입
 
         [Header("Harvest Console")]
-        [SerializeField] private KeyCode harvestScanKey = KeyCode.F;          // 스캔
-        [SerializeField] private KeyCode harvestSwitchSensorKey = KeyCode.R;  // 센서 전환
-        [SerializeField] private KeyCode harvestCommitKey = KeyCode.Space;    // 회수 확정
-        [SerializeField] private KeyCode harvestExitKey = KeyCode.X;          // 회수 종료
+        [SerializeField] private KeyCode harvestScanKey = KeyCode.F;               // 스캔
+        [SerializeField] private KeyCode harvestSwitchSensorKey = KeyCode.R;       // 센서 전환
+        [SerializeField] private KeyCode harvestCommitKey = KeyCode.Space;         // 회수 확정
+        [SerializeField] private KeyCode harvestExitKey = KeyCode.X;               // 회수 종료
+        [SerializeField] private KeyCode harvestResetSequenceKey = KeyCode.G;      // 순서 리셋
+        [SerializeField] private KeyCode harvestInventoryKey = KeyCode.Tab;        // 인벤토리
 
         /// <summary>전진 키를 반환한다.</summary>
         public KeyCode MoveForwardKey => moveForwardKey;
@@ -57,5 +59,11 @@ namespace Project.Data.Input
 
         /// <summary>Harvest 종료 키를 반환한다.</summary>
         public KeyCode HarvestExitKey => harvestExitKey;
+
+        /// <summary>Harvest 순서 리셋 키를 반환한다.</summary>
+        public KeyCode HarvestResetSequenceKey => harvestResetSequenceKey;
+
+        /// <summary>Harvest 인벤토리 키를 반환한다.</summary>
+        public KeyCode HarvestInventoryKey => harvestInventoryKey;
     }
 }

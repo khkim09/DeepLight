@@ -25,14 +25,11 @@ namespace Project.Gameplay.Inventory
         /// <summary>인벤토리 그리드를 생성한다</summary>
         public InventoryGridData(int width, int height)
         {
-            // 기본 크기 저장
             this.width = width;
             this.height = height;
 
-            // 점유 그리드 생성
             occupiedGrid = new InventoryItemInstance[width, height];
 
-            // 기본은 전 칸 사용 가능
             usableMask = new bool[width, height];
             FillUsableMask(true);
         }
@@ -40,17 +37,12 @@ namespace Project.Gameplay.Inventory
         /// <summary>그리드를 기본 크기로 초기화한다</summary>
         public void Initialize(int newWidth, int newHeight)
         {
-            // 크기 저장
             width = newWidth;
             height = newHeight;
 
-            // 아이템 목록 초기화
             items.Clear();
-
-            // 점유 그리드 재생성
             occupiedGrid = new InventoryItemInstance[width, height];
 
-            // 전 칸 사용 가능
             usableMask = new bool[width, height];
             FillUsableMask(true);
         }
@@ -58,28 +50,20 @@ namespace Project.Gameplay.Inventory
         /// <summary>레이아웃 데이터로 그리드를 초기화한다</summary>
         public void Initialize(SubmarineInventoryLayoutSO layout)
         {
-            // 레이아웃 유효성 실패면 중단
             if (layout == null || !layout.IsValid())
                 return;
 
-            // 크기 반영
             width = layout.GridSize.x;
             height = layout.GridSize.y;
 
-            // 아이템 목록 초기화
             items.Clear();
-
-            // 점유 그리드 재생성
             occupiedGrid = new InventoryItemInstance[width, height];
-
-            // 사용 가능 마스크 생성
             usableMask = layout.BuildUsableMask();
         }
 
         /// <summary>모든 셀 사용 가능 상태를 채운다</summary>
         private void FillUsableMask(bool value)
         {
-            // 전 셀 순회
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
@@ -132,15 +116,12 @@ namespace Project.Gameplay.Inventory
             {
                 Vector2Int cell = occupiedCells[i];
 
-                // 범위 밖이면 실패
                 if (!IsInBounds(cell))
                     return false;
 
-                // 사용 불가 칸이면 실패
                 if (!IsUsableCell(cell))
                     return false;
 
-                // 이미 점유 중이면 실패
                 if (occupiedGrid[cell.x, cell.y] != null)
                     return false;
             }
@@ -174,28 +155,22 @@ namespace Project.Gameplay.Inventory
         /// <summary>아이템을 직접 배치한다</summary>
         public bool TryPlaceItem(ItemSO itemData, Vector2Int originPosition, bool isRotated, out InventoryItemInstance placedItem)
         {
-            // 기본값 초기화
             placedItem = null;
 
-            // 배치 가능성 검사
             if (!CanPlaceItem(itemData, originPosition, isRotated))
                 return false;
 
-            // 인스턴스 생성
             placedItem = new InventoryItemInstance(itemData, originPosition, isRotated);
             items.Add(placedItem);
 
-            // 점유 셀 계산
             List<Vector2Int> occupiedCells = BuildPlacedCells(itemData, originPosition, isRotated);
 
-            // 점유 반영
             for (int i = 0; i < occupiedCells.Count; i++)
             {
                 Vector2Int cell = occupiedCells[i];
                 occupiedGrid[cell.x, cell.y] = placedItem;
             }
 
-            // 이벤트 발행
             EventBus.Publish(new InventoryItemAddedEvent(itemData.ItemId, 1));
             EventBus.Publish(new InventoryChangedEvent());
             return true;
@@ -204,10 +179,8 @@ namespace Project.Gameplay.Inventory
         /// <summary>아이템 자동 배치를 시도한다</summary>
         public bool TryAutoPlaceItem(ItemSO itemData, out InventoryItemInstance placedItem)
         {
-            // 기본값 초기화
             placedItem = null;
 
-            // 자동 배치 위치 탐색
             InventoryPlacementResult result = FindPlacement(itemData, true);
             if (!result.IsSuccess)
                 return false;
@@ -238,29 +211,18 @@ namespace Project.Gameplay.Inventory
             return true;
         }
 
-        /// <summary>총 적재 무게를 계산한다</summary>
+        /// <summary>총 적재 무게를 호환성용으로 반환한다.</summary>
         public float CalculateTotalWeight()
         {
-            float totalWeight = 0f;
-
-            for (int i = 0; i < items.Count; i++)
-            {
-                if (items[i].ItemData == null)
-                    continue;
-
-                totalWeight += items[i].ItemData.Weight;
-            }
-
-            return totalWeight;
+            // 총중량 시스템은 제거했으므로 항상 0을 반환한다.
+            return 0f;
         }
 
         /// <summary>점유 정보를 다시 구성한다</summary>
         public void RebuildOccupiedGrid()
         {
-            // 점유 그리드 초기화
             occupiedGrid = new InventoryItemInstance[width, height];
 
-            // 아이템 순회
             for (int i = 0; i < items.Count; i++)
             {
                 InventoryItemInstance itemInstance = items[i];

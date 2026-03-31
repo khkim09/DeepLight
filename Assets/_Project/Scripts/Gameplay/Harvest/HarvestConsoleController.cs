@@ -5,29 +5,33 @@ using Project.Data.Enums;
 using Project.Data.Harvest;
 using Project.Data.Input;
 using Project.Gameplay.GameModes;
+using Project.Gameplay.Runtime;
 using UnityEngine;
 
 namespace Project.Gameplay.Harvest
 {
-    /// <summary>회수 콘솔 모드에서 센서 사용과 포인트 선택 입력을 담당하는 클래스이다.</summary>
+    /// <summary>회수 콘솔 입력, 포인트 선택, 타깃 회전을 처리한다.</summary>
     public class HarvestConsoleController : MonoBehaviour
     {
         [Header("Data")]
-        [SerializeField] private HarvestScanRevealTuningSO scanRevealTuning; // 포인트 공개/선택 튜닝
-        [SerializeField] private GameInputBindingsSO inputBindings;          // 공용 입력 바인딩 SO
+        [SerializeField] private HarvestScanRevealTuningSO scanRevealTuning; // 공개/선택 반경 튜닝
+        [SerializeField] private GameInputBindingsSO inputBindings; // 입력 바인딩 SO
 
         [Header("References")]
-        [SerializeField] private Camera harvestConsoleCamera; // 조종실 카메라
+        [SerializeField] private Camera harvestConsoleCamera; // 회수 콘솔 카메라
+        [SerializeField] private HarvestTargetRotationController targetRotationController; // 타깃 회전 제어기
 
-        private HarvestModeSession harvestModeSession;
-        private HarvestResolver harvestResolver;
-        private HarvestModeCoordinator harvestModeCoordinator;
-        private readonly List<HarvestScanPoint> currentPoints = new();
+        private HarvestModeSession harvestModeSession; // 현재 회수 세션
+        private HarvestResolver harvestResolver; // 회수 계산기
+        private HarvestModeCoordinator harvestModeCoordinator; // 모드 전환 조정기
+        private readonly List<HarvestScanPoint> currentPoints = new(); // 현재 타깃 포인트 캐시
 
-        private bool isHarvestMode;
-        private HarvestScanPoint hoveredPoint;
+        private bool isHarvestMode; // 현재 Harvest 모드 여부
+        private bool isDraggingTarget; // 현재 타깃 드래그 회전 여부
+        private HarvestScanPoint hoveredPoint; // 현재 hover 중인 포인트
+        private HarvestTargetBehaviour currentTargetBehaviour; // 현재 타깃 Behaviour
 
-        /// <summary>세션과 해석기, 조정기를 주입한다.</summary>
+        /// <summary>세션과 계산기, 조정기를 주입한다.</summary>
         public void Initialize(
             HarvestModeSession newHarvestModeSession,
             HarvestResolver newHarvestResolver,
@@ -38,21 +42,21 @@ namespace Project.Gameplay.Harvest
             harvestModeCoordinator = newHarvestModeCoordinator;
         }
 
-        /// <summary>Harvest 모드 이벤트를 구독한다.</summary>
+        /// <summary>Harvest 이벤트를 구독한다.</summary>
         private void OnEnable()
         {
             EventBus.Subscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
             EventBus.Subscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
         }
 
-        /// <summary>Harvest 모드 이벤트 구독을 해제한다.</summary>
+        /// <summary>Harvest 이벤트 구독을 해제한다.</summary>
         private void OnDisable()
         {
             EventBus.Unsubscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
             EventBus.Unsubscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
         }
 
-        /// <summary>초기 탐사용 커서 상태를 적용한다.</summary>
+        /// <summary>초기 탐사 커서 상태를 적용한다.</summary>
         private void Start()
         {
             ApplyExplorationCursorState();
@@ -67,7 +71,7 @@ namespace Project.Gameplay.Harvest
             if (harvestModeSession == null || harvestResolver == null || harvestModeCoordinator == null)
                 return;
 
-            if (inputBindings == null)
+            if (inputBindings == null || harvestConsoleCamera == null)
                 return;
 
             if (!harvestModeSession.HasTarget)
@@ -85,30 +89,50 @@ namespace Project.Gameplay.Harvest
 
             HandleSensorModeInput();
             HandleScanInput();
+            HandleTargetRotationInput();
             HandlePointClickInput();
             HandleCommitAndExitInput();
+            HandleResetInput();
         }
 
-        /// <summary>회수 콘솔 진입 시 포인트 목록과 상태를 초기화한다.</summary>
+        /// <summary>회수 콘솔 진입 시 현재 타깃과 포인트 상태를 초기화한다.</summary>
         private void OnHarvestModeEntered(HarvestModeEnteredEvent publishedEvent)
         {
             isHarvestMode = true;
+            isDraggingTarget = false;
             hoveredPoint = null;
+            currentTargetBehaviour = harvestModeSession.CurrentTarget as HarvestTargetBehaviour;
 
             ApplyHarvestCursorState();
             CacheCurrentTargetPoints();
             ResetCurrentPoints();
 
+            harvestModeSession.EnsureSequenceCapacity(currentPoints.Count);
+
+            if (currentTargetBehaviour != null && targetRotationController != null)
+            {
+                targetRotationController.BindTarget(currentTargetBehaviour.GetRotationPivot());
+                targetRotationController.ResetRotation();
+            }
+
             harvestModeSession.SetScanMode(HarvestScanMode.Sonar);
             EventBus.Publish(new HarvestScanModeChangedEvent((int)HarvestScanMode.Sonar));
+
+            PublishTargetPrepared();
+            PublishRuntimeState();
+            PublishSelectionChanged();
+            PublishHoveredPoint(null);
 
             RecalculatePreview();
         }
 
-        /// <summary>회수 콘솔 종료 시 런타임 상태를 정리한다.</summary>
+        /// <summary>회수 콘솔 종료 시 현재 타깃 상태를 정리한다.</summary>
         private void OnHarvestModeExited(HarvestModeExitedEvent publishedEvent)
         {
             isHarvestMode = false;
+            isDraggingTarget = false;
+            currentTargetBehaviour = null;
+
             ApplyExplorationCursorState();
 
             if (hoveredPoint != null)
@@ -118,6 +142,14 @@ namespace Project.Gameplay.Harvest
             }
 
             currentPoints.Clear();
+
+            if (targetRotationController != null)
+            {
+                targetRotationController.EndDrag();
+                targetRotationController.UnbindTarget();
+            }
+
+            PublishHoveredPoint(null);
         }
 
         /// <summary>센서 전환 입력을 처리한다.</summary>
@@ -167,13 +199,40 @@ namespace Project.Gameplay.Harvest
             harvestModeSession.AddScanPulse();
             EventBus.Publish(new HarvestScanPulseEvent((int)currentMode, harvestModeSession.ScanPulseCount));
 
-            foreach (HarvestScanPoint point in revealedPoints)
+            for (int i = 0; i < revealedPoints.Count; i++)
             {
+                HarvestScanPoint point = revealedPoints[i];
                 harvestModeSession.AddRevealedPoint(point.PointId);
                 EventBus.Publish(new HarvestPointRevealedEvent(point.PointId));
             }
 
+            PublishRuntimeState();
             RecalculatePreview();
+        }
+
+        /// <summary>타깃 회전 입력을 처리한다.</summary>
+        private void HandleTargetRotationInput()
+        {
+            if (targetRotationController == null)
+                return;
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (hoveredPoint == null)
+                {
+                    isDraggingTarget = true;
+                    targetRotationController.BeginDrag(Input.mousePosition);
+                }
+            }
+
+            if (Input.GetMouseButton(0) && isDraggingTarget)
+                targetRotationController.RotateByDrag(Input.mousePosition);
+
+            if (Input.GetMouseButtonUp(0) && isDraggingTarget)
+            {
+                isDraggingTarget = false;
+                targetRotationController.EndDrag();
+            }
         }
 
         /// <summary>포인트 선택과 제거 입력을 처리한다.</summary>
@@ -183,7 +242,7 @@ namespace Project.Gameplay.Harvest
                 TrySelectHoveredPoint();
 
             if (Input.GetMouseButtonDown(1))
-                RemoveLastSelectedPoint();
+                TryRemoveHoveredPoint();
         }
 
         /// <summary>회수 확정과 종료 입력을 처리한다.</summary>
@@ -199,19 +258,26 @@ namespace Project.Gameplay.Harvest
                 harvestModeCoordinator.ExitHarvestMode();
         }
 
+        /// <summary>순서 리셋 입력을 처리한다.</summary>
+        private void HandleResetInput()
+        {
+            if (!Input.GetKeyDown(inputBindings.HarvestResetSequenceKey))
+                return;
+
+            ResetSelectionSequence();
+        }
+
         /// <summary>현재 마우스 위치 기준으로 hover 포인트를 갱신한다.</summary>
         private void UpdateHoveredPoint()
         {
-            if (harvestConsoleCamera == null)
-                return;
-
-            Vector2 mousePosition = Input.mousePosition;
             HarvestScanPoint bestPoint = null;
             float bestDistance = float.MaxValue;
+            Vector2 mousePosition = Input.mousePosition;
 
-            foreach (HarvestScanPoint point in currentPoints)
+            for (int i = 0; i < currentPoints.Count; i++)
             {
-                if (point == null || !point.IsRevealed || point.IsSelected)
+                HarvestScanPoint point = currentPoints[i];
+                if (point == null || !point.IsRevealed)
                     continue;
 
                 Vector3 screenPosition = harvestConsoleCamera.WorldToScreenPoint(point.transform.position);
@@ -219,8 +285,7 @@ namespace Project.Gameplay.Harvest
                     continue;
 
                 float distance = Vector2.Distance(mousePosition, screenPosition);
-
-                if (scanRevealTuning == null || distance > scanRevealTuning.PointHoverRadiusPixels)
+                if (scanRevealTuning != null && distance > scanRevealTuning.PointHoverRadiusPixels)
                     continue;
 
                 if (distance >= bestDistance)
@@ -230,35 +295,80 @@ namespace Project.Gameplay.Harvest
                 bestPoint = point;
             }
 
-            if (hoveredPoint != null && hoveredPoint != bestPoint)
+            if (hoveredPoint == bestPoint)
+            {
+                PublishHoveredPoint(hoveredPoint);
+                return;
+            }
+
+            if (hoveredPoint != null)
                 hoveredPoint.SetHovered(false);
 
             hoveredPoint = bestPoint;
 
             if (hoveredPoint != null)
                 hoveredPoint.SetHovered(true);
+
+            PublishHoveredPoint(hoveredPoint);
         }
 
-        /// <summary>현재 hover 중인 포인트를 순서에 배치한다.</summary>
+        /// <summary>현재 hover 포인트를 가장 앞의 빈 순번에 배치한다.</summary>
         private void TrySelectHoveredPoint()
         {
             if (hoveredPoint == null)
                 return;
 
+            if (!hoveredPoint.IsRevealed)
+                return;
+
+            if (harvestModeSession.ContainsSelectedPoint(hoveredPoint.PointId))
+                return;
+
             Vector3 screenPosition = harvestConsoleCamera.WorldToScreenPoint(hoveredPoint.transform.position);
             float distance = Vector2.Distance(Input.mousePosition, screenPosition);
 
-            if (scanRevealTuning == null || distance > scanRevealTuning.PointSelectRadiusPixels)
+            if (scanRevealTuning != null && distance > scanRevealTuning.PointSelectRadiusPixels)
                 return;
 
-            hoveredPoint.Select();
-            harvestModeSession.AddSelectedPoint(hoveredPoint.PointId);
+            if (!harvestModeSession.TryAssignSelectedPoint(hoveredPoint.PointId))
+                return;
+
+            RefreshAssignedOrders();
+            PublishSelectionChanged();
+            PublishHoveredPoint(hoveredPoint);
 
             EventBus.Publish(new HarvestPointSelectedEvent(
                 hoveredPoint.PointId,
-                harvestModeSession.SelectedPointSequence.Count));
+                harvestModeSession.GetAssignedOrder(hoveredPoint.PointId)));
 
-            hoveredPoint = null;
+            RecalculatePreview();
+        }
+
+        /// <summary>현재 hover 중인 선택 포인트를 순서에서 제거한다.</summary>
+        private void TryRemoveHoveredPoint()
+        {
+            if (hoveredPoint == null)
+                return;
+
+            if (!harvestModeSession.ContainsSelectedPoint(hoveredPoint.PointId))
+                return;
+
+            if (!harvestModeSession.RemoveSelectedPoint(hoveredPoint.PointId))
+                return;
+
+            RefreshAssignedOrders();
+            PublishSelectionChanged();
+            PublishHoveredPoint(hoveredPoint);
+            RecalculatePreview();
+        }
+
+        /// <summary>현재 순서 슬롯을 전부 비운다.</summary>
+        public void ResetSelectionSequence()
+        {
+            harvestModeSession.ClearSequence();
+            RefreshAssignedOrders();
+            PublishSelectionChanged();
+            PublishHoveredPoint(hoveredPoint);
             RecalculatePreview();
         }
 
@@ -267,28 +377,28 @@ namespace Project.Gameplay.Harvest
         {
             currentPoints.Clear();
 
-            if (harvestModeSession?.CurrentTarget is not HarvestTargetBehaviour targetBehaviour)
+            if (currentTargetBehaviour == null)
                 return;
 
-            IReadOnlyList<HarvestScanPoint> scanPoints = targetBehaviour.GetScanPoints();
+            IReadOnlyList<HarvestScanPoint> scanPoints = currentTargetBehaviour.GetScanPoints();
             if (scanPoints == null)
                 return;
 
             currentPoints.AddRange(scanPoints.Where(point => point != null));
         }
 
-        /// <summary>현재 포인트 런타임 상태를 초기화한다.</summary>
+        /// <summary>현재 포인트 상태를 초기화한다.</summary>
         private void ResetCurrentPoints()
         {
-            foreach (HarvestScanPoint point in currentPoints)
+            for (int i = 0; i < currentPoints.Count; i++)
             {
-                if (point == null)
+                if (currentPoints[i] == null)
                     continue;
 
-                point.ResetRuntimeState();
+                currentPoints[i].ResetRuntimeState();
             }
 
-            harvestModeSession.ClearSelectedPoints();
+            harvestModeSession.ClearSequence();
         }
 
         /// <summary>현재 센서 모드 기준으로 포인트를 공개한다.</summary>
@@ -309,15 +419,18 @@ namespace Project.Gameplay.Harvest
             guaranteed.Reveal();
             revealed.Add(guaranteed);
 
-            foreach (HarvestScanPoint point in unrevealed)
+            for (int i = 0; i < unrevealed.Count; i++)
             {
+                HarvestScanPoint point = unrevealed[i];
                 if (point == guaranteed)
                     continue;
 
-                float signature = scanMode == HarvestScanMode.Sonar ? point.SonarSignature : point.LidarSignature;
-
                 if (scanRevealTuning == null)
-                    return revealed;
+                    continue;
+
+                float signature = scanMode == HarvestScanMode.Sonar
+                    ? point.SonarSignature
+                    : point.LidarSignature;
 
                 float revealChance = Mathf.Lerp(
                     scanRevealTuning.MinRevealChance,
@@ -334,30 +447,24 @@ namespace Project.Gameplay.Harvest
             return revealed;
         }
 
-        /// <summary>마지막 선택 포인트를 회수 순서에서 제거한다.</summary>
-        private void RemoveLastSelectedPoint()
+        /// <summary>세션 슬롯 정보에 맞춰 각 포인트의 순번 표시를 갱신한다.</summary>
+        private void RefreshAssignedOrders()
         {
-            if (harvestModeSession.SelectedPointSequence.Count <= 0)
-                return;
+            for (int i = 0; i < currentPoints.Count; i++)
+            {
+                HarvestScanPoint point = currentPoints[i];
+                if (point == null)
+                    continue;
 
-            string lastPointId = harvestModeSession.SelectedPointSequence.Last();
-            HarvestScanPoint point = currentPoints.FirstOrDefault(candidate => candidate.PointId == lastPointId);
-            if (point != null)
-                point.Deselect();
-
-            List<string> rebuilt = harvestModeSession.SelectedPointSequence
-                .Take(harvestModeSession.SelectedPointSequence.Count - 1)
-                .ToList();
-
-            harvestModeSession.ClearSelectedPoints();
-
-            foreach (string pointId in rebuilt)
-                harvestModeSession.AddSelectedPoint(pointId);
-
-            RecalculatePreview();
+                int assignedOrder = harvestModeSession.GetAssignedOrder(point.PointId);
+                if (assignedOrder > 0)
+                    point.AssignOrder(assignedOrder);
+                else
+                    point.ClearAssignedOrder();
+            }
         }
 
-        /// <summary>현재 세션 상태를 기반으로 추정치를 다시 계산한다.</summary>
+        /// <summary>현재 세션 상태를 기준으로 추정치를 다시 계산한다.</summary>
         private void RecalculatePreview()
         {
             harvestResolver.EvaluateRecoveryPlan(harvestModeSession, currentPoints);
@@ -371,6 +478,65 @@ namespace Project.Gameplay.Harvest
 
             EventBus.Publish(new HarvestRecoveryCommittedEvent());
             harvestResolver.ResolveCommittedRecovery(harvestModeSession, currentPoints);
+        }
+
+        /// <summary>현재 타깃 기본 정보를 HUD 이벤트로 발행한다.</summary>
+        private void PublishTargetPrepared()
+        {
+            if (currentTargetBehaviour == null || currentTargetBehaviour.TargetData == null)
+                return;
+
+            string displayName = currentTargetBehaviour.RuntimePreviewDisplayName;
+            if (string.IsNullOrWhiteSpace(displayName))
+                displayName = currentTargetBehaviour.TargetData.TargetId;
+
+            EventBus.Publish(new HarvestConsoleTargetPreparedEvent(displayName, currentPoints.Count));
+        }
+
+        /// <summary>현재 실제 선택 개수를 HUD 이벤트로 발행한다.</summary>
+        private void PublishSelectionChanged()
+        {
+            EventBus.Publish(new HarvestSelectionSequenceChangedEvent(
+                harvestModeSession.GetAssignedPointCount(),
+                currentPoints.Count));
+        }
+
+        /// <summary>현재 hover 포인트 정보를 HUD 이벤트로 발행한다.</summary>
+        private void PublishHoveredPoint(HarvestScanPoint point)
+        {
+            if (point == null)
+            {
+                EventBus.Publish(new HarvestHoveredPointChangedEvent(
+                    false,
+                    string.Empty,
+                    string.Empty,
+                    0,
+                    0f,
+                    0f,
+                    Vector2.zero));
+                return;
+            }
+
+            Vector3 screenPosition = harvestConsoleCamera.WorldToScreenPoint(point.TooltipAnchor.position);
+            EventBus.Publish(new HarvestHoveredPointChangedEvent(
+                true,
+                point.PointId,
+                point.DisplayLabel,
+                point.AssignedOrder,
+                point.SonarSignature,
+                point.LidarSignature,
+                screenPosition));
+        }
+
+        /// <summary>현재 배터리/내구도 상태를 HUD 초기화용으로 재발행한다.</summary>
+        private void PublishRuntimeState()
+        {
+            SubmarineRuntimeState runtime = harvestResolver.SubmarineRuntimeState;
+            if (runtime == null || runtime.BaseStats == null)
+                return;
+
+            EventBus.Publish(new BatteryChangedEvent(runtime.CurrentBattery, runtime.BaseStats.MaxBattery));
+            EventBus.Publish(new HullDurabilityChangedEvent(runtime.CurrentHullDurability, runtime.BaseStats.MaxHullDurability));
         }
 
         /// <summary>회수 콘솔용 자유 커서 상태를 적용한다.</summary>

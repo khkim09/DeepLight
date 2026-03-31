@@ -23,3 +23,5 @@ MonoBehaviour:
   harvestSwitchSensorKey: 114
   harvestCommitKey: 32
   harvestExitKey: 120
+  harvestResetSequenceKey: 103
+  harvestInventoryKey: 9

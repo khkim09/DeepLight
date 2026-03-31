@@ -1,41 +1,36 @@
-﻿using UnityEngine;
+﻿using Project.Data.Harvest;
+using UnityEngine;
 
 namespace Project.Gameplay.Harvest
 {
-    /// <summary>회수 콘솔에서 선택 가능한 고정 포인트를 정의하는 컴포넌트</summary>
+    /// <summary>런타임 회수 포인트의 시각 상태와 스탯을 보관한다.</summary>
     public class HarvestScanPoint : MonoBehaviour
     {
-        [Header("Identity")]
-        [SerializeField] private string pointId = "A"; // 포인트 고유 ID
-        [SerializeField] private int displayOrder = 0; // 표시 순서
-        [SerializeField] private string displayLabel = "A"; // HUD 표시 라벨
+        [Header("Visual References")]
+        [SerializeField] private GameObject pointVisualRoot; // 시각 루트
+        [SerializeField] private SpriteRenderer outerRingRenderer; // 외곽 링 렌더러
+        [SerializeField] private SpriteRenderer fillRenderer; // 내부 fill 렌더러
+        [SerializeField] private Transform tooltipAnchor; // 툴팁 기준 위치
 
-        [Header("Recovery Weights")]
-        [Tooltip("포인트 기본 안정성")][SerializeField, Range(0f, 1f)] private float baseStability = 0.5f; // 포인트 기본 안정성
-        [Tooltip("첫 포인트 적합도")][SerializeField, Range(0f, 1f)] private float firstAnchorBias = 0.5f; // 첫 포인트 적합도
-        [Tooltip("후속 순서 적합도")][SerializeField, Range(0f, 1f)] private float sequenceBias = 0.5f; // 후속 순서 적합도
-        [Tooltip("위험도")][SerializeField, Range(0f, 1f)] private float riskWeight = 0.5f; // 위험도
+        [Header("Layers")]
+        [SerializeField] private LayerMask scanPointLayerMask; // point root 레이어
+        [SerializeField] private LayerMask visualLayerMask; // visual 레이어
 
-        [Header("Sensor Signatures")]
-        [Tooltip("소나 반응도")][SerializeField, Range(0f, 1f)] private float sonarSignature = 0.5f; // 소나 반응도
-        [Tooltip("라이다 반응도")][SerializeField, Range(0f, 1f)] private float lidarSignature = 0.5f; // 라이다 반응도
+        private string pointId;
+        private int displayOrder;
+        private string displayLabel;
+        private float baseStability;
+        private float firstAnchorBias;
+        private float sequenceBias;
+        private float riskWeight;
+        private float sonarSignature;
+        private float lidarSignature;
 
-        [Header("Visual")]
-        [SerializeField] private GameObject pointVisualRoot; // 포인트 비주얼 루트
-        [SerializeField] private SpriteRenderer pointSpriteRenderer; // 포인트 스프라이트 렌더러
-        [SerializeField] private Sprite hiddenSprite; // 미공개 스프라이트(black)
-        [SerializeField] private Sprite revealedSprite; // 공개/선택 스프라이트(white)
-        [SerializeField] private Color hiddenColor = new Color(1f, 1f, 1f, 0.55f); // 미공개 색상
-        [SerializeField] private Color revealedColor = new Color(0.8f, 0.95f, 1f, 1f); // 공개 색상
-        [SerializeField] private Color hoveredColor = new Color(1f, 0.95f, 0.5f, 1f); // hover 색상
-        [SerializeField] private Color selectedColor = new Color(0.35f, 1f, 0.35f, 1f); // 선택/배치 완료 색상
-        [SerializeField] private float hoveredScaleMultiplier = 1.2f; // hover 시 확대 배율
-        [SerializeField] private float selectedScaleMultiplier = 1.25f; // 선택 시 확대 배율
-
-        private bool isRevealed; // 스캔으로 공개되었는지
-        private bool isSelected; // 회수 순서에 배치되었는지
-        private bool isHovered; // 현재 마우스 hover 상태인지
-        private Vector3 visualBaseScale = Vector3.one; // 기본 비주얼 스케일
+        private bool isRevealed;
+        private bool isHovered;
+        private int assignedOrder;
+        private HarvestPointOrderVisualSetSO visualSet;
+        private Vector3 baseScale = Vector3.one;
 
         public string PointId => pointId;
         public int DisplayOrder => displayOrder;
@@ -47,97 +42,171 @@ namespace Project.Gameplay.Harvest
         public float SonarSignature => sonarSignature;
         public float LidarSignature => lidarSignature;
         public bool IsRevealed => isRevealed;
-        public bool IsSelected => isSelected;
         public bool IsHovered => isHovered;
+        public bool IsSelected => assignedOrder > 0;
+        public int AssignedOrder => assignedOrder;
+        public Transform TooltipAnchor => tooltipAnchor != null ? tooltipAnchor : transform;
 
-        /// <summary>초기 비주얼 상태를 적용한다</summary>
+        /// <summary>초기 시각 상태와 레이어를 적용한다.</summary>
         private void Awake()
         {
             if (pointVisualRoot != null)
-                visualBaseScale = pointVisualRoot.transform.localScale; // 기본 스케일 캐싱
+                baseScale = pointVisualRoot.transform.localScale;
 
-            ApplyVisualState(); // 시작 비주얼 적용
+            ApplyLayers();
+            ApplyVisualState();
         }
 
-        /// <summary>포인트 상태를 초기화한다</summary>
+        /// <summary>preset과 런타임 스탯으로 현재 포인트를 초기화한다.</summary>
+        public void Initialize(HarvestScanPointPresetSO preset, HarvestScanPointRuntimeStats runtimeStats)
+        {
+            pointId = preset.PointId;
+            displayOrder = preset.DisplayOrder;
+            displayLabel = preset.DisplayLabel;
+
+            baseStability = runtimeStats.BaseStability;
+            firstAnchorBias = runtimeStats.FirstAnchorBias;
+            sequenceBias = runtimeStats.SequenceBias;
+            riskWeight = runtimeStats.RiskWeight;
+            sonarSignature = runtimeStats.SonarSignature;
+            lidarSignature = runtimeStats.LidarSignature;
+
+            visualSet = preset.OrderVisualSet;
+
+            ResetRuntimeState();
+        }
+
+        /// <summary>포인트 상태를 초기화한다.</summary>
         public void ResetRuntimeState()
         {
-            isRevealed = false; // 공개 상태 초기화
-            isSelected = false; // 선택 상태 초기화
-            isHovered = false; // hover 상태 초기화
-            ApplyVisualState(); // 비주얼 적용
+            isRevealed = false;
+            isHovered = false;
+            assignedOrder = 0;
+            ApplyVisualState();
         }
 
-        /// <summary>포인트를 공개 상태로 전환한다</summary>
+        /// <summary>포인트를 공개 상태로 전환한다.</summary>
         public void Reveal()
         {
-            isRevealed = true; // 공개 처리
-            ApplyVisualState(); // 비주얼 적용
+            isRevealed = true;
+            ApplyVisualState();
         }
 
-        /// <summary>포인트를 회수 순서에 배치된 상태로 전환한다</summary>
-        public void Select()
-        {
-            isSelected = true; // 선택 완료 상태
-            isRevealed = true; // 선택되면 공개 상태도 보장
-            isHovered = false; // 선택 완료 시 hover 해제
-            ApplyVisualState(); // 비주얼 적용
-        }
-
-        /// <summary>포인트를 회수 순서에서 제거한다</summary>
-        public void Deselect()
-        {
-            isSelected = false; // 선택 완료 상태 해제
-            isHovered = false; // hover도 해제
-            ApplyVisualState(); // 현재 공개/비공개 상태에 맞춰 복귀
-        }
-
-        /// <summary>포인트 hover 상태를 갱신한다</summary>
+        /// <summary>hover 상태를 갱신한다.</summary>
         public void SetHovered(bool hovered)
         {
-            if (isSelected)
-                hovered = false; // 이미 배치된 포인트는 hover보다 selected 우선
-
             if (isHovered == hovered)
                 return;
 
-            isHovered = hovered; // hover 상태 반영
-            ApplyVisualState(); // 비주얼 적용
+            isHovered = hovered;
+            ApplyVisualState();
         }
 
-        /// <summary>현재 상태에 맞는 비주얼을 갱신한다</summary>
+        /// <summary>현재 포인트에 순번을 지정한다.</summary>
+        public void AssignOrder(int order)
+        {
+            assignedOrder = Mathf.Max(0, order);
+            if (assignedOrder > 0)
+                isRevealed = true;
+
+            ApplyVisualState();
+        }
+
+        /// <summary>현재 포인트의 순번을 제거한다.</summary>
+        public void ClearAssignedOrder()
+        {
+            assignedOrder = 0;
+            isHovered = false;
+            ApplyVisualState();
+        }
+
+        /// <summary>현재 상태에 맞는 시각을 반영한다.</summary>
         private void ApplyVisualState()
         {
             if (pointVisualRoot != null)
-                pointVisualRoot.SetActive(true); // 포인트 위치 자체는 항상 보이게 유지
+                pointVisualRoot.SetActive(true);
 
-            if (pointSpriteRenderer != null)
+            if (outerRingRenderer != null)
             {
-                // 스프라이트 종류 결정
-                pointSpriteRenderer.sprite = isRevealed || isSelected ? revealedSprite : hiddenSprite;
-
-                // 색상 결정
-                if (isSelected)
-                    pointSpriteRenderer.color = selectedColor;
-                else if (isHovered)
-                    pointSpriteRenderer.color = hoveredColor;
-                else if (isRevealed)
-                    pointSpriteRenderer.color = revealedColor;
+                if (visualSet == null)
+                {
+                    outerRingRenderer.color = isRevealed ? Color.white : new Color(0.15f, 0.15f, 0.15f, 0.8f);
+                }
+                else if (!isRevealed)
+                {
+                    outerRingRenderer.color = visualSet.HiddenRingColor;
+                }
+                else if (isHovered && !IsSelected)
+                {
+                    outerRingRenderer.color = visualSet.HoverRingColor;
+                }
                 else
-                    pointSpriteRenderer.color = hiddenColor;
+                {
+                    outerRingRenderer.color = visualSet.RevealedRingColor;
+                }
             }
 
-            if (pointVisualRoot == null)
-                return;
+            if (fillRenderer != null)
+            {
+                if (!IsSelected)
+                {
+                    fillRenderer.sprite = null;
+                    fillRenderer.color = new Color(1f, 1f, 1f, 0f);
+                }
+                else
+                {
+                    fillRenderer.sprite = visualSet != null ? visualSet.GetSpriteForOrder(assignedOrder) : null;
+                    fillRenderer.color = Color.white;
+                }
+            }
 
-            // 상태에 따라 크기 강조
-            float scaleMultiplier = 1f;
-            if (isSelected)
-                scaleMultiplier = selectedScaleMultiplier;
-            else if (isHovered)
-                scaleMultiplier = hoveredScaleMultiplier;
+            if (pointVisualRoot != null)
+            {
+                float scaleMultiplier = visualSet != null && isHovered && !IsSelected
+                    ? visualSet.HoveredScaleMultiplier
+                    : 1f;
 
-            pointVisualRoot.transform.localScale = visualBaseScale * scaleMultiplier;
+                pointVisualRoot.transform.localScale = baseScale * scaleMultiplier;
+            }
+        }
+
+        /// <summary>인스펙터 LayerMask 기준으로 레이어를 적용한다.</summary>
+        private void ApplyLayers()
+        {
+            int scanPointLayer = ExtractSingleLayerIndex(scanPointLayerMask);
+            int visualLayer = ExtractSingleLayerIndex(visualLayerMask);
+
+            if (scanPointLayer >= 0)
+                gameObject.layer = scanPointLayer;
+
+            if (visualLayer >= 0 && pointVisualRoot != null)
+                SetLayerRecursively(pointVisualRoot.transform, visualLayer);
+        }
+
+        /// <summary>LayerMask에서 단일 레이어 인덱스를 추출한다.</summary>
+        private int ExtractSingleLayerIndex(LayerMask mask)
+        {
+            int value = mask.value;
+            if (value == 0)
+                return -1;
+
+            int index = 0;
+            while (value > 1)
+            {
+                value >>= 1;
+                index++;
+            }
+
+            return index;
+        }
+
+        /// <summary>하위 transform 전체에 레이어를 재귀 적용한다.</summary>
+        private void SetLayerRecursively(Transform root, int layerIndex)
+        {
+            root.gameObject.layer = layerIndex;
+
+            for (int i = 0; i < root.childCount; i++)
+                SetLayerRecursively(root.GetChild(i), layerIndex);
         }
     }
 }

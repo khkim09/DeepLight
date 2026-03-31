@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Data::Project.Data.CameraSystem.ExplorationCameraTuningSO
   baseFollow:
     defaultOffsetY: 2
-    rotationFollowSpeed: 10
+    rotationFollowSpeed: 7
   distance:
     idleDistanceZ: -6
     normalForwardDistanceZ: -7.5
     boostForwardDistanceZ: -9
     normalBackwardDistanceZ: -5
     boostBackwardDistanceZ: -4
-    distanceSmoothTime: 0.3
+    distanceSmoothTime: 0.4
   freeLook:
     freeLookTopOffset: {x: 0, y: 6, z: -1}
     mouseSensitivityX: 100
