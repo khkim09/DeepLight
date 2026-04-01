@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Project.Gameplay.World
 {
-    /// <summary>수심과 거리 조건에 따라 채집 타깃을 런타임 생성하는 클래스이다.</summary>
+    /// <summary>수심과 거리 규칙에 따라 채집 타깃을 월드 전체에 생성하는 클래스이다.</summary>
     public class HarvestWorldSpawner : MonoBehaviour
     {
         [Header("References")]
@@ -22,14 +22,16 @@ namespace Project.Gameplay.World
         [SerializeField] private float spawnClearRadius = 20f; // 타깃 간 최소 거리
         [SerializeField] private int maxPositionRetry = 20; // 위치 재시도 횟수
 
+        [Header("Story Debug")]
+        [SerializeField] private int currentDay = 1; // 현재 스토리 일자 디버그 값
+
         [Header("Debug")]
         [SerializeField] private bool spawnOnStart = true; // 시작 시 자동 생성 여부
         [SerializeField] private bool logSpawnFlow = true; // 생성 흐름 로그 출력 여부
-        [SerializeField] private int currentDay = 1; // 현재 스토리 일자 디버그 값
 
         private readonly List<HarvestTargetBehaviour> spawnedTargets = new(); // 생성된 타깃 캐시
 
-        /// <summary>시작 시 현재 조건에 맞는 타깃을 생성한다.</summary>
+        /// <summary>시작 시 모든 프로필을 기준으로 타깃을 생성한다.</summary>
         private void Start()
         {
             if (!spawnOnStart)
@@ -38,7 +40,7 @@ namespace Project.Gameplay.World
             SpawnAll();
         }
 
-        /// <summary>현재 조건에 맞는 모든 타깃 생성을 다시 수행한다.</summary>
+        /// <summary>등록된 모든 프로필에 대해 월드 타깃을 다시 생성한다.</summary>
         [ContextMenu("Spawn All Harvest Targets")]
         public void SpawnAll()
         {
@@ -50,24 +52,13 @@ namespace Project.Gameplay.World
                 return;
             }
 
-            if (playerTransform == null)
-            {
-                Log("Spawn aborted: Player Transform is null.");
-                return;
-            }
-
             if (startPoint == null)
             {
                 Log("Spawn aborted: Start Point is null.");
                 return;
             }
 
-            float currentDepth = Mathf.Abs(playerTransform.position.y);
-            float currentDistanceXZ = Vector2.Distance(
-                new Vector2(playerTransform.position.x, playerTransform.position.z),
-                new Vector2(startPoint.position.x, startPoint.position.z));
-
-            Log($"Spawn begin | depth={currentDepth:F1}, distanceXZ={currentDistanceXZ:F1}, day={currentDay}");
+            Log($"Spawn begin | world-wide generation, currentDay={currentDay}");
 
             int totalSpawned = 0;
 
@@ -80,19 +71,12 @@ namespace Project.Gameplay.World
                     continue;
                 }
 
-                if (!profile.Matches(currentDepth, currentDistanceXZ, currentDay))
-                {
-                    Log($"Profile [{profile.ProfileId}] skipped: conditions not matched");
-                    continue;
-                }
-
                 int spawnCount = Random.Range(profile.MinSpawnCount, profile.MaxSpawnCount + 1);
-                Log($"Profile [{profile.ProfileId}] matched: try spawn {spawnCount}");
+                Log($"Profile [{profile.ProfileId}] spawning count={spawnCount}");
 
                 for (int spawnIndex = 0; spawnIndex < spawnCount; spawnIndex++)
                 {
                     HarvestTargetSO targetData = PickTargetFromProfile(profile);
-
                     if (targetData == null)
                     {
                         Log($"Profile [{profile.ProfileId}] spawn[{spawnIndex}] skipped: no valid target in pool");
@@ -112,9 +96,10 @@ namespace Project.Gameplay.World
                         transform);
 
                     instance.name = $"HarvestTarget_{targetData.TargetId}_{spawnIndex}";
-
-                    // 핵심: 프리팹의 TargetData는 비워둬도 되고, 여기서 런타임 할당한다.
                     instance.SetTargetData(targetData);
+
+                    // 스폰 프로필의 day 범위를 “채집 가능 시기”로 전달한다.
+                    instance.SetHarvestAvailabilityWindow(profile.MinDay, profile.MaxDay, currentDay);
 
                     spawnedTargets.Add(instance);
                     totalSpawned++;
@@ -155,14 +140,8 @@ namespace Project.Gameplay.World
             for (int i = 0; i < profile.TargetPool.Count; i++)
             {
                 HarvestTargetSO target = profile.TargetPool[i].Target;
-                if (target == null)
+                if (target == null || !target.IsValid())
                     continue;
-
-                if (!target.IsValid())
-                {
-                    Log($"Invalid target skipped in profile [{profile.ProfileId}]: {(target != null ? target.name : "null")}");
-                    continue;
-                }
 
                 totalWeight += profile.TargetPool[i].Weight;
             }
@@ -187,7 +166,7 @@ namespace Project.Gameplay.World
             return null;
         }
 
-        /// <summary>프로필 조건 범위 안에서 실제 생성 위치를 찾는다.</summary>
+        /// <summary>프로필의 거리/수심 범위 안에서 실제 생성 위치를 찾는다.</summary>
         private bool TryFindSpawnPosition(HarvestTargetSpawnProfileSO profile, out Vector3 spawnPosition)
         {
             spawnPosition = Vector3.zero;

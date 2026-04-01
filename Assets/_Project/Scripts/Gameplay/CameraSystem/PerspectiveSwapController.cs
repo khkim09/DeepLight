@@ -92,7 +92,13 @@ namespace Project.Gameplay.CameraSystem
 
             Quaternion zRoll = Quaternion.Euler(0f, 0f, -orbitAngle);
             Vector3 dynamicMidLocalPos = zRoll * transitionGuide.localPosition;
-            Quaternion dynamicMidLocalRot = zRoll * transitionGuide.localRotation;
+
+            Quaternion rolledRot = zRoll * transitionGuide.localRotation;
+            Vector3 lookForward = rolledRot * Vector3.forward;
+
+            // 방향(Forward)은 zRoll이 적용된 값을 그대로 사용하여 Pitch/Yaw 자연스러운 전환을 유지하되,
+            // 정수리 방향(Up)을 잠수함의 로컬 Y축(Vector3.up)으로 강제 고정하여 Roll 현상을 방지합니다.
+            Quaternion dynamicMidLocalRot = Quaternion.LookRotation(lookForward, Vector3.up);
 
             try
             {
@@ -148,7 +154,9 @@ namespace Project.Gameplay.CameraSystem
             Quaternion zRoll = Quaternion.Euler(0f, 0f, -orbitAngle);
 
             Vector3 dynamicMidLocalPos = zRoll * transitionGuide.localPosition;
-            Quaternion dynamicMidLocalRot = zRoll * transitionGuide.localRotation;
+            Quaternion rolledRot = zRoll * transitionGuide.localRotation;
+            Vector3 lookForward = rolledRot * Vector3.forward;
+            Quaternion dynamicMidLocalRot = Quaternion.LookRotation(lookForward, Vector3.up);
 
             // 역방향 전환을 위해 카메라를 다시 조종석 출발 위치로 되돌린다.
             explorationCamera.transform.position = cockpitTransitionTarget.position;

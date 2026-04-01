@@ -6,11 +6,11 @@ using UnityEngine;
 
 namespace Project.Gameplay.Harvest
 {
-    /// <summary>채집 대상의 런타임 포인트와 실제 드랍 아이템을 관리한다.</summary>
+    /// <summary>채집 대상의 런타임 포인트, 드랍 아이템, 해금 조건을 관리한다.</summary>
     public class HarvestTargetBehaviour : MonoBehaviour, IHarvestTarget
     {
         [SerializeField] private HarvestTargetSO targetData; // 현재 채집 대상 데이터
-        [SerializeField] private bool isAvailable = true; // 현재 채집 가능 여부
+        [SerializeField] private bool isAvailable = true; // 월드 상 존재/사용 가능 여부
         [SerializeField] private Transform rotationPivot; // 회전 피벗 참조
         [SerializeField] private HarvestScanPoint[] scanPoints; // 런타임 포인트 캐시
 
@@ -18,10 +18,20 @@ namespace Project.Gameplay.Harvest
         private string runtimePreviewDisplayName = string.Empty; // 런타임 위장 이름
         private ItemSO runtimeResolvedItem; // 런타임 확정 드랍 아이템
 
+        private int requiredMinDay = 1; // 채집 가능 최소 day
+        private int requiredMaxDay = 999; // 채집 가능 최대 day
+        private int currentStoryDay = 1; // 현재 스토리 day
+
         public HarvestTargetSO TargetData => targetData;
         public bool IsAvailable => isAvailable;
         public string RuntimePreviewDisplayName => runtimePreviewDisplayName;
         public ItemSO RuntimeResolvedItem => runtimeResolvedItem;
+        public int RequiredMinDay => requiredMinDay;
+        public int RequiredMaxDay => requiredMaxDay;
+        public int CurrentStoryDay => currentStoryDay;
+
+        /// <summary>현재 day 기준으로 실제 채집 가능 여부를 반환한다.</summary>
+        public bool IsHarvestUnlocked => currentStoryDay >= requiredMinDay && currentStoryDay <= requiredMaxDay;
 
         /// <summary>초기 참조와 런타임 데이터를 구성한다.</summary>
         private void Awake()
@@ -48,6 +58,29 @@ namespace Project.Gameplay.Harvest
         public ItemSO GetResolvedItem()
         {
             return runtimeResolvedItem;
+        }
+
+        /// <summary>채집 가능 day 범위를 설정한다.</summary>
+        public void SetHarvestAvailabilityWindow(int minDay, int maxDay, int storyDay)
+        {
+            requiredMinDay = Mathf.Max(1, minDay);
+            requiredMaxDay = Mathf.Max(requiredMinDay, maxDay);
+            currentStoryDay = Mathf.Max(1, storyDay);
+        }
+
+        /// <summary>현재 채집 불가 이유 문자열을 반환한다.</summary>
+        public string GetUnavailableReason()
+        {
+            if (IsHarvestUnlocked)
+                return string.Empty;
+
+            if (currentStoryDay < requiredMinDay)
+                return $"Unavailable until day {requiredMinDay}.";
+
+            if (currentStoryDay > requiredMaxDay)
+                return $"This target can no longer be harvested.";
+
+            return "This target cannot be harvested right now.";
         }
 
         /// <summary>target data를 교체하고 런타임 구성을 다시 만든다.</summary>
@@ -134,13 +167,10 @@ namespace Project.Gameplay.Harvest
                 return;
             }
 
-            // 회수 전 UI에서 보여줄 위장 이름을 1회 뽑아 고정한다.
+            // 위장 이름과 실제 드랍 아이템을 생성 시점에 1회 확정한다.
             runtimePreviewDisplayName = targetData.BuildPreviewDisplayName();
-
-            // 실제 획득 아이템도 target 생성 시 1회 뽑아 고정한다.
             runtimeResolvedItem = targetData.PickRandomItem();
 
-            // 포인트를 런타임 생성한다.
             GenerateRuntimePoints();
             CacheScanPoints();
         }
@@ -185,7 +215,6 @@ namespace Project.Gameplay.Harvest
                 if (point == null)
                     continue;
 
-                // preset 기반으로 identity/stats/visual set을 주입한다.
                 point.Initialize(preset, preset.BuildRuntimeStats());
 
                 runtimePointCache.Add(point);
@@ -207,7 +236,6 @@ namespace Project.Gameplay.Harvest
             {
                 CubeFace face = candidateFaces[Random.Range(0, candidateFaces.Count)];
 
-                // 면 평면 좌표를 범위 내 랜덤으로 뽑는다.
                 float a = Random.Range(data.PlanarMin, data.PlanarMax);
                 float b = Random.Range(data.PlanarMin, data.PlanarMax);
 
@@ -263,7 +291,6 @@ namespace Project.Gameplay.Harvest
                 float deltaA = Mathf.Abs(other.PlaneCoordA - a);
                 float deltaB = Mathf.Abs(other.PlaneCoordB - b);
 
-                // 두 축 모두 최소 간격보다 작으면 겹침으로 본다.
                 if (deltaA < data.MinPointSpacing && deltaB < data.MinPointSpacing)
                     return true;
             }

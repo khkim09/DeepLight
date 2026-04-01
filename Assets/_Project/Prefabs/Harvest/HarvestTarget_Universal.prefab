@@ -243,10 +243,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f31f119a0a52334289375783f25f361, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestTargetHighlightController
-  targetRenderer: {fileID: 1084739174740834514}
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
-  highlightedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  useMaterialInstance: 1
+  targetRenderers: []
+  highlightLayerMask:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!1 &7649576820552487016
 GameObject:
   m_ObjectHideFlags: 0

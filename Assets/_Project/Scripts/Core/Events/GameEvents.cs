@@ -265,6 +265,43 @@ namespace Project.Core.Events
 
     #endregion
 
+    #region Interaction UI
+
+    /// <summary>채집 대상에 포커스가 맞춰져 HUD에 상호작용 아이콘(!)을 띄우는 이벤트</summary>
+    public readonly struct HarvestTargetFocusedEvent : IEvent
+    {
+        public readonly string DisplayName; // 타깃 표시 이름
+        public readonly KeyCode InteractKey; // 상호작용 키 (F)
+        public readonly bool IsAvailable; // 현재 채집 가능한 대상인지 여부
+
+        /// <summary>포커스 이벤트 정보 생성</summary>
+        public HarvestTargetFocusedEvent(string displayName, KeyCode interactKey, bool isAvailable)
+        {
+            DisplayName = displayName;
+            InteractKey = interactKey;
+            IsAvailable = isAvailable;
+        }
+    }
+
+    /// <summary>채집 대상에서 포커스가 해제되어 아이콘과 툴팁을 숨기는 이벤트</summary>
+    public readonly struct HarvestTargetUnfocusedEvent : IEvent
+    {
+    }
+
+    /// <summary>상호작용이 불가능한 대상에게 키를 입력했을 때 툴팁을 띄우는 이벤트</summary>
+    public readonly struct HarvestTargetInteractMessageEvent : IEvent
+    {
+        public readonly string Message; // 띄울 안내 메시지
+
+        /// <summary>메시지 이벤트 정보 생성</summary>
+        public HarvestTargetInteractMessageEvent(string message)
+        {
+            Message = message;
+        }
+    }
+
+    #endregion
+
     #region Inventory
 
     /// <summary>인벤토리 아이템 추가 이벤트</summary>

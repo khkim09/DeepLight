@@ -50,32 +50,37 @@ namespace Project.Gameplay.Interaction
             EventBus.Unsubscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
         }
 
-        /// <summary>탐사 모드에서 현재 상호작용 대상을 갱신하고 입력을 처리한다.</summary>
+        /// <summary>탐사 모드에서 상호작용 대상을 갱신하고 입력을 처리한다.</summary>
         private void Update()
         {
-            if (isHarvestMode)
-                return;
+            if (isHarvestMode) return;
 
             // 현재 겹친 존 중 가장 적절한 대상을 재선정한다.
             UpdateCurrentZone();
 
-            if (harvestModeCoordinator == null || inputBindings == null)
-                return;
+            if (harvestModeCoordinator == null || inputBindings == null) return;
 
-            if (!HasAvailableTarget())
-                return;
+            // 타깃이 없거나 데이터가 유효하지 않으면 입력 무시
+            if (currentTarget == null || currentTarget.TargetData == null || !currentTarget.TargetData.IsValid()) return;
 
-            if (!Input.GetKeyDown(inputBindings.InteractHarvestKey))
-                return;
-
-            // 접근 연출이 없으면 즉시 진입한다.
-            if (approachController == null)
+            if (Input.GetKeyDown(inputBindings.InteractHarvestKey))
             {
-                harvestModeCoordinator.TryEnterHarvestMode(currentTarget);
-                return;
-            }
+                // 타깃이 감지되었으나 채집 불가능(이미 채집함 등) 상태일 때 툴팁 이벤트 발행
+                if (!currentTarget.IsAvailable)
+                {
+                    EventBus.Publish(new HarvestTargetInteractMessageEvent("현재는 채집할 수 없는 대상입니다."));
+                    return;
+                }
 
-            _ = approachController.TryApproachAndEnterHarvestAsync(currentZone, harvestModeCoordinator);
+                // 접근 연출이 없으면 즉시 진입한다.
+                if (approachController == null)
+                {
+                    harvestModeCoordinator.TryEnterHarvestMode(currentTarget);
+                    return;
+                }
+
+                _ = approachController.TryApproachAndEnterHarvestAsync(currentZone, harvestModeCoordinator);
+            }
         }
 
         /// <summary>Harvest 진입 시 탐사 상호작용을 잠근다.</summary>
@@ -94,46 +99,20 @@ namespace Project.Gameplay.Interaction
                 approachController.EndApproachLook();
         }
 
-        /// <summary>현재 유효한 채집 대상 존재 여부를 반환한다.</summary>
-        public bool HasAvailableTarget()
-        {
-            if (currentTarget == null)
-                return false;
-
-            if (!currentTarget.IsAvailable)
-                return false;
-
-            if (currentTarget.TargetData == null)
-                return false;
-
-            if (!currentTarget.TargetData.IsValid())
-                return false;
-
-            return true;
-        }
-
         /// <summary>현재 대상의 표시 이름을 반환한다.</summary>
         public string GetCurrentTargetDisplayName()
         {
-            if (!HasAvailableTarget())
-                return string.Empty;
+            if (currentTarget == null || currentTarget.TargetData == null) return string.Empty;
 
-            // 위장 이름은 런타임에서 확정된 이름을 우선 사용한다.
             if (currentTarget is HarvestTargetBehaviour targetBehaviour)
             {
                 if (!string.IsNullOrWhiteSpace(targetBehaviour.RuntimePreviewDisplayName))
                     return targetBehaviour.RuntimePreviewDisplayName;
             }
 
-            HarvestTargetSO targetData = currentTarget.TargetData;
-            if (targetData == null)
-                return string.Empty;
-
-            // fallback은 target id로 둔다.
-            if (!string.IsNullOrWhiteSpace(targetData.TargetId))
-                return targetData.TargetId;
-
-            return string.Empty;
+            return !string.IsNullOrWhiteSpace(currentTarget.TargetData.TargetId)
+                ? currentTarget.TargetData.TargetId
+                : string.Empty;
         }
 
         /// <summary>겹친 존 중 현재 상호작용할 대상을 선정한다.</summary>
@@ -148,7 +127,7 @@ namespace Project.Gameplay.Interaction
             for (int i = overlappedZones.Count - 1; i >= 0; i--)
             {
                 HarvestInteractionZone zone = overlappedZones[i];
-                if (zone == null || zone.HarvestTarget == null || !zone.HarvestTarget.IsAvailable)
+                if (zone == null || zone.HarvestTarget == null)
                 {
                     overlappedZones.RemoveAt(i);
                     continue;
@@ -156,12 +135,9 @@ namespace Project.Gameplay.Interaction
 
                 Vector3 toTarget = zone.GetTargetCenter() - transform.position;
                 float distance = toTarget.magnitude;
-                if (distance <= 0.0001f)
-                    continue;
+                if (distance <= 0.0001f) continue;
 
                 Vector3 direction = toTarget.normalized;
-
-                // 정면 우선 + 가까운 대상 우선
                 float alignment = Vector3.Dot(transform.forward, direction);
                 float score = alignment * 2f - distance * 0.15f;
 
@@ -177,37 +153,45 @@ namespace Project.Gameplay.Interaction
                 ApplyCurrentHighlight();
         }
 
-        /// <summary>현재 타깃에 하이라이트를 적용한다.</summary>
+        /// <summary>현재 타깃에 하이라이트를 적용하고 UI 이벤트를 발행한다.</summary>
         private void ApplyCurrentHighlight()
         {
             HarvestTargetBehaviour targetBehaviour = currentZone != null ? currentZone.TargetBehaviour : null;
-            if (targetBehaviour == null)
-                return;
+            if (targetBehaviour == null) return;
 
             currentHighlight = targetBehaviour.GetComponentInParent<HarvestTargetHighlightController>();
             if (currentHighlight == null)
                 currentHighlight = targetBehaviour.GetComponent<HarvestTargetHighlightController>();
 
             if (currentHighlight != null)
+            {
                 currentHighlight.SetHighlight(true);
+
+                // 타깃 이름, 키, 그리고 '채집 가능 여부'를 UI에 전달
+                EventBus.Publish(new HarvestTargetFocusedEvent(
+                    GetCurrentTargetDisplayName(),
+                    InteractKey,
+                    currentTarget.IsAvailable));
+            }
         }
 
-        /// <summary>현재 하이라이트를 해제한다.</summary>
+        /// <summary>현재 하이라이트를 해제하고 UI 숨김 이벤트를 발행한다.</summary>
         private void ClearCurrentHighlight()
         {
-            if (currentHighlight == null)
-                return;
+            if (currentHighlight != null)
+            {
+                currentHighlight.SetHighlight(false);
+                currentHighlight = null;
+            }
 
-            currentHighlight.SetHighlight(false);
-            currentHighlight = null;
+            EventBus.Publish(new HarvestTargetUnfocusedEvent());
         }
 
         /// <summary>상호작용 존 진입 시 후보 목록에 추가한다.</summary>
         private void OnTriggerEnter(Collider other)
         {
             HarvestInteractionZone zone = other.GetComponent<HarvestInteractionZone>();
-            if (zone == null)
-                return;
+            if (zone == null) return;
 
             if (!overlappedZones.Contains(zone))
                 overlappedZones.Add(zone);
@@ -217,8 +201,7 @@ namespace Project.Gameplay.Interaction
         private void OnTriggerExit(Collider other)
         {
             HarvestInteractionZone zone = other.GetComponent<HarvestInteractionZone>();
-            if (zone == null)
-                return;
+            if (zone == null) return;
 
             overlappedZones.Remove(zone);
 

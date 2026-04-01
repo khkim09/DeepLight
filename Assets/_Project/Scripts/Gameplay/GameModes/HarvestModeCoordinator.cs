@@ -35,15 +35,20 @@ namespace Project.Gameplay.GameModes
             if (targetData == null || !targetData.IsValid())
                 return false;
 
-            // 세션 대상 저장
+            // 월드에는 존재하지만 현재 day 조건이 안 맞는 경우 진입만 막는다.
+            if (target is HarvestTargetBehaviour targetBehaviour && !targetBehaviour.IsHarvestUnlocked)
+            {
+                Debug.LogWarning($"[HarvestModeCoordinator] Harvest blocked: {targetBehaviour.GetUnavailableReason()}");
+                return false;
+            }
+
             harvestModeSession.SetTarget(target);
 
-            // 세션 시작 이벤트는 현재 target이 런타임에서 확정한 아이템 ID를 사용한다.
             string itemId = string.Empty;
 
-            if (target is HarvestTargetBehaviour targetBehaviour)
+            if (target is HarvestTargetBehaviour resolvedTargetBehaviour)
             {
-                ItemSO resolvedItem = targetBehaviour.GetResolvedItem();
+                ItemSO resolvedItem = resolvedTargetBehaviour.GetResolvedItem();
                 if (resolvedItem != null && resolvedItem.IsValid())
                     itemId = resolvedItem.ItemId;
             }

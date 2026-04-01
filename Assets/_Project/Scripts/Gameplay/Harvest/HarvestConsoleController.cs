@@ -98,6 +98,10 @@ namespace Project.Gameplay.Harvest
         /// <summary>회수 콘솔 진입 시 현재 타깃과 포인트 상태를 초기화한다.</summary>
         private void OnHarvestModeEntered(HarvestModeEnteredEvent publishedEvent)
         {
+            // 이벤트는 먼저 왔지만 런타임 주입이 아직 끝나지 않은 경우를 방어한다.
+            if (harvestModeSession == null || harvestResolver == null || harvestModeCoordinator == null)
+                return;
+
             isHarvestMode = true;
             isDraggingTarget = false;
             hoveredPoint = null;

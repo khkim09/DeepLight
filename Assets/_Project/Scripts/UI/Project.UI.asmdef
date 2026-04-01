@@ -4,7 +4,8 @@
     "references": [
         "Project.Core",
         "Project.Data",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

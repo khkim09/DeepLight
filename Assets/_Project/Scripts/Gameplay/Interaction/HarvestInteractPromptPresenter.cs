@@ -46,12 +46,12 @@ namespace Project.Gameplay.Interaction
                 return;
             }
 
-            // 대상 없으면 숨김
-            if (!harvestPointInteractor.HasAvailableTarget())
-            {
-                promptText.gameObject.SetActive(false);
-                return;
-            }
+            // // 대상 없으면 숨김
+            // if (!harvestPointInteractor.HasAvailableTarget())
+            // {
+            //     promptText.gameObject.SetActive(false);
+            //     return;
+            // }
 
             // 표시 이름 가져오기
             string displayName = harvestPointInteractor.GetCurrentTargetDisplayName();

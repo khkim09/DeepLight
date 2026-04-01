@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: SpawnProfile_Test
   m_EditorClassIdentifier: Project.Data::Project.Data.Harvest.HarvestTargetSpawnProfileSO
   profileId: spawn_shallow_early
-  minDepth: 0
-  maxDepth: 999
-  minDistanceFromStartXZ: 100
-  maxDistanceFromStartXZ: 140
+  minDepth: 540
+  maxDepth: 660
+  minDistanceFromStartXZ: 95
+  maxDistanceFromStartXZ: 150
   minDay: 1
   maxDay: 999
   minSpawnCount: 2

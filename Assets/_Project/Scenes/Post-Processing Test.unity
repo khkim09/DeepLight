@@ -6552,9 +6552,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestTargetRotationController
   dragYawSpeed: 0.28
-  dragPitchSpeed: 0.18
-  minPitch: -55
-  maxPitch: 55
+  dragPitchSpeed: 0.28
+  rotationReferenceCamera: {fileID: 1981470076}
 --- !u!114 &366932395
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7657,10 +7656,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f31f119a0a52334289375783f25f361, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestTargetHighlightController
-  targetRenderer: {fileID: 665811155}
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
-  highlightedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  useMaterialInstance: 1
+  targetRenderers: []
+  highlightLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &678165907
 GameObject:
   m_ObjectHideFlags: 0
@@ -8165,7 +8164,7 @@ Transform:
   m_GameObject: {fileID: 854683253}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 10}
+  m_LocalPosition: {x: 120, y: -598, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8185,10 +8184,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f31f119a0a52334289375783f25f361, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestTargetHighlightController
-  targetRenderer: {fileID: 1256627349}
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
-  highlightedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  useMaterialInstance: 1
+  targetRenderers: []
+  highlightLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &862883676
 GameObject:
   m_ObjectHideFlags: 0
@@ -8299,7 +8298,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 183
+    m_Bits: 1207
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -11236,7 +11235,7 @@ Transform:
   m_GameObject: {fileID: 1434104320}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1.0740378}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14271,9 +14270,9 @@ MonoBehaviour:
   maxSpawnHeight: -20
   spawnClearRadius: 8
   maxPositionRetry: 40
+  currentDay: 1
   spawnOnStart: 1
   logSpawnFlow: 1
-  currentDay: 1
 --- !u!4 &1938212022
 Transform:
   m_ObjectHideFlags: 0
@@ -14481,7 +14480,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 951
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -14761,10 +14760,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f31f119a0a52334289375783f25f361, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Harvest.HarvestTargetHighlightController
-  targetRenderer: {fileID: 2074224335}
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
-  highlightedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  useMaterialInstance: 1
+  targetRenderers: []
+  highlightLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &2076399890
 GameObject:
   m_ObjectHideFlags: 0

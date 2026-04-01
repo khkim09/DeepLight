@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using Project.Data.Harvest;
 using Project.Gameplay.CameraSystem;
 using Project.Gameplay.GameModes;
+using Project.Gameplay.Harvest;
 using Project.Gameplay.UserInput;
 using UnityEngine;
 
@@ -61,75 +62,105 @@ namespace Project.Gameplay.Interaction
             if (interactionZone.HarvestTarget == null || !interactionZone.HarvestTarget.IsAvailable)
                 return;
 
+            // 잠긴 대상은 approach 연출 자체를 시작하지 않는다.
+            if (interactionZone.TargetBehaviour != null && !interactionZone.TargetBehaviour.IsHarvestUnlocked)
+            {
+                Debug.LogWarning(
+                    $"[HarvestApproachController] Harvest blocked before approach: {interactionZone.TargetBehaviour.GetUnavailableReason()}");
+                return;
+            }
+
             isApproaching = true;
 
             // 접근 연출 중에는 플레이어 입력을 잠근다.
             if (playerMover != null)
                 playerMover.SetExternalControlLock(true);
 
-            Vector3 targetCenter = interactionZone.GetTargetCenter();
-            Vector3 currentPosition = controlledRigidbody != null ? controlledRigidbody.position : transform.position;
+            try
+            {
+                Vector3 targetCenter = interactionZone.GetTargetCenter();
+                Vector3 currentPosition = controlledRigidbody != null ? controlledRigidbody.position : transform.position;
 
-            // 타깃 반대 방향에서 접근할 최종 위치를 계산한다.
-            Vector3 approachDirection = currentPosition - targetCenter;
-            if (runtimeSettings.PreserveCurrentDepth)
-                approachDirection.y = 0f;
+                // 타깃 반대 방향에서 접근할 최종 위치를 계산한다.
+                Vector3 approachDirection = currentPosition - targetCenter;
+                if (runtimeSettings.PreserveCurrentDepth)
+                    approachDirection.y = 0f;
 
-            if (approachDirection.sqrMagnitude <= 0.0001f)
-                approachDirection = -transform.forward;
+                if (approachDirection.sqrMagnitude <= 0.0001f)
+                    approachDirection = -transform.forward;
 
-            approachDirection.Normalize();
+                approachDirection.Normalize();
 
-            Camera refCam = explorationCameraController != null ? explorationCameraController.GetComponent<Camera>() : null;
-            float framingDistance = interactionZone.EvaluateFramingDistance(refCam) + runtimeSettings.StopDistancePadding;
+                Camera refCam = explorationCameraController != null ? explorationCameraController.GetComponent<Camera>() : null;
+                float framingDistance = interactionZone.EvaluateFramingDistance(refCam) + runtimeSettings.StopDistancePadding;
 
-            Vector3 desiredPosition = targetCenter + approachDirection * framingDistance;
-            if (runtimeSettings.PreserveCurrentDepth)
-                desiredPosition.y = currentPosition.y;
+                Vector3 desiredPosition = targetCenter + approachDirection * framingDistance;
+                if (runtimeSettings.PreserveCurrentDepth)
+                    desiredPosition.y = currentPosition.y;
 
-            // 잠수정이 최종 위치에서 타깃을 바라보게 회전을 계산한다.
-            Vector3 lookDirection = targetCenter - desiredPosition;
-            if (lookDirection.sqrMagnitude <= 0.0001f)
-                lookDirection = transform.forward;
+                // 잠수정이 최종 위치에서 타깃을 바라보게 회전을 계산한다.
+                Vector3 lookDirection = targetCenter - desiredPosition;
+                if (lookDirection.sqrMagnitude <= 0.0001f)
+                    lookDirection = transform.forward;
 
-            Quaternion desiredRotation = Quaternion.LookRotation(lookDirection.normalized, Vector3.up);
+                Quaternion desiredRotation = Quaternion.LookRotation(lookDirection.normalized, Vector3.up);
 
-            float distance = Vector3.Distance(currentPosition, desiredPosition);
-            float angle = Quaternion.Angle(
-                controlledRigidbody != null ? controlledRigidbody.rotation : transform.rotation,
-                desiredRotation);
+                float distance = Vector3.Distance(currentPosition, desiredPosition);
+                float angle = Quaternion.Angle(
+                    controlledRigidbody != null ? controlledRigidbody.rotation : transform.rotation,
+                    desiredRotation);
 
-            // 이동 거리와 회전 각도 중 더 오래 걸리는 쪽을 연출 시간 기준으로 사용한다.
-            float calculatedDuration = Mathf.Max(
-                distance / runtimeSettings.ApproachMoveSpeed,
-                angle / runtimeSettings.ApproachRotationSpeed);
+                // 이동 거리와 회전 각도 중 더 오래 걸리는 쪽을 연출 시간 기준으로 사용한다.
+                float calculatedDuration = Mathf.Max(
+                    distance / runtimeSettings.ApproachMoveSpeed,
+                    angle / runtimeSettings.ApproachRotationSpeed);
 
-            float finalDuration = Mathf.Max(calculatedDuration, runtimeSettings.MinApproachDuration);
+                float finalDuration = Mathf.Max(calculatedDuration, runtimeSettings.MinApproachDuration);
 
-            // 조종실 타깃 보정도 미리 시작한다.
-            if (cockpitTargetLookController != null && interactionZone.TargetBehaviour != null)
-                cockpitTargetLookController.BeginLookAt(interactionZone.TargetBehaviour.transform);
+                // 조종실 타깃 보정도 미리 시작한다.
+                if (cockpitTargetLookController != null && interactionZone.TargetBehaviour != null)
+                    cockpitTargetLookController.BeginLookAt(interactionZone.TargetBehaviour.transform);
 
-            CancellationToken token = this.GetCancellationTokenOnDestroy();
+                CancellationToken token = this.GetCancellationTokenOnDestroy();
 
-            UniTask showLetterboxTask = transitionLetterboxPresenter != null
-                ? transitionLetterboxPresenter.ShowAsync()
-                : UniTask.CompletedTask;
+                UniTask showLetterboxTask = transitionLetterboxPresenter != null
+                    ? transitionLetterboxPresenter.ShowAsync()
+                    : UniTask.CompletedTask;
 
-            UniTask approachTask = PlayApproachAsync(desiredPosition, desiredRotation, finalDuration, token);
+                UniTask approachTask = PlayApproachAsync(desiredPosition, desiredRotation, finalDuration, token);
 
-            UniTask alignCamTask = explorationCameraController != null
-                ? explorationCameraController.AlignToTargetIndependentlyAsync(
-                    interactionZone.TargetBehaviour.transform,
-                    finalDuration,
-                    token)
-                : UniTask.CompletedTask;
+                UniTask alignCamTask = explorationCameraController != null
+                    ? explorationCameraController.AlignToTargetIndependentlyAsync(
+                        interactionZone.TargetBehaviour.transform,
+                        finalDuration,
+                        token)
+                    : UniTask.CompletedTask;
 
-            // 레터박스, 선체 접근, 카메라 독립 정렬을 병렬 실행한다.
-            await UniTask.WhenAll(showLetterboxTask, approachTask, alignCamTask);
+                // 레터박스, 선체 접근, 카메라 독립 정렬을 병렬 실행한다.
+                await UniTask.WhenAll(showLetterboxTask, approachTask, alignCamTask);
 
-            harvestModeCoordinator.TryEnterHarvestMode(interactionZone.HarvestTarget);
-            isApproaching = false;
+                bool entered = harvestModeCoordinator.TryEnterHarvestMode(interactionZone.HarvestTarget);
+
+                // 진입이 실패하면 잠금과 보정을 즉시 해제한다.
+                if (!entered)
+                    EndApproachLook();
+            }
+            finally
+            {
+                // 아직 approach 상태가 살아 있고, 실제 Harvest 세션 진입이 안 된 경우만 잠금 해제한다.
+                if (isApproaching)
+                {
+                    bool enteredHarvest =
+                        harvestModeCoordinator != null &&
+                        harvestModeCoordinator.HarvestModeSession != null &&
+                        harvestModeCoordinator.HarvestModeSession.HasTarget;
+
+                    if (!enteredHarvest)
+                        EndApproachLook();
+                }
+
+                isApproaching = false;
+            }
         }
 
         /// <summary>접근 연출 종료 시 시점 보정과 입력 잠금을 해제한다.</summary>
