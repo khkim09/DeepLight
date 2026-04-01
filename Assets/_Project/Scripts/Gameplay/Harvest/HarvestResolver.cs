@@ -13,7 +13,7 @@ using Random = UnityEngine.Random;
 
 namespace Project.Gameplay.Harvest
 {
-    /// <summary>회수 성공률과 결과 처리를 계산한다.</summary>
+    /// <summary>회수 성공률, 배터리/내구도 비용, 결과 처리를 계산한다.</summary>
     public class HarvestResolver
     {
         private readonly SubmarineRuntimeState submarineRuntimeState; // 잠수함 런타임 상태
@@ -23,6 +23,7 @@ namespace Project.Gameplay.Harvest
         // 실패 시 아이템 무게를 hull 손상으로 환산하는 내부 계수
         private const float FailureWeightToHullMultiplier = 0.75f;
 
+        /// <summary>잠수함 런타임 상태를 반환한다.</summary>
         public SubmarineRuntimeState SubmarineRuntimeState => submarineRuntimeState;
 
         /// <summary>회수 계산에 필요한 런타임 참조를 생성한다.</summary>
@@ -36,7 +37,7 @@ namespace Project.Gameplay.Harvest
             this.tuning = tuning;
         }
 
-        /// <summary>세션/타깃 기준 기본 회수 성공률을 계산한다.</summary>
+        /// <summary>대상의 기본 회수 성공률을 계산한다.</summary>
         public float EvaluateBaseRecoveryChance(IHarvestTarget harvestTarget)
         {
             if (harvestTarget == null || !harvestTarget.IsAvailable || tuning == null)
@@ -50,10 +51,10 @@ namespace Project.Gameplay.Harvest
             if (itemData == null || !itemData.IsValid())
                 return 0f;
 
-            // 기본 난이도 = 아이템 자체 난이도 + target 난이도
+            // 기본 난이도 = 아이템 난이도 + 타깃 추가 난이도
             float difficulty = Mathf.Clamp01(itemData.BaseCatchDifficulty + targetData.AdditionalDifficulty);
 
-            // 배터리 상태가 좋을수록 보너스를 주고, 아이템 무게가 클수록 확률 패널티를 준다.
+            // 배터리가 많을수록 약간 유리, 무게가 무거울수록 패널티
             float batteryRatio = submarineRuntimeState.BaseStats.MaxBattery <= 0f
                 ? 0f
                 : submarineRuntimeState.CurrentBattery / submarineRuntimeState.BaseStats.MaxBattery;
@@ -92,7 +93,7 @@ namespace Project.Gameplay.Harvest
             int revealedCount = harvestModeSession.RevealedPointIds.Count;
             int selectedCount = harvestModeSession.GetAssignedPointCount();
 
-            // 공개된 포인트 수가 많을수록 추정 안정도가 약간 오른다.
+            // 공개된 포인트 수 보너스
             float revealBonus = Mathf.Min(tuning.MaxRevealBonus, revealedCount * tuning.RevealBonusPerPoint);
 
             float sequenceBonus = 0f;
@@ -109,7 +110,7 @@ namespace Project.Gameplay.Harvest
                 {
                     string pointId = harvestModeSession.SelectedPointSequence[i];
 
-                    // 비어 있는 순서 슬롯은 계산에서 제외한다.
+                    // 비어 있는 슬롯은 건너뛴다.
                     if (string.IsNullOrWhiteSpace(pointId))
                         continue;
 
@@ -128,11 +129,13 @@ namespace Project.Gameplay.Harvest
 
             float finalChance = Mathf.Clamp01(baseChance + revealBonus + sequenceBonus - sequenceRiskPenalty);
 
-            // 스캔 횟수와 선택 개수로 예상 배터리/내구도 소모량을 계산한다.
+            // 예상 배터리/내구도 비용 계산
             float averagePulseCost = (tuning.SonarPulseBatteryCost + tuning.LidarPulseBatteryCost) * 0.5f;
-            float batteryCost = harvestModeSession.ScanPulseCount * averagePulseCost + selectedCount * tuning.SelectedPointBatteryCost;
-            float durabilityCost = selectedCount * tuning.SelectedPointDurabilityCost +
-                                   sequenceRiskPenalty * tuning.RiskPenaltyToDurabilityMultiplier;
+            float batteryCost = harvestModeSession.ScanPulseCount * averagePulseCost
+                                + selectedCount * tuning.SelectedPointBatteryCost;
+
+            float durabilityCost = selectedCount * tuning.SelectedPointDurabilityCost
+                                   + sequenceRiskPenalty * tuning.RiskPenaltyToDurabilityMultiplier;
 
             harvestModeSession.SetEstimatedOutcome(finalChance, batteryCost, durabilityCost);
 
@@ -142,7 +145,7 @@ namespace Project.Gameplay.Harvest
                 harvestModeSession.EstimatedDurabilityCost));
         }
 
-        /// <summary>현재 세션의 회수 결과를 확정하고 인벤토리 적재까지 처리한다.</summary>
+        /// <summary>현재 세션의 회수 결과를 확정하고 배터리/내구도/인벤토리 반영까지 처리한다.</summary>
         public HarvestResolveResult ResolveCommittedRecovery(HarvestModeSession harvestModeSession, IReadOnlyList<HarvestScanPoint> allPoints)
         {
             if (harvestModeSession == null || harvestModeSession.CurrentTarget == null)
@@ -160,21 +163,20 @@ namespace Project.Gameplay.Harvest
             if (itemData == null || !itemData.IsValid())
                 return new HarvestResolveResult(string.Empty, false, 0f, false, false);
 
-            // commit 직전 기준으로 preview를 다시 확정 계산한다.
+            // 확정 직전 preview 재계산
             EvaluateRecoveryPlan(harvestModeSession, allPoints);
 
             float finalChance = harvestModeSession.EstimatedRecoveryChance;
             float batteryCost = harvestModeSession.EstimatedBatteryCost;
             float durabilityCost = harvestModeSession.EstimatedDurabilityCost;
 
-            // commit 시 예측된 배터리 비용을 즉시 차감한다.
+            // 확정 시 예측된 배터리/내구도 비용을 즉시 차감
             submarineRuntimeState.ConsumeBattery(batteryCost);
 
-            // commit 시 내구도도 기본 소모량을 차감한다.
             if (durabilityCost > 0f)
                 submarineRuntimeState.DamageHull(durabilityCost);
 
-            // 배터리 0 이하면 강제 종료 처리
+            // 배터리 0 이하 강제 종료
             if (submarineRuntimeState.CurrentBattery <= 0f)
             {
                 EventBus.Publish(new HarvestSessionForcedEndedByBatteryEvent(targetData.TargetId));
@@ -188,7 +190,7 @@ namespace Project.Gameplay.Harvest
             bool chanceSuccess = Random.value <= finalChance;
             if (!chanceSuccess)
             {
-                // 실패 시 아이템 무게만큼 추가 hull 손상을 준다.
+                // 실패 시 아이템 무게 비례 추가 hull 손상
                 float failureHullDamage = itemData.Weight * FailureWeightToHullMultiplier;
                 if (failureHullDamage > 0f)
                     submarineRuntimeState.DamageHull(failureHullDamage);
@@ -213,7 +215,7 @@ namespace Project.Gameplay.Harvest
             return new HarvestResolveResult(itemData.ItemId, finalSuccess, finalChance, addedToInventory, false);
         }
 
-        /// <summary>현재 target에서 실제 확정 아이템을 찾아 반환한다.</summary>
+        /// <summary>현재 target에서 런타임 확정된 실제 아이템을 찾아 반환한다.</summary>
         private ItemSO ResolveTargetItem(IHarvestTarget harvestTarget)
         {
             if (harvestTarget is HarvestTargetBehaviour targetBehaviour)

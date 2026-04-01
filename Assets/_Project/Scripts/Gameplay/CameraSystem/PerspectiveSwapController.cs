@@ -88,9 +88,16 @@ namespace Project.Gameplay.CameraSystem
 
             // 현재 탐사 카메라 위치 기준으로 가이드의 회전 방향을 유동적으로 계산한다.
             Vector3 localCamPos = submarineTransform.InverseTransformPoint(explorationCamera.transform.position);
-            float orbitAngle = Mathf.Atan2(localCamPos.x, -localCamPos.z) * Mathf.Rad2Deg;
 
-            Quaternion zRoll = Quaternion.Euler(0f, 0f, -orbitAngle);
+            // Z축 대신 X축(측면)과 Y축(상하)을 사용하여 카메라의 진입 방향을 파악합니다.
+            Vector2 xyDirection = new Vector2(localCamPos.x, localCamPos.y);
+            float rollAngle = 0f;
+            if (xyDirection.sqrMagnitude > 0.001f)
+            {
+                rollAngle = Vector2.SignedAngle(Vector2.up, xyDirection);
+            }
+
+            Quaternion zRoll = Quaternion.Euler(0f, 0f, rollAngle);
             Vector3 dynamicMidLocalPos = zRoll * transitionGuide.localPosition;
 
             Quaternion rolledRot = zRoll * transitionGuide.localRotation;
@@ -120,6 +127,9 @@ namespace Project.Gameplay.CameraSystem
 
                 explorationCamera.gameObject.SetActive(false);
                 harvestConsoleCamera.gameObject.SetActive(true);
+
+                // Harvest 카메라 전환 완료 후 HUD 활성화 이벤트
+                EventBus.Publish(new HarvestCameraTransitionCompletedEvent());
             }
             catch (OperationCanceledException)
             {
@@ -150,8 +160,16 @@ namespace Project.Gameplay.CameraSystem
             Quaternion finalExplorationRot = explorationCamera.transform.rotation;
 
             Vector3 localCamPos = submarineTransform.InverseTransformPoint(finalExplorationPos);
-            float orbitAngle = Mathf.Atan2(localCamPos.x, -localCamPos.z) * Mathf.Rad2Deg;
-            Quaternion zRoll = Quaternion.Euler(0f, 0f, -orbitAngle);
+
+            // Z축 대신 X축(측면)과 Y축(상하)을 사용하여 카메라의 진입 방향을 파악합니다.
+            Vector2 xyDirection = new Vector2(localCamPos.x, localCamPos.y);
+            float rollAngle = 0f;
+            if (xyDirection.sqrMagnitude > 0.001f)
+            {
+                rollAngle = Vector2.SignedAngle(Vector2.up, xyDirection);
+            }
+
+            Quaternion zRoll = Quaternion.Euler(0f, 0f, rollAngle);
 
             Vector3 dynamicMidLocalPos = zRoll * transitionGuide.localPosition;
             Quaternion rolledRot = zRoll * transitionGuide.localRotation;

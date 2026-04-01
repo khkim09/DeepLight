@@ -136,6 +136,11 @@ namespace Project.Core.Events
         public readonly float BatteryCost; // 추정 배터리 소모량
         public readonly float DurabilityCost; // 추정 내구도 소모량
 
+        // HUD 호환용 별칭
+        public float EstimatedRecoveryChance => RecoveryChance; // 추정 성공률 별칭
+        public float EstimatedBatteryCost => BatteryCost; // 추정 배터리 비용 별칭
+        public float EstimatedDurabilityCost => DurabilityCost; // 추정 내구도 비용 별칭
+
         /// <summary>추정치 갱신 정보 생성</summary>
         public HarvestRecoveryPreviewUpdatedEvent(float recoveryChance, float batteryCost, float durabilityCost)
         {
@@ -225,6 +230,11 @@ namespace Project.Core.Events
             LidarSignature = lidarSignature;
             ScreenPosition = screenPosition;
         }
+    }
+
+    /// <summary>Harvest 카메라 전환 완료 이벤트</summary>
+    public readonly struct HarvestCameraTransitionCompletedEvent : IEvent
+    {
     }
 
     #endregion
