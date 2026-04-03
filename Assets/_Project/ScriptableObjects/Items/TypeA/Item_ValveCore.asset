@@ -15,14 +15,16 @@ MonoBehaviour:
   itemId: itm_res_valve_core
   displayName: Valve Core
   description: A sealed valve core from a pressurized fluid control unit.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: ea9504a6c9d6cc64fac1773f94e50dbb, type: 3}
   worldPrefab: {fileID: 0}
+  typeIcon: {fileID: 0}
   category: 0
   rarity: 1
+  analysisTimeHours: 0
+  analysisTeaserMessage: 
   sellPrice: 24
-  weight: 0.9
   baseCatchDifficulty: 0.21
   shapeBounds: {x: 1, y: 1}
   occupiedCells:
-  - Position: {x: 0, y: 0}
-  canRotate: 1
+  - {x: 0, y: 0}
+  canRotate: 0

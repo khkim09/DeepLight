@@ -15,11 +15,7 @@ MonoBehaviour:
   baseMoveSpeed: 5
   baseTurnSpeed: 90
   inventoryLayout: {fileID: 11400000, guid: 424fa94d161211141bfb6215ab490170, type: 2}
-  inventoryWidth: 8
-  inventoryHeight: 6
-  maxCargoWeight: 100
+  inventoryWidth: 6
+  inventoryHeight: 8
   maxHullDurability: 100
   maxBattery: 100
-  useWeightPenalty: 1
-  moveSpeedPenaltyPerWeight: 0.01
-  turnSpeedPenaltyPerWeight: 0.02

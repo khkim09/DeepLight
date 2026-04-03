@@ -16,17 +16,19 @@ MonoBehaviour:
   displayName: Abyss Relay Heart
   description: The central relay heart of a deep transmission network buried below
     the trench.
-  icon: {fileID: 0}
+  icon: {fileID: 1578319434, guid: d9f0f845e79bbcf4eb09e1f67e59e418, type: 3}
   worldPrefab: {fileID: 0}
   category: 1
   rarity: 4
+  analysisTimeHours: 10
+  analysisTeaserMessage: '"Something inside still waits for a signal."'
   sellPrice: 340
-  weight: 1.6
   baseCatchDifficulty: 0.93
-  shapeBounds: {x: 3, y: 2}
+  shapeBounds: {x: 2, y: 3}
   occupiedCells:
-  - Position: {x: 0, y: 0}
-  - Position: {x: 1, y: 0}
-  - Position: {x: 2, y: 0}
-  - Position: {x: 1, y: 1}
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 0, y: 1}
+  - {x: 1, y: 1}
+  - {x: 0, y: 2}
   canRotate: 1

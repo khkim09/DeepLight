@@ -15,14 +15,14 @@ MonoBehaviour:
   itemId: itm_res_memory_chip
   displayName: Memory Chip
   description: A partially intact memory chip containing compressed archival traces.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 9e0a4cd9bbb69ae4e8116750f650e354, type: 3}
   worldPrefab: {fileID: 0}
   category: 0
   rarity: 2
+  analysisTimeHours: 0
   sellPrice: 82
-  weight: 0.5
   baseCatchDifficulty: 0.54
   shapeBounds: {x: 1, y: 1}
   occupiedCells:
-  - Position: {x: 0, y: 0}
+  - {x: 0, y: 0}
   canRotate: 0

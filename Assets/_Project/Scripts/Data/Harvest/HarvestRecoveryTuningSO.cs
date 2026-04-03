@@ -13,8 +13,6 @@ namespace Project.Data.Harvest
         [SerializeField] private float difficultyPenaltyMultiplier = 0.55f; // 난이도 패널티 배율
         [SerializeField] private float batteryBonusAtEmpty = -0.1f;         // 배터리 0% 보너스
         [SerializeField] private float batteryBonusAtFull = 0.1f;           // 배터리 100% 보너스
-        [SerializeField] private float weightNormalization = 30f;           // 무게 정규화 기준값
-        [SerializeField] private float weightPenaltyMultiplier = 0.2f;      // 무게 패널티 배율
 
         [Header("Scan Cost")]
         [SerializeField] private float sonarPulseBatteryCost = 3f; // 소나 스캔 1회 배터리 비용
@@ -44,12 +42,6 @@ namespace Project.Data.Harvest
 
         /// <summary>배터리 100% 기준 보너스를 반환한다.</summary>
         public float BatteryBonusAtFull => batteryBonusAtFull;
-
-        /// <summary>무게 정규화 기준값을 반환한다.</summary>
-        public float WeightNormalization => Mathf.Max(0.01f, weightNormalization);
-
-        /// <summary>무게 패널티 배율을 반환한다.</summary>
-        public float WeightPenaltyMultiplier => Mathf.Max(0f, weightPenaltyMultiplier);
 
         /// <summary>소나 스캔 1회 비용을 반환한다.</summary>
         public float SonarPulseBatteryCost => Mathf.Max(0f, sonarPulseBatteryCost);

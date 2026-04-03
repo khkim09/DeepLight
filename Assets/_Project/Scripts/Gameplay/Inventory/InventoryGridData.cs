@@ -1,53 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using Project.Core.Events;
 using Project.Data.Items;
 using Project.Data.Submarine;
 using UnityEngine;
 
 namespace Project.Gameplay.Inventory
 {
-    /// <summary>인벤토리 배치와 점유 검사를 담당하는 런타임 클래스</summary>
+    /// <summary>인벤토리의 논리적 배치와 칸 점유 상태를 관리하는 데이터 클래스이다.</summary>
     [Serializable]
     public class InventoryGridData
     {
-        [SerializeField] private int width; // 인벤토리 가로 칸 수
-        [SerializeField] private int height; // 인벤토리 세로 칸 수
+        private int width; // 가로 크기
+        private int height; // 세로 크기
 
         private readonly List<InventoryItemInstance> items = new(); // 배치된 아이템 목록
-        private InventoryItemInstance[,] occupiedGrid; // 칸 점유 정보
-        private bool[,] usableMask; // 사용 가능 셀 마스크
+        private InventoryItemInstance[,] occupiedGrid; // 칸당 점유 아이템 정보
+        private bool[,] usableMask; // 사용 가능 칸 마스크
 
         public int Width => width;
         public int Height => height;
         public IReadOnlyList<InventoryItemInstance> Items => items;
 
-        /// <summary>인벤토리 그리드를 생성한다</summary>
-        public InventoryGridData(int width, int height)
+        /// <summary>그리드 데이터를 초기화하고 레이아웃 마스크를 생성한다.</summary>
+        public InventoryGridData(SubmarineInventoryLayoutSO layout)
         {
-            this.width = width;
-            this.height = height;
-
-            occupiedGrid = new InventoryItemInstance[width, height];
-
-            usableMask = new bool[width, height];
-            FillUsableMask(true);
+            Initialize(layout);
         }
 
-        /// <summary>그리드를 기본 크기로 초기화한다</summary>
-        public void Initialize(int newWidth, int newHeight)
-        {
-            width = newWidth;
-            height = newHeight;
-
-            items.Clear();
-            occupiedGrid = new InventoryItemInstance[width, height];
-
-            usableMask = new bool[width, height];
-            FillUsableMask(true);
-        }
-
-        /// <summary>레이아웃 데이터로 그리드를 초기화한다</summary>
+        /// <summary>외부 런타임 상태에서 그리드를 재초기화한다.</summary>
         public void Initialize(SubmarineInventoryLayoutSO layout)
         {
             if (layout == null || !layout.IsValid())
@@ -61,67 +41,25 @@ namespace Project.Gameplay.Inventory
             usableMask = layout.BuildUsableMask();
         }
 
-        /// <summary>모든 셀 사용 가능 상태를 채운다</summary>
-        private void FillUsableMask(bool value)
+        /// <summary>지정 위치와 회전 상태에서 아이템 배치가 가능한지 검사한다.</summary>
+        public bool CanPlaceItem(ItemSO item, Vector2Int origin, int rotationQuarterTurns)
         {
-            for (int y = 0; y < height; y++)
+            if (item == null)
+                return false;
+
+            List<Vector2Int> targetCells = BuildPlacedCells(item, origin, rotationQuarterTurns);
+
+            foreach (Vector2Int cell in targetCells)
             {
-                for (int x = 0; x < width; x++)
-                    usableMask[x, y] = value;
-            }
-        }
-
-        /// <summary>좌표가 그리드 범위 내인지 확인한다</summary>
-        public bool IsInBounds(Vector2Int position)
-        {
-            if (position.x < 0 || position.x >= width)
-                return false;
-
-            if (position.y < 0 || position.y >= height)
-                return false;
-
-            return true;
-        }
-
-        /// <summary>좌표가 실제 사용 가능한 칸인지 확인한다</summary>
-        public bool IsUsableCell(Vector2Int position)
-        {
-            if (!IsInBounds(position))
-                return false;
-
-            if (usableMask == null)
-                return true;
-
-            return usableMask[position.x, position.y];
-        }
-
-        /// <summary>해당 칸 점유 아이템을 반환한다</summary>
-        public InventoryItemInstance GetItemAt(Vector2Int position)
-        {
-            if (!IsInBounds(position))
-                return null;
-
-            return occupiedGrid[position.x, position.y];
-        }
-
-        /// <summary>아이템 배치 가능 여부를 확인한다</summary>
-        public bool CanPlaceItem(ItemSO itemData, Vector2Int originPosition, bool isRotated)
-        {
-            if (itemData == null || !itemData.IsValid())
-                return false;
-
-            List<Vector2Int> occupiedCells = BuildPlacedCells(itemData, originPosition, isRotated);
-
-            for (int i = 0; i < occupiedCells.Count; i++)
-            {
-                Vector2Int cell = occupiedCells[i];
-
-                if (!IsInBounds(cell))
+                // 그리드 범위 검사
+                if (cell.x < 0 || cell.x >= width || cell.y < 0 || cell.y >= height)
                     return false;
 
-                if (!IsUsableCell(cell))
+                // 사용 가능한 칸인지 검사
+                if (!usableMask[cell.x, cell.y])
                     return false;
 
+                // 이미 점유된 칸인지 검사
                 if (occupiedGrid[cell.x, cell.y] != null)
                     return false;
             }
@@ -129,73 +67,33 @@ namespace Project.Gameplay.Inventory
             return true;
         }
 
-        /// <summary>아이템 자동 배치 좌표를 탐색한다</summary>
-        public InventoryPlacementResult FindPlacement(ItemSO itemData, bool allowRotation)
+        /// <summary>아이템을 특정 위치에 배치하고 점유 정보를 갱신한다.</summary>
+        public bool TryPlaceItem(ItemSO itemData, Vector2Int origin, int rotationQuarterTurns, out InventoryItemInstance instance)
         {
-            if (itemData == null || !itemData.IsValid())
-                return new InventoryPlacementResult(false, Vector2Int.zero, false);
+            instance = null;
 
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    Vector2Int position = new Vector2Int(x, y);
-
-                    if (CanPlaceItem(itemData, position, false))
-                        return new InventoryPlacementResult(true, position, false);
-
-                    if (allowRotation && itemData.CanRotate && CanPlaceItem(itemData, position, true))
-                        return new InventoryPlacementResult(true, position, true);
-                }
-            }
-
-            return new InventoryPlacementResult(false, Vector2Int.zero, false);
-        }
-
-        /// <summary>아이템을 직접 배치한다</summary>
-        public bool TryPlaceItem(ItemSO itemData, Vector2Int originPosition, bool isRotated, out InventoryItemInstance placedItem)
-        {
-            placedItem = null;
-
-            if (!CanPlaceItem(itemData, originPosition, isRotated))
+            if (!CanPlaceItem(itemData, origin, rotationQuarterTurns))
                 return false;
 
-            placedItem = new InventoryItemInstance(itemData, originPosition, isRotated);
-            items.Add(placedItem);
+            instance = new InventoryItemInstance(itemData, origin, rotationQuarterTurns);
+            items.Add(instance);
 
-            List<Vector2Int> occupiedCells = BuildPlacedCells(itemData, originPosition, isRotated);
-
-            for (int i = 0; i < occupiedCells.Count; i++)
+            List<Vector2Int> cells = BuildPlacedCells(itemData, origin, rotationQuarterTurns);
+            foreach (Vector2Int cell in cells)
             {
-                Vector2Int cell = occupiedCells[i];
-                occupiedGrid[cell.x, cell.y] = placedItem;
+                occupiedGrid[cell.x, cell.y] = instance;
             }
 
-            EventBus.Publish(new InventoryItemAddedEvent(itemData.ItemId, 1));
-            EventBus.Publish(new InventoryChangedEvent());
             return true;
         }
 
-        /// <summary>아이템 자동 배치를 시도한다</summary>
-        public bool TryAutoPlaceItem(ItemSO itemData, out InventoryItemInstance placedItem)
-        {
-            placedItem = null;
-
-            InventoryPlacementResult result = FindPlacement(itemData, true);
-            if (!result.IsSuccess)
-                return false;
-
-            return TryPlaceItem(itemData, result.Position, result.IsRotated, out placedItem);
-        }
-
-        /// <summary>아이템을 제거한다</summary>
+        /// <summary>인벤토리에서 아이템을 제거하고 점유 상태를 해제한다.</summary>
         public bool RemoveItem(InventoryItemInstance itemInstance)
         {
-            if (itemInstance == null)
+            if (itemInstance == null || !items.Contains(itemInstance))
                 return false;
 
-            if (!items.Remove(itemInstance))
-                return false;
+            items.Remove(itemInstance);
 
             for (int y = 0; y < height; y++)
             {
@@ -206,64 +104,25 @@ namespace Project.Gameplay.Inventory
                 }
             }
 
-            EventBus.Publish(new InventoryItemRemovedEvent(itemInstance.ItemData.ItemId, 1));
-            EventBus.Publish(new InventoryChangedEvent());
             return true;
         }
 
-        /// <summary>총 적재 무게를 호환성용으로 반환한다.</summary>
-        public float CalculateTotalWeight()
+        /// <summary>아이템 점유 셀 목록을 회전과 위치를 고려하여 생성한다.</summary>
+        private List<Vector2Int> BuildPlacedCells(ItemSO itemData, Vector2Int origin, int rotationQuarterTurns)
         {
-            // 총중량 시스템은 제거했으므로 항상 0을 반환한다.
-            return 0f;
-        }
+            List<Vector2Int> cells = new();
 
-        /// <summary>점유 정보를 다시 구성한다</summary>
-        public void RebuildOccupiedGrid()
-        {
-            occupiedGrid = new InventoryItemInstance[width, height];
-
-            for (int i = 0; i < items.Count; i++)
+            foreach (Vector2Int localCell in itemData.OccupiedCells)
             {
-                InventoryItemInstance itemInstance = items[i];
-                List<Vector2Int> occupiedCells = BuildPlacedCells(itemInstance.ItemData, itemInstance.OriginPosition, itemInstance.IsRotated);
+                Vector2Int rotatedLocal = InventoryRotationUtility.RotateLocalCell(
+                    localCell,
+                    itemData.ShapeBounds,
+                    rotationQuarterTurns);
 
-                for (int j = 0; j < occupiedCells.Count; j++)
-                {
-                    Vector2Int cell = occupiedCells[j];
-                    if (!IsInBounds(cell))
-                        continue;
-
-                    if (!IsUsableCell(cell))
-                        continue;
-
-                    occupiedGrid[cell.x, cell.y] = itemInstance;
-                }
-            }
-        }
-
-        /// <summary>배치될 모든 셀 좌표를 생성한다</summary>
-        private List<Vector2Int> BuildPlacedCells(ItemSO itemData, Vector2Int originPosition, bool isRotated)
-        {
-            List<Vector2Int> cells = new List<Vector2Int>();
-
-            for (int i = 0; i < itemData.OccupiedCells.Count; i++)
-            {
-                Vector2Int localCell = itemData.OccupiedCells[i].Position;
-                Vector2Int rotatedCell = RotateCell(localCell, itemData.ShapeBounds, isRotated);
-                cells.Add(originPosition + rotatedCell);
+                cells.Add(origin + rotatedLocal);
             }
 
             return cells;
-        }
-
-        /// <summary>회전 상태에 맞는 셀 좌표를 계산한다</summary>
-        private Vector2Int RotateCell(Vector2Int localCell, Vector2Int originalBounds, bool isRotated)
-        {
-            if (!isRotated)
-                return localCell;
-
-            return new Vector2Int(originalBounds.y - 1 - localCell.y, localCell.x);
         }
     }
 }

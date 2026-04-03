@@ -12,6 +12,10 @@ namespace Project.Gameplay.UI
         [Header("Visual Root")]
         [SerializeField] private CanvasGroup canvasGroup; // Harvest HUD 표시/숨김용 CanvasGroup
 
+        [Header("Dynamic Visibility")]
+        [Tooltip("채집 성공 시 화면에서 숨길 UI 오브젝트 배열입니다.")]
+        [SerializeField] private GameObject[] hideOnSuccessObjects; // 성공 시 숨길 대상들
+
         [Header("Target")]
         [SerializeField] private TMP_Text targetNameText; // 현재 타깃 이름
 
@@ -39,6 +43,7 @@ namespace Project.Gameplay.UI
             EventBus.Subscribe<HarvestRecoveryPreviewUpdatedEvent>(OnRecoveryPreviewUpdated);
             EventBus.Subscribe<HarvestConsoleTargetPreparedEvent>(OnTargetPrepared);
             EventBus.Subscribe<HarvestScanModeChangedEvent>(OnScanModeChanged);
+            EventBus.Subscribe<HarvestRecoveryResolvedEvent>(OnHarvestRecoveryResolved); // 채집 결과 이벤트 구독
         }
 
         /// <summary>Harvest HUD 관련 데이터 이벤트 구독을 해제한다.</summary>
@@ -47,6 +52,7 @@ namespace Project.Gameplay.UI
             EventBus.Unsubscribe<HarvestRecoveryPreviewUpdatedEvent>(OnRecoveryPreviewUpdated);
             EventBus.Unsubscribe<HarvestConsoleTargetPreparedEvent>(OnTargetPrepared);
             EventBus.Unsubscribe<HarvestScanModeChangedEvent>(OnScanModeChanged);
+            EventBus.Unsubscribe<HarvestRecoveryResolvedEvent>(OnHarvestRecoveryResolved); // 채집 결과 이벤트 해제
         }
 
         /// <summary>시작 시 HUD를 숨기고 기본값을 넣는다.</summary>
@@ -67,7 +73,36 @@ namespace Project.Gameplay.UI
             canvasGroup.blocksRaycasts = isVisible;
 
             if (!isVisible)
+            {
                 ResetPreviewUi();
+            }
+            else
+            {
+                // HUD가 켜질 때(탐사 -> 채집 재진입 시) 숨겼던 오브젝트들을 전부 다시 켜준다.
+                SetDynamicObjectsActive(true);
+            }
+        }
+
+        /// <summary>채집 결과를 수신하여 성공 시 지정된 UI들을 숨긴다.</summary>
+        private void OnHarvestRecoveryResolved(HarvestRecoveryResolvedEvent publishedEvent)
+        {
+            if (publishedEvent.IsSuccess)
+            {
+                SetDynamicObjectsActive(false);
+            }
+        }
+
+        /// <summary>동적 시각 요소(배열)의 켜고 끄기를 일괄 처리한다.</summary>
+        private void SetDynamicObjectsActive(bool isActive)
+        {
+            if (hideOnSuccessObjects == null || hideOnSuccessObjects.Length == 0)
+                return;
+
+            for (int i = 0; i < hideOnSuccessObjects.Length; i++)
+            {
+                if (hideOnSuccessObjects[i] != null)
+                    hideOnSuccessObjects[i].SetActive(isActive);
+            }
         }
 
         /// <summary>예상 성공률과 예상 비용 UI를 갱신한다.</summary>

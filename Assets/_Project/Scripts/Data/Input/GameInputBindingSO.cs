@@ -25,7 +25,12 @@ namespace Project.Data.Input
         [SerializeField] private KeyCode harvestCommitKey = KeyCode.Space;         // 회수 확정
         [SerializeField] private KeyCode harvestExitKey = KeyCode.X;               // 회수 종료
         [SerializeField] private KeyCode harvestResetSequenceKey = KeyCode.G;      // 순서 리셋
+
+        [Header("Always")]
         [SerializeField] private KeyCode harvestInventoryKey = KeyCode.Tab;        // 인벤토리
+
+        [Header("Inventory")]
+        [SerializeField] private KeyCode inventoryDiscardKey = KeyCode.Z;          // 아이템 버리기
 
         /// <summary>전진 키를 반환한다.</summary>
         public KeyCode MoveForwardKey => moveForwardKey;
@@ -65,5 +70,8 @@ namespace Project.Data.Input
 
         /// <summary>Harvest 인벤토리 키를 반환한다.</summary>
         public KeyCode HarvestInventoryKey => harvestInventoryKey;
+
+        /// <summary>Inventory 폐기 키를 반환한다.</summary>
+        public KeyCode InventoryDiscardKey => inventoryDiscardKey;
     }
 }

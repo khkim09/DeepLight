@@ -15,14 +15,16 @@ MonoBehaviour:
   itemId: itm_res_fastener_pack
   displayName: Fastener Pack
   description: A bundle of marine fasteners, brackets, and rusted fixings.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: ca8255511746a404c90ac254288a6209, type: 3}
   worldPrefab: {fileID: 0}
+  typeIcon: {fileID: 0}
   category: 0
   rarity: 0
+  analysisTimeHours: 0
+  analysisTeaserMessage: 
   sellPrice: 12
-  weight: 0.5
   baseCatchDifficulty: 0.14
   shapeBounds: {x: 1, y: 1}
   occupiedCells:
-  - Position: {x: 0, y: 0}
-  canRotate: 1
+  - {x: 0, y: 0}
+  canRotate: 0

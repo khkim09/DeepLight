@@ -15,15 +15,17 @@ MonoBehaviour:
   itemId: itm_res_iron_scrap
   displayName: Iron Scrap
   description: A corroded chunk of structural iron salvaged from shallow wreckage.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: f94f0acce6cf8d349865f031b1de8eb6, type: 3}
   worldPrefab: {fileID: 0}
+  typeIcon: {fileID: 0}
   category: 0
   rarity: 0
+  analysisTimeHours: 0
+  analysisTeaserMessage: 
   sellPrice: 18
-  weight: 1.2
   baseCatchDifficulty: 0.18
   shapeBounds: {x: 2, y: 1}
   occupiedCells:
-  - Position: {x: 0, y: 0}
-  - Position: {x: 1, y: 0}
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
   canRotate: 1

@@ -15,17 +15,18 @@ MonoBehaviour:
   itemId: itm_relic_f_signalcore
   displayName: Origin Signal Core
   description: A sealed signal core believed to contain a source-level abyssal pattern.
-  icon: {fileID: 0}
+  icon: {fileID: 1578319434, guid: d9f0f845e79bbcf4eb09e1f67e59e418, type: 3}
   worldPrefab: {fileID: 0}
   category: 1
   rarity: 4
+  analysisTimeHours: 12
+  analysisTeaserMessage: '"The noise around it feels almost intentional."'
   sellPrice: 380
-  weight: 1.8
   baseCatchDifficulty: 0.96
   shapeBounds: {x: 3, y: 2}
   occupiedCells:
-  - Position: {x: 0, y: 0}
-  - Position: {x: 1, y: 0}
-  - Position: {x: 1, y: 1}
-  - Position: {x: 2, y: 1}
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 1, y: 1}
+  - {x: 2, y: 1}
   canRotate: 1

@@ -4,8 +4,10 @@
     "references": [
         "Project.Core",
         "Project.Data",
+        "Project.Gameplay",
         "Unity.TextMeshPro",
-        "UniTask"
+        "UniTask",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

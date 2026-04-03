@@ -20,9 +20,6 @@ namespace Project.Gameplay.Runtime
         public float CurrentHullDurability => currentHullDurability;
         public InventoryGridData InventoryGrid => inventoryGrid;
 
-        // 총중량 시스템은 제거했으므로 항상 0으로 본다.
-        public float CurrentCargoWeight => 0f;
-
         /// <summary>잠수함 런타임 상태 생성</summary>
         public SubmarineRuntimeState(SubmarineStatsSO baseStats)
         {
@@ -31,27 +28,24 @@ namespace Project.Gameplay.Runtime
             currentBattery = baseStats.MaxBattery;
             currentHullDurability = baseStats.MaxHullDurability;
 
-            inventoryGrid = new InventoryGridData(baseStats.InventoryWidth, baseStats.InventoryHeight);
-
-            if (baseStats.InventoryLayout != null && baseStats.InventoryLayout.IsValid())
-                inventoryGrid.Initialize(baseStats.InventoryLayout);
+            if (baseStats.InventoryLayout != null)
+                inventoryGrid = new InventoryGridData(baseStats.InventoryLayout);
         }
 
-        /// <summary>잠수함 런타임 상태 초기화</summary>
+        /// <summary>잠수함 런타임 상태를 지정된 스탯으로 다시 초기화한다.</summary>
         public void Initialize(SubmarineStatsSO newBaseStats)
         {
-            baseStats = newBaseStats;
-
+            this.baseStats = newBaseStats;
             currentBattery = baseStats.MaxBattery;
             currentHullDurability = baseStats.MaxHullDurability;
 
-            if (inventoryGrid == null)
-                inventoryGrid = new InventoryGridData(baseStats.InventoryWidth, baseStats.InventoryHeight);
-
             if (baseStats.InventoryLayout != null && baseStats.InventoryLayout.IsValid())
-                inventoryGrid.Initialize(baseStats.InventoryLayout);
-            else
-                inventoryGrid.Initialize(baseStats.InventoryWidth, baseStats.InventoryHeight);
+            {
+                if (inventoryGrid == null)
+                    inventoryGrid = new InventoryGridData(baseStats.InventoryLayout);
+                else
+                    inventoryGrid.Initialize(baseStats.InventoryLayout);
+            }
         }
 
         /// <summary>배터리를 소비한다.</summary>
@@ -85,13 +79,13 @@ namespace Project.Gameplay.Runtime
         /// <summary>현재 이동 속도를 반환한다.</summary>
         public float GetCurrentMoveSpeed()
         {
-            return baseStats.GetMoveSpeed(0f);
+            return baseStats.GetMoveSpeed();
         }
 
         /// <summary>현재 선회 속도를 반환한다.</summary>
         public float GetCurrentTurnSpeed()
         {
-            return baseStats.GetTurnSpeed(0f);
+            return baseStats.GetTurnSpeed();
         }
     }
 }

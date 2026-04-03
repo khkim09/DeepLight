@@ -15,15 +15,17 @@ MonoBehaviour:
   itemId: itm_res_wet_lumber
   displayName: Wet Lumber Crate
   description: A waterlogged bundle of timber fragments, still useful as basic material.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 16181f12973a04448842c1079db4e39a, type: 3}
   worldPrefab: {fileID: 0}
+  typeIcon: {fileID: 0}
   category: 0
   rarity: 0
+  analysisTimeHours: 0
+  analysisTeaserMessage: 
   sellPrice: 14
-  weight: 1
   baseCatchDifficulty: 0.15
   shapeBounds: {x: 2, y: 1}
   occupiedCells:
-  - Position: {x: 0, y: 0}
-  - Position: {x: 1, y: 0}
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
   canRotate: 1

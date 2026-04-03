@@ -15,14 +15,16 @@ MonoBehaviour:
   itemId: itm_res_sensor_fragment
   displayName: Sensor Fragment
   description: A broken sensor shard from a deteriorated observation device.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 8079d79f2fdabfc448729ee13bff449b, type: 3}
   worldPrefab: {fileID: 0}
+  typeIcon: {fileID: 0}
   category: 0
   rarity: 1
+  analysisTimeHours: 0
+  analysisTeaserMessage: 
   sellPrice: 38
-  weight: 0.9
   baseCatchDifficulty: 0.32
   shapeBounds: {x: 1, y: 1}
   occupiedCells:
-  - Position: {x: 0, y: 0}
+  - {x: 0, y: 0}
   canRotate: 0

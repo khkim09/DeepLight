@@ -15,14 +15,16 @@ MonoBehaviour:
   itemId: itm_res_battery_cell
   displayName: Battery Cell
   description: A compact power cell with a small amount of charge remaining.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: ad56902323cde774a8e08be441d8573c, type: 3}
   worldPrefab: {fileID: 0}
+  typeIcon: {fileID: 0}
   category: 0
   rarity: 0
+  analysisTimeHours: 0
+  analysisTeaserMessage: 
   sellPrice: 28
-  weight: 0.9
   baseCatchDifficulty: 0.24
   shapeBounds: {x: 1, y: 1}
   occupiedCells:
-  - Position: {x: 0, y: 0}
+  - {x: 0, y: 0}
   canRotate: 0

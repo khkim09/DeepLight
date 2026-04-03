@@ -2,12 +2,13 @@
 using Project.Data.Harvest;
 using Project.Data.Submarine;
 using Project.Gameplay.CameraSystem;
-using Project.Gameplay.DebugView;
 using Project.Gameplay.GameModes;
 using Project.Gameplay.Harvest;
 using Project.Gameplay.Interaction;
 using Project.Gameplay.Runtime;
 using Project.Gameplay.Services;
+using Project.UI.Harvest;
+using Project.UI.Inventory;
 using UnityEngine;
 
 namespace Project.Managers.Composition
@@ -33,15 +34,19 @@ namespace Project.Managers.Composition
         [Header("Input References")]
         [SerializeField] private HarvestConsoleController harvestConsoleController; // 회수 콘솔 입력 컨트롤러
 
-        [Header("Debug View References")]
-        [SerializeField] private InventoryGridDebugView inventoryGridDebugView; // 인벤토리 그리드 디버그 UI
+        [Header("UI Controllers (To Initialize)")]
+        [SerializeField] private HarvestResultUIController harvestResultUIController; // 채집 결과 UI
+        [SerializeField] private InventoryGrabbedItemPresenter grabbedItemPresenter; // grab/release 프리젠터
+        [SerializeField] private InventoryGridBuilder gridBuilder; // 슬롯 생성기
+        [SerializeField] private InventoryGridPresenter gridPresenter; // 그리드 프리젠터
 
         private SubmarineRuntimeState submarineRuntimeState; // 잠수함 상태
-        private InventoryService inventoryService; // 인벤토리 서비스
-        private HarvestResolver harvestResolver; // 채집 해석기
-        private GameModeService gameModeService; // 게임 모드 서비스
         private HarvestModeSession harvestModeSession; // 채집 세션
         private HarvestModeCoordinator harvestModeCoordinator; // 채집 조정기
+        private HarvestResolver harvestResolver; // 채집 해석기
+        private GameModeService gameModeService; // 게임 모드 서비스
+        private EncyclopediaService encyclopediaService; // 도감 서비스
+        private InventoryService inventoryService; // 인벤토리 서비스
 
         /// <summary>런타임 조립과 주입을 수행한다</summary>
         private void Awake()
@@ -53,14 +58,20 @@ namespace Project.Managers.Composition
                 return;
             }
 
+            // 1. core 런타임 상태 및 논리 서비스 생성
             submarineRuntimeState = new SubmarineRuntimeState(submarineStats);
-
-            inventoryService = new InventoryService(submarineRuntimeState);
-            harvestResolver = new HarvestResolver(submarineRuntimeState, inventoryService, harvestRecoveryTuning);
-            gameModeService = new GameModeService(GameModeType.Exploration3D);
             harvestModeSession = new HarvestModeSession();
+
+            encyclopediaService = new EncyclopediaService();
+            inventoryService = new InventoryService(submarineRuntimeState);
+
+            gameModeService = new GameModeService(GameModeType.Exploration3D);
+            harvestResolver = new HarvestResolver(submarineRuntimeState, inventoryService, harvestRecoveryTuning);
+
+            // 2. 모드 전환 코디네이터 생성
             harvestModeCoordinator = new HarvestModeCoordinator(gameModeService, harvestModeSession);
 
+            // 3. 씬 내 상호작용 및 가시성 제어기 초기화
             if (harvestPointInteractor != null)
                 harvestPointInteractor.Initialize(harvestModeCoordinator);
 
@@ -74,13 +85,27 @@ namespace Project.Managers.Composition
                 harvestConsoleCameraController.SetCockpitViewAnchor(cockpitViewAnchor);
 
             if (harvestConsoleController != null)
-                harvestConsoleController.Initialize(
-                    harvestModeSession,
-                    harvestResolver,
-                    harvestModeCoordinator);
+                harvestConsoleController.Initialize(harvestModeSession, harvestResolver, harvestModeCoordinator);
 
-            if (inventoryGridDebugView != null)
-                inventoryGridDebugView.Initialize(submarineRuntimeState);
+            if (harvestResultUIController != null)
+                harvestResultUIController.Initialize(encyclopediaService);
+
+            if (grabbedItemPresenter != null)
+                grabbedItemPresenter.Initialize(inventoryService);
+
+            if (submarineStats != null && submarineStats.InventoryLayout != null)
+            {
+                if (gridBuilder != null)
+                    gridBuilder.Initialize(submarineStats.InventoryLayout);
+
+                if (gridPresenter != null)
+                {
+                    gridPresenter.Initialize(submarineStats.InventoryLayout);
+
+                    // 시작 시 현재 인벤토리 상태와 슬롯 점유 시각을 동기화한다.
+                    gridPresenter.RefreshOccupiedState(submarineRuntimeState.InventoryGrid);
+                }
+            }
         }
 
         /// <summary>초기 상태 이벤트를 발행한다</summary>

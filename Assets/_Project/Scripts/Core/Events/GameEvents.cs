@@ -314,6 +314,18 @@ namespace Project.Core.Events
 
     #region Inventory
 
+    /// <summary>인벤토리 UI의 열림/닫힘 상태가 변경되었을 때 발생하는 이벤트</summary>
+    public readonly struct InventoryUIToggledEvent : IEvent
+    {
+        public readonly bool IsOpen; // 열림 여부
+
+        /// <summary>인벤토리 토글 정보 생성</summary>
+        public InventoryUIToggledEvent(bool isOpen)
+        {
+            IsOpen = isOpen;
+        }
+    }
+
     /// <summary>인벤토리 아이템 추가 이벤트</summary>
     public readonly struct InventoryItemAddedEvent : IEvent
     {
@@ -345,6 +357,34 @@ namespace Project.Core.Events
     /// <summary>인벤토리 전체 변경 이벤트</summary>
     public readonly struct InventoryChangedEvent : IEvent
     {
+    }
+
+    /// <summary>아이템 배치가 최종 확정되었을 때 발생하는 이벤트</summary>
+    public readonly struct InventoryItemPlacementConfirmedEvent : IEvent
+    {
+        public readonly string ItemId; // 배치 완료된 아이템 ID
+        public readonly bool WasFreshRecovery; // 채집 직후 fresh recovery grab이었는지 여부
+
+        /// <summary>아이템 배치 확정 정보 생성</summary>
+        public InventoryItemPlacementConfirmedEvent(string itemId, bool wasFreshRecovery)
+        {
+            ItemId = itemId;
+            WasFreshRecovery = wasFreshRecovery;
+        }
+    }
+
+    /// <summary>그랩 중이던 아이템이 폐기되었을 때 발생하는 이벤트</summary>
+    public readonly struct InventoryItemDiscardedEvent : IEvent
+    {
+        public readonly string ItemId; // 폐기된 아이템 ID
+        public readonly bool WasFreshRecovery; // 채집 직후 fresh recovery grab이었는지 여부
+
+        /// <summary>아이템 폐기 정보 생성</summary>
+        public InventoryItemDiscardedEvent(string itemId, bool wasFreshRecovery)
+        {
+            ItemId = itemId;
+            WasFreshRecovery = wasFreshRecovery;
+        }
     }
 
     #endregion

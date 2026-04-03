@@ -15,15 +15,16 @@ MonoBehaviour:
   itemId: itm_res_copper_wire
   displayName: Copper Wire Coil
   description: A tightly wound copper coil used in old marine circuitry.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: a289c471c95c60a429cc906d6ac60636, type: 3}
   worldPrefab: {fileID: 0}
+  typeIcon: {fileID: 0}
   category: 0
   rarity: 0
+  analysisTimeHours: 0
+  analysisTeaserMessage: 
   sellPrice: 22
-  weight: 0.8
   baseCatchDifficulty: 0.2
-  shapeBounds: {x: 2, y: 1}
+  shapeBounds: {x: 1, y: 1}
   occupiedCells:
-  - Position: {x: 0, y: 0}
-  - Position: {x: 1, y: 0}
-  canRotate: 1
+  - {x: 0, y: 0}
+  canRotate: 0

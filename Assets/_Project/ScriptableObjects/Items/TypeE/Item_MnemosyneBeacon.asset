@@ -15,17 +15,18 @@ MonoBehaviour:
   itemId: itm_relic_e_beacon
   displayName: Mnemosyne Beacon
   description: An anomalous beacon linked to memory tracking and neural observation.
-  icon: {fileID: 0}
+  icon: {fileID: 1578319434, guid: d9f0f845e79bbcf4eb09e1f67e59e418, type: 3}
   worldPrefab: {fileID: 0}
   category: 1
   rarity: 3
+  analysisTimeHours: 4
+  analysisTeaserMessage: '"A faint replay pulse repeats at fixed intervals."'
   sellPrice: 240
-  weight: 1.1
   baseCatchDifficulty: 0.84
   shapeBounds: {x: 2, y: 2}
   occupiedCells:
-  - Position: {x: 0, y: 0}
-  - Position: {x: 1, y: 0}
-  - Position: {x: 0, y: 1}
-  - Position: {x: 1, y: 1}
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 0, y: 1}
+  - {x: 1, y: 1}
   canRotate: 0

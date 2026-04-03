@@ -1,61 +1,64 @@
-﻿using Project.Data.Items;
+﻿using Project.Core.Events;
+using Project.Data.Items;
 using Project.Gameplay.Inventory;
 using Project.Gameplay.Runtime;
 using UnityEngine;
 
 namespace Project.Gameplay.Services
 {
-    /// <summary>외부 시스템이 쓰는 조합용 진입점</summary>
+    /// <summary>외부 시스템이 사용하는 인벤토리 조작 진입점이다.</summary>
     public class InventoryService
     {
         private readonly SubmarineRuntimeState submarineRuntimeState; // 잠수함 런타임 상태
 
         public SubmarineRuntimeState SubmarineRuntimeState => submarineRuntimeState;
 
-        /// <summary>인벤토리 서비스 생성</summary>
+        /// <summary>인벤토리 서비스를 생성한다.</summary>
         public InventoryService(SubmarineRuntimeState submarineRuntimeState)
         {
             this.submarineRuntimeState = submarineRuntimeState;
         }
 
-        /// <summary>아이템 자동 적재 시도</summary>
-        public bool TryAddItem(ItemSO itemData, out InventoryItemInstance itemInstance)
+        /// <summary>아이템 수동 배치를 시도한다.</summary>
+        public bool TryAddItem(ItemSO itemData, Vector2Int originPosition, int rotationQuarterTurns, out InventoryItemInstance itemInstance)
         {
             itemInstance = null;
 
             if (submarineRuntimeState == null || submarineRuntimeState.InventoryGrid == null)
                 return false;
 
-            return submarineRuntimeState.InventoryGrid.TryAutoPlaceItem(itemData, out itemInstance);
-        }
+            bool isSuccess = submarineRuntimeState.InventoryGrid.TryPlaceItem(
+                itemData,
+                originPosition,
+                rotationQuarterTurns,
+                out itemInstance);
 
-        /// <summary>아이템 수동 배치 시도</summary>
-        public bool TryAddItem(ItemSO itemData, Vector2Int originPosition, bool isRotated, out InventoryItemInstance itemInstance)
-        {
-            itemInstance = null;
-
-            if (submarineRuntimeState == null || submarineRuntimeState.InventoryGrid == null)
+            if (!isSuccess)
                 return false;
 
-            return submarineRuntimeState.InventoryGrid.TryPlaceItem(itemData, originPosition, isRotated, out itemInstance);
+            EventBus.Publish(new InventoryItemAddedEvent(itemData.ItemId, 1));
+            EventBus.Publish(new InventoryChangedEvent());
+
+            return true;
         }
 
-        /// <summary>아이템 제거 시도</summary>
+        /// <summary>아이템 제거를 시도한다.</summary>
         public bool TryRemoveItem(InventoryItemInstance itemInstance)
         {
             if (submarineRuntimeState == null || submarineRuntimeState.InventoryGrid == null)
                 return false;
 
-            return submarineRuntimeState.InventoryGrid.RemoveItem(itemInstance);
-        }
+            if (itemInstance == null || itemInstance.ItemData == null)
+                return false;
 
-        /// <summary>현재 총 적재 중량 반환</summary>
-        public float GetTotalCargoWeight()
-        {
-            if (submarineRuntimeState == null || submarineRuntimeState.InventoryGrid == null)
-                return 0f;
+            bool isSuccess = submarineRuntimeState.InventoryGrid.RemoveItem(itemInstance);
+            if (!isSuccess)
+                return false;
 
-            return submarineRuntimeState.InventoryGrid.CalculateTotalWeight();
+            EventBus.Publish(new InventoryItemRemovedEvent(itemInstance.ItemData.ItemId, 1));
+            EventBus.Publish(new InventoryChangedEvent());
+
+            return true;
         }
     }
 }

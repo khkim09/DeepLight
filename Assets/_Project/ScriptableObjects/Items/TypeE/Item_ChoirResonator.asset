@@ -15,17 +15,19 @@ MonoBehaviour:
   itemId: itm_relic_e_resonator
   displayName: Choir Resonator
   description: A resonance device tuned to respond to deep acoustic signal patterns.
-  icon: {fileID: 0}
+  icon: {fileID: 1578319434, guid: d9f0f845e79bbcf4eb09e1f67e59e418, type: 3}
   worldPrefab: {fileID: 0}
   category: 1
   rarity: 3
+  analysisTimeHours: 8
+  analysisTeaserMessage: '"It hums softly, as if answering a distant choir."'
   sellPrice: 270
-  weight: 1
   baseCatchDifficulty: 0.88
   shapeBounds: {x: 3, y: 2}
   occupiedCells:
-  - Position: {x: 0, y: 0}
-  - Position: {x: 1, y: 0}
-  - Position: {x: 1, y: 1}
-  - Position: {x: 2, y: 1}
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
+  - {x: 0, y: 1}
+  - {x: 1, y: 1}
   canRotate: 1

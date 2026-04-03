@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
+using Project.Core.Events;
 using Project.Data.CameraSystem;
 using Project.Data.Input;
 using UnityEngine;
@@ -26,6 +27,7 @@ namespace Project.Gameplay.CameraSystem
         private Quaternion smoothedTargetRotation;
         private float localYaw;
         private float localPitch;
+        private bool isInventoryOpen; // 인벤토리 열림 상태 플래그
 
         /// <summary>자유 시야 입력이 유지 중인지 반환한다.</summary>
         public bool IsFreeLookActive => inputBindings != null && Input.GetKey(inputBindings.FreeLookKey);
@@ -79,6 +81,18 @@ namespace Project.Gameplay.CameraSystem
             RebuildRuntimeSettings();
         }
 
+        /// <summary>이벤트를 구독한다.</summary>
+        private void OnEnable()
+        {
+            EventBus.Subscribe<InventoryUIToggledEvent>(OnInventoryToggled);
+        }
+
+        /// <summary>이벤트 구독을 해제한다.</summary>
+        private void OnDisable()
+        {
+            EventBus.Unsubscribe<InventoryUIToggledEvent>(OnInventoryToggled);
+        }
+
         /// <summary>매 프레임 후방 추적과 자유시점을 갱신한다.</summary>
         private void LateUpdate()
         {
@@ -90,7 +104,8 @@ namespace Project.Gameplay.CameraSystem
 
             if (!IsInputLocked)
             {
-                if (IsFreeLookActive)
+                // 인벤토리가 닫혀 있을 때만 자유시야 조작을 허용한다.
+                if (IsFreeLookActive && !isInventoryOpen)
                 {
                     localYaw += Input.GetAxis("Mouse X") * runtimeSettings.MouseSensitivityX * Time.deltaTime;
                     localPitch -= Input.GetAxis("Mouse Y") * runtimeSettings.MouseSensitivityY * Time.deltaTime;
@@ -98,7 +113,7 @@ namespace Project.Gameplay.CameraSystem
                 }
                 else
                 {
-                    // 자유시점을 떼면 기본 후방 시점으로 자연스럽게 복귀한다.
+                    // 자유시점을 떼거나 인벤토리가 열리면 기본 후방 시점으로 자연스럽게 복귀한다.
                     localYaw = Mathf.Lerp(localYaw, 0f, 8f * Time.deltaTime);
                     localPitch = Mathf.Lerp(localPitch, 0f, 8f * Time.deltaTime);
                 }
@@ -197,6 +212,12 @@ namespace Project.Gameplay.CameraSystem
                 return;
 
             runtimeSettings = cameraTuning.BuildRuntimeSettings(userSettings);
+        }
+
+        /// <summary>인벤토리 토글 이벤트를 수신하여 상태를 갱신한다.</summary>
+        private void OnInventoryToggled(InventoryUIToggledEvent publishedEvent)
+        {
+            isInventoryOpen = publishedEvent.IsOpen;
         }
     }
 }

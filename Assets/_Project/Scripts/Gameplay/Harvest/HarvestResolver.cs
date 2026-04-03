@@ -20,9 +20,6 @@ namespace Project.Gameplay.Harvest
         private readonly InventoryService inventoryService; // 인벤토리 서비스
         private readonly HarvestRecoveryTuningSO tuning; // 회수 계산 튜닝
 
-        // 실패 시 아이템 무게를 hull 손상으로 환산하는 내부 계수
-        private const float FailureWeightToHullMultiplier = 0.75f;
-
         /// <summary>잠수함 런타임 상태를 반환한다.</summary>
         public SubmarineRuntimeState SubmarineRuntimeState => submarineRuntimeState;
 
@@ -54,19 +51,17 @@ namespace Project.Gameplay.Harvest
             // 기본 난이도 = 아이템 난이도 + 타깃 추가 난이도
             float difficulty = Mathf.Clamp01(itemData.BaseCatchDifficulty + targetData.AdditionalDifficulty);
 
-            // 배터리가 많을수록 약간 유리, 무게가 무거울수록 패널티
+            // 배터리가 많을수록 약간 유리
             float batteryRatio = submarineRuntimeState.BaseStats.MaxBattery <= 0f
                 ? 0f
                 : submarineRuntimeState.CurrentBattery / submarineRuntimeState.BaseStats.MaxBattery;
 
             float batteryBonus = Mathf.Lerp(tuning.BatteryBonusAtEmpty, tuning.BatteryBonusAtFull, batteryRatio);
-            float weightPenalty = Mathf.Clamp01(itemData.Weight / Mathf.Max(1f, tuning.WeightNormalization)) * tuning.WeightPenaltyMultiplier;
 
             return Mathf.Clamp01(
                 tuning.BaseRecoveryChance
                 - difficulty * tuning.DifficultyPenaltyMultiplier
-                + batteryBonus
-                - weightPenalty);
+                + batteryBonus);
         }
 
         /// <summary>현재 센서 모드의 스캔 1회 배터리 비용을 반환한다.</summary>
@@ -188,10 +183,11 @@ namespace Project.Gameplay.Harvest
             }
 
             bool chanceSuccess = Random.value <= finalChance;
+
             if (!chanceSuccess)
             {
-                // 실패 시 아이템 무게 비례 추가 hull 손상
-                float failureHullDamage = itemData.Weight * FailureWeightToHullMultiplier;
+                // 실패 시 페널티: 무게 환산 대신 고정치(혹은 Tuning 값) 사용
+                float failureHullDamage = 10f; // 필요시 tuning.FailureHullDamage 등으로 교체하여 사용
                 if (failureHullDamage > 0f)
                     submarineRuntimeState.DamageHull(failureHullDamage);
 
@@ -201,18 +197,19 @@ namespace Project.Gameplay.Harvest
                 harvestModeSession.MarkResolved();
                 return new HarvestResolveResult(itemData.ItemId, false, finalChance, false, false);
             }
+            else
+            {
+                // 성공 시 처리: 인벤토리 자동 적재 폐기, 아이템은 마우스 그랩(Grab) 상태로 넘어간다.
+                if (targetData.ConsumeOnSuccess)
+                    harvestTarget.Consume();
 
-            bool addedToInventory = inventoryService.TryAddItem(itemData, out InventoryItemInstance instance);
-            bool finalSuccess = addedToInventory;
+                // UI에 채집이 성공적으로 끝났음을 알리기 위해 AddedToInventory를 true로 넘김 (실제 적재 여부는 아님)
+                EventBus.Publish(new HarvestRecoveryResolvedEvent(itemData.ItemId, true, finalChance, true));
+                EventBus.Publish(new HarvestAttemptResolvedEvent(itemData.ItemId, true, finalChance, true));
 
-            if (finalSuccess && targetData.ConsumeOnSuccess)
-                harvestTarget.Consume();
-
-            EventBus.Publish(new HarvestRecoveryResolvedEvent(itemData.ItemId, finalSuccess, finalChance, addedToInventory));
-            EventBus.Publish(new HarvestAttemptResolvedEvent(itemData.ItemId, finalSuccess, finalChance, addedToInventory));
-
-            harvestModeSession.MarkResolved();
-            return new HarvestResolveResult(itemData.ItemId, finalSuccess, finalChance, addedToInventory, false);
+                harvestModeSession.MarkResolved();
+                return new HarvestResolveResult(itemData.ItemId, true, finalChance, true, false);
+            }
         }
 
         /// <summary>현재 target에서 런타임 확정된 실제 아이템을 찾아 반환한다.</summary>

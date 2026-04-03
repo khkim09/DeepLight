@@ -546,7 +546,7 @@ namespace Project.Gameplay.Harvest
         /// <summary>회수 콘솔용 자유 커서 상태를 적용한다.</summary>
         private void ApplyHarvestCursorState()
         {
-            Cursor.lockState = CursorLockMode.None;
+            Cursor.lockState = CursorLockMode.Confined;
             Cursor.visible = true;
         }
 

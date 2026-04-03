@@ -29,6 +29,7 @@ namespace Project.Gameplay.UserInput
 
         private bool isHarvestMode;
         private bool isExternallyLocked;
+        private bool isInventoryOpen; // 인벤토리 열림 상태 플래그 추가
 
         // direct delta 회전 누적값
         private float targetYaw;
@@ -47,7 +48,7 @@ namespace Project.Gameplay.UserInput
         private bool isCurrentBoostPressed;
 
         /// <summary>현재 이동 조작이 잠겨있는지 반환한다.</summary>
-        public bool IsMovementLocked => isHarvestMode || isExternallyLocked;
+        public bool IsMovementLocked => isHarvestMode || isExternallyLocked; // 인벤토리 열림은 이동 잠금 조건에서 제외
 
         /// <summary>강체와 런타임 세팅을 초기화한다.</summary>
         private void Awake()
@@ -72,18 +73,20 @@ namespace Project.Gameplay.UserInput
             RebuildRuntimeSettings();
         }
 
-        /// <summary>Harvest 이벤트를 구독한다.</summary>
+        /// <summary>이벤트를 구독한다.</summary>
         private void OnEnable()
         {
             EventBus.Subscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
             EventBus.Subscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
+            EventBus.Subscribe<InventoryUIToggledEvent>(OnInventoryToggled); // 인벤토리 이벤트 구독
         }
 
-        /// <summary>Harvest 이벤트 구독을 해제한다.</summary>
+        /// <summary>이벤트 구독을 해제한다.</summary>
         private void OnDisable()
         {
             EventBus.Unsubscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
             EventBus.Unsubscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
+            EventBus.Unsubscribe<InventoryUIToggledEvent>(OnInventoryToggled); // 인벤토리 이벤트 구독 해제
         }
 
         /// <summary>입력을 캐싱하고 렌더 프레임 기준으로 회전을 갱신한다.</summary>
@@ -106,8 +109,8 @@ namespace Project.Gameplay.UserInput
             currentVerticalInput = GetVerticalInput();
             isCurrentBoostPressed = Input.GetKey(inputBindings.BoostKey);
 
-            // 자유시점 중에는 카메라만 회전하고 선체는 회전하지 않는다.
-            if (explorationCameraController != null && !explorationCameraController.IsFreeLookActive)
+            // 자유시점 중이 아니며, 인벤토리 패널이 닫혀있을 때만 마우스 회전을 허용한다.
+            if (explorationCameraController != null && !explorationCameraController.IsFreeLookActive && !isInventoryOpen)
             {
                 float rawMouseX = Input.GetAxisRaw("Mouse X");
                 float rawMouseY = Input.GetAxisRaw("Mouse Y");
@@ -171,7 +174,6 @@ namespace Project.Gameplay.UserInput
                 Mathf.Infinity,
                 deltaTime);
 
-            // 전진 중 피치 조향에 따라 루프 보조 회전을 더한다.
             if (Mathf.Abs(currentForwardSpeed) > 0.01f && runtimeSettings.MaxForwardSpeed > 0.01f)
             {
                 float speedRatio = currentForwardSpeed / runtimeSettings.MaxForwardSpeed;
@@ -319,6 +321,12 @@ namespace Project.Gameplay.UserInput
         private void OnHarvestModeExited(HarvestModeExitedEvent publishedEvent)
         {
             isHarvestMode = false;
+        }
+
+        /// <summary>인벤토리 토글 이벤트를 수신하여 상태를 갱신한다.</summary>
+        private void OnInventoryToggled(InventoryUIToggledEvent publishedEvent)
+        {
+            isInventoryOpen = publishedEvent.IsOpen;
         }
 
         /// <summary>현재 이동 속도를 즉시 0으로 만든다.</summary>

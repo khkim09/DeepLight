@@ -15,14 +15,16 @@ MonoBehaviour:
   itemId: itm_res_fuel_can
   displayName: Fuel Canister
   description: A compact fuel container recovered from abandoned transport stock.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 96950495a198f9942a7a9dd3e94c4d7e, type: 3}
   worldPrefab: {fileID: 0}
+  typeIcon: {fileID: 0}
   category: 0
   rarity: 0
+  analysisTimeHours: 0
+  analysisTeaserMessage: 
   sellPrice: 26
-  weight: 1.1
   baseCatchDifficulty: 0.22
   shapeBounds: {x: 1, y: 1}
   occupiedCells:
-  - Position: {x: 0, y: 0}
+  - {x: 0, y: 0}
   canRotate: 0

@@ -15,14 +15,14 @@ MonoBehaviour:
   itemId: itm_res_ceramic_insulator
   displayName: Ceramic Insulator
   description: A ceramic insulator fragment built to resist high voltage leaks.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 9e0a4cd9bbb69ae4e8116750f650e354, type: 3}
   worldPrefab: {fileID: 0}
   category: 0
   rarity: 1
+  analysisTimeHours: 0
   sellPrice: 34
-  weight: 0.7
   baseCatchDifficulty: 0.29
   shapeBounds: {x: 1, y: 1}
   occupiedCells:
-  - Position: {x: 0, y: 0}
+  - {x: 0, y: 0}
   canRotate: 0
