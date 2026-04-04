@@ -207,9 +207,6 @@ namespace Project.UI.Inventory
             previewImage.color = Color.white;
             previewImage.enabled = true;
 
-            if (tooltipPresenter != null)
-                tooltipPresenter.ShowItem(currentItem);
-
             ApplyPreviewVisual();
             UpdatePreviewPosition();
         }
@@ -263,10 +260,21 @@ namespace Project.UI.Inventory
                 return;
             }
 
-            if (grabSourceType == GrabSourceType.RegrabFromInventory)
-                tooltipPresenter.ShowItem(currentItem);
-            else
+            if (grabSourceType == GrabSourceType.FreshRecovery)
+            {
                 tooltipPresenter.Hide();
+                return;
+            }
+
+            if (grabSourceType == GrabSourceType.RegrabFromInventory)
+            {
+                // 실제 보이는 sprite 기준으로 정렬 오차를 줄이기 위해 visualRect를 우선 사용
+                RectTransform targetRect = previewVisualRect != null ? previewVisualRect : previewRect;
+                tooltipPresenter.ShowForGrabbedPreview(currentItem, targetRect);
+                return;
+            }
+
+            tooltipPresenter.Hide();
         }
 
         /// <summary>현재 아이템을 90도씩 시계 방향으로 회전한다.</summary>
@@ -274,8 +282,6 @@ namespace Project.UI.Inventory
         {
             rotationQuarterTurns = InventoryRotationUtility.NormalizeQuarterTurns(rotationQuarterTurns + 1);
             ApplyPreviewVisual();
-
-            Debug.Log($"[GrabRotate] quarterTurns={rotationQuarterTurns}, size={previewRect.sizeDelta}, euler={previewVisualRect.localEulerAngles}");
         }
 
         /// <summary>preview 루트 크기와 비주얼 자식 회전을 현재 상태에 맞게 적용한다.</summary>

@@ -23,11 +23,13 @@ namespace Project.UI.Harvest
         [SerializeField] private TextMeshProUGUI descriptionText; // 팝업 설명 문구
 
         private EncyclopediaService encyclopediaService; // 도감 서비스
+        private GameTimeService gameTimeService; // 인게임 시간 서비스
 
-        /// <summary>도감 서비스를 주입하고 초기 패널 상태를 정리한다.</summary>
-        public void Initialize(EncyclopediaService newEncyclopediaService)
+        /// <summary>도감 서비스와 시간 서비스를 주입하고 초기 패널 상태를 정리한다.</summary>
+        public void Initialize(EncyclopediaService newEncyclopediaService, GameTimeService newGameTimeService)
         {
             encyclopediaService = newEncyclopediaService;
+            gameTimeService = newGameTimeService;
 
             if (newDiscoveryPanel != null)
                 newDiscoveryPanel.SetActive(false);
@@ -68,16 +70,14 @@ namespace Project.UI.Harvest
 
             bool isNewlyDiscovered = !encyclopediaService.IsItemDiscovered(itemData.ItemId);
 
-            // 새 발견이면 즉시 도감 등록 + 팝업 활성화
             if (isNewlyDiscovered)
             {
-                // TODO: 추후 인게임 시간 시스템이 붙으면 실제 누적 시간 값을 넘겨준다.
-                encyclopediaService.DiscoverItem(itemData.ItemId, 0f);
+                float currentInGameHours = gameTimeService != null ? gameTimeService.CurrentInGameHours : 0f;
+                encyclopediaService.DiscoverItem(itemData.ItemId, currentInGameHours);
                 ShowDiscoveryPopup(itemData);
             }
 
-            // 가장 중요한 요구사항:
-            // 채집 성공 즉시 현재 마우스 위치 기준 fresh recovery grab을 시작한다.
+            // 채집 성공 즉시 fresh recovery grab 시작
             grabPresenter.StartRecoveredGrab(itemData, isNewlyDiscovered);
         }
 
@@ -109,8 +109,8 @@ namespace Project.UI.Harvest
                 {
                     descriptionText.text =
                         $"...!! Relic discovered! " +
-                        $"Detailed analysis required." +
-                        $" {itemData.AnalysisTeaserMessage}";
+                        $"Detailed analysis required. " +
+                        $"{itemData.AnalysisTeaserMessage}";
                 }
                 else
                 {

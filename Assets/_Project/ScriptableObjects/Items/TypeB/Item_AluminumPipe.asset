@@ -15,11 +15,13 @@ MonoBehaviour:
   itemId: itm_res_aluminum_pipe
   displayName: Aluminum Pipe
   description: A lightweight aluminum pipe section salvaged from ship interiors.
-  icon: {fileID: 21300000, guid: 9e0a4cd9bbb69ae4e8116750f650e354, type: 3}
+  icon: {fileID: 21300000, guid: 10e8a91c3d2af36418e6843abf6f3b82, type: 3}
   worldPrefab: {fileID: 0}
+  typeIcon: {fileID: 0}
   category: 0
   rarity: 1
   analysisTimeHours: 0
+  analysisTeaserMessage: 
   sellPrice: 27
   baseCatchDifficulty: 0.25
   shapeBounds: {x: 3, y: 1}

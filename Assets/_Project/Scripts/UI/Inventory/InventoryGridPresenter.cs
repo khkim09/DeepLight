@@ -2,6 +2,7 @@
 using Project.Data.Items;
 using Project.Data.Submarine;
 using Project.Gameplay.Inventory;
+using Project.Gameplay.Services;
 using UnityEngine;
 
 namespace Project.UI.Inventory
@@ -24,7 +25,10 @@ namespace Project.UI.Inventory
         private readonly Dictionary<InventoryItemInstance, InventoryPlacedItemView> placedItemViewMap = new();
 
         /// <summary>Bootstrapper에서 SO를 주입받고 슬롯 캐시를 구축한다.</summary>
-        public void Initialize(SubmarineInventoryLayoutSO layout)
+        public void Initialize(
+            SubmarineInventoryLayoutSO layout,
+            EncyclopediaService encyclopediaService,
+            GameTimeService gameTimeService)
         {
             layoutSO = layout;
             RebuildSlotCache();

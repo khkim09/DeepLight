@@ -15,8 +15,9 @@ MonoBehaviour:
   itemId: itm_res_survey_beacon
   displayName: Survey Beacon
   description: A field beacon once used for long-range underwater survey operations.
-  icon: {fileID: 21300000, guid: 9e0a4cd9bbb69ae4e8116750f650e354, type: 3}
+  icon: {fileID: 21300000, guid: 4a4673415cb329a43a4ba6a2340b3dfd, type: 3}
   worldPrefab: {fileID: 0}
+  typeIcon: {fileID: 0}
   category: 0
   rarity: 2
   analysisTimeHours: 0

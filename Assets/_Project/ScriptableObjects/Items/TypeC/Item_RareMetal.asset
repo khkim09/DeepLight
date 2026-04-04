@@ -15,11 +15,13 @@ MonoBehaviour:
   itemId: itm_res_rare_metal
   displayName: Rare Metal Cluster
   description: A dense cluster of rare alloy formed under prolonged deep-sea stress.
-  icon: {fileID: 21300000, guid: 9e0a4cd9bbb69ae4e8116750f650e354, type: 3}
+  icon: {fileID: 21300000, guid: f80b6aa1322dc8a41876539c3f12d057, type: 3}
   worldPrefab: {fileID: 0}
+  typeIcon: {fileID: 0}
   category: 0
   rarity: 2
   analysisTimeHours: 0
+  analysisTeaserMessage: 
   sellPrice: 96
   baseCatchDifficulty: 0.58
   shapeBounds: {x: 2, y: 2}

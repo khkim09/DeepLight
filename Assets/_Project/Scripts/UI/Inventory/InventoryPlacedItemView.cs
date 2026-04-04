@@ -22,6 +22,9 @@ namespace Project.UI.Inventory
         /// <summary>루트 RectTransform을 반환한다.</summary>
         public RectTransform RectTransform => transform as RectTransform;
 
+        /// <summary>비주얼 RectTransform을 반환한다.</summary>
+        public RectTransform VisualRectTransform => visualRect != null ? visualRect : RectTransform;
+
         /// <summary>참조가 비어 있으면 자동으로 찾는다.</summary>
         private void Awake()
         {
@@ -71,24 +74,20 @@ namespace Project.UI.Inventory
             visualRect.pivot = new Vector2(0.5f, 0.5f);
             visualRect.anchoredPosition = Vector2.zero;
 
-            // 중요:
-            // 루트는 점유 footprint 크기,
-            // 비주얼 자식은 "원본(비회전) 크기"를 유지한 채 회전만 준다.
-            // 이렇게 해야 화면에서 실제 1x2 / 2x1 footprint가 올바르게 보인다.
             visualRect.sizeDelta = unrotatedPixelSize;
             visualRect.localEulerAngles = new Vector3(0f, 0f, InventoryRotationUtility.GetRotationZ(rotationQuarterTurns));
             visualRect.localScale = Vector3.one;
             visualRect.SetAsLastSibling();
         }
 
-        /// <summary>포인터 hover 진입 시 툴팁을 띄운다.</summary>
+        /// <summary>포인터 hover 진입 시 배치 아이템 hover 전용 툴팁을 띄운다.</summary>
         public void OnPointerEnter(PointerEventData eventData)
         {
             if (grabbedItemPresenter == null || grabbedItemPresenter.IsAnyGrabActive)
                 return;
 
             if (tooltipPresenter != null && itemInstance != null && itemInstance.ItemData != null)
-                tooltipPresenter.ShowItem(itemInstance.ItemData);
+                tooltipPresenter.ShowForPlacedHover(itemInstance.ItemData, VisualRectTransform);
         }
 
         /// <summary>포인터 hover 이탈 시 툴팁을 숨긴다.</summary>

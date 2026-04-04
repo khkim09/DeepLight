@@ -15,8 +15,9 @@ MonoBehaviour:
   itemId: itm_res_comm_module
   displayName: Comm Module
   description: A damaged communication module stripped from a sealed device.
-  icon: {fileID: 21300000, guid: 9e0a4cd9bbb69ae4e8116750f650e354, type: 3}
+  icon: {fileID: 21300000, guid: 14caa99cea828a3448f7eeb670fa8ad2, type: 3}
   worldPrefab: {fileID: 0}
+  typeIcon: {fileID: 0}
   category: 0
   rarity: 2
   analysisTimeHours: 0

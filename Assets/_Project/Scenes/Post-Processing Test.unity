@@ -10330,6 +10330,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Managers::Project.Managers.Composition.DeepLightTestBedBootstrapper
   submarineStats: {fileID: 11400000, guid: 0ff294c54a11f1247a5893e861c351ac, type: 2}
   harvestRecoveryTuning: {fileID: 11400000, guid: 3916320f36b347e44a030aaa85f45ff1, type: 2}
+  startInGameHours: 0
   playerTransform: {fileID: 8892471190458576195}
   harvestPointInteractor: {fileID: 8892471190458576200}
   harvestWorldVisibilityController: {fileID: 1705312580}
@@ -16180,9 +16181,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Project.UI::Project.UI.Inventory.InventoryItemTooltipPresenter
   rootObject: {fileID: 1856539329}
+  tooltipRect: {fileID: 1856539330}
+  rootCanvas: {fileID: 144727200}
   itemTypeIconImage: {fileID: 1881114738}
   itemNameText: {fileID: 465050297}
   itemDescriptionText: {fileID: 1145981547}
+  inventoryLeftLocalX: 320
+  hoverFixedLocalX: 145
+  sideGap: 0
+  sideSwitchThresholdX: -320
+  screenPadding: 12
 --- !u!1 &1869799806
 GameObject:
   m_ObjectHideFlags: 0

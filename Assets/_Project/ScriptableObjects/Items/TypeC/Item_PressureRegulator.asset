@@ -15,8 +15,9 @@ MonoBehaviour:
   itemId: itm_res_pressure_regulator
   displayName: Pressure Regulator
   description: A reinforced regulator designed to stabilize extreme pressure loads.
-  icon: {fileID: 21300000, guid: 9e0a4cd9bbb69ae4e8116750f650e354, type: 3}
+  icon: {fileID: 21300000, guid: 9586806b28d4b5a478172c63eb215ba2, type: 3}
   worldPrefab: {fileID: 0}
+  typeIcon: {fileID: 0}
   category: 0
   rarity: 2
   analysisTimeHours: 0
