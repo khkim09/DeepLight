@@ -28,6 +28,7 @@ namespace Project.Gameplay.CameraSystem
         private float localYaw;
         private float localPitch;
         private bool isInventoryOpen; // 인벤토리 열림 상태 플래그
+        private Vector3 externalShakeLocalOffset; // 외부 연출용 카메라 로컬 오프셋
 
         /// <summary>자유 시야 입력이 유지 중인지 반환한다.</summary>
         public bool IsFreeLookActive => inputBindings != null && Input.GetKey(inputBindings.FreeLookKey);
@@ -37,6 +38,12 @@ namespace Project.Gameplay.CameraSystem
 
         /// <summary>카메라가 잠수함과 독립적으로 정렬 중인지 여부이다.</summary>
         public bool IsIndependentAlignment { get; set; }
+
+        /// <summary>외부 연출용 로컬 오프셋을 설정한다.</summary>
+        public void SetExternalShakeLocalOffset(Vector3 localOffset)
+        {
+            externalShakeLocalOffset = localOffset;
+        }
 
         /// <summary>새 추적 대상을 설정한다.</summary>
         public void SetTarget(Transform newTarget)
@@ -104,7 +111,6 @@ namespace Project.Gameplay.CameraSystem
 
             if (!IsInputLocked)
             {
-                // 인벤토리가 닫혀 있을 때만 자유시야 조작을 허용한다.
                 if (IsFreeLookActive && !isInventoryOpen)
                 {
                     localYaw += Input.GetAxis("Mouse X") * runtimeSettings.MouseSensitivityX * Time.deltaTime;
@@ -113,7 +119,6 @@ namespace Project.Gameplay.CameraSystem
                 }
                 else
                 {
-                    // 자유시점을 떼거나 인벤토리가 열리면 기본 후방 시점으로 자연스럽게 복귀한다.
                     localYaw = Mathf.Lerp(localYaw, 0f, 8f * Time.deltaTime);
                     localPitch = Mathf.Lerp(localPitch, 0f, 8f * Time.deltaTime);
                 }
@@ -146,7 +151,8 @@ namespace Project.Gameplay.CameraSystem
             Quaternion localCamRotation = Quaternion.Euler(localPitch, localYaw, 0f);
             Quaternion finalCamRotation = smoothedTargetRotation * localCamRotation;
 
-            transform.position = target.position + (finalCamRotation * targetLocalOffset);
+            // 외부 shake는 카메라 로컬 기준으로 최종 포즈에 가산한다.
+            transform.position = target.position + (finalCamRotation * (targetLocalOffset + externalShakeLocalOffset));
             transform.LookAt(target.position, finalCamRotation * Vector3.up);
         }
 
@@ -194,7 +200,7 @@ namespace Project.Gameplay.CameraSystem
             smoothedTargetRotation = target.rotation;
 
             Vector3 baseOffset = new Vector3(0f, runtimeSettings.DefaultOffsetY, currentDistanceZ);
-            transform.position = target.position + (smoothedTargetRotation * baseOffset);
+            transform.position = target.position + (smoothedTargetRotation * (baseOffset + externalShakeLocalOffset));
             transform.LookAt(target.position, smoothedTargetRotation * Vector3.up);
         }
 

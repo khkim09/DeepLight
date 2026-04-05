@@ -7,6 +7,7 @@ using Project.Data.Input;
 using Project.Gameplay.GameModes;
 using Project.Gameplay.Runtime;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Project.Gameplay.Harvest
 {
@@ -20,6 +21,10 @@ namespace Project.Gameplay.Harvest
         [Header("References")]
         [SerializeField] private Camera harvestConsoleCamera; // 회수 콘솔 카메라
         [SerializeField] private HarvestTargetRotationController targetRotationController; // 타깃 회전 제어기
+
+        [Header("Rotation Input Guard")]
+        [SerializeField] private bool blockInputWhenPointerOverUi = true; // UI 위 포인터일 때 입력 차단
+        [SerializeField] private float validRotationHalfWidthPixels = 450f; // 화면 중심 기준 허용 x 반폭
 
         private HarvestModeSession harvestModeSession; // 현재 회수 세션
         private HarvestResolver harvestResolver; // 회수 계산기
@@ -98,7 +103,6 @@ namespace Project.Gameplay.Harvest
         /// <summary>회수 콘솔 진입 시 현재 타깃과 포인트 상태를 초기화한다.</summary>
         private void OnHarvestModeEntered(HarvestModeEnteredEvent publishedEvent)
         {
-            // 이벤트는 먼저 왔지만 런타임 주입이 아직 끝나지 않은 경우를 방어한다.
             if (harvestModeSession == null || harvestResolver == null || harvestModeCoordinator == null)
                 return;
 
@@ -186,7 +190,7 @@ namespace Project.Gameplay.Harvest
                 return;
 
             float batteryCost = harvestResolver.GetScanPulseBatteryCost(currentMode);
-            harvestResolver.SubmarineRuntimeState.ConsumeBattery(batteryCost);
+            harvestResolver.SubmarineRuntimeState.ConsumeBatteryOperational(batteryCost);
 
             if (harvestResolver.SubmarineRuntimeState.CurrentBattery <= 0f)
             {
@@ -222,7 +226,7 @@ namespace Project.Gameplay.Harvest
 
             if (Input.GetMouseButtonDown(0))
             {
-                if (hoveredPoint == null)
+                if (CanStartTargetRotationDrag(Input.mousePosition))
                 {
                     isDraggingTarget = true;
                     targetRotationController.BeginDrag(Input.mousePosition);
@@ -230,7 +234,10 @@ namespace Project.Gameplay.Harvest
             }
 
             if (Input.GetMouseButton(0) && isDraggingTarget)
-                targetRotationController.RotateByDrag(Input.mousePosition);
+            {
+                if (CanContinueTargetRotationDrag(Input.mousePosition))
+                    targetRotationController.RotateByDrag(Input.mousePosition);
+            }
 
             if (Input.GetMouseButtonUp(0) && isDraggingTarget)
             {
@@ -242,6 +249,9 @@ namespace Project.Gameplay.Harvest
         /// <summary>포인트 선택과 제거 입력을 처리한다.</summary>
         private void HandlePointClickInput()
         {
+            if (IsPointerBlockedByUi())
+                return;
+
             if (Input.GetMouseButtonDown(0))
                 TrySelectHoveredPoint();
 
@@ -274,6 +284,12 @@ namespace Project.Gameplay.Harvest
         /// <summary>현재 마우스 위치 기준으로 hover 포인트를 갱신한다.</summary>
         private void UpdateHoveredPoint()
         {
+            if (IsPointerBlockedByUi())
+            {
+                ClearHoveredPoint();
+                return;
+            }
+
             HarvestScanPoint bestPoint = null;
             float bestDistance = float.MaxValue;
             Vector2 mousePosition = Input.mousePosition;
@@ -541,6 +557,65 @@ namespace Project.Gameplay.Harvest
 
             EventBus.Publish(new BatteryChangedEvent(runtime.CurrentBattery, runtime.BaseStats.MaxBattery));
             EventBus.Publish(new HullDurabilityChangedEvent(runtime.CurrentHullDurability, runtime.BaseStats.MaxHullDurability));
+        }
+
+        /// <summary>현재 hover 포인트를 즉시 해제한다.</summary>
+        private void ClearHoveredPoint()
+        {
+            if (hoveredPoint != null)
+            {
+                hoveredPoint.SetHovered(false);
+                hoveredPoint = null;
+            }
+
+            PublishHoveredPoint(null);
+        }
+
+        /// <summary>현재 포인터가 UI 위에 있어 입력을 막아야 하는지 반환한다.</summary>
+        private bool IsPointerBlockedByUi()
+        {
+            if (!blockInputWhenPointerOverUi)
+                return false;
+
+            if (EventSystem.current == null)
+                return false;
+
+            return EventSystem.current.IsPointerOverGameObject();
+        }
+
+        /// <summary>화면 중심 기준 회전 허용 x 대역 안에 있는지 검사한다.</summary>
+        private bool IsInsideRotationBand(Vector3 screenPosition)
+        {
+            float screenCenterX = Screen.width * 0.5f;
+            float offsetXFromCenter = screenPosition.x - screenCenterX;
+            return Mathf.Abs(offsetXFromCenter) <= Mathf.Max(0f, validRotationHalfWidthPixels);
+        }
+
+        /// <summary>현재 위치에서 타깃 회전 드래그를 시작할 수 있는지 검사한다.</summary>
+        private bool CanStartTargetRotationDrag(Vector3 screenPosition)
+        {
+            if (hoveredPoint != null)
+                return false;
+
+            if (IsPointerBlockedByUi())
+                return false;
+
+            if (!IsInsideRotationBand(screenPosition))
+                return false;
+
+            return true;
+        }
+
+        /// <summary>현재 위치에서 타깃 회전 드래그를 계속 진행할 수 있는지 검사한다.</summary>
+        private bool CanContinueTargetRotationDrag(Vector3 screenPosition)
+        {
+            if (IsPointerBlockedByUi())
+                return false;
+
+            if (!IsInsideRotationBand(screenPosition))
+                return false;
+
+            return true;
         }
 
         /// <summary>회수 콘솔용 자유 커서 상태를 적용한다.</summary>

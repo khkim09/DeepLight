@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e2e5ed63e244544d9122befd3ef0ef2, type: 3}
   m_Name: SubmarineStats_Test
   m_EditorClassIdentifier: Project.Data::Project.Data.Submarine.SubmarineStatsSO
-  baseMoveSpeed: 5
+  baseMoveSpeed: 8
   baseTurnSpeed: 90
   inventoryLayout: {fileID: 11400000, guid: 424fa94d161211141bfb6215ab490170, type: 2}
   inventoryWidth: 6

@@ -48,31 +48,79 @@ namespace Project.Gameplay.Runtime
             }
         }
 
-        /// <summary>배터리를 소비한다.</summary>
+        /// <summary>정상 운영 비용으로 배터리를 소비한다.</summary>
+        public void ConsumeBatteryOperational(float amount)
+        {
+            if (baseStats == null)
+                return;
+
+            currentBattery = Mathf.Max(0f, currentBattery - Mathf.Max(0f, amount));
+            EventBus.Publish(new BatteryChangedEvent(currentBattery, baseStats.MaxBattery));
+        }
+
+        /// <summary>정상 운영 비용으로 선체 내구도를 감소시킨다.</summary>
+        public void DamageHullOperational(float amount)
+        {
+            if (baseStats == null)
+                return;
+
+            currentHullDurability = Mathf.Max(0f, currentHullDurability - Mathf.Max(0f, amount));
+            EventBus.Publish(new HullDurabilityChangedEvent(currentHullDurability, baseStats.MaxHullDurability));
+        }
+
+        /// <summary>위험 피해로 선체 내구도를 감소시키고 위험 피드백 이벤트를 발행한다.</summary>
+        public void DamageHullDanger(
+            float amount,
+            SubmarineDangerFeedbackType feedbackType,
+            float intensityMultiplier = 1f)
+        {
+            if (baseStats == null)
+                return;
+
+            float clampedAmount = Mathf.Max(0f, amount);
+            if (clampedAmount <= 0f)
+                return;
+
+            currentHullDurability = Mathf.Max(0f, currentHullDurability - clampedAmount);
+            EventBus.Publish(new HullDurabilityChangedEvent(currentHullDurability, baseStats.MaxHullDurability));
+
+            EventBus.Publish(new SubmarineDangerFeedbackEvent(
+                feedbackType,
+                clampedAmount,
+                currentHullDurability,
+                baseStats.MaxHullDurability,
+                Mathf.Max(0f, intensityMultiplier)));
+        }
+
+        /// <summary>배터리를 소비한다. 레거시 호출은 정상 운영 비용으로 처리한다.</summary>
         public void ConsumeBattery(float amount)
         {
-            currentBattery = Mathf.Max(0f, currentBattery - amount);
-            EventBus.Publish(new BatteryChangedEvent(currentBattery, baseStats.MaxBattery));
+            ConsumeBatteryOperational(amount);
         }
 
         /// <summary>배터리를 회복한다.</summary>
         public void RestoreBattery(float amount)
         {
-            currentBattery = Mathf.Min(baseStats.MaxBattery, currentBattery + amount);
+            if (baseStats == null)
+                return;
+
+            currentBattery = Mathf.Min(baseStats.MaxBattery, currentBattery + Mathf.Max(0f, amount));
             EventBus.Publish(new BatteryChangedEvent(currentBattery, baseStats.MaxBattery));
         }
 
-        /// <summary>선체 내구도를 감소시킨다.</summary>
+        /// <summary>선체 내구도를 감소시킨다. 레거시 호출은 정상 운영 비용으로 처리한다.</summary>
         public void DamageHull(float amount)
         {
-            currentHullDurability = Mathf.Max(0f, currentHullDurability - amount);
-            EventBus.Publish(new HullDurabilityChangedEvent(currentHullDurability, baseStats.MaxHullDurability));
+            DamageHullOperational(amount);
         }
 
         /// <summary>선체 내구도를 회복한다.</summary>
         public void RepairHull(float amount)
         {
-            currentHullDurability = Mathf.Min(baseStats.MaxHullDurability, currentHullDurability + amount);
+            if (baseStats == null)
+                return;
+
+            currentHullDurability = Mathf.Min(baseStats.MaxHullDurability, currentHullDurability + Mathf.Max(0f, amount));
             EventBus.Publish(new HullDurabilityChangedEvent(currentHullDurability, baseStats.MaxHullDurability));
         }
 

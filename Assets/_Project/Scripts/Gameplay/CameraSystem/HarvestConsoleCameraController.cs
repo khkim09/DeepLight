@@ -8,16 +8,23 @@ namespace Project.Gameplay.CameraSystem
         [SerializeField] private Transform cockpitViewAnchor; // 조종실 시점 앵커
         [SerializeField] private bool followAnchorContinuously = true; // 활성 상태에서 앵커 추종 여부
 
+        private Vector3 externalShakeLocalOffset; // 외부 연출용 로컬 오프셋
+
+        /// <summary>외부 연출용 로컬 오프셋을 설정한다.</summary>
+        public void SetExternalShakeLocalOffset(Vector3 localOffset)
+        {
+            externalShakeLocalOffset = localOffset;
+        }
+
         /// <summary>조종실 시점 앵커를 설정한다</summary>
         public void SetCockpitViewAnchor(Transform newCockpitViewAnchor)
         {
-            cockpitViewAnchor = newCockpitViewAnchor; // 앵커 저장
+            cockpitViewAnchor = newCockpitViewAnchor;
         }
 
         /// <summary>현재 기준으로 목표 포즈를 계산한다</summary>
         public void GetDesiredPose(out Vector3 position, out Quaternion rotation)
         {
-            // 앵커 없으면 현재 포즈 유지
             if (cockpitViewAnchor == null)
             {
                 position = transform.position;
@@ -25,8 +32,8 @@ namespace Project.Gameplay.CameraSystem
                 return;
             }
 
-            position = cockpitViewAnchor.position; // 앵커 위치 사용
-            rotation = cockpitViewAnchor.rotation; // 앵커 회전 사용
+            position = cockpitViewAnchor.position + (cockpitViewAnchor.rotation * externalShakeLocalOffset);
+            rotation = cockpitViewAnchor.rotation;
         }
 
         /// <summary>현재 기준 목표 포즈를 즉시 반영한다</summary>

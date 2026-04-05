@@ -7,6 +7,7 @@ using Project.Gameplay.Harvest;
 using Project.Gameplay.Interaction;
 using Project.Gameplay.Runtime;
 using Project.Gameplay.Services;
+using Project.Gameplay.UserInput;
 using Project.UI.Harvest;
 using Project.UI.Inventory;
 using UnityEngine;
@@ -27,6 +28,7 @@ namespace Project.Managers.Composition
         [SerializeField] private Transform playerTransform; // 플레이어 Transform
         [SerializeField] private HarvestPointInteractor harvestPointInteractor; // F키 Harvest 진입 컴포넌트
         [SerializeField] private HarvestWorldVisibilityController harvestWorldVisibilityController; // Harvest 중 월드 타깃 가시성 제어기
+        [SerializeField] private SubmarineCollisionDangerSensor collisionDangerSensor; // 충돌 위험 감지 센서
 
         [Header("Camera References")]
         [SerializeField] private PerspectiveSwapController perspectiveSwapController; // 카메라 전환 컨트롤러
@@ -62,7 +64,6 @@ namespace Project.Managers.Composition
                 return;
             }
 
-            // 1. core 런타임 상태 및 논리 서비스 생성
             submarineRuntimeState = new SubmarineRuntimeState(submarineStats);
             harvestModeSession = new HarvestModeSession();
 
@@ -73,15 +74,16 @@ namespace Project.Managers.Composition
             gameModeService = new GameModeService(GameModeType.Exploration3D);
             harvestResolver = new HarvestResolver(submarineRuntimeState, inventoryService, harvestRecoveryTuning);
 
-            // 2. 모드 전환 코디네이터 생성
             harvestModeCoordinator = new HarvestModeCoordinator(gameModeService, harvestModeSession);
 
-            // 3. 씬 내 상호작용 및 가시성 제어기 초기화
             if (harvestPointInteractor != null)
                 harvestPointInteractor.Initialize(harvestModeCoordinator);
 
             if (harvestWorldVisibilityController != null)
                 harvestWorldVisibilityController.Initialize(harvestModeSession);
+
+            if (collisionDangerSensor != null)
+                collisionDangerSensor.Initialize(submarineRuntimeState);
 
             if (explorationFollowCameraController != null && playerTransform != null)
                 explorationFollowCameraController.SetTarget(playerTransform);
@@ -136,7 +138,7 @@ namespace Project.Managers.Composition
             EventBus.Subscribe<HarvestSessionForcedEndedByBatteryEvent>(OnHarvestSessionForcedEndedByBattery);
         }
 
-        /// <summary>이벤트 구독을 해제한다</summary>
+        /// <summary>이벤트를 해제한다</summary>
         private void OnDisable()
         {
             EventBus.Unsubscribe<HarvestSessionForcedEndedByBatteryEvent>(OnHarvestSessionForcedEndedByBattery);
