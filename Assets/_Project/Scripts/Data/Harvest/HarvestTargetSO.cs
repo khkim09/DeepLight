@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Project.Data.Items;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Project.Data.Harvest
 {
@@ -57,7 +59,6 @@ namespace Project.Data.Harvest
 
             int totalWeight = 0;
 
-            // 유효한 후보의 총 가중치를 계산한다.
             for (int i = 0; i < itemPool.Count; i++)
             {
                 ItemSO item = itemPool[i].Item;
@@ -73,7 +74,6 @@ namespace Project.Data.Harvest
             int roll = Random.Range(0, totalWeight);
             int cumulative = 0;
 
-            // 누적 가중치 구간에 들어온 아이템을 반환한다.
             for (int i = 0; i < itemPool.Count; i++)
             {
                 ItemSO item = itemPool[i].Item;
@@ -108,7 +108,7 @@ namespace Project.Data.Harvest
     }
 
     /// <summary>가중치가 포함된 드랍 아이템 후보 엔트리이다.</summary>
-    [System.Serializable]
+    [Serializable]
     public struct HarvestItemWeightedEntry
     {
         [SerializeField] private ItemSO item; // 후보 아이템

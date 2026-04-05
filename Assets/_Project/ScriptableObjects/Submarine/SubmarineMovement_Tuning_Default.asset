@@ -21,7 +21,7 @@ MonoBehaviour:
     ascendSpeed: 3
     descendSpeed: 3
     idleDrag: 1.8
-    brakeDeceleration: 10
+    brakeDeceleration: 18
     maxPitchAngle: 50
     rotationSmoothTime: 0.15
     loopRotationSpeed: 50

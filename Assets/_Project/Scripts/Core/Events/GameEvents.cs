@@ -310,6 +310,25 @@ namespace Project.Core.Events
         }
     }
 
+    /// <summary>상호작용 컨테이너에 표시할 프롬프트 타입 변경 이벤트</summary>
+    public readonly struct InteractionPromptChangedEvent : IEvent
+    {
+        public readonly int PromptType; // 표시할 프롬프트 타입 값
+        public readonly KeyCode InteractKey; // 표시할 키
+
+        /// <summary>프롬프트 변경 정보 생성</summary>
+        public InteractionPromptChangedEvent(int promptType, KeyCode interactKey)
+        {
+            PromptType = promptType;
+            InteractKey = interactKey;
+        }
+    }
+
+    /// <summary>상호작용 컨테이너를 숨겨야 할 때 발생하는 이벤트</summary>
+    public readonly struct InteractionPromptClearedEvent : IEvent
+    {
+    }
+
     #endregion
 
     #region Inventory

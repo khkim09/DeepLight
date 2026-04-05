@@ -37,7 +37,7 @@ namespace Project.Editor.DataTools
 
             EditorGUILayout.HelpBox(
                 "CSV Header Example:\n" +
-                "itemId,displayName,description,category,rarity,sellPrice,weight,baseCatchDifficulty,shapeBoundsX,shapeBoundsY,occupiedCells,canRotate,iconPath,worldPrefabPath\n" +
+                "itemId,displayName,description,category,rarity,sellPrice,baseCatchDifficulty,shapeBoundsX,shapeBoundsY,occupiedCells,canRotate,iconPath,worldPrefabPath\n" +
                 "occupiedCells format: 0:0|1:0|1:1",
                 MessageType.Info);
 
@@ -115,14 +115,13 @@ namespace Project.Editor.DataTools
                 Category = Get(parts, 3),
                 Rarity = Get(parts, 4),
                 SellPrice = ParseInt(Get(parts, 5)),
-                Weight = ParseFloat(Get(parts, 6)),
-                BaseCatchDifficulty = ParseFloat(Get(parts, 7)),
-                ShapeBoundsX = ParseInt(Get(parts, 8)),
-                ShapeBoundsY = ParseInt(Get(parts, 9)),
-                OccupiedCells = Get(parts, 10),
-                CanRotate = ParseBool(Get(parts, 11)),
-                IconPath = Get(parts, 12),
-                WorldPrefabPath = Get(parts, 13)
+                BaseCatchDifficulty = ParseFloat(Get(parts, 6)),
+                ShapeBoundsX = ParseInt(Get(parts, 7)),
+                ShapeBoundsY = ParseInt(Get(parts, 8)),
+                OccupiedCells = Get(parts, 9),
+                CanRotate = ParseBool(Get(parts, 10)),
+                IconPath = Get(parts, 11),
+                WorldPrefabPath = Get(parts, 12)
             };
 
             return row;
@@ -151,7 +150,6 @@ namespace Project.Editor.DataTools
             SetEnumByName(so.FindProperty("rarity"), row.Rarity);
 
             so.FindProperty("sellPrice").intValue = row.SellPrice;
-            so.FindProperty("weight").floatValue = row.Weight;
             so.FindProperty("baseCatchDifficulty").floatValue = row.BaseCatchDifficulty;
 
             SerializedProperty bounds = so.FindProperty("shapeBounds");
@@ -275,7 +273,6 @@ namespace Project.Editor.DataTools
             public string Category;
             public string Rarity;
             public int SellPrice;
-            public float Weight;
             public float BaseCatchDifficulty;
             public int ShapeBoundsX;
             public int ShapeBoundsY;

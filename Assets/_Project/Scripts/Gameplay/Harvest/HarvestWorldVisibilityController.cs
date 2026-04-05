@@ -17,32 +17,37 @@ namespace Project.Gameplay.Harvest
         [SerializeField] private bool autoFindTargetsOnAwake = true; // 시작 시 씬 타깃 자동 수집 여부
         [SerializeField] private bool includeInactiveTargets = true; // 비활성 오브젝트까지 캐싱할지 여부
 
-        private readonly List<TargetVisibilityEntry> cachedEntries = new List<TargetVisibilityEntry>();
+        private readonly List<TargetVisibilityEntry> cachedEntries = new();
 
+        /// <summary>초기 캐시를 구성한다.</summary>
         private void Awake()
         {
             if (autoFindTargetsOnAwake)
                 RebuildCache();
         }
 
+        /// <summary>이벤트를 구독한다.</summary>
         private void OnEnable()
         {
-            EventBus.Subscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
+            EventBus.Subscribe<HarvestCameraTransitionCompletedEvent>(OnHarvestCameraTransitionCompleted);
             EventBus.Subscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
         }
 
+        /// <summary>이벤트 구독을 해제한다.</summary>
         private void OnDisable()
         {
-            EventBus.Unsubscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
+            EventBus.Unsubscribe<HarvestCameraTransitionCompletedEvent>(OnHarvestCameraTransitionCompleted);
             EventBus.Unsubscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
             RestoreAllTargets();
         }
 
+        /// <summary>외부에서 세션 참조를 주입한다.</summary>
         public void Initialize(HarvestModeSession newHarvestModeSession)
         {
             harvestModeSession = newHarvestModeSession;
         }
 
+        /// <summary>씬 내 전체 타깃 캐시를 다시 만든다.</summary>
         [ContextMenu("Rebuild Target Cache")]
         public void RebuildCache()
         {
@@ -63,9 +68,10 @@ namespace Project.Gameplay.Harvest
             }
         }
 
-        private void OnHarvestModeEntered(HarvestModeEnteredEvent publishedEvent)
+        /// <summary>Harvest 카메라 전환 완료 후 현재 대상만 남기고 가린다.</summary>
+        private void OnHarvestCameraTransitionCompleted(HarvestCameraTransitionCompletedEvent publishedEvent)
         {
-            if (harvestModeSession == null)
+            if (harvestModeSession == null || !harvestModeSession.HasTarget)
                 return;
 
             if (cachedEntries.Count <= 0)
@@ -75,11 +81,13 @@ namespace Project.Gameplay.Harvest
             ApplyVisibilityForActiveTarget(activeTarget);
         }
 
+        /// <summary>Harvest 종료 시 전부 복구한다.</summary>
         private void OnHarvestModeExited(HarvestModeExitedEvent publishedEvent)
         {
             RestoreAllTargets();
         }
 
+        /// <summary>현재 대상만 남기고 나머지를 숨긴다.</summary>
         private void ApplyVisibilityForActiveTarget(HarvestTargetBehaviour activeTarget)
         {
             for (int i = 0; i < cachedEntries.Count; i++)
@@ -93,6 +101,7 @@ namespace Project.Gameplay.Harvest
             }
         }
 
+        /// <summary>전체 타깃을 원래 상태로 복원한다.</summary>
         private void RestoreAllTargets()
         {
             for (int i = 0; i < cachedEntries.Count; i++)
@@ -105,6 +114,7 @@ namespace Project.Gameplay.Harvest
             }
         }
 
+        /// <summary>씬 오브젝트인지 여부를 판정한다.</summary>
         private static bool IsSceneObject(HarvestTargetBehaviour target)
         {
             if (target == null)
@@ -113,6 +123,7 @@ namespace Project.Gameplay.Harvest
             return !string.IsNullOrEmpty(target.gameObject.scene.name);
         }
 
+        /// <summary>타깃 1개에 대한 원래 가시성 상태를 저장하고 복원한다.</summary>
         private sealed class TargetVisibilityEntry
         {
             private readonly HarvestTargetBehaviour target;
@@ -137,7 +148,7 @@ namespace Project.Gameplay.Harvest
                 renderers = target.GetComponentsInChildren<Renderer>(true);
                 colliders = target.GetComponentsInChildren<Collider>(true);
 
-                List<Behaviour> collectedBehaviours = new List<Behaviour>();
+                List<Behaviour> collectedBehaviours = new();
                 collectedBehaviours.AddRange(target.GetComponentsInChildren<HarvestInteractionZone>(true));
                 collectedBehaviours.AddRange(target.GetComponentsInChildren<HarvestTargetHighlightController>(true));
                 behaviours = collectedBehaviours.Where(component => component != null).Distinct().ToArray();
