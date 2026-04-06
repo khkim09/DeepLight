@@ -136,10 +136,9 @@ namespace Project.Core.Events
         public readonly float BatteryCost; // 추정 배터리 소모량
         public readonly float DurabilityCost; // 추정 내구도 소모량
 
-        // HUD 호환용 별칭
-        public float EstimatedRecoveryChance => RecoveryChance; // 추정 성공률 별칭
-        public float EstimatedBatteryCost => BatteryCost; // 추정 배터리 비용 별칭
-        public float EstimatedDurabilityCost => DurabilityCost; // 추정 내구도 비용 별칭
+        public float EstimatedRecoveryChance => RecoveryChance; // HUD 호환용 별칭
+        public float EstimatedBatteryCost => BatteryCost; // HUD 호환용 별칭
+        public float EstimatedDurabilityCost => DurabilityCost; // HUD 호환용 별칭
 
         /// <summary>추정치 갱신 정보 생성</summary>
         public HarvestRecoveryPreviewUpdatedEvent(float recoveryChance, float batteryCost, float durabilityCost)
@@ -147,6 +146,37 @@ namespace Project.Core.Events
             RecoveryChance = recoveryChance;
             BatteryCost = batteryCost;
             DurabilityCost = durabilityCost;
+        }
+    }
+
+    /// <summary>고정 패널용 회수 계획 상태 갱신 이벤트</summary>
+    public readonly struct HarvestRecoveryPlanMetricsUpdatedEvent : IEvent
+    {
+        public readonly int RevealedPointCount; // 공개 개수
+        public readonly int TotalPointCount; // 총 개수
+        public readonly int SelectedPointCount; // 현재 선택 개수
+        public readonly int RecommendedPointCount; // 권장 개수
+        public readonly float FirstAnchorScore01; // 현재 1번 포인트 앵커 점수
+        public readonly float SequenceScore01; // 현재 순서 균형 점수
+        public readonly float FinalChance01; // 예상 성공률
+
+        /// <summary>회수 계획 상태 정보 생성</summary>
+        public HarvestRecoveryPlanMetricsUpdatedEvent(
+            int revealedPointCount,
+            int totalPointCount,
+            int selectedPointCount,
+            int recommendedPointCount,
+            float firstAnchorScore01,
+            float sequenceScore01,
+            float finalChance01)
+        {
+            RevealedPointCount = revealedPointCount;
+            TotalPointCount = totalPointCount;
+            SelectedPointCount = selectedPointCount;
+            RecommendedPointCount = recommendedPointCount;
+            FirstAnchorScore01 = finalChance01 < 0f ? 0f : Mathf.Clamp01(firstAnchorScore01);
+            SequenceScore01 = finalChance01 < 0f ? 0f : Mathf.Clamp01(sequenceScore01);
+            FinalChance01 = Mathf.Clamp01(finalChance01);
         }
     }
 
@@ -208,9 +238,13 @@ namespace Project.Core.Events
         public readonly string PointId; // 포인트 ID
         public readonly string DisplayLabel; // 표시 라벨
         public readonly int AssignedOrder; // 할당 순번
-        public readonly float SonarSignature; // 소나 반응도
-        public readonly float LidarSignature; // 라이다 반응도
-        public readonly Vector2 ScreenPosition; // 툴팁 배치용 스크린 좌표
+
+        public readonly float BaseStability; // 구조 안정성
+        public readonly float FirstAnchorBias; // 첫 앵커 적합도
+        public readonly float SequenceBias; // 후속 순서 적합도
+        public readonly float RiskWeight; // 위험도
+
+        public readonly Vector2 ScreenPosition; // 향후 확장용 스크린 좌표
 
         /// <summary>hover 포인트 정보 생성</summary>
         public HarvestHoveredPointChangedEvent(
@@ -218,16 +252,20 @@ namespace Project.Core.Events
             string pointId,
             string displayLabel,
             int assignedOrder,
-            float sonarSignature,
-            float lidarSignature,
+            float baseStability,
+            float firstAnchorBias,
+            float sequenceBias,
+            float riskWeight,
             Vector2 screenPosition)
         {
             HasPoint = hasPoint;
             PointId = pointId;
             DisplayLabel = displayLabel;
             AssignedOrder = assignedOrder;
-            SonarSignature = sonarSignature;
-            LidarSignature = lidarSignature;
+            BaseStability = Mathf.Clamp01(baseStability);
+            FirstAnchorBias = Mathf.Clamp01(firstAnchorBias);
+            SequenceBias = Mathf.Clamp01(sequenceBias);
+            RiskWeight = Mathf.Clamp01(riskWeight);
             ScreenPosition = screenPosition;
         }
     }
@@ -277,11 +315,11 @@ namespace Project.Core.Events
 
     #region Interaction UI
 
-    /// <summary>채집 대상에 포커스가 맞춰져 HUD에 상호작용 아이콘(!)을 띄우는 이벤트</summary>
+    /// <summary>채집 대상에 포커스가 맞춰져 HUD에 상호작용 아이콘을 띄우는 이벤트</summary>
     public readonly struct HarvestTargetFocusedEvent : IEvent
     {
         public readonly string DisplayName; // 타깃 표시 이름
-        public readonly KeyCode InteractKey; // 상호작용 키 (F)
+        public readonly KeyCode InteractKey; // 상호작용 키
         public readonly bool IsAvailable; // 현재 채집 가능한 대상인지 여부
 
         /// <summary>포커스 이벤트 정보 생성</summary>
@@ -333,7 +371,7 @@ namespace Project.Core.Events
 
     #region Inventory
 
-    /// <summary>인벤토리 UI의 열림/닫힘 상태가 변경되었을 때 발생하는 이벤트</summary>
+    /// <summary>인벤토리 UI 열림/닫힘 상태 변경 이벤트</summary>
     public readonly struct InventoryUIToggledEvent : IEvent
     {
         public readonly bool IsOpen; // 열림 여부
@@ -378,11 +416,11 @@ namespace Project.Core.Events
     {
     }
 
-    /// <summary>아이템 배치가 최종 확정되었을 때 발생하는 이벤트</summary>
+    /// <summary>아이템 배치 최종 확정 이벤트</summary>
     public readonly struct InventoryItemPlacementConfirmedEvent : IEvent
     {
         public readonly string ItemId; // 배치 완료된 아이템 ID
-        public readonly bool WasFreshRecovery; // 채집 직후 fresh recovery grab이었는지 여부
+        public readonly bool WasFreshRecovery; // 채집 직후 fresh recovery grab 여부
 
         /// <summary>아이템 배치 확정 정보 생성</summary>
         public InventoryItemPlacementConfirmedEvent(string itemId, bool wasFreshRecovery)
@@ -392,11 +430,11 @@ namespace Project.Core.Events
         }
     }
 
-    /// <summary>그랩 중이던 아이템이 폐기되었을 때 발생하는 이벤트</summary>
+    /// <summary>그랩 중 아이템 폐기 이벤트</summary>
     public readonly struct InventoryItemDiscardedEvent : IEvent
     {
         public readonly string ItemId; // 폐기된 아이템 ID
-        public readonly bool WasFreshRecovery; // 채집 직후 fresh recovery grab이었는지 여부
+        public readonly bool WasFreshRecovery; // 채집 직후 fresh recovery grab 여부
 
         /// <summary>아이템 폐기 정보 생성</summary>
         public InventoryItemDiscardedEvent(string itemId, bool wasFreshRecovery)

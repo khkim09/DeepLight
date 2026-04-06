@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c07340dffacc37479be249b6a35db6e, type: 3}
   m_Name: SubmarineInventoryLayout_TestSubmarine_A
   m_EditorClassIdentifier: Project.Data::Project.Data.Submarine.SubmarineInventoryLayoutSO
-  CellSize: {x: 55, y: 55}
+  CellSize: {x: 70, y: 70}
   Spacing: {x: 5, y: 5}
   GridSize: {x: 6, y: 8}
   UsableCells:

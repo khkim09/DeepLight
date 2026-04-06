@@ -95,15 +95,27 @@ namespace Project.Gameplay.Harvest
                 forcedExitByBattery: false,
                 dangerHullDamage: 0f);
 
+            // 세션 내부 추정값 캐시 갱신
             harvestModeSession.SetEstimatedOutcome(
                 previewReport.FinalChance,
                 previewReport.OperationBatteryCost,
                 previewReport.OperationDurabilityCost);
 
+            // 기존 상단 확률/비용 UI와 호환되는 preview 이벤트
             EventBus.Publish(new HarvestRecoveryPreviewUpdatedEvent(
                 previewReport.FinalChance,
                 previewReport.OperationBatteryCost,
                 previewReport.OperationDurabilityCost));
+
+            // 좌측 고정 패널용 요약 지표 이벤트
+            EventBus.Publish(new HarvestRecoveryPlanMetricsUpdatedEvent(
+                previewReport.RevealedPointCount,
+                previewReport.TotalPointCount,
+                previewReport.SelectedPointCount,
+                Mathf.Min(3, Mathf.Max(1, previewReport.TotalPointCount)),
+                previewReport.FirstAnchorScore01,
+                previewReport.SequenceScore01,
+                previewReport.FinalChance));
         }
 
         /// <summary>현재 세션의 회수 결과를 확정하고 배터리/내구도/인벤토리 반영까지 처리한다.</summary>
@@ -155,7 +167,10 @@ namespace Project.Gameplay.Harvest
                 return new HarvestResolveResult(itemData.ItemId, false, 0f, false, true, forcedBatteryReport);
             }
 
-            bool chanceSuccess = Random.value <= previewReport.FinalChance;
+            const float guaranteedFailureThreshold01 = 0.20f; // 빨간 구간은 실제로도 강제 실패 처리
+
+            bool chanceSuccess = previewReport.FinalChance >= guaranteedFailureThreshold01
+                                && Random.value <= previewReport.FinalChance;
 
             if (!chanceSuccess)
             {
@@ -249,20 +264,24 @@ namespace Project.Gameplay.Harvest
             int revealedPointCount = harvestModeSession.RevealedPointIds.Count;
             int selectedPointCount = selectedPoints.Count;
 
+            // 스캔 공개율
             float revealCoverage01 = totalPointCount <= 0
                 ? 0f
                 : Mathf.Clamp01((float)revealedPointCount / totalPointCount);
 
+            // 선택 준비도: 3개 안정 기준에 대한 현재 확보율
             float selectionReadiness01 = totalPointCount <= 0
                 ? 0f
                 : Mathf.Clamp01(selectedPointCount / Mathf.Min(MinimumStableAnchorCount, totalPointCount));
 
             HarvestScanPoint firstPoint = selectedPointCount > 0 ? selectedPoints[0] : null;
 
+            // 현재 1번 포인트 점수
             float firstAnchorScore01 = firstPoint == null
                 ? 0f
                 : Mathf.Clamp01(firstPoint.FirstAnchorBias * 0.7f + firstPoint.BaseStability * 0.3f);
 
+            // 후속 순서 균형 점수
             float sequenceScore01 = 0.5f;
             if (selectedPointCount > 1)
             {
@@ -273,10 +292,12 @@ namespace Project.Gameplay.Harvest
                 sequenceScore01 = Mathf.Clamp01(sequenceAccumulator / (selectedPoints.Count - 1));
             }
 
+            // 전체 구조 안정성 평균
             float stabilityScore01 = selectedPointCount <= 0
                 ? 0f
                 : Mathf.Clamp01(selectedPoints.Average(point => point.BaseStability));
 
+            // 전체 위험도 평균
             float riskScore01 = selectedPointCount <= 0
                 ? 0f
                 : Mathf.Clamp01(selectedPoints.Average(point => point.RiskWeight));
@@ -294,6 +315,7 @@ namespace Project.Gameplay.Harvest
             for (int i = 0; i < selectedPoints.Count; i++)
             {
                 HarvestScanPoint point = selectedPoints[i];
+
                 if (i > 0)
                     sequenceBonus += point.SequenceBias * tuning.SequenceBiasMultiplier;
 

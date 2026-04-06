@@ -115,6 +115,7 @@ namespace Project.Gameplay.Harvest
             CacheCurrentTargetPoints();
             ResetCurrentPoints();
 
+            // 현재 타깃의 포인트 수만큼 순서 슬롯 확보
             harvestModeSession.EnsureSequenceCapacity(currentPoints.Count);
 
             if (currentTargetBehaviour != null && targetRotationController != null)
@@ -172,6 +173,7 @@ namespace Project.Gameplay.Harvest
 
             harvestModeSession.SetScanMode(nextMode);
             EventBus.Publish(new HarvestScanModeChangedEvent((int)nextMode));
+
             RecalculatePreview();
         }
 
@@ -189,6 +191,7 @@ namespace Project.Gameplay.Harvest
             if (revealedPoints.Count <= 0)
                 return;
 
+            // 스캔 운영 비용 차감
             float batteryCost = harvestResolver.GetScanPulseBatteryCost(currentMode);
             harvestResolver.SubmarineRuntimeState.ConsumeBatteryOperational(batteryCost);
 
@@ -207,6 +210,7 @@ namespace Project.Gameplay.Harvest
             harvestModeSession.AddScanPulse();
             EventBus.Publish(new HarvestScanPulseEvent((int)currentMode, harvestModeSession.ScanPulseCount));
 
+            // 공개된 포인트를 세션에 반영
             for (int i = 0; i < revealedPoints.Count; i++)
             {
                 HarvestScanPoint point = revealedPoints[i];
@@ -533,18 +537,23 @@ namespace Project.Gameplay.Harvest
                     0,
                     0f,
                     0f,
+                    0f,
+                    0f,
                     Vector2.zero));
                 return;
             }
 
             Vector3 screenPosition = harvestConsoleCamera.WorldToScreenPoint(point.TooltipAnchor.position);
+
             EventBus.Publish(new HarvestHoveredPointChangedEvent(
                 true,
                 point.PointId,
                 point.DisplayLabel,
                 point.AssignedOrder,
-                point.SonarSignature,
-                point.LidarSignature,
+                point.BaseStability,
+                point.FirstAnchorBias,
+                point.SequenceBias,
+                point.RiskWeight,
                 screenPosition));
         }
 
