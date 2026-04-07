@@ -16,8 +16,7 @@ MonoBehaviour:
   displayName: Battery Cell
   description: A compact power cell with a small amount of charge remaining.
   icon: {fileID: 21300000, guid: ad56902323cde774a8e08be441d8573c, type: 3}
-  worldPrefab: {fileID: 0}
-  typeIcon: {fileID: 0}
+  typeIcon: {fileID: 21300000, guid: 7e757c7a539c1b94eac2692cd3cee0f5, type: 3}
   category: 0
   rarity: 0
   analysisTimeHours: 0

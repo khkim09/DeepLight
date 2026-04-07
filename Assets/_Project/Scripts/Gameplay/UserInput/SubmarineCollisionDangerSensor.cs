@@ -12,8 +12,16 @@ namespace Project.Gameplay.UserInput
         [SerializeField] private LayerMask damageLayerMask = ~0; // 피해를 줄 충돌 레이어
         [SerializeField] private float minRelativeVelocityToDamage = 2.5f; // 피해 시작 상대 속도
         [SerializeField] private float maxRelativeVelocityForMaxDamage = 18f; // 최대 피해 기준 속도
-        [SerializeField] private float minDamage = 1f; // 최소 피해
-        [SerializeField] private float maxDamage = 12f; // 최대 피해
+
+        [Header("Hull Damage")]
+        [SerializeField] private float minHullDamage = 1f; // 최소 내구도 피해
+        [SerializeField] private float maxHullDamage = 7f; // 최대 내구도 피해
+
+        [Header("Battery Damage")]
+        [SerializeField] private bool applyBatteryDangerDamage = true; // 충돌 시 배터리 위험 소모 여부
+        [SerializeField] private float minBatteryDamage = 0.5f; // 최소 배터리 피해
+        [SerializeField] private float maxBatteryDamage = 5f; // 최대 배터리 피해
+        [SerializeField] private float batteryDangerIntensityMultiplier = 1f; // 배터리 danger 연출 강도
 
         [Header("Debug")]
         [SerializeField] private bool ignoreTriggerColliders = true; // 트리거 무시 여부
@@ -89,12 +97,21 @@ namespace Project.Gameplay.UserInput
                 Mathf.Max(minRelativeVelocityToDamage + 0.01f, maxRelativeVelocityForMaxDamage),
                 relativeVelocity);
 
-            float damageAmount = Mathf.Lerp(minDamage, maxDamage, velocity01);
-
+            // 내구도 danger 피해
+            float hullDamageAmount = Mathf.Lerp(minHullDamage, maxHullDamage, velocity01);
             submarineRuntimeState.DamageHullDanger(
-                damageAmount,
+                hullDamageAmount,
                 SubmarineDangerFeedbackType.CollisionWithEnvironment,
                 1f);
+
+            // 배터리 danger 피해
+            if (applyBatteryDangerDamage)
+            {
+                float batteryDamageAmount = Mathf.Lerp(minBatteryDamage, maxBatteryDamage, velocity01);
+                submarineRuntimeState.ConsumeBatteryDanger(
+                    batteryDamageAmount,
+                    batteryDangerIntensityMultiplier);
+            }
         }
 
         /// <summary>접촉 대상을 대표하는 키를 생성한다.</summary>

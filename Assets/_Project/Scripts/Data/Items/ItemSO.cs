@@ -15,7 +15,6 @@ namespace Project.Data.Items
 
         [Header("Visual")]
         [SerializeField] private Sprite icon; // 아이콘
-        [SerializeField] private GameObject worldPrefab; // 월드 프리팹
         [SerializeField] private Sprite typeIcon; // 유형 아이콘
 
         [Header("Category")]
@@ -42,7 +41,6 @@ namespace Project.Data.Items
         public string DisplayName => displayName;
         public string Description => description;
         public Sprite Icon => icon;
-        public GameObject WorldPrefab => worldPrefab;
         public Sprite TypeIcon => typeIcon;
         public ItemCategoryType Category => category;
         public ItemRarityType Rarity => rarity;

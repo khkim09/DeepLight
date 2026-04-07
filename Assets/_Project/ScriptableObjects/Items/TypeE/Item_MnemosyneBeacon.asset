@@ -15,8 +15,8 @@ MonoBehaviour:
   itemId: itm_relic_e_beacon
   displayName: Mnemosyne Beacon
   description: An anomalous beacon linked to memory tracking and neural observation.
-  icon: {fileID: 1578319434, guid: d9f0f845e79bbcf4eb09e1f67e59e418, type: 3}
-  worldPrefab: {fileID: 0}
+  icon: {fileID: 21300000, guid: ba7cc469327488748a8de86295fe5168, type: 3}
+  typeIcon: {fileID: 21300000, guid: aafce1a78ecf26b40ba655b69d28fd91, type: 3}
   category: 1
   rarity: 3
   analysisTimeHours: 4

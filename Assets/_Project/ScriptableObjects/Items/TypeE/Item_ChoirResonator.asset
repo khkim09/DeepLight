@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Choir Resonator
   description: A resonance device tuned to respond to deep acoustic signal patterns.
   icon: {fileID: 1578319434, guid: d9f0f845e79bbcf4eb09e1f67e59e418, type: 3}
-  worldPrefab: {fileID: 0}
+  typeIcon: {fileID: 21300000, guid: aafce1a78ecf26b40ba655b69d28fd91, type: 3}
   category: 1
   rarity: 3
   analysisTimeHours: 8

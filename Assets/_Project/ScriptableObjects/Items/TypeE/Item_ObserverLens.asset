@@ -15,8 +15,8 @@ MonoBehaviour:
   itemId: itm_relic_e_lens
   displayName: Observer Lens
   description: A precision lens assembly used to record and amplify hidden phenomena.
-  icon: {fileID: 1578319434, guid: d9f0f845e79bbcf4eb09e1f67e59e418, type: 3}
-  worldPrefab: {fileID: 0}
+  icon: {fileID: 21300000, guid: 5f1b7924c0d16b14a95ce05ec5f1ce09, type: 3}
+  typeIcon: {fileID: 21300000, guid: aafce1a78ecf26b40ba655b69d28fd91, type: 3}
   category: 1
   rarity: 3
   analysisTimeHours: 6

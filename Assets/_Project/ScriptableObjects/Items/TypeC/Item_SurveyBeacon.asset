@@ -16,8 +16,7 @@ MonoBehaviour:
   displayName: Survey Beacon
   description: A field beacon once used for long-range underwater survey operations.
   icon: {fileID: 21300000, guid: 4a4673415cb329a43a4ba6a2340b3dfd, type: 3}
-  worldPrefab: {fileID: 0}
-  typeIcon: {fileID: 0}
+  typeIcon: {fileID: 21300000, guid: 7e757c7a539c1b94eac2692cd3cee0f5, type: 3}
   category: 0
   rarity: 2
   analysisTimeHours: 0

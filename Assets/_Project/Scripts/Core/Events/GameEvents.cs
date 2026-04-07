@@ -462,6 +462,28 @@ namespace Project.Core.Events
         }
     }
 
+    /// <summary>배터리 위험 피드백 이벤트</summary>
+    public readonly struct BatteryDangerFeedbackEvent : IEvent
+    {
+        public readonly float DamageAmount; // 이번에 잃은 배터리량
+        public readonly float CurrentBattery; // 현재 배터리
+        public readonly float MaxBattery; // 최대 배터리
+        public readonly float IntensityMultiplier; // 추가 강도 배율
+
+        /// <summary>배터리 위험 피드백 정보를 생성한다.</summary>
+        public BatteryDangerFeedbackEvent(
+            float damageAmount,
+            float currentBattery,
+            float maxBattery,
+            float intensityMultiplier)
+        {
+            DamageAmount = damageAmount;
+            CurrentBattery = currentBattery;
+            MaxBattery = maxBattery;
+            IntensityMultiplier = intensityMultiplier;
+        }
+    }
+
     /// <summary>선체 내구도 상태 변경 이벤트</summary>
     public readonly struct HullDurabilityChangedEvent : IEvent
     {

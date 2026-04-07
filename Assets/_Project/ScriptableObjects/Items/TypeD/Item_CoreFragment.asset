@@ -15,8 +15,8 @@ MonoBehaviour:
   itemId: itm_epic_core_fragment
   displayName: Core Fragment
   description: A fractured piece of a deeper system core with unusual energy residue.
-  icon: {fileID: 21300000, guid: 9e0a4cd9bbb69ae4e8116750f650e354, type: 3}
-  worldPrefab: {fileID: 0}
+  icon: {fileID: 21300000, guid: 70a06669624d3a04c82ac05b8025ce05, type: 3}
+  typeIcon: {fileID: 21300000, guid: 7e757c7a539c1b94eac2692cd3cee0f5, type: 3}
   category: 0
   rarity: 3
   analysisTimeHours: 0

@@ -15,8 +15,8 @@ MonoBehaviour:
   itemId: itm_epic_black_box
   displayName: Black Box
   description: A sealed recording unit built to preserve critical mission data.
-  icon: {fileID: 21300000, guid: 9e0a4cd9bbb69ae4e8116750f650e354, type: 3}
-  worldPrefab: {fileID: 0}
+  icon: {fileID: 21300000, guid: e9bc130a1248c07408c15b661bbb7d97, type: 3}
+  typeIcon: {fileID: 21300000, guid: 7e757c7a539c1b94eac2692cd3cee0f5, type: 3}
   category: 0
   rarity: 3
   analysisTimeHours: 0

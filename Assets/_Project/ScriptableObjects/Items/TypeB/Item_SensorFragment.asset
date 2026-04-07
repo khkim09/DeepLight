@@ -16,8 +16,7 @@ MonoBehaviour:
   displayName: Sensor Fragment
   description: A broken sensor shard from a deteriorated observation device.
   icon: {fileID: 21300000, guid: 8079d79f2fdabfc448729ee13bff449b, type: 3}
-  worldPrefab: {fileID: 0}
-  typeIcon: {fileID: 0}
+  typeIcon: {fileID: 21300000, guid: 7e757c7a539c1b94eac2692cd3cee0f5, type: 3}
   category: 0
   rarity: 1
   analysisTimeHours: 0

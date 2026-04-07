@@ -16,8 +16,7 @@ MonoBehaviour:
   displayName: Aluminum Pipe
   description: A lightweight aluminum pipe section salvaged from ship interiors.
   icon: {fileID: 21300000, guid: 10e8a91c3d2af36418e6843abf6f3b82, type: 3}
-  worldPrefab: {fileID: 0}
-  typeIcon: {fileID: 0}
+  typeIcon: {fileID: 21300000, guid: 7e757c7a539c1b94eac2692cd3cee0f5, type: 3}
   category: 0
   rarity: 1
   analysisTimeHours: 0

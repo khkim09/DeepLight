@@ -58,6 +58,29 @@ namespace Project.Gameplay.Runtime
             EventBus.Publish(new BatteryChangedEvent(currentBattery, baseStats.MaxBattery));
         }
 
+        /// <summary>위험 상황으로 배터리를 소비하고 위험 피드백 이벤트를 발행한다.</summary>
+        public void ConsumeBatteryDanger(float amount, float intensityMultiplier = 1f)
+        {
+            if (baseStats == null)
+                return;
+
+            float clampedAmount = Mathf.Max(0f, amount);
+            if (clampedAmount <= 0f)
+                return;
+
+            currentBattery = Mathf.Max(0f, currentBattery - clampedAmount);
+
+            // 실제 배터리 값 갱신
+            EventBus.Publish(new BatteryChangedEvent(currentBattery, baseStats.MaxBattery));
+
+            // HUD 바운스/지연 손실 연출용 danger 피드백
+            EventBus.Publish(new BatteryDangerFeedbackEvent(
+                clampedAmount,
+                currentBattery,
+                baseStats.MaxBattery,
+                Mathf.Max(0f, intensityMultiplier)));
+        }
+
         /// <summary>정상 운영 비용으로 선체 내구도를 감소시킨다.</summary>
         public void DamageHullOperational(float amount)
         {
