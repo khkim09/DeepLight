@@ -29,6 +29,7 @@ namespace Project.Managers.Composition
         [SerializeField] private HarvestPointInteractor harvestPointInteractor; // F키 Harvest 진입 컴포넌트
         [SerializeField] private HarvestWorldVisibilityController harvestWorldVisibilityController; // Harvest 중 월드 타깃 가시성 제어기
         [SerializeField] private SubmarineCollisionDangerSensor collisionDangerSensor; // 충돌 위험 감지 센서
+        [SerializeField] private SubmarineLightController submarineLightController; // 잠수함 조명 컨트롤러
 
         [Header("Camera References")]
         [SerializeField] private PerspectiveSwapController perspectiveSwapController; // 카메라 전환 컨트롤러

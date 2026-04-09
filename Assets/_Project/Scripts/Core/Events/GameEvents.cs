@@ -499,20 +499,4 @@ namespace Project.Core.Events
     }
 
     #endregion
-
-    #region Progression
-
-    /// <summary>업그레이드 구매 이벤트</summary>
-    public readonly struct UpgradePurchasedEvent : IEvent
-    {
-        public readonly string UpgradeId; // 업그레이드 ID
-
-        /// <summary>업그레이드 구매 정보 생성</summary>
-        public UpgradePurchasedEvent(string upgradeId)
-        {
-            UpgradeId = upgradeId;
-        }
-    }
-
-    #endregion
 }

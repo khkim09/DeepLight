@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5195767c84fbf2644b5a0f69fea05109, type: 3}
+  m_Name: SubmarineLight_Tuning_Default
+  m_EditorClassIdentifier: Project.Data::Project.Data.Submarine.SubmarineLightTuningSO
+  explorationTopWorldBaseIntensity: 120
+  explorationTopOuterAngleWide: 56
+  explorationTopOuterAngleNarrow: 24
+  explorationTopRangeWide: 28
+  explorationTopRangeNarrow: 42
+  harvestBottomWorldBaseIntensity: 55
+  harvestBottomOuterAngleWide: 34
+  harvestBottomOuterAngleNarrow: 18
+  harvestBottomRangeWide: 12
+  harvestBottomRangeNarrow: 20
+  narrowApertureIntensityMultiplier: 1.2
+  wideApertureIntensityMultiplier: 0.72
+  innerOuterAngleRatio: 0.45
+  defaultAperture01: 0.45
+  minAperture01: 0
+  maxAperture01: 1
+  apertureWheelStep: 0.08
+  focusAssistMask:
+    serializedVersion: 2
+    m_Bits: 1152
+  focusAssistStartDistance: 14
+  focusAssistEndDistance: 4
+  focusAssistMinIntensityMultiplier: 0.05
+  topBeamScaleWide: {x: 400, y: 400, z: 250}
+  topBeamScaleNarrow: {x: 275, y: 275, z: 550}
+  bottomBeamScaleWide: {x: 110, y: 110, z: 170}
+  bottomBeamScaleNarrow: {x: 100, y: 100, z: 200}
+  topBeamOpacityWide: 0.2
+  topBeamOpacityNarrow: 0.65
+  bottomBeamOpacityWide: 0.5
+  bottomBeamOpacityNarrow: 0.5
+  beamLengthFadePower: 1.8
+  beamViewRimPower: 1.35
+  beamDepthFadeDistance: 10
