@@ -2,6 +2,7 @@
 using Project.Data.Input;
 using Project.Data.Submarine;
 using Project.Gameplay.CameraSystem;
+using Project.Gameplay.Services;
 using UnityEngine;
 
 namespace Project.Gameplay.UserInput
@@ -20,8 +21,12 @@ namespace Project.Gameplay.UserInput
         [Header("User Settings")]
         [SerializeField] private SubmarineControlUserSettings userSettings = default; // 유저 감도 옵션
 
+        [Header("Time Flow")]
+        [SerializeField] private float minimumActiveSpeedForTimeFlow = 0.15f; // 이 속도 이상일 때만 탐사 시간이 흐른다
+
         private Rigidbody rb;
         private SubmarineMovementRuntimeSettings runtimeSettings;
+        private GameTimeService gameTimeService; // 탐사 이동 기반 시간 진행 서비스
 
         private float currentForwardSpeed;
         private float currentVerticalSpeed;
@@ -47,8 +52,15 @@ namespace Project.Gameplay.UserInput
         private float currentVerticalInput;
         private bool isCurrentBoostPressed;
 
-        /// <summary>현재 이동 조작이 잠겨있는지 반환한다.</summary>
-        public bool IsMovementLocked => isHarvestMode || isExternallyLocked; // 인벤토리 열림은 이동 잠금 조건에서 제외
+        // 공개 property
+        public bool IsMovementLocked => isHarvestMode || isExternallyLocked; // 이동 조작 잠금 여부
+        public float CurrentWorldSpeed => rb != null ? rb.linearVelocity.magnitude : 0f; // 현재 실제 이동 속도
+
+        /// <summary>시간 서비스를 초기 주입한다.</summary>
+        public void Initialize(GameTimeService newGameTimeService)
+        {
+            gameTimeService = newGameTimeService;
+        }
 
         /// <summary>강체와 런타임 세팅을 초기화한다.</summary>
         private void Awake()
@@ -78,7 +90,7 @@ namespace Project.Gameplay.UserInput
         {
             EventBus.Subscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
             EventBus.Subscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
-            EventBus.Subscribe<InventoryUIToggledEvent>(OnInventoryToggled); // 인벤토리 이벤트 구독
+            EventBus.Subscribe<InventoryUIToggledEvent>(OnInventoryToggled);
         }
 
         /// <summary>이벤트 구독을 해제한다.</summary>
@@ -86,7 +98,7 @@ namespace Project.Gameplay.UserInput
         {
             EventBus.Unsubscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
             EventBus.Unsubscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
-            EventBus.Unsubscribe<InventoryUIToggledEvent>(OnInventoryToggled); // 인벤토리 이벤트 구독 해제
+            EventBus.Unsubscribe<InventoryUIToggledEvent>(OnInventoryToggled);
         }
 
         /// <summary>입력을 캐싱하고 렌더 프레임 기준으로 회전을 갱신한다.</summary>
@@ -153,6 +165,7 @@ namespace Project.Gameplay.UserInput
             }
 
             ApplyMovement();
+            AdvanceExplorationTime(fixedDeltaTime);
         }
 
         /// <summary>목표 회전을 향해 현재 회전을 부드럽게 적용한다.</summary>
@@ -200,6 +213,24 @@ namespace Project.Gameplay.UserInput
             Vector3 forwardVelocity = (transform.rotation * Vector3.forward) * currentForwardSpeed;
             Vector3 verticalVelocity = Vector3.up * currentVerticalSpeed;
             rb.linearVelocity = forwardVelocity + verticalVelocity;
+        }
+
+        /// <summary>실제 이동 중일 때만 탐사 시간을 전진시킨다.</summary>
+        private void AdvanceExplorationTime(float deltaTime)
+        {
+            if (gameTimeService == null || IsMovementLocked)
+                return;
+
+            if (rb == null)
+                return;
+
+            // 실제 이동 속도를 기준으로 시간을 흐르게 한다.
+            // 가만히 서 있거나, 입력만 넣고 실제 위치 변화가 거의 없으면 시간은 정지한다.
+            float speed = rb.linearVelocity.magnitude;
+            if (speed < minimumActiveSpeedForTimeFlow)
+                return;
+
+            gameTimeService.AdvanceByActiveRealSeconds(deltaTime);
         }
 
         /// <summary>현재 트랜스폼 회전을 내부 누적값에 맞춘다.</summary>

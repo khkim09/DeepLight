@@ -14,6 +14,9 @@ namespace Project.Gameplay.UI
         [SerializeField] private HarvestFailureReasonPopupPresenter failureReasonPopupPresenter; // 실패 이유 팝업
         [SerializeField] private SubmarineDangerFeedbackPresenter dangerFeedbackPresenter; // 위험 피해 피드백
 
+        [Header("Other UI Elements")]
+        [SerializeField] private GameObject centerCrosshair; // 탐사 모드 중앙 조준선
+
         /// <summary>UI 관련 이벤트를 구독한다.</summary>
         private void OnEnable()
         {
@@ -49,6 +52,9 @@ namespace Project.Gameplay.UI
 
             if (failureReasonPopupPresenter != null)
                 failureReasonPopupPresenter.HideImmediate();
+
+            if (centerCrosshair != null)
+                centerCrosshair.SetActive(false);
         }
 
         /// <summary>Harvest 종료 시 HUD와 오버레이를 정리한다.</summary>
@@ -62,6 +68,9 @@ namespace Project.Gameplay.UI
 
             if (dangerFeedbackPresenter != null)
                 dangerFeedbackPresenter.HideImmediate();
+
+            if (centerCrosshair != null)
+                centerCrosshair.SetActive(true);
         }
     }
 }

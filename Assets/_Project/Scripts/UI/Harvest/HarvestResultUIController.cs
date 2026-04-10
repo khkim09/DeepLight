@@ -72,8 +72,8 @@ namespace Project.UI.Harvest
 
             if (isNewlyDiscovered)
             {
-                float currentInGameHours = gameTimeService != null ? gameTimeService.CurrentInGameHours : 0f;
-                encyclopediaService.DiscoverItem(itemData.ItemId, currentInGameHours);
+                float currentAbsoluteHours = gameTimeService != null ? gameTimeService.CurrentAbsoluteHours : 0f;
+                encyclopediaService.DiscoverItem(itemData.ItemId, currentAbsoluteHours);
                 ShowDiscoveryPopup(itemData);
             }
 

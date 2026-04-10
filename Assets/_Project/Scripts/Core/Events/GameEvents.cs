@@ -499,4 +499,74 @@ namespace Project.Core.Events
     }
 
     #endregion
+
+    #region Time
+
+    /// <summary>현재 하루 표시 방식이다.</summary>
+    public enum GameDayLengthMode
+    {
+        TwelveHour = 0,      // 초반 가짜 하루: 12시간
+        TwentyFourHour = 1   // 진실 이후 실제 하루: 24시간
+    }
+
+    /// <summary>게임 시간 상태 변경 이벤트</summary>
+    public readonly struct GameTimeChangedEvent : IEvent
+    {
+        public readonly int Day; // 현재 Day
+        public readonly float HourOfDay; // 현재 하루 내부 시각
+        public readonly float DayLengthHours; // 현재 하루 길이
+        public readonly bool IsDaylight; // 현재 낮 구간 여부
+        public readonly bool HasPendingDayLengthSwitch; // 다음 경계에서 24시간제로 전환 예약 여부
+
+        /// <summary>게임 시간 상태 정보를 생성한다.</summary>
+        public GameTimeChangedEvent(
+            int day,
+            float hourOfDay,
+            float dayLengthHours,
+            bool isDaylight,
+            bool hasPendingDayLengthSwitch)
+        {
+            Day = day;
+            HourOfDay = hourOfDay;
+            DayLengthHours = dayLengthHours;
+            IsDaylight = isDaylight;
+            HasPendingDayLengthSwitch = hasPendingDayLengthSwitch;
+        }
+    }
+
+    /// <summary>하루 길이 표시 방식 전환 이벤트</summary>
+    public readonly struct GameDayLengthModeChangedEvent : IEvent
+    {
+        public readonly GameDayLengthMode PreviousMode;
+        public readonly GameDayLengthMode CurrentMode;
+
+        /// <summary>하루 길이 표시 방식 전환 정보를 생성한다.</summary>
+        public GameDayLengthModeChangedEvent(GameDayLengthMode previousMode, GameDayLengthMode currentMode)
+        {
+            PreviousMode = previousMode;
+            CurrentMode = currentMode;
+        }
+    }
+
+    #endregion
+
+    #region Navigation
+
+    /// <summary>탐사 상단 방향 HUD용 현재 헤딩 정보 이벤트</summary>
+    public readonly struct ExplorationHeadingChangedEvent : IEvent
+    {
+        public readonly float HeadingDegrees; // 북(0) 기준 시계방향 각도
+        public readonly float HeadingNormalized01; // 0~1 정규화 값
+        public readonly string MajorCardinal; // 가장 가까운 주방위 문자열
+
+        /// <summary>헤딩 변경 정보를 생성한다.</summary>
+        public ExplorationHeadingChangedEvent(float headingDegrees, float headingNormalized01, string majorCardinal)
+        {
+            HeadingDegrees = headingDegrees;
+            HeadingNormalized01 = headingNormalized01;
+            MajorCardinal = majorCardinal;
+        }
+    }
+
+    #endregion
 }

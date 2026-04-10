@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ExplorationCamera_Tuning_Default
   m_EditorClassIdentifier: Project.Data::Project.Data.CameraSystem.ExplorationCameraTuningSO
   baseFollow:
-    defaultOffsetY: 4
+    defaultOffsetY: 1.5
     rotationFollowSpeed: 7
   distance:
     idleDistanceZ: -8
@@ -23,7 +23,7 @@ MonoBehaviour:
     boostBackwardDistanceZ: -6
     distanceSmoothTime: 0.4
   freeLook:
-    freeLookTopOffset: {x: 0, y: 6, z: -1}
+    freeLookTopOffset: {x: 0, y: 0, z: 0}
     mouseSensitivityX: 100
     mouseSensitivityY: 60
     minPitch: -90

@@ -22,10 +22,15 @@ namespace Project.Managers.Composition
         [SerializeField] private HarvestRecoveryTuningSO harvestRecoveryTuning; // 회수 계산 튜닝
 
         [Header("Time Settings")]
-        [SerializeField] private float startInGameHours = 0f; // 시작 인게임 누적 시간
+        [SerializeField] private int startDay = 1; // 시작 Day
+        [SerializeField] private float startHourOfDay = 9f; // 시작 시각 (12시간제 기준 예: 늦은 시간 표현 가능)
+        [SerializeField] private float activeRealSecondsPerGameHour = 180f; // 인게임 1시간당 실제 액티브 시간
+        [SerializeField] private GameDayLengthMode initialDayLengthMode = GameDayLengthMode.TwelveHour; // 초반 하루 길이 모드
 
         [Header("Scene References")]
         [SerializeField] private Transform playerTransform; // 플레이어 Transform
+        [SerializeField] private TestBedPlayerMover playerMover; // 잠수함 이동 컨트롤러
+        [SerializeField] private Rigidbody playerRigidbody; // 잠수함 rigidbody
         [SerializeField] private HarvestPointInteractor harvestPointInteractor; // F키 Harvest 진입 컴포넌트
         [SerializeField] private HarvestWorldVisibilityController harvestWorldVisibilityController; // Harvest 중 월드 타깃 가시성 제어기
         [SerializeField] private SubmarineCollisionDangerSensor collisionDangerSensor; // 충돌 위험 감지 센서
@@ -36,6 +41,10 @@ namespace Project.Managers.Composition
         [SerializeField] private ExplorationFollowCameraController explorationFollowCameraController; // 탐사 카메라 컨트롤러
         [SerializeField] private HarvestConsoleCameraController harvestConsoleCameraController; // 회수 콘솔 카메라 컨트롤러
         [SerializeField] private Transform cockpitViewAnchor; // 조종실 1인칭 시점 앵커
+
+        [Header("Runtime Helpers")]
+        [SerializeField] private GameTimeFlowController gameTimeFlowController; // 시간 흐름 컨트롤러
+        [SerializeField] private ExplorationNavigationTelemetryPublisher navigationTelemetryPublisher; // 방향 HUD 백엔드
 
         [Header("Input References")]
         [SerializeField] private HarvestConsoleController harvestConsoleController; // 회수 콘솔 입력 컨트롤러
@@ -70,11 +79,16 @@ namespace Project.Managers.Composition
 
             encyclopediaService = new EncyclopediaService();
             inventoryService = new InventoryService(submarineRuntimeState);
-            gameTimeService = new GameTimeService(startInGameHours);
+
+            // 초반은 12시간제 하루로 시작한다.
+            gameTimeService = new GameTimeService(
+                startDay,
+                startHourOfDay,
+                activeRealSecondsPerGameHour,
+                initialDayLengthMode);
 
             gameModeService = new GameModeService(GameModeType.Exploration3D);
             harvestResolver = new HarvestResolver(submarineRuntimeState, inventoryService, harvestRecoveryTuning);
-
             harvestModeCoordinator = new HarvestModeCoordinator(gameModeService, harvestModeSession);
 
             if (harvestPointInteractor != null)
@@ -86,8 +100,26 @@ namespace Project.Managers.Composition
             if (collisionDangerSensor != null)
                 collisionDangerSensor.Initialize(submarineRuntimeState);
 
-            if (explorationFollowCameraController != null && playerTransform != null)
-                explorationFollowCameraController.SetTarget(playerTransform);
+            if (playerMover == null && playerTransform != null)
+                playerMover = playerTransform.GetComponent<TestBedPlayerMover>();
+
+            if (playerRigidbody == null && playerTransform != null)
+                playerRigidbody = playerTransform.GetComponent<Rigidbody>();
+
+            if (playerMover != null)
+                playerMover.Initialize(gameTimeService);
+
+            if (gameTimeFlowController != null)
+            {
+                gameTimeFlowController.Initialize(
+                    gameTimeService,
+                    gameModeService,
+                    playerMover,
+                    playerRigidbody);
+            }
+
+            if (navigationTelemetryPublisher != null && playerTransform != null)
+                navigationTelemetryPublisher.SetTarget(playerTransform);
 
             if (harvestConsoleCameraController != null && cockpitViewAnchor != null)
                 harvestConsoleCameraController.SetCockpitViewAnchor(cockpitViewAnchor);
@@ -131,6 +163,8 @@ namespace Project.Managers.Composition
             EventBus.Publish(new HullDurabilityChangedEvent(
                 submarineRuntimeState.CurrentHullDurability,
                 submarineStats.MaxHullDurability));
+
+            gameTimeService?.PublishCurrentState();
         }
 
         /// <summary>방전 강제 종료 이벤트를 구독한다</summary>
