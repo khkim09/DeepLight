@@ -32,6 +32,7 @@ namespace Project.Gameplay.CameraSystem
         {
             EventBus.Subscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
             EventBus.Subscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
+            EventBus.Subscribe<HarvestCameraTransitionCompletedEvent>(OnHarvestCameraTransitionCompleted);
         }
 
         /// <summary>이벤트 구독을 해제한다</summary>
@@ -39,6 +40,7 @@ namespace Project.Gameplay.CameraSystem
         {
             EventBus.Unsubscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
             EventBus.Unsubscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
+            EventBus.Unsubscribe<HarvestCameraTransitionCompletedEvent>(OnHarvestCameraTransitionCompleted);
             CancelCurrentTransition();
         }
 
@@ -67,6 +69,13 @@ namespace Project.Gameplay.CameraSystem
 
             isHarvestMode = false;
             StartTransitionToExplorationAsync().Forget();
+        }
+
+        /// <summary>채집 카메라 전환 완료 이벤트를 처리한다</summary>
+        private void OnHarvestCameraTransitionCompleted(HarvestCameraTransitionCompletedEvent publishedEvent)
+        {
+            if (transitionLetterboxPresenter != null)
+                transitionLetterboxPresenter.HideAsync().Forget();
         }
 
         /// <summary>탐사에서 조종석으로 전환한다</summary>
@@ -109,11 +118,7 @@ namespace Project.Gameplay.CameraSystem
 
             try
             {
-                UniTask hideLetterboxTask = transitionLetterboxPresenter != null
-                    ? transitionLetterboxPresenter.HideAsync()
-                    : UniTask.CompletedTask;
-
-                UniTask cameraTask = PlayDynamicBezierTransitionAsync(
+                await PlayDynamicBezierTransitionAsync(
                     explorationCamera.transform.position,
                     explorationCamera.transform.rotation,
                     dynamicMidLocalPos,
@@ -122,8 +127,6 @@ namespace Project.Gameplay.CameraSystem
                     cockpitTransitionTarget.rotation,
                     tuning.GuideReachTime,
                     token);
-
-                await UniTask.WhenAll(hideLetterboxTask, cameraTask);
 
                 explorationCamera.gameObject.SetActive(false);
                 harvestConsoleCamera.gameObject.SetActive(true);
@@ -182,13 +185,9 @@ namespace Project.Gameplay.CameraSystem
 
             try
             {
-                UniTask showLetterboxTask = transitionLetterboxPresenter != null
-                    ? transitionLetterboxPresenter.ShowAsync()
-                    : UniTask.CompletedTask;
-
                 float reverseMidTime = 1f - tuning.GuideReachTime;
 
-                UniTask cameraTask = PlayDynamicBezierTransitionAsync(
+                await PlayDynamicBezierTransitionAsync(
                     cockpitTransitionTarget.position,
                     cockpitTransitionTarget.rotation,
                     dynamicMidLocalPos,
@@ -198,19 +197,11 @@ namespace Project.Gameplay.CameraSystem
                     reverseMidTime,
                     token);
 
-                await UniTask.WhenAll(showLetterboxTask, cameraTask);
-
                 if (explorationFollowCameraController != null)
                 {
                     explorationFollowCameraController.IsIndependentAlignment = false;
                     explorationFollowCameraController.IsInputLocked = false;
                 }
-
-                UniTask hideLetterboxTask = transitionLetterboxPresenter != null
-                    ? transitionLetterboxPresenter.HideAsync()
-                    : UniTask.CompletedTask;
-
-                await hideLetterboxTask;
             }
             catch (OperationCanceledException)
             {

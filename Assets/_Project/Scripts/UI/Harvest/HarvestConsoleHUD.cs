@@ -32,15 +32,11 @@ namespace Project.Gameplay.UI
         [SerializeField] private Color lidarColor = new Color(1f, 0.8f, 0.35f, 1f); // 라이다 컬러
         [SerializeField] private Color noneColor = Color.white; // 기본 컬러
 
-        [Header("Recovery Preview")]
-        [SerializeField] private Slider recoveryChanceSlider; // 예상 성공률 슬라이더
-
         private int currentTotalPointCount; // 현재 총 포인트 개수 캐시
 
         /// <summary>Harvest HUD 관련 데이터 이벤트를 구독한다.</summary>
         private void OnEnable()
         {
-            EventBus.Subscribe<HarvestRecoveryPreviewUpdatedEvent>(OnRecoveryPreviewUpdated);
             EventBus.Subscribe<HarvestConsoleTargetPreparedEvent>(OnTargetPrepared);
             EventBus.Subscribe<HarvestScanModeChangedEvent>(OnScanModeChanged);
             EventBus.Subscribe<HarvestRecoveryResolvedEvent>(OnHarvestRecoveryResolved); // 채집 결과 이벤트 구독
@@ -49,7 +45,6 @@ namespace Project.Gameplay.UI
         /// <summary>Harvest HUD 관련 데이터 이벤트 구독을 해제한다.</summary>
         private void OnDisable()
         {
-            EventBus.Unsubscribe<HarvestRecoveryPreviewUpdatedEvent>(OnRecoveryPreviewUpdated);
             EventBus.Unsubscribe<HarvestConsoleTargetPreparedEvent>(OnTargetPrepared);
             EventBus.Unsubscribe<HarvestScanModeChangedEvent>(OnScanModeChanged);
             EventBus.Unsubscribe<HarvestRecoveryResolvedEvent>(OnHarvestRecoveryResolved); // 채집 결과 이벤트 해제
@@ -103,13 +98,6 @@ namespace Project.Gameplay.UI
                 if (hideOnSuccessObjects[i] != null)
                     hideOnSuccessObjects[i].SetActive(isActive);
             }
-        }
-
-        /// <summary>예상 성공률과 예상 비용 UI를 갱신한다.</summary>
-        private void OnRecoveryPreviewUpdated(HarvestRecoveryPreviewUpdatedEvent publishedEvent)
-        {
-            if (recoveryChanceSlider != null)
-                recoveryChanceSlider.value = Mathf.Clamp01(publishedEvent.EstimatedRecoveryChance);
         }
 
         /// <summary>현재 대상 이름과 총 포인트 개수를 갱신한다.</summary>
@@ -196,9 +184,6 @@ namespace Project.Gameplay.UI
         private void ResetPreviewUi()
         {
             currentTotalPointCount = 0;
-
-            if (recoveryChanceSlider != null)
-                recoveryChanceSlider.value = 0f;
 
             if (sensorModeText != null)
             {

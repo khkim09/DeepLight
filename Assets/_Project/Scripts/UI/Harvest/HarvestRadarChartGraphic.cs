@@ -104,6 +104,7 @@ namespace Project.UI.Harvest
             SetVerticesDirty();
         }
 
+#if UNITY_EDITOR
         /// <summary>인스펙터 값 변경 시 다시 그리기를 요청한다.</summary>
         protected override void OnValidate()
         {
@@ -119,6 +120,7 @@ namespace Project.UI.Harvest
 
             ForceRebuild();
         }
+#endif
 
         /// <summary>RectTransform 크기 변경 시 다시 그리기를 요청한다.</summary>
         protected override void OnRectTransformDimensionsChange()

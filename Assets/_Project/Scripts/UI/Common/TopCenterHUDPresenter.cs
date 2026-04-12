@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Project.UI.Common
 {
-    /// <summary>AlwaysHUD 상단 중앙 바에서 날짜, 시간, 배그식 방향계를 표시하는 프리젠터이다.</summary>
+    /// <summary>AlwaysHUD 상단 중앙 바에서 날짜, 시간, 1도 단위 배그식 방향계를 표시하는 프리젠터이다.</summary>
     public class TopCenterHUDPresenter : MonoBehaviour
     {
         [Header("Time UI")]
@@ -22,12 +22,16 @@ namespace Project.UI.Common
         [SerializeField] private int repeatedCycles = 3; // 360도 반복 생성 횟수
 
         [Header("Tick Style")]
-        [SerializeField] private float minorTickWidth = 2f;
-        [SerializeField] private float minorTickHeight = 14f;
-        [SerializeField] private float mediumTickWidth = 2.5f;
-        [SerializeField] private float mediumTickHeight = 22f;
-        [SerializeField] private float majorTickWidth = 4f;
-        [SerializeField] private float majorTickHeight = 32f;
+        [SerializeField] private float minor1DegreeTickWidth = 1f; // 1도 단위 눈금 두께
+        [SerializeField] private float minor1DegreeTickHeight = 6f; // 1도 단위 눈금 높이
+        [SerializeField] private float minor5DegreeTickWidth = 1.5f; // 5도 단위 눈금 두께
+        [SerializeField] private float minor5DegreeTickHeight = 10f; // 5도 단위 눈금 높이
+        [SerializeField] private float minor15DegreeTickWidth = 2f; // 15도 단위 눈금 두께
+        [SerializeField] private float minor15DegreeTickHeight = 14f; // 15도 단위 눈금 높이
+        [SerializeField] private float cardinal45DegreeTickWidth = 2.5f; // 45도 단위 눈금 두께
+        [SerializeField] private float cardinal45DegreeTickHeight = 22f; // 45도 단위 눈금 높이
+        [SerializeField] private float major90DegreeTickWidth = 4f; // 90도 단위 눈금 두께
+        [SerializeField] private float major90DegreeTickHeight = 32f; // 90도 단위 눈금 높이
 
         [Header("Label Position")]
         [SerializeField] private float cardinalLabelOffsetFromTickBottom = 16f; // 방위 텍스트를 눈금 아래로 내릴 거리
@@ -35,12 +39,14 @@ namespace Project.UI.Common
         [SerializeField] private float tickBaseY = 2f; // 눈금 시작 y
 
         [Header("Colors")]
-        [SerializeField] private Color minorTickColor = new(1f, 1f, 1f, 0.40f);
-        [SerializeField] private Color mediumTickColor = new(1f, 1f, 1f, 0.70f);
-        [SerializeField] private Color majorTickColor = Color.white;
+        [SerializeField] private Color minor1DegreeTickColor = new(1f, 1f, 1f, 0.20f); // 1도 눈금 색
+        [SerializeField] private Color minor5DegreeTickColor = new(1f, 1f, 1f, 0.28f); // 5도 눈금 색
+        [SerializeField] private Color minor15DegreeTickColor = new(1f, 1f, 1f, 0.40f); // 15도 눈금 색
+        [SerializeField] private Color cardinal45DegreeTickColor = new(1f, 1f, 1f, 0.70f); // 45도 눈금 색
+        [SerializeField] private Color major90DegreeTickColor = Color.white; // 90도 눈금 색
         [SerializeField] private Color northHighlightColor = new(1f, 0.85f, 0.15f, 1f); // N 강조 색
-        [SerializeField] private Color cardinalTextColor = Color.white;
-        [SerializeField] private Color degreeTextColor = new(1f, 1f, 1f, 0.85f);
+        [SerializeField] private Color cardinalTextColor = Color.white; // NSEW/NE 등 문자 색
+        [SerializeField] private Color degreeTextColor = new(1f, 1f, 1f, 0.85f); // 숫자 색
 
         private readonly List<GameObject> generatedObjects = new();
         private float latestHeadingDegrees;
@@ -77,7 +83,7 @@ namespace Project.UI.Common
             ApplyCompassPosition(latestHeadingDegrees);
         }
 
-        /// <summary>시간 이벤트를 받아 날짜/시간 표시를 갱신한다.</summary>
+        /// <summary>시간 이벤트를 받아 날짜와 시간을 갱신한다.</summary>
         private void OnGameTimeChanged(GameTimeChangedEvent publishedEvent)
         {
             ApplyTimeText(
@@ -86,7 +92,7 @@ namespace Project.UI.Common
                 publishedEvent.DayLengthHours);
         }
 
-        /// <summary>헤딩 이벤트를 받아 방향계 표시를 갱신한다.</summary>
+        /// <summary>헤딩 이벤트를 받아 방향계를 갱신한다.</summary>
         private void OnExplorationHeadingChanged(ExplorationHeadingChangedEvent publishedEvent)
         {
             latestHeadingDegrees = publishedEvent.HeadingDegrees;
@@ -117,7 +123,7 @@ namespace Project.UI.Common
             compassContent.anchoredPosition = new Vector2(targetX, compassContent.anchoredPosition.y);
         }
 
-        /// <summary>배그식 방향계를 다시 생성한다.</summary>
+        /// <summary>1도 단위 배그식 방향계를 다시 생성한다.</summary>
         private void RebuildCompass()
         {
             ClearGeneratedObjects();
@@ -139,19 +145,57 @@ namespace Project.UI.Common
             {
                 float cycleOffsetX = startX + (cycle * cycleWidth);
 
-                for (int degree = 0; degree < 360; degree += 15)
+                for (int degree = 0; degree < 360; degree += 1)
                 {
-                    bool isMajor = degree % 90 == 0;
-                    bool isCardinal = degree % 45 == 0;
+                    bool isMajor90 = degree % 90 == 0;
+                    bool isCardinal45 = !isMajor90 && degree % 45 == 0;
+                    bool isMinor15 = !isCardinal45 && degree % 15 == 0;
+                    bool isMinor5 = !isMinor15 && degree % 5 == 0;
+                    bool isMinor1 = !isMinor5;
                     bool isNorth = degree == 0;
 
                     float x = cycleOffsetX + (degree * pixelsPerDegree);
 
-                    float tickHeight = isMajor ? majorTickHeight : (isCardinal ? mediumTickHeight : minorTickHeight);
-                    float tickWidth = isMajor ? majorTickWidth : (isCardinal ? mediumTickWidth : minorTickWidth);
-                    Color tickColor = isNorth
-                        ? northHighlightColor
-                        : (isMajor ? majorTickColor : (isCardinal ? mediumTickColor : minorTickColor));
+                    float tickHeight;
+                    float tickWidth;
+                    Color tickColor;
+
+                    if (isNorth)
+                    {
+                        tickHeight = major90DegreeTickHeight;
+                        tickWidth = major90DegreeTickWidth;
+                        tickColor = northHighlightColor;
+                    }
+                    else if (isMajor90)
+                    {
+                        tickHeight = major90DegreeTickHeight;
+                        tickWidth = major90DegreeTickWidth;
+                        tickColor = major90DegreeTickColor;
+                    }
+                    else if (isCardinal45)
+                    {
+                        tickHeight = cardinal45DegreeTickHeight;
+                        tickWidth = cardinal45DegreeTickWidth;
+                        tickColor = cardinal45DegreeTickColor;
+                    }
+                    else if (isMinor15)
+                    {
+                        tickHeight = minor15DegreeTickHeight;
+                        tickWidth = minor15DegreeTickWidth;
+                        tickColor = minor15DegreeTickColor;
+                    }
+                    else if (isMinor5)
+                    {
+                        tickHeight = minor5DegreeTickHeight;
+                        tickWidth = minor5DegreeTickWidth;
+                        tickColor = minor5DegreeTickColor;
+                    }
+                    else
+                    {
+                        tickHeight = minor1DegreeTickHeight;
+                        tickWidth = minor1DegreeTickWidth;
+                        tickColor = minor1DegreeTickColor;
+                    }
 
                     CreateTick(
                         x,
@@ -165,6 +209,7 @@ namespace Project.UI.Common
                     float cardinalLabelY = tickBottomY - cardinalLabelOffsetFromTickBottom;
                     float degreeLabelY = tickBottomY - degreeLabelOffsetFromTickBottom;
 
+                    // 45도 단위는 NSEW / NE 등 방향 라벨 표시
                     if (degree % 45 == 0)
                     {
                         Color labelColor = isNorth ? northHighlightColor : cardinalTextColor;
@@ -176,7 +221,8 @@ namespace Project.UI.Common
                             labelColor,
                             18f);
                     }
-                    else
+                    // 15도 단위는 숫자 라벨 표시
+                    else if (degree % 15 == 0)
                     {
                         CreateLabel(
                             x,

@@ -17,6 +17,7 @@ namespace Project.Data.Submarine
 
         [Header("Bottom Harvest World Lights")]
         [SerializeField] private float harvestBottomWorldBaseIntensity = 55f; // 하단 실제 조명 강도
+        [SerializeField] private float harvestBottomFixedIntensity = 75f; // 하단 고정 실제 조명 강도 (조리개 무시)
         [SerializeField] private float harvestBottomOuterAngleWide = 34f; // 넓은 조리개 하단 외곽각
         [SerializeField] private float harvestBottomOuterAngleNarrow = 18f; // 좁은 조리개 하단 외곽각
         [SerializeField] private float harvestBottomRangeWide = 12f; // 넓은 조리개 하단 사거리
@@ -66,6 +67,7 @@ namespace Project.Data.Submarine
         public float FocusAssistStartDistance => focusAssistStartDistance;
         public float FocusAssistEndDistance => focusAssistEndDistance;
         public float FocusAssistMinIntensityMultiplier => focusAssistMinIntensityMultiplier;
+        public float HarvestBottomFixedIntensity => harvestBottomFixedIntensity;
 
         public float DefaultAperture01 => defaultAperture01;
         public float MinAperture01 => minAperture01;

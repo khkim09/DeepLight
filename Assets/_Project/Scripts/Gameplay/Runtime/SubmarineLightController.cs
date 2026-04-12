@@ -210,13 +210,7 @@ namespace Project.Gameplay.Runtime
             float outerAngle = lightTuning.GetBottomOuterAngle(aperture01);
             float range = lightTuning.GetBottomRange(aperture01);
 
-            // 좌측 실제 조명 적용
-            Transform leftRayOrigin = bottomLeftFocusRayOrigin != null
-                ? bottomLeftFocusRayOrigin
-                : bottomLeftHarvestWorldLight != null ? bottomLeftHarvestWorldLight.transform : null;
-
-            float leftFocusMultiplier = EvaluateFocusAssistMultiplier(leftRayOrigin);
-            float leftWorldIntensity = lightTuning.GetBottomWorldIntensity(aperture01) * leftFocusMultiplier;
+            float leftWorldIntensity = lightTuning.HarvestBottomFixedIntensity;
 
             SetSpotLight(
                 bottomLeftHarvestWorldLight,
@@ -227,13 +221,7 @@ namespace Project.Gameplay.Runtime
                 outerAngle,
                 range);
 
-            // 우측 실제 조명 적용
-            Transform rightRayOrigin = bottomRightFocusRayOrigin != null
-                ? bottomRightFocusRayOrigin
-                : bottomRightHarvestWorldLight != null ? bottomRightHarvestWorldLight.transform : null;
-
-            float rightFocusMultiplier = EvaluateFocusAssistMultiplier(rightRayOrigin);
-            float rightWorldIntensity = lightTuning.GetBottomWorldIntensity(aperture01) * rightFocusMultiplier;
+            float rightWorldIntensity = lightTuning.HarvestBottomFixedIntensity;
 
             SetSpotLight(
                 bottomRightHarvestWorldLight,

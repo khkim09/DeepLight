@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdf2a0ab8a0116f4ca23277abb124186, type: 3}
   m_Name: CameraTransition_Tuning_Default
   m_EditorClassIdentifier: Project.Data::Project.Data.CameraSystem.CameraTransitionTuningSO
-  letterboxShownHeight: 140
+  letterboxShownHeight: 200
   letterboxAnimateDuration: 0.35
   transitionDuration: 1.1
   guideReachTime: 0.45

@@ -28,8 +28,8 @@ Material:
     - _BeamLengthWS: 1
     - _BeamOpacity: 0.35
     - _DepthFadeDistance: 1.2
-    - _LengthFadePower: 1.8
-    - _ViewRimPower: 1.2
+    - _LengthFadePower: 8
+    - _ViewRimPower: 0.1
     m_Colors:
     - _BeamColor: {r: 0.75, g: 0.9, b: 1, a: 1}
     - _BeamForwardWS: {r: 0, g: 0, b: 1, a: 0}

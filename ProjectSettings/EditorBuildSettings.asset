@@ -5,9 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/_Project/Scenes/TestBed.unity
     guid: 39e56c8e09962c0459c59205a95f6888
+  - enabled: 1
+    path: Assets/_Project/Scenes/Post-Processing Test.unity
+    guid: 2b082b11126287c4fb99fc204e1665a5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

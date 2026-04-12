@@ -33,15 +33,19 @@ namespace Project.UI.Harvest
 
         private bool isHarvestMode; // 현재 Harvest 모드 여부
 
+        private void Awake()
+        {
+            // 최초 1회만 초기 상태 적용
+            HidePanelImmediate();
+            ResetView();
+        }
+
         /// <summary>이벤트를 구독한다.</summary>
         private void OnEnable()
         {
             EventBus.Subscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
             EventBus.Subscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
             EventBus.Subscribe<HarvestRecoveryPlanMetricsUpdatedEvent>(OnPlanMetricsUpdated);
-
-            HidePanelImmediate();
-            ResetView();
         }
 
         /// <summary>이벤트 구독을 해제한다.</summary>
@@ -74,6 +78,8 @@ namespace Project.UI.Harvest
             if (!isHarvestMode)
                 return;
 
+            ShowPanelImmediate();
+
             if (revealCountText != null)
                 revealCountText.text = $"{publishedEvent.RevealedPointCount} / {publishedEvent.TotalPointCount}";
 
@@ -96,11 +102,7 @@ namespace Project.UI.Harvest
             if (successChanceFillImage != null)
             {
                 float chance01 = Mathf.Clamp01(publishedEvent.FinalChance01);
-
-                // 원형 fill 양 반영
                 successChanceFillImage.fillAmount = chance01;
-
-                // 실제 경계값과 동일한 색상 구간
                 successChanceFillImage.color = EvaluateChanceColor(chance01);
             }
         }

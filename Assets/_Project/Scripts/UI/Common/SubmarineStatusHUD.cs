@@ -24,7 +24,6 @@ namespace Project.Gameplay.UI
 
             [Header("Delayed Damage")]
             public Image delayedFillImage; // red lag 링
-            public RectTransform delayedHandlePivot; // red lag 핸들
 
             [HideInInspector] public float displayedValue01 = 1f; // 실제 현재 게이지 표시값
             [HideInInspector] public float delayedValue01 = 1f; // 지연 손실 표시값
@@ -321,10 +320,6 @@ namespace Project.Gameplay.UI
             // red lag 링
             if (gauge.delayedFillImage != null)
                 gauge.delayedFillImage.fillAmount = delayedValue01;
-
-            // red lag 핸들
-            if (gauge.delayedHandlePivot != null)
-                gauge.delayedHandlePivot.localRotation = Quaternion.Euler(0f, 0f, delayedValue01 * 360f);
         }
 
         /// <summary>게이지 애니메이션만 취소한다.</summary>

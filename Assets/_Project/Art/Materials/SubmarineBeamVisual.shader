@@ -2,7 +2,7 @@ Shader "Project/Unlit/SubmarineBeamVisual"
 {
     Properties
     {
-        _BeamColor("Beam Color", Color) = (0.75, 0.9, 1.0, 1.0)
+        [HDR] _BeamColor("Beam Color", Color) = (0.75, 0.9, 1.0, 1.0)
         _BeamOpacity("Beam Opacity", Range(0, 1)) = 0.35
         _LengthFadePower("Length Fade Power", Range(0.1, 8)) = 1.8
         _ViewRimPower("View Rim Power", Range(0.1, 8)) = 1.2

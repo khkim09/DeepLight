@@ -18,6 +18,7 @@ MonoBehaviour:
   explorationTopRangeWide: 28
   explorationTopRangeNarrow: 42
   harvestBottomWorldBaseIntensity: 55
+  harvestBottomFixedIntensity: 75
   harvestBottomOuterAngleWide: 34
   harvestBottomOuterAngleNarrow: 18
   harvestBottomRangeWide: 12
