@@ -2919,7 +2919,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
   randomSeed: 0
@@ -2982,7 +2982,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.05
+      scalar: 0
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -3424,7 +3424,7 @@ ParticleSystem:
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: -0.05
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -3789,7 +3789,7 @@ ParticleSystem:
     m_BurstCount: 0
     m_Bursts: []
   SizeModule:
-    enabled: 0
+    enabled: 1
     curve:
       serializedVersion: 2
       minMaxState: 1
@@ -4113,7 +4113,7 @@ ParticleSystem:
         m_RotationOrder: 4
     separateAxes: 0
   ColorModule:
-    enabled: 0
+    enabled: 1
     gradient:
       serializedVersion: 2
       minMaxState: 1
@@ -4122,7 +4122,7 @@ ParticleSystem:
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
-        key1: {r: 1, g: 1, b: 1, a: 1}
+        key1: {r: 1, g: 1, b: 1, a: 0}
         key2: {r: 0, g: 0, b: 0, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -4146,7 +4146,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
-        m_ColorSpace: -1
+        m_ColorSpace: 0
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
       minGradient:
@@ -16602,7 +16602,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1287536005}
-  - component: {fileID: 1287536006}
   m_Layer: 5
   m_Name: RuntimeInfoPanel
   m_TagString: Untagged
@@ -16634,18 +16633,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!225 &1287536006
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1287536004}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 0
-  m_BlocksRaycasts: 0
-  m_IgnoreParentGroups: 0
 --- !u!1 &1296576502
 GameObject:
   m_ObjectHideFlags: 0
@@ -18646,7 +18633,6 @@ MonoBehaviour:
   canvasGroup: {fileID: 1566260315}
   hideOnSuccessObjects:
   - {fileID: 885377096}
-  - {fileID: 1606016091}
   - {fileID: 771444996}
   - {fileID: 1950792348}
   targetNameText: {fileID: 1444408188}
@@ -19263,6 +19249,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1606016092}
   - component: {fileID: 1606016093}
+  - component: {fileID: 1606016094}
   m_Layer: 5
   m_Name: HarvestInfo
   m_TagString: Untagged
@@ -19304,7 +19291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b54f3aa160a3b19488b1e884365e8fe5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Project.UI::Project.UI.Harvest.HarvestPlanInfoPanelPresenter
-  panelCanvasGroup: {fileID: 1287536006}
+  panelCanvasGroup: {fileID: 1606016094}
   revealCountText: {fileID: 334230960}
   selectedCountText: {fileID: 1066793271}
   firstAnchorScoreText: {fileID: 1754685291}
@@ -19317,6 +19304,18 @@ MonoBehaviour:
   lowChanceThreshold01: 0.2
   midChanceThreshold01: 0.65
   defaultRecommendedCount: 2
+--- !u!225 &1606016094
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1606016091}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &1622366352
 GameObject:
   m_ObjectHideFlags: 0
@@ -19725,7 +19724,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1662695819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24301,6 +24300,7 @@ GameObject:
   - component: {fileID: 8892471190458576202}
   - component: {fileID: 8892471190458576206}
   - component: {fileID: 8892471190458576207}
+  - component: {fileID: 8892471190458576208}
   m_Layer: 0
   m_Name: Submarine
   m_TagString: Untagged
@@ -24558,6 +24558,26 @@ MonoBehaviour:
   explorationColor: {r: 0.96, g: 0.98, b: 1, a: 1}
   sonarColor: {r: 0.45, g: 1, b: 0.72, a: 1}
   lidarColor: {r: 1, g: 0.78, b: 0.28, a: 1}
+--- !u!114 &8892471190458576208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8080504202031134713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11bcac8e045b5fd4b971d23aadbb49a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.Submarine.SubmarineVFXController
+  subRigidbody: {fileID: 8892471190458576198}
+  propellerTransform: {fileID: 0}
+  forwardWakeVFX: {fileID: 0}
+  backwardWakeVFX: {fileID: 0}
+  ascendVFX: {fileID: 0}
+  descendVFX: {fileID: 0}
+  propellerSpeedMultiplier: 1500
+  vfxActivationThreshold: 0.2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

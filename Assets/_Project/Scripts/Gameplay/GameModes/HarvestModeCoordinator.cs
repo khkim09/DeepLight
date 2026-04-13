@@ -22,6 +22,18 @@ namespace Project.Gameplay.GameModes
             this.harvestModeSession = harvestModeSession;
         }
 
+        /// <summary>현재 타깃의 런타임 고유 키를 반환한다.</summary>
+        private string ResolveRuntimeTargetKey(IHarvestTarget target)
+        {
+            if (target is HarvestTargetBehaviour targetBehaviour)
+                return targetBehaviour.GetRuntimeTargetKey();
+
+            if (target is Component component)
+                return $"{component.gameObject.scene.name}_{component.GetInstanceID()}";
+
+            return string.Empty;
+        }
+
         /// <summary>채집 대상과 함께 채집 모드에 진입한다.</summary>
         public bool TryEnterHarvestMode(IHarvestTarget target)
         {
@@ -42,7 +54,10 @@ namespace Project.Gameplay.GameModes
                 return false;
             }
 
-            harvestModeSession.SetTarget(target);
+            // 방어적 초기화:
+            // 이전 세션의 휘발성 상태를 먼저 날린 뒤 새 타깃을 바인딩한다.
+            harvestModeSession.ResetTransientState(clearTarget: true);
+            harvestModeSession.BeginForTarget(target);
 
             string itemId = string.Empty;
 
@@ -53,7 +68,8 @@ namespace Project.Gameplay.GameModes
                     itemId = resolvedItem.ItemId;
             }
 
-            EventBus.Publish(new HarvestSessionStartedEvent(targetData.TargetId, itemId));
+            string runtimeTargetKey = ResolveRuntimeTargetKey(target);
+            EventBus.Publish(new HarvestSessionStartedEvent(runtimeTargetKey, itemId));
 
             gameModeService.EnterHarvestMode();
 
@@ -67,16 +83,16 @@ namespace Project.Gameplay.GameModes
         /// <summary>탐사 모드로 복귀한다.</summary>
         public void ExitHarvestMode()
         {
-            string targetId = string.Empty;
-            if (harvestModeSession.CurrentTarget != null && harvestModeSession.CurrentTarget.TargetData != null)
-                targetId = harvestModeSession.CurrentTarget.TargetData.TargetId;
+            string runtimeTargetKey = ResolveRuntimeTargetKey(harvestModeSession.CurrentTarget);
 
-            if (!string.IsNullOrWhiteSpace(targetId))
-                EventBus.Publish(new HarvestSessionEndedEvent(targetId));
+            if (!string.IsNullOrWhiteSpace(runtimeTargetKey))
+                EventBus.Publish(new HarvestSessionEndedEvent(runtimeTargetKey));
 
             EventBus.Publish(new HarvestModeExitedEvent());
 
-            harvestModeSession.ClearTarget();
+            // 종료 이벤트를 발행한 뒤 세션을 비워서, 리스너들이 현재 타깃 정보를 읽을 수 있게 한다.
+            harvestModeSession.ResetTransientState(clearTarget: true);
+
             gameModeService.EnterExplorationMode();
         }
     }

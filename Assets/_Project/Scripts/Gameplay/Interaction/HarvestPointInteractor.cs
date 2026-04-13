@@ -24,6 +24,8 @@ namespace Project.Gameplay.Interaction
         private IHarvestTarget currentTarget; // 현재 상호작용 대상
         private HarvestInteractionZone currentZone; // 현재 선택된 상호작용 존
         private HarvestTargetHighlightController currentHighlight; // 현재 하이라이트 컨트롤러
+        private HarvestRetryPenaltyService harvestRetryPenaltyService; // 타깃별 재시도 패널티 서비스
+
         private bool isHarvestMode; // Harvest 모드 여부
         private bool currentTargetInteractable; // 현재 대상 실제 상호작용 가능 여부
 
@@ -36,10 +38,13 @@ namespace Project.Gameplay.Interaction
         /// <summary>현재 대상이 실제 상호작용 가능한지 반환한다.</summary>
         public bool IsCurrentTargetInteractable => currentTargetInteractable;
 
-        /// <summary>채집 모드 조정기를 주입한다.</summary>
-        public void Initialize(HarvestModeCoordinator newHarvestModeCoordinator)
+        /// <summary>채집 모드 조정기와 재시도 패널티 서비스를 주입한다.</summary>
+        public void Initialize(
+            HarvestModeCoordinator newHarvestModeCoordinator,
+            HarvestRetryPenaltyService newHarvestRetryPenaltyService)
         {
             harvestModeCoordinator = newHarvestModeCoordinator;
+            harvestRetryPenaltyService = newHarvestRetryPenaltyService;
         }
 
         /// <summary>Harvest 모드 이벤트를 구독한다.</summary>
@@ -136,6 +141,14 @@ namespace Project.Gameplay.Interaction
         /// <summary>현재 대상의 상호작용 불가 메시지를 반환한다.</summary>
         public string GetCurrentTargetUnavailableMessage()
         {
+            // 재시도 패널티가 최우선
+            if (harvestRetryPenaltyService != null && currentTarget != null)
+            {
+                string penaltyText = harvestRetryPenaltyService.GetRemainingPenaltyDisplayText(currentTarget);
+                if (!string.IsNullOrWhiteSpace(penaltyText))
+                    return $"Preparing for retry. Remaining time: {penaltyText}";
+            }
+
             if (currentTarget is HarvestTargetBehaviour targetBehaviour)
             {
                 string reason = targetBehaviour.GetUnavailableReason();
@@ -144,9 +157,9 @@ namespace Project.Gameplay.Interaction
             }
 
             if (currentTarget != null && !currentTarget.IsAvailable)
-                return "지금은 채집 불가합니다.";
+                return "This target is currently unavailable for harvesting.";
 
-            return "지금은 채집할 수 없습니다.";
+            return "This target cannot be harvested at the moment.";
         }
 
         /// <summary>겹친 존 중 현재 상호작용할 대상을 선정한다.</summary>
@@ -226,11 +239,17 @@ namespace Project.Gameplay.Interaction
             if (zone == null || target == null)
                 return false;
 
+            // 이미 성공 처리되어 사라졌거나 사용 불가인 대상 차단
             if (!target.IsAvailable)
                 return false;
 
+            // 스토리 day 조건 차단
             HarvestTargetBehaviour targetBehaviour = zone.TargetBehaviour;
             if (targetBehaviour != null && !targetBehaviour.IsHarvestUnlocked)
+                return false;
+
+            // 재시도 패널티 차단
+            if (harvestRetryPenaltyService != null && harvestRetryPenaltyService.IsRetryBlocked(target))
                 return false;
 
             return true;

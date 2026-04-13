@@ -32,12 +32,19 @@ namespace Project.UI.Harvest
         [SerializeField] private int defaultRecommendedCount = 3; // fallback 권장 개수
 
         private bool isHarvestMode; // 현재 Harvest 모드 여부
+        private string activeTargetKey = string.Empty; // 현재 표시 중인 타깃 키
 
+        private int currentTotalPointCount; // 현재 타깃 총 포인트 수
+        private int currentRevealedPointCount; // 현재 공개 포인트 수
+        private int currentSelectedPointCount; // 현재 선택 포인트 수
+        private int currentRecommendedPointCount; // 현재 권장 포인트 수
+
+        /// <summary>초기 상태를 적용한다.</summary>
         private void Awake()
         {
-            // 최초 1회만 초기 상태 적용
             HidePanelImmediate();
-            ResetView();
+            ResetRuntimeState();
+            ApplyAllTextsImmediate();
         }
 
         /// <summary>이벤트를 구독한다.</summary>
@@ -45,7 +52,17 @@ namespace Project.UI.Harvest
         {
             EventBus.Subscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
             EventBus.Subscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
+            EventBus.Subscribe<HarvestCameraTransitionCompletedEvent>(OnHarvestCameraTransitionCompleted);
+
+            EventBus.Subscribe<HarvestSessionStartedEvent>(OnHarvestSessionStarted);
+            EventBus.Subscribe<HarvestSessionEndedEvent>(OnHarvestSessionEnded);
+
+            EventBus.Subscribe<HarvestConsoleTargetPreparedEvent>(OnTargetPrepared);
+            EventBus.Subscribe<HarvestPointRevealedEvent>(OnPointRevealed);
+            EventBus.Subscribe<HarvestSelectionSequenceChangedEvent>(OnSelectionSequenceChanged);
+            EventBus.Subscribe<HarvestRecoveryPreviewUpdatedEvent>(OnRecoveryPreviewUpdated);
             EventBus.Subscribe<HarvestRecoveryPlanMetricsUpdatedEvent>(OnPlanMetricsUpdated);
+            EventBus.Subscribe<HarvestRecoveryResolvedEvent>(OnHarvestRecoveryResolved);
         }
 
         /// <summary>이벤트 구독을 해제한다.</summary>
@@ -53,57 +70,226 @@ namespace Project.UI.Harvest
         {
             EventBus.Unsubscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
             EventBus.Unsubscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
+            EventBus.Unsubscribe<HarvestCameraTransitionCompletedEvent>(OnHarvestCameraTransitionCompleted);
+
+            EventBus.Unsubscribe<HarvestSessionStartedEvent>(OnHarvestSessionStarted);
+            EventBus.Unsubscribe<HarvestSessionEndedEvent>(OnHarvestSessionEnded);
+
+            EventBus.Unsubscribe<HarvestConsoleTargetPreparedEvent>(OnTargetPrepared);
+            EventBus.Unsubscribe<HarvestPointRevealedEvent>(OnPointRevealed);
+            EventBus.Unsubscribe<HarvestSelectionSequenceChangedEvent>(OnSelectionSequenceChanged);
+            EventBus.Unsubscribe<HarvestRecoveryPreviewUpdatedEvent>(OnRecoveryPreviewUpdated);
             EventBus.Unsubscribe<HarvestRecoveryPlanMetricsUpdatedEvent>(OnPlanMetricsUpdated);
+            EventBus.Unsubscribe<HarvestRecoveryResolvedEvent>(OnHarvestRecoveryResolved);
+
+            activeTargetKey = string.Empty;
         }
 
-        /// <summary>Harvest 진입 시 패널을 표시한다.</summary>
+        /// <summary>채집 세션 시작 시 현재 활성 타깃 키를 저장한다.</summary>
+        private void OnHarvestSessionStarted(HarvestSessionStartedEvent publishedEvent)
+        {
+            activeTargetKey = publishedEvent.TargetKey;
+        }
+
+        /// <summary>채집 세션 종료 시 현재 활성 타깃 키를 비운다.</summary>
+        private void OnHarvestSessionEnded(HarvestSessionEndedEvent publishedEvent)
+        {
+            if (activeTargetKey == publishedEvent.TargetKey)
+                activeTargetKey = string.Empty;
+        }
+
+        /// <summary>Harvest 진입 시 패널을 초기화하고 표시한다.</summary>
         private void OnHarvestModeEntered(HarvestModeEnteredEvent publishedEvent)
         {
             isHarvestMode = true;
+            ResetRuntimeState();
             ShowPanelImmediate();
-            ResetView();
+            ApplyAllTextsImmediate();
+        }
+
+        /// <summary>Harvest 카메라 전환 완료 시 패널을 다시 초기화한다.</summary>
+        private void OnHarvestCameraTransitionCompleted(HarvestCameraTransitionCompletedEvent publishedEvent)
+        {
+            if (!isHarvestMode)
+                return;
+
+            ResetRuntimeState();
+            ShowPanelImmediate();
+            ApplyAllTextsImmediate();
         }
 
         /// <summary>Harvest 종료 시 패널을 숨기고 초기화한다.</summary>
         private void OnHarvestModeExited(HarvestModeExitedEvent publishedEvent)
         {
             isHarvestMode = false;
+            activeTargetKey = string.Empty;
+
+            ResetRuntimeState();
             HidePanelImmediate();
-            ResetView();
+            ApplyAllTextsImmediate();
         }
 
-        /// <summary>회수 계획 상태 이벤트를 받아 고정 패널을 갱신한다.</summary>
+        /// <summary>채집 성공 시 패널을 알파 0으로 숨긴다.</summary>
+        private void OnHarvestRecoveryResolved(HarvestRecoveryResolvedEvent publishedEvent)
+        {
+            if (!isHarvestMode)
+                return;
+
+            if (!publishedEvent.IsSuccess)
+                return;
+
+            // 오브젝트는 활성 상태로 유지하고, 표시만 끈다.
+            HidePanelImmediate();
+        }
+
+        /// <summary>현재 타깃 준비 완료 시 기본 0 상태를 현재 타깃 총 개수 기준으로 맞춘다.</summary>
+        private void OnTargetPrepared(HarvestConsoleTargetPreparedEvent publishedEvent)
+        {
+            if (!isHarvestMode)
+                return;
+
+            currentTotalPointCount = Mathf.Max(0, publishedEvent.TotalPointCount);
+            currentRevealedPointCount = 0;
+            currentSelectedPointCount = 0;
+            currentRecommendedPointCount = Mathf.Min(
+                defaultRecommendedCount,
+                Mathf.Max(1, currentTotalPointCount));
+
+            ShowPanelImmediate();
+            ApplyCountTextsImmediate();
+            ApplyAnchorSequenceTextsImmediate(0f, 0f);
+            ApplyChanceImmediate(0f);
+        }
+
+        /// <summary>회수 포인트 공개 이벤트를 반영한다.</summary>
+        private void OnPointRevealed(HarvestPointRevealedEvent publishedEvent)
+        {
+            if (!isHarvestMode)
+                return;
+
+            currentRevealedPointCount = Mathf.Clamp(
+                currentRevealedPointCount + 1,
+                0,
+                currentTotalPointCount);
+
+            ApplyRevealTextImmediate();
+        }
+
+        /// <summary>선택 순서 개수 변경 이벤트를 반영한다.</summary>
+        private void OnSelectionSequenceChanged(HarvestSelectionSequenceChangedEvent publishedEvent)
+        {
+            if (!isHarvestMode)
+                return;
+
+            currentSelectedPointCount = Mathf.Max(0, publishedEvent.SelectedCount);
+            currentTotalPointCount = Mathf.Max(currentTotalPointCount, publishedEvent.TotalCount);
+
+            if (currentRecommendedPointCount <= 0)
+            {
+                currentRecommendedPointCount = Mathf.Min(
+                    defaultRecommendedCount,
+                    Mathf.Max(1, currentTotalPointCount));
+            }
+
+            ApplySelectedTextImmediate();
+        }
+
+        /// <summary>추정 성공률 이벤트를 받아 chance text와 ring을 갱신한다.</summary>
+        private void OnRecoveryPreviewUpdated(HarvestRecoveryPreviewUpdatedEvent publishedEvent)
+        {
+            if (!isHarvestMode)
+                return;
+
+            ApplyChanceImmediate(publishedEvent.RecoveryChance);
+        }
+
+        /// <summary>회수 계획 상태 이벤트를 받아 앵커/순서 점수와 count 보정을 반영한다.</summary>
         private void OnPlanMetricsUpdated(HarvestRecoveryPlanMetricsUpdatedEvent publishedEvent)
         {
             if (!isHarvestMode)
                 return;
 
-            ShowPanelImmediate();
+            if (string.IsNullOrWhiteSpace(activeTargetKey))
+                activeTargetKey = publishedEvent.TargetKey;
 
-            if (revealCountText != null)
-                revealCountText.text = $"{publishedEvent.RevealedPointCount} / {publishedEvent.TotalPointCount}";
+            if (publishedEvent.TargetKey != activeTargetKey)
+                return;
 
-            int recommendedCount = publishedEvent.RecommendedPointCount > 0
+            currentTotalPointCount = Mathf.Max(0, publishedEvent.TotalPointCount);
+            currentRevealedPointCount = Mathf.Clamp(publishedEvent.RevealedPointCount, 0, currentTotalPointCount);
+            currentSelectedPointCount = Mathf.Clamp(publishedEvent.SelectedPointCount, 0, currentTotalPointCount);
+            currentRecommendedPointCount = publishedEvent.RecommendedPointCount > 0
                 ? publishedEvent.RecommendedPointCount
-                : defaultRecommendedCount;
+                : Mathf.Min(defaultRecommendedCount, Mathf.Max(1, currentTotalPointCount));
 
+            ShowPanelImmediate();
+            ApplyCountTextsImmediate();
+            ApplyAnchorSequenceTextsImmediate(
+                publishedEvent.FirstAnchorScore01,
+                publishedEvent.SequenceScore01);
+            ApplyChanceImmediate(publishedEvent.FinalChance01);
+        }
+
+        /// <summary>런타임 표시 상태를 초기화한다.</summary>
+        private void ResetRuntimeState()
+        {
+            currentTotalPointCount = 0;
+            currentRevealedPointCount = 0;
+            currentSelectedPointCount = 0;
+            currentRecommendedPointCount = defaultRecommendedCount;
+        }
+
+        /// <summary>모든 텍스트와 링 상태를 즉시 반영한다.</summary>
+        private void ApplyAllTextsImmediate()
+        {
+            ApplyCountTextsImmediate();
+            ApplyAnchorSequenceTextsImmediate(0f, 0f);
+            ApplyChanceImmediate(0f);
+        }
+
+        /// <summary>개수 관련 텍스트를 즉시 반영한다.</summary>
+        private void ApplyCountTextsImmediate()
+        {
+            ApplyRevealTextImmediate();
+            ApplySelectedTextImmediate();
+        }
+
+        /// <summary>공개 개수 텍스트를 즉시 반영한다.</summary>
+        private void ApplyRevealTextImmediate()
+        {
+            if (revealCountText != null)
+                revealCountText.text = $"{currentRevealedPointCount} / {currentTotalPointCount}";
+        }
+
+        /// <summary>선택 개수 텍스트를 즉시 반영한다.</summary>
+        private void ApplySelectedTextImmediate()
+        {
             if (selectedCountText != null)
-                selectedCountText.text = $"{publishedEvent.SelectedPointCount} / {recommendedCount}";
+                selectedCountText.text = $"{currentSelectedPointCount} / {currentRecommendedPointCount}";
+        }
 
+        /// <summary>앵커/시퀀스 점수 텍스트를 즉시 반영한다.</summary>
+        private void ApplyAnchorSequenceTextsImmediate(float firstAnchorScore01, float sequenceScore01)
+        {
             if (firstAnchorScoreText != null)
-                firstAnchorScoreText.text = $"{Mathf.RoundToInt(publishedEvent.FirstAnchorScore01 * 100f)}%";
+                firstAnchorScoreText.text = $"{Mathf.RoundToInt(Mathf.Clamp01(firstAnchorScore01) * 100f)}%";
 
             if (sequenceScoreText != null)
-                sequenceScoreText.text = $"{Mathf.RoundToInt(publishedEvent.SequenceScore01 * 100f)}%";
+                sequenceScoreText.text = $"{Mathf.RoundToInt(Mathf.Clamp01(sequenceScore01) * 100f)}%";
+        }
+
+        /// <summary>확률 텍스트와 링 상태를 즉시 반영한다.</summary>
+        private void ApplyChanceImmediate(float chance01)
+        {
+            float clampedChance01 = Mathf.Clamp01(chance01);
 
             if (successChanceValueText != null)
-                successChanceValueText.text = $"{Mathf.RoundToInt(publishedEvent.FinalChance01 * 100f)}";
+                successChanceValueText.text = $"{Mathf.RoundToInt(clampedChance01 * 100f)}";
 
             if (successChanceFillImage != null)
             {
-                float chance01 = Mathf.Clamp01(publishedEvent.FinalChance01);
-                successChanceFillImage.fillAmount = chance01;
-                successChanceFillImage.color = EvaluateChanceColor(chance01);
+                successChanceFillImage.fillAmount = clampedChance01;
+                successChanceFillImage.color = EvaluateChanceColor(clampedChance01);
             }
         }
 
@@ -139,31 +325,6 @@ namespace Project.UI.Harvest
             panelCanvasGroup.alpha = 0f;
             panelCanvasGroup.interactable = false;
             panelCanvasGroup.blocksRaycasts = false;
-        }
-
-        /// <summary>표시값을 초기 상태로 되돌린다.</summary>
-        private void ResetView()
-        {
-            if (revealCountText != null)
-                revealCountText.text = "0 / 0";
-
-            if (selectedCountText != null)
-                selectedCountText.text = $"0 / {defaultRecommendedCount}";
-
-            if (firstAnchorScoreText != null)
-                firstAnchorScoreText.text = "0%";
-
-            if (sequenceScoreText != null)
-                sequenceScoreText.text = "0%";
-
-            if (successChanceValueText != null)
-                successChanceValueText.text = "0";
-
-            if (successChanceFillImage != null)
-            {
-                successChanceFillImage.fillAmount = 0f;
-                successChanceFillImage.color = lowChanceColor;
-            }
         }
     }
 }

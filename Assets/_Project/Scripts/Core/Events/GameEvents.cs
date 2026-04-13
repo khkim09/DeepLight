@@ -42,13 +42,13 @@ namespace Project.Core.Events
     /// <summary>채집 세션 시작 이벤트</summary>
     public readonly struct HarvestSessionStartedEvent : IEvent
     {
-        public readonly string TargetId; // 채집 대상 ID
+        public readonly string TargetKey; // 채집 대상 런타임 고유 키
         public readonly string ItemId; // 대상 아이템 ID
 
         /// <summary>채집 세션 시작 정보 생성</summary>
-        public HarvestSessionStartedEvent(string targetId, string itemId)
+        public HarvestSessionStartedEvent(string targetKey, string itemId)
         {
-            TargetId = targetId;
+            TargetKey = targetKey;
             ItemId = itemId;
         }
     }
@@ -56,24 +56,24 @@ namespace Project.Core.Events
     /// <summary>채집 세션 종료 이벤트</summary>
     public readonly struct HarvestSessionEndedEvent : IEvent
     {
-        public readonly string TargetId; // 채집 대상 ID
+        public readonly string TargetKey; // 채집 대상 런타임 고유 키
 
         /// <summary>채집 세션 종료 정보 생성</summary>
-        public HarvestSessionEndedEvent(string targetId)
+        public HarvestSessionEndedEvent(string targetKey)
         {
-            TargetId = targetId;
+            TargetKey = targetKey;
         }
     }
 
     /// <summary>배터리 방전으로 인한 채집 세션 강제 종료 이벤트</summary>
     public readonly struct HarvestSessionForcedEndedByBatteryEvent : IEvent
     {
-        public readonly string TargetId; // 채집 대상 ID
+        public readonly string TargetKey; // 채집 대상 런타임 고유 키
 
         /// <summary>채집 세션 강제 종료 정보 생성</summary>
-        public HarvestSessionForcedEndedByBatteryEvent(string targetId)
+        public HarvestSessionForcedEndedByBatteryEvent(string targetKey)
         {
-            TargetId = targetId;
+            TargetKey = targetKey;
         }
     }
 
@@ -152,6 +152,7 @@ namespace Project.Core.Events
     /// <summary>고정 패널용 회수 계획 상태 갱신 이벤트</summary>
     public readonly struct HarvestRecoveryPlanMetricsUpdatedEvent : IEvent
     {
+        public readonly string TargetKey; // 현재 타깃 런타임 고유 키
         public readonly int RevealedPointCount; // 공개 개수
         public readonly int TotalPointCount; // 총 개수
         public readonly int SelectedPointCount; // 현재 선택 개수
@@ -162,6 +163,7 @@ namespace Project.Core.Events
 
         /// <summary>회수 계획 상태 정보 생성</summary>
         public HarvestRecoveryPlanMetricsUpdatedEvent(
+            string targetKey,
             int revealedPointCount,
             int totalPointCount,
             int selectedPointCount,
@@ -170,12 +172,13 @@ namespace Project.Core.Events
             float sequenceScore01,
             float finalChance01)
         {
+            TargetKey = targetKey;
             RevealedPointCount = revealedPointCount;
             TotalPointCount = totalPointCount;
             SelectedPointCount = selectedPointCount;
             RecommendedPointCount = recommendedPointCount;
-            FirstAnchorScore01 = finalChance01 < 0f ? 0f : Mathf.Clamp01(firstAnchorScore01);
-            SequenceScore01 = finalChance01 < 0f ? 0f : Mathf.Clamp01(sequenceScore01);
+            FirstAnchorScore01 = Mathf.Clamp01(firstAnchorScore01);
+            SequenceScore01 = Mathf.Clamp01(sequenceScore01);
             FinalChance01 = Mathf.Clamp01(finalChance01);
         }
     }

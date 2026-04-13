@@ -11,6 +11,7 @@ namespace Project.Gameplay.GameModes
         private HarvestScanMode currentScanMode; // 현재 센서 모드
         private readonly List<string> revealedPointIds = new(); // 공개된 포인트 ID 목록
         private readonly List<string> selectedPointSequence = new(); // 순서 슬롯 목록 (빈 슬롯은 string.Empty)
+
         private float estimatedRecoveryChance; // 추정 회수 성공률
         private float estimatedBatteryCost; // 추정 배터리 소모량
         private float estimatedDurabilityCost; // 추정 내구도 소모량
@@ -28,32 +29,29 @@ namespace Project.Gameplay.GameModes
         public bool IsResolved => isResolved;
         public bool HasTarget => currentTarget != null;
 
-        /// <summary>채집 대상 설정과 세션 초기화를 수행한다.</summary>
+        /// <summary>새 타깃으로 채집 세션을 시작한다.</summary>
+        public void BeginForTarget(IHarvestTarget target)
+        {
+            ResetConsoleState();
+            currentTarget = target;
+        }
+
+        /// <summary>기존 호출부 호환용으로 타깃을 설정한다.</summary>
         public void SetTarget(IHarvestTarget target)
         {
-            currentTarget = target; // 현재 대상 보관
-            ResetConsoleState(); // 세션 상태 초기화
+            BeginForTarget(target);
         }
 
         /// <summary>현재 센서 모드를 변경한다.</summary>
-        public void SetScanMode(HarvestScanMode scanMode)
-        {
-            currentScanMode = scanMode; // 센서 모드 저장
-        }
+        public void SetScanMode(HarvestScanMode scanMode) => currentScanMode = scanMode;
 
         /// <summary>스캔 펄스 사용 횟수를 증가시킨다.</summary>
-        public void AddScanPulse()
-        {
-            scanPulseCount++; // 사용 횟수 증가
-        }
+        public void AddScanPulse() => scanPulseCount++;
 
         /// <summary>포인트를 공개 상태 목록에 추가한다.</summary>
         public void AddRevealedPoint(string pointId)
         {
-            if (string.IsNullOrWhiteSpace(pointId))
-                return;
-
-            if (revealedPointIds.Contains(pointId))
+            if (string.IsNullOrWhiteSpace(pointId) || revealedPointIds.Contains(pointId))
                 return;
 
             revealedPointIds.Add(pointId);
@@ -65,13 +63,7 @@ namespace Project.Gameplay.GameModes
             if (string.IsNullOrWhiteSpace(pointId))
                 return false;
 
-            for (int i = 0; i < selectedPointSequence.Count; i++)
-            {
-                if (selectedPointSequence[i] == pointId)
-                    return true;
-            }
-
-            return false;
+            return selectedPointSequence.Contains(pointId);
         }
 
         /// <summary>현재 순서 슬롯 개수를 지정한다.</summary>
@@ -80,11 +72,9 @@ namespace Project.Gameplay.GameModes
             if (count <= 0)
                 return;
 
-            // 필요한 개수만큼 빈 슬롯을 뒤에 추가한다.
             while (selectedPointSequence.Count < count)
                 selectedPointSequence.Add(string.Empty);
 
-            // 초과 슬롯은 뒤에서 제거한다.
             while (selectedPointSequence.Count > count)
                 selectedPointSequence.RemoveAt(selectedPointSequence.Count - 1);
         }
@@ -92,13 +82,9 @@ namespace Project.Gameplay.GameModes
         /// <summary>가장 앞의 빈 슬롯에 포인트를 배치한다.</summary>
         public bool TryAssignSelectedPoint(string pointId)
         {
-            if (string.IsNullOrWhiteSpace(pointId))
+            if (string.IsNullOrWhiteSpace(pointId) || ContainsSelectedPoint(pointId))
                 return false;
 
-            if (ContainsSelectedPoint(pointId))
-                return false;
-
-            // 가장 앞의 빈 슬롯을 찾아 채운다.
             for (int i = 0; i < selectedPointSequence.Count; i++)
             {
                 if (!string.IsNullOrWhiteSpace(selectedPointSequence[i]))
@@ -122,7 +108,6 @@ namespace Project.Gameplay.GameModes
                 if (selectedPointSequence[i] != pointId)
                     continue;
 
-                // 중간 값만 비우고 뒤 순서는 유지한다.
                 selectedPointSequence[i] = string.Empty;
                 return true;
             }
@@ -150,7 +135,6 @@ namespace Project.Gameplay.GameModes
         {
             int count = 0;
 
-            // 빈 슬롯이 아닌 값만 실제 선택 개수로 계산한다.
             for (int i = 0; i < selectedPointSequence.Count; i++)
             {
                 if (!string.IsNullOrWhiteSpace(selectedPointSequence[i]))
@@ -176,16 +160,21 @@ namespace Project.Gameplay.GameModes
         }
 
         /// <summary>회수 결과가 확정되었음을 표시한다.</summary>
-        public void MarkResolved()
+        public void MarkResolved() => isResolved = true;
+
+        /// <summary>채집 세션의 휘발성 상태를 전부 초기화한다.</summary>
+        public void ResetTransientState(bool clearTarget)
         {
-            isResolved = true;
+            if (clearTarget)
+                currentTarget = null;
+
+            ResetConsoleState();
         }
 
         /// <summary>채집 세션 전체를 정리한다.</summary>
         public void ClearTarget()
         {
-            currentTarget = null;
-            ResetConsoleState();
+            ResetTransientState(clearTarget: true);
         }
 
         /// <summary>회수 콘솔 상태를 초기화한다.</summary>
@@ -194,6 +183,7 @@ namespace Project.Gameplay.GameModes
             currentScanMode = HarvestScanMode.None;
             revealedPointIds.Clear();
             selectedPointSequence.Clear();
+
             estimatedRecoveryChance = 0f;
             estimatedBatteryCost = 0f;
             estimatedDurabilityCost = 0f;

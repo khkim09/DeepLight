@@ -24,6 +24,7 @@ namespace Project.Gameplay.Harvest
         private readonly SubmarineRuntimeState submarineRuntimeState; // 잠수함 런타임 상태
         private readonly InventoryService inventoryService; // 인벤토리 서비스
         private readonly HarvestRecoveryTuningSO tuning; // 회수 계산 튜닝
+        private readonly HarvestRetryPenaltyService harvestRetryPenaltyService; // 타깃별 재시도 패널티 서비스
 
         /// <summary>잠수함 런타임 상태를 반환한다.</summary>
         public SubmarineRuntimeState SubmarineRuntimeState => submarineRuntimeState;
@@ -32,11 +33,13 @@ namespace Project.Gameplay.Harvest
         public HarvestResolver(
             SubmarineRuntimeState submarineRuntimeState,
             InventoryService inventoryService,
-            HarvestRecoveryTuningSO tuning)
+            HarvestRecoveryTuningSO tuning,
+            HarvestRetryPenaltyService harvestRetryPenaltyService)
         {
             this.submarineRuntimeState = submarineRuntimeState;
             this.inventoryService = inventoryService;
             this.tuning = tuning;
+            this.harvestRetryPenaltyService = harvestRetryPenaltyService;
         }
 
         /// <summary>대상의 기본 회수 성공률을 계산한다.</summary>
@@ -107,8 +110,11 @@ namespace Project.Gameplay.Harvest
                 previewReport.OperationBatteryCost,
                 previewReport.OperationDurabilityCost));
 
+            string targetKey = ResolveRuntimeTargetKey(harvestModeSession.CurrentTarget);
+
             // 좌측 고정 패널용 요약 지표 이벤트
             EventBus.Publish(new HarvestRecoveryPlanMetricsUpdatedEvent(
+                targetKey,
                 previewReport.RevealedPointCount,
                 previewReport.TotalPointCount,
                 previewReport.SelectedPointCount,
@@ -150,6 +156,7 @@ namespace Project.Gameplay.Harvest
             if (previewReport.OperationDurabilityCost > 0f)
                 submarineRuntimeState.DamageHullOperational(previewReport.OperationDurabilityCost);
 
+            // 방전 강제 종료
             if (submarineRuntimeState.CurrentBattery <= 0f)
             {
                 HarvestRecoveryDiagnosticReport forcedBatteryReport = BuildDiagnosticReport(
@@ -160,7 +167,10 @@ namespace Project.Gameplay.Harvest
                     forcedExitByBattery: true,
                     dangerHullDamage: 0f);
 
-                EventBus.Publish(new HarvestSessionForcedEndedByBatteryEvent(targetData.TargetId));
+                string targetKey = ResolveRuntimeTargetKey(harvestTarget);
+                EventBus.Publish(new HarvestSessionForcedEndedByBatteryEvent(targetKey));
+
+                harvestRetryPenaltyService?.ApplyRetryPenalty(harvestTarget, itemData);
                 PublishResolveEvents(itemData.ItemId, false, 0f, false, forcedBatteryReport);
 
                 harvestModeSession.MarkResolved();
@@ -192,6 +202,7 @@ namespace Project.Gameplay.Harvest
                     forcedExitByBattery: false,
                     dangerHullDamage: dangerHullDamage);
 
+                harvestRetryPenaltyService?.ApplyRetryPenalty(harvestTarget, itemData);
                 PublishResolveEvents(itemData.ItemId, false, previewReport.FinalChance, false, failureReport);
 
                 harvestModeSession.MarkResolved();
@@ -629,6 +640,18 @@ namespace Project.Gameplay.Harvest
                 Reason = reason;
                 Severity = severity;
             }
+        }
+
+        /// <summary>현재 타깃의 런타임 고유 키를 반환한다.</summary>
+        private string ResolveRuntimeTargetKey(IHarvestTarget harvestTarget)
+        {
+            if (harvestTarget is HarvestTargetBehaviour targetBehaviour)
+                return targetBehaviour.GetRuntimeTargetKey();
+
+            if (harvestTarget is Component component)
+                return $"{component.gameObject.scene.name}_{component.GetInstanceID()}";
+
+            return string.Empty;
         }
     }
 }

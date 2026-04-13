@@ -13,6 +13,7 @@ namespace Project.Gameplay.Harvest
         [SerializeField] private bool isAvailable = true; // 월드 상 존재/사용 가능 여부
         [SerializeField] private Transform rotationPivot; // 회전 피벗 참조
         [SerializeField] private HarvestScanPoint[] scanPoints; // 런타임 포인트 캐시
+        [SerializeField] private string runtimeTargetKey; // 런타임 중 같은 씬 내에서 타깃을 구분하는 키
 
         private readonly List<HarvestScanPoint> runtimePointCache = new(); // 런타임 생성 포인트 캐시
         private string runtimePreviewDisplayName = string.Empty; // 런타임 위장 이름
@@ -36,6 +37,9 @@ namespace Project.Gameplay.Harvest
         /// <summary>초기 참조와 런타임 데이터를 구성한다.</summary>
         private void Awake()
         {
+            if (string.IsNullOrWhiteSpace(runtimeTargetKey))
+                runtimeTargetKey = $"{gameObject.scene.name}_{GetInstanceID()}";
+
             ResolveRotationPivot();
             RebuildRuntimeData();
             ResetScanPoints();
@@ -81,6 +85,15 @@ namespace Project.Gameplay.Harvest
                 return $"This target can no longer be harvested.";
 
             return "This target cannot be harvested right now.";
+        }
+
+        /// <summary>현재 타깃의 런타임 고유 키를 반환한다.</summary>
+        public string GetRuntimeTargetKey()
+        {
+            if (string.IsNullOrWhiteSpace(runtimeTargetKey))
+                runtimeTargetKey = $"{gameObject.scene.name}_{GetInstanceID()}";
+
+            return runtimeTargetKey;
         }
 
         /// <summary>target data를 교체하고 런타임 구성을 다시 만든다.</summary>

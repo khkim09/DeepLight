@@ -52,6 +52,7 @@ namespace Project.Gameplay.Harvest
         {
             EventBus.Subscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
             EventBus.Subscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
+            EventBus.Subscribe<HarvestCameraTransitionCompletedEvent>(OnHarvestCameraTransitionCompleted);
         }
 
         /// <summary>Harvest 이벤트 구독을 해제한다.</summary>
@@ -59,6 +60,7 @@ namespace Project.Gameplay.Harvest
         {
             EventBus.Unsubscribe<HarvestModeEnteredEvent>(OnHarvestModeEntered);
             EventBus.Unsubscribe<HarvestModeExitedEvent>(OnHarvestModeExited);
+            EventBus.Unsubscribe<HarvestCameraTransitionCompletedEvent>(OnHarvestCameraTransitionCompleted);
         }
 
         /// <summary>초기 탐사 커서 상태를 적용한다.</summary>
@@ -106,6 +108,9 @@ namespace Project.Gameplay.Harvest
             if (harvestModeSession == null || harvestResolver == null || harvestModeCoordinator == null)
                 return;
 
+            harvestModeSession.ResetTransientState(clearTarget: false);
+            harvestModeSession.SetScanMode(HarvestScanMode.Sonar);
+
             isHarvestMode = true;
             isDraggingTarget = false;
             hoveredPoint = null;
@@ -115,7 +120,6 @@ namespace Project.Gameplay.Harvest
             CacheCurrentTargetPoints();
             ResetCurrentPoints();
 
-            // 현재 타깃의 포인트 수만큼 순서 슬롯 확보
             harvestModeSession.EnsureSequenceCapacity(currentPoints.Count);
 
             if (currentTargetBehaviour != null && targetRotationController != null)
@@ -132,6 +136,23 @@ namespace Project.Gameplay.Harvest
             PublishSelectionChanged();
             PublishHoveredPoint(null);
 
+            PublishInitialPlanMetrics();
+            RecalculatePreview();
+        }
+
+        /// <summary>Harvest 카메라 전환 완료 후 현재 타깃 기준으로 패널 상태를 다시 맞춘다.</summary>
+        private void OnHarvestCameraTransitionCompleted(HarvestCameraTransitionCompletedEvent publishedEvent)
+        {
+            if (!isHarvestMode)
+                return;
+
+            if (harvestModeSession == null || harvestResolver == null)
+                return;
+
+            if (!harvestModeSession.HasTarget)
+                return;
+
+            PublishInitialPlanMetrics();
             RecalculatePreview();
         }
 
@@ -140,7 +161,6 @@ namespace Project.Gameplay.Harvest
         {
             isHarvestMode = false;
             isDraggingTarget = false;
-            currentTargetBehaviour = null;
 
             ApplyExplorationCursorState();
 
@@ -149,6 +169,12 @@ namespace Project.Gameplay.Harvest
                 hoveredPoint.SetHovered(false);
                 hoveredPoint = null;
             }
+
+            if (currentTargetBehaviour != null)
+                currentTargetBehaviour.ResetScanPoints();
+
+            if (harvestModeSession != null)
+                harvestModeSession.ResetTransientState(clearTarget: true);
 
             currentPoints.Clear();
 
@@ -159,6 +185,7 @@ namespace Project.Gameplay.Harvest
             }
 
             PublishHoveredPoint(null);
+            currentTargetBehaviour = null;
         }
 
         /// <summary>센서 전환 입력을 처리한다.</summary>
@@ -191,7 +218,6 @@ namespace Project.Gameplay.Harvest
             if (revealedPoints.Count <= 0)
                 return;
 
-            // 스캔 운영 비용 차감
             float batteryCost = harvestResolver.GetScanPulseBatteryCost(currentMode);
             harvestResolver.SubmarineRuntimeState.ConsumeBatteryOperational(batteryCost);
 
@@ -199,8 +225,11 @@ namespace Project.Gameplay.Harvest
             {
                 if (harvestModeSession.CurrentTarget?.TargetData != null)
                 {
-                    EventBus.Publish(new HarvestSessionForcedEndedByBatteryEvent(
-                        harvestModeSession.CurrentTarget.TargetData.TargetId));
+                    string targetKey = currentTargetBehaviour != null
+                        ? currentTargetBehaviour.GetRuntimeTargetKey()
+                        : string.Empty;
+
+                    EventBus.Publish(new HarvestSessionForcedEndedByBatteryEvent(targetKey));
                 }
 
                 harvestModeCoordinator.ExitHarvestMode();
@@ -210,7 +239,6 @@ namespace Project.Gameplay.Harvest
             harvestModeSession.AddScanPulse();
             EventBus.Publish(new HarvestScanPulseEvent((int)currentMode, harvestModeSession.ScanPulseCount));
 
-            // 공개된 포인트를 세션에 반영
             for (int i = 0; i < revealedPoints.Count; i++)
             {
                 HarvestScanPoint point = revealedPoints[i];
@@ -423,6 +451,27 @@ namespace Project.Gameplay.Harvest
             }
 
             harvestModeSession.ClearSequence();
+        }
+
+        /// <summary>현재 타깃 기준 0 상태 회수 계획 이벤트를 강제로 발행한다.</summary>
+        private void PublishInitialPlanMetrics()
+        {
+            int totalPointCount = currentPoints.Count;
+            int recommendedPointCount = Mathf.Min(3, Mathf.Max(1, totalPointCount));
+
+            string targetKey = currentTargetBehaviour != null
+                ? currentTargetBehaviour.GetRuntimeTargetKey()
+                : string.Empty;
+
+            EventBus.Publish(new HarvestRecoveryPlanMetricsUpdatedEvent(
+                targetKey,
+                0,
+                totalPointCount,
+                0,
+                recommendedPointCount,
+                0f,
+                0f,
+                0f));
         }
 
         /// <summary>현재 센서 모드 기준으로 포인트를 공개한다.</summary>
