@@ -7828,7 +7828,7 @@ GameObject:
   m_Component:
   - component: {fileID: 331534927}
   m_Layer: 5
-  m_Name: DiscoveryPopup
+  m_Name: EncyclopediaPopup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8253,6 +8253,72 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 352447467}
   m_Mesh: {fileID: 3613567641014311022, guid: 3bf697ab0d9b856449eae514b1af7055, type: 3}
+--- !u!1 &359258029
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 359258030}
+  - component: {fileID: 359258031}
+  m_Layer: 0
+  m_Name: HarvestNearbyTestSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &359258030
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 359258029}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1004242910}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &359258031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 359258029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fcce2fc4fefa4e439eba1108948cfdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.World.HarvestNearbyTestSpawner
+  harvestTargetPrefab: {fileID: 151321410283941889, guid: 8f78119acb851c843aa9003be470695f, type: 3}
+  centerTransform: {fileID: 8892471190458576195}
+  spawnParent: {fileID: 359258030}
+  spawnProfiles:
+  - {fileID: 11400000, guid: 5d1ca5099e1bcd54ba99bb0036225047, type: 2}
+  - {fileID: 11400000, guid: de36d12fc203b1a46b335484b424bd95, type: 2}
+  - {fileID: 11400000, guid: 00778d0a664392148a4dd7f780d79d53, type: 2}
+  - {fileID: 11400000, guid: d3334ac081e1c2b4692b87ce4147d659, type: 2}
+  - {fileID: 11400000, guid: 8b5fa0d215e8c5d458c632368e58e240, type: 2}
+  minSpawnRadiusXZ: 20
+  maxSpawnRadiusXZ: 120
+  minYOffset: -35
+  maxYOffset: 35
+  minAbsoluteY: -1200
+  maxAbsoluteY: -20
+  spawnClearRadius: 18
+  maxPositionRetry: 40
+  currentDay: 1
+  spawnOnStart: 1
+  clearBeforeSpawn: 1
+  logSpawnFlow: 1
+  drawGizmos: 1
 --- !u!1 &360374284
 GameObject:
   m_ObjectHideFlags: 0
@@ -10230,6 +10296,83 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 514550916}
   m_CullTransparentMesh: 1
+--- !u!1 &520922439
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 520922440}
+  - component: {fileID: 520922442}
+  - component: {fileID: 520922441}
+  m_Layer: 5
+  m_Name: RadarChartGraphic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &520922440
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 520922439}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2026833019}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &520922441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 520922439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a83db892a7dfb7e47821eec0f5a7d04f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.UI::Project.UI.Harvest.HarvestRadarChartStaticGraphic
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  enableDebugLog: 1
+  dividerColor: {r: 0.35, g: 1, b: 0.42, a: 0.9}
+  dividerThickness: 2
+  fillSectorInterior: 1
+  drawSectorOutline: 1
+  sectorFillInnerColor: {r: 0.019607844, g: 0.21960784, b: 0.05882353, a: 0.050980393}
+  sectorFillOuterColor: {r: 0.05490196, g: 0.7058824, b: 0.14901961, a: 0.21960784}
+  sectorOutlineColor: {r: 0.039215688, g: 0.078431375, b: 0.2, a: 1}
+  sectorOutlineThickness: 3
+  chartRadiusRatio: 0.84
+  sectorSegments: 24
+  invertRiskValueForDisplay: 0
+--- !u!222 &520922442
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 520922439}
+  m_CullTransparentMesh: 1
 --- !u!1 &526315342
 GameObject:
   m_ObjectHideFlags: 0
@@ -12163,6 +12306,81 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &813433861
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 813433862}
+  - component: {fileID: 813433864}
+  - component: {fileID: 813433863}
+  m_Layer: 5
+  m_Name: RadarTrail
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &813433862
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813433861}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2026833019}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &813433863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813433861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: c298b82d6f048714da43b45e44e588f0, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &813433864
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813433861}
+  m_CullTransparentMesh: 1
 --- !u!1 &836174185
 GameObject:
   m_ObjectHideFlags: 0
@@ -13005,7 +13223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Project.UI::Project.UI.Harvest.HarvestScanPointInfoPanelPresenter
   panelCanvasGroup: {fileID: 1682668852}
-  radarGraphic: {fileID: 1622366354}
+  radarBackgroundGraphic: {fileID: 520922441}
   topAxisNameText: {fileID: 1168316177}
   bottomAxisNameText: {fileID: 1467104676}
   leftAxisNameText: {fileID: 1467410299}
@@ -14019,6 +14237,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 859603493}
+  - {fileID: 1938212022}
+  - {fileID: 359258030}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1004242911
@@ -17689,6 +17909,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1446048042}
   m_CullTransparentMesh: 1
+--- !u!1 &1454230641
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1454230642}
+  - component: {fileID: 1454230644}
+  - component: {fileID: 1454230643}
+  m_Layer: 5
+  m_Name: RadarNeedle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1454230642
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1454230641}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2026833019}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1454230643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1454230641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 0879212155690304281651a8d9437a4d, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1454230644
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1454230641}
+  m_CullTransparentMesh: 1
 --- !u!1 &1466276129
 GameObject:
   m_ObjectHideFlags: 0
@@ -19316,94 +19611,6 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
---- !u!1 &1622366352
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1622366353}
-  - component: {fileID: 1622366355}
-  - component: {fileID: 1622366354}
-  m_Layer: 5
-  m_Name: RadarGraphic
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1622366353
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1622366352}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2026833019}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1622366354
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1622366352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7282cbba1d8575e45a313a7519a2a02d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Project.UI::Project.UI.Harvest.HarvestRadarChartGraphic
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  enableDebugLog: 1
-  backgroundDiscColor: {r: 0.05, g: 0.08, b: 0.06, a: 0.92156863}
-  outerRingColor: {r: 0.55, g: 1, b: 0.65, a: 0.69803923}
-  outerRingThickness: 3
-  dividerColor: {r: 0.35, g: 1, b: 0.42, a: 0.9019608}
-  dividerThickness: 2
-  fillSectorInterior: 1
-  drawSectorOutline: 1
-  sectorFillInnerColor: {r: 0.02, g: 0.22, b: 0.06, a: 0.050980393}
-  sectorFillOuterColor: {r: 0.05490196, g: 0.7058824, b: 0.14901961, a: 0.21960784}
-  sectorOutlineColor: {r: 0.04, g: 0.08, b: 0.2, a: 1}
-  sectorOutlineThickness: 3
-  chartRadiusRatio: 0.84
-  sectorSegments: 20
-  invertRiskValueForDisplay: 0
-  enableSweepLine: 1
-  animateInPlayModeOnly: 1
-  sweepSpeedDegreesPerSecond: 80
-  sweepHeadThickness: 3.5
-  sweepTrailAngle: 50
-  sweepTrailSegments: 8
-  sweepHeadColor: {r: 0.92, g: 1, b: 0.92, a: 0.95}
-  sweepTrailOuterColor: {r: 0.35, g: 1, b: 0.45, a: 0.18}
---- !u!222 &1622366355
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1622366352}
-  m_CullTransparentMesh: 1
 --- !u!1 &1636393539
 GameObject:
   m_ObjectHideFlags: 0
@@ -20028,6 +20235,81 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!1 &1700399817
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1700399818}
+  - component: {fileID: 1700399820}
+  - component: {fileID: 1700399819}
+  m_Layer: 5
+  m_Name: RadarBackground
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1700399818
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700399817}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2026833019}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1700399819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700399817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 31a7dd4c65fbce24c93503efc52a7ac6, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1700399820
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700399817}
+  m_CullTransparentMesh: 1
 --- !u!1 &1705312578
 GameObject:
   m_ObjectHideFlags: 0
@@ -22583,7 +22865,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.UI::Project.UI.Harvest.HarvestWorldTargetPromptPresenter
   harvestPointInteractor: {fileID: 8892471190458576200}
   explorationCamera: {fileID: 870650679}
-  rootCanvas: {fileID: 144727200}
   promptRoot: {fileID: 450450230}
   promptGroup: {fileID: 450450231}
   iconImage: {fileID: 514550918}
@@ -22656,7 +22937,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1004242910}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1950792348
 GameObject:
@@ -23325,6 +23606,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2026833019}
+  - component: {fileID: 2026833020}
   m_Layer: 5
   m_Name: RadarRoot
   m_TagString: Untagged
@@ -23344,7 +23626,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1622366353}
+  - {fileID: 1700399818}
+  - {fileID: 520922440}
+  - {fileID: 813433862}
+  - {fileID: 1454230642}
   m_Father: {fileID: 1682668851}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -23352,6 +23637,25 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2026833020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2026833018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee7e0162755726b4690bd8094f46e595, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Project.UI::Project.UI.Harvest.HarvestRadarSweepRotator
+  trailRect: {fileID: 813433862}
+  needleRect: {fileID: 1454230642}
+  panelCanvasGroup: {fileID: 1682668852}
+  animateInPlayModeOnly: 1
+  sweepSpeedDegreesPerSecond: 80
+  initialAngleDeg: 0
+  visibleAlphaThreshold: 0.01
 --- !u!1 &2033670530
 GameObject:
   m_ObjectHideFlags: 0
@@ -24584,7 +24888,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 1769245990}
   - {fileID: 1662695820}
-  - {fileID: 1938212022}
   - {fileID: 1004242910}
   - {fileID: 1314600731}
   - {fileID: 8892471190458576195}

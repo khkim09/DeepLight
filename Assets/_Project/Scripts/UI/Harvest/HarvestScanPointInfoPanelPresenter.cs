@@ -11,7 +11,7 @@ namespace Project.UI.Harvest
         [SerializeField] private CanvasGroup panelCanvasGroup; // hover 정보 전체 CanvasGroup
 
         [Header("Radar")]
-        [SerializeField] private HarvestRadarChartGraphic radarGraphic; // 부채꼴 레이더 그래프
+        [SerializeField] private HarvestRadarChartStaticGraphic radarBackgroundGraphic; // 부채꼴 레이더 그래프
 
         [Header("Axis Name Texts")]
         [SerializeField] private TMP_Text topAxisNameText; // 위 축 이름
@@ -132,9 +132,9 @@ namespace Project.UI.Harvest
                 rightValueText.text = $"{Mathf.RoundToInt(currentRightValue * 100f)}";
 
             // 레이더 그래프 갱신
-            if (radarGraphic != null)
+            if (radarBackgroundGraphic != null)
             {
-                radarGraphic.SetValues(
+                radarBackgroundGraphic.SetValues(
                     currentTopValue,
                     currentBottomValue,
                     currentLeftValue,
@@ -163,7 +163,7 @@ namespace Project.UI.Harvest
         /// <summary>차트 주변 값 텍스트의 위치를 갱신한다.</summary>
         private void RefreshRadarTextLayout()
         {
-            if (radarGraphic == null)
+            if (radarBackgroundGraphic == null)
                 return;
 
             // 핵심:
@@ -171,8 +171,8 @@ namespace Project.UI.Harvest
             // 그 다음 텍스트 절반 크기 + inside/outside padding + extra offset을 직접 더해
             // 글자 외곽선 기준 여유를 맞춘다.
 
-            Vector2 topValuePosition = radarGraphic.GetValueLocalPosition(
-                HarvestRadarChartGraphic.RadarAxis.Top,
+            Vector2 topValuePosition = radarBackgroundGraphic.GetValueLocalPosition(
+                HarvestRadarChartStaticGraphic.RadarAxis.Top,
                 currentTopValue,
                 insideThreshold01,
                 0f,
@@ -190,8 +190,8 @@ namespace Project.UI.Harvest
 
             SetAnchoredPosition(topValueRoot, topValuePosition);
 
-            Vector2 bottomValuePosition = radarGraphic.GetValueLocalPosition(
-                HarvestRadarChartGraphic.RadarAxis.Bottom,
+            Vector2 bottomValuePosition = radarBackgroundGraphic.GetValueLocalPosition(
+                HarvestRadarChartStaticGraphic.RadarAxis.Bottom,
                 currentBottomValue,
                 insideThreshold01,
                 0f,
@@ -209,8 +209,8 @@ namespace Project.UI.Harvest
 
             SetAnchoredPosition(bottomValueRoot, bottomValuePosition);
 
-            Vector2 leftValuePosition = radarGraphic.GetValueLocalPosition(
-                HarvestRadarChartGraphic.RadarAxis.Left,
+            Vector2 leftValuePosition = radarBackgroundGraphic.GetValueLocalPosition(
+                HarvestRadarChartStaticGraphic.RadarAxis.Left,
                 currentLeftValue,
                 insideThreshold01,
                 0f,
@@ -228,8 +228,8 @@ namespace Project.UI.Harvest
 
             SetAnchoredPosition(leftValueRoot, leftValuePosition);
 
-            Vector2 rightValuePosition = radarGraphic.GetValueLocalPosition(
-                HarvestRadarChartGraphic.RadarAxis.Right,
+            Vector2 rightValuePosition = radarBackgroundGraphic.GetValueLocalPosition(
+                HarvestRadarChartStaticGraphic.RadarAxis.Right,
                 currentRightValue,
                 insideThreshold01,
                 0f,
@@ -283,8 +283,8 @@ namespace Project.UI.Harvest
             currentLeftValue = 0f;
             currentRightValue = 0f;
 
-            if (radarGraphic != null)
-                radarGraphic.ClearValues();
+            if (radarBackgroundGraphic != null)
+                radarBackgroundGraphic.ClearValues();
 
             if (topValueText != null)
                 topValueText.text = "--";

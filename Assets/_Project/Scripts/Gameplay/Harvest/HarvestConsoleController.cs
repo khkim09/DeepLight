@@ -347,11 +347,11 @@ namespace Project.Gameplay.Harvest
                 bestPoint = point;
             }
 
+            // 핵심:
+            // 같은 포인트를 계속 hover 중이면 이벤트를 다시 보내지 않는다.
+            // static radar rebuild, 값 텍스트 갱신, 레이아웃 재계산을 매 프레임 막기 위함이다.
             if (hoveredPoint == bestPoint)
-            {
-                PublishHoveredPoint(hoveredPoint);
                 return;
-            }
 
             if (hoveredPoint != null)
                 hoveredPoint.SetHovered(false);

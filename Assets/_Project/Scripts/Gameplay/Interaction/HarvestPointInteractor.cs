@@ -68,17 +68,24 @@ namespace Project.Gameplay.Interaction
             if (isHarvestMode)
                 return;
 
+            // 매 프레임 현재 겹친 zone 기준으로 실제 포커스 대상을 다시 계산
             UpdateCurrentZone();
 
             if (harvestModeCoordinator == null || inputBindings == null)
                 return;
 
-            if (currentTarget == null || currentTarget.TargetData == null || !currentTarget.TargetData.IsValid())
-                return;
-
             if (!Input.GetKeyDown(inputBindings.InteractHarvestKey))
                 return;
 
+            // 핵심:
+            // zone 안에 실제로 들어가 있지 않다면 F를 눌러도 아무 반응도 하지 않는다.
+            if (!HasValidInteractionContext())
+                return;
+
+            if (currentTarget == null || currentTarget.TargetData == null || !currentTarget.TargetData.IsValid())
+                return;
+
+            // zone 안에 들어와 있고, 그 대상이 블락 상태일 때만 불가 메시지를 띄운다.
             if (!currentTargetInteractable)
             {
                 EventBus.Publish(new HarvestTargetInteractMessageEvent(GetCurrentTargetUnavailableMessage()));
@@ -146,7 +153,7 @@ namespace Project.Gameplay.Interaction
             {
                 string penaltyText = harvestRetryPenaltyService.GetRemainingPenaltyDisplayText(currentTarget);
                 if (!string.IsNullOrWhiteSpace(penaltyText))
-                    return $"Preparing for retry. Remaining time: {penaltyText}";
+                    return $"Retry blocked. Remaining time: {penaltyText}";
             }
 
             if (currentTarget is HarvestTargetBehaviour targetBehaviour)
@@ -162,6 +169,36 @@ namespace Project.Gameplay.Interaction
             return "This target cannot be harvested at the moment.";
         }
 
+        /// <summary>현재 입력 시점에 실제 상호작용 가능한 컨텍스트가 있는지 검사한다.</summary>
+        private bool HasValidInteractionContext()
+        {
+            // 현재 zone/target이 없으면 상호작용 컨텍스트가 없다.
+            if (currentZone == null || currentTarget == null)
+                return false;
+
+            // 비활성화된 zone은 이미 상호작용 컨텍스트가 끝난 상태다.
+            if (!currentZone.gameObject.activeInHierarchy)
+                return false;
+
+            // overlapped 목록에 현재 zone이 실제로 남아 있어야 한다.
+            if (!overlappedZones.Contains(currentZone))
+                return false;
+
+            // 현재 zone이 파괴되었거나 target이 비어 있으면 무효
+            if (currentZone.HarvestTarget == null)
+                return false;
+
+            // 현재 zone이 currentTarget과 동일한 대상을 바라보는지도 다시 확인
+            if (currentZone.HarvestTarget != currentTarget)
+                return false;
+
+            // 이미 소모된 target은 zone 안에 있었더라도 더 이상 현재 상호작용 컨텍스트가 아니다.
+            if (!currentTarget.IsAvailable)
+                return false;
+
+            return true;
+        }
+
         /// <summary>겹친 존 중 현재 상호작용할 대상을 선정한다.</summary>
         private void UpdateCurrentZone()
         {
@@ -172,7 +209,18 @@ namespace Project.Gameplay.Interaction
             for (int i = overlappedZones.Count - 1; i >= 0; i--)
             {
                 HarvestInteractionZone zone = overlappedZones[i];
-                if (zone == null || zone.HarvestTarget == null)
+
+                // 파괴되었거나 비활성화된 zone은 stale entry이므로 즉시 정리한다.
+                if (zone == null || !zone.gameObject.activeInHierarchy)
+                {
+                    overlappedZones.RemoveAt(i);
+                    continue;
+                }
+
+                IHarvestTarget target = zone.HarvestTarget;
+
+                // 타깃 참조가 없거나 이미 소모된 대상도 더 이상 후보가 아니다.
+                if (target == null || !target.IsAvailable)
                 {
                     overlappedZones.RemoveAt(i);
                     continue;
@@ -191,14 +239,14 @@ namespace Project.Gameplay.Interaction
                 {
                     bestScore = score;
                     bestZone = zone;
-                    bestTarget = zone.HarvestTarget;
+                    bestTarget = target;
                 }
             }
 
             SetCurrentFocus(bestZone, bestTarget);
         }
 
-        /// <summary>현재 포커스 대상과 하이라이트/이벤트 상태를 갱신한다.</summary>
+        /// <summary>현재 포커스 대상과 하이라이트 및 이벤트 상태를 갱신한다.</summary>
         private void SetCurrentFocus(HarvestInteractionZone nextZone, IHarvestTarget nextTarget)
         {
             bool nextInteractable = EvaluateTargetInteractable(nextZone, nextTarget);
@@ -307,14 +355,8 @@ namespace Project.Gameplay.Interaction
             if (currentZone == null || currentTarget == null)
                 return InteractionPromptType.None;
 
-            // 현재는 Harvest 가능 상태만 프롬프트를 띄운다.
             if (currentTargetInteractable)
                 return InteractionPromptType.HarvestAvailable;
-
-            // TODO : 확장 포인트:
-            // if (CanDock()) return InteractionPromptType.DockAvailable;
-            // if (CanTalk()) return InteractionPromptType.TalkAvailable;
-            // if (CanUseDevice()) return InteractionPromptType.UseDeviceAvailable;
 
             return InteractionPromptType.None;
         }
@@ -330,6 +372,12 @@ namespace Project.Gameplay.Interaction
         {
             HarvestInteractionZone zone = other.GetComponent<HarvestInteractionZone>();
             if (zone == null)
+                return;
+
+            if (!zone.gameObject.activeInHierarchy)
+                return;
+
+            if (zone.HarvestTarget == null || !zone.HarvestTarget.IsAvailable)
                 return;
 
             if (!overlappedZones.Contains(zone))

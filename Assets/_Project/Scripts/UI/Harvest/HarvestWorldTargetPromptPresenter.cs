@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using Project.Core.Events;
-using Project.Data.Harvest;
 using Project.Gameplay.Interaction;
 using TMPro;
 using UnityEngine;
@@ -15,7 +14,6 @@ namespace Project.UI.Harvest
         [Header("References")]
         [SerializeField] private HarvestPointInteractor harvestPointInteractor; // 현재 타깃 감지기
         [SerializeField] private Camera explorationCamera; // 탐사 카메라
-        [SerializeField] private Canvas rootCanvas; // 루트 캔버스
 
         [Header("Prompt Root")]
         [SerializeField] private RectTransform promptRoot; // 아이콘 프롬프트 루트
@@ -28,8 +26,8 @@ namespace Project.UI.Harvest
         [SerializeField] private TextMeshProUGUI messageText; // 불가 메시지 텍스트
 
         [Header("Sprites")]
-        [SerializeField] private Sprite availableIconSprite; // 자원 아이콘
-        [SerializeField] private Sprite blockedIconSprite; // 금지 아이콘
+        [SerializeField] private Sprite availableIconSprite; // 진입 가능 아이콘
+        [SerializeField] private Sprite blockedIconSprite; // 블락 아이콘
 
         [Header("Prompt Color")]
         [SerializeField] private Color availableColor = Color.white; // 가능 상태 색
@@ -76,7 +74,7 @@ namespace Project.UI.Harvest
             CancelMessageTask();
         }
 
-        /// <summary>아이콘과 메시지 위치를 현재 타깃 월드 좌표에 맞춰 갱신한다.</summary>
+        /// <summary>아이콘 위치를 현재 타깃 월드 좌표에 맞춰 갱신한다.</summary>
         private void LateUpdate()
         {
             if (!ShouldShowWorldPrompt())
@@ -112,7 +110,9 @@ namespace Project.UI.Harvest
 
             RefreshPromptIcon();
 
-            // 이미 소모된 대상만 숨긴다.
+            // 정책:
+            // - 이미 소모된 대상만 완전 숨김
+            // - 아직 존재하지만 진입 불가인 대상은 blocked icon 유지
             SetPromptVisible(ShouldShowWorldPrompt());
         }
 
@@ -147,21 +147,21 @@ namespace Project.UI.Harvest
             HideMessageImmediate();
         }
 
-        /// <summary>현재 대상 상태와 타입에 맞는 아이콘을 반영한다.</summary>
+        /// <summary>현재 대상 상태에 맞는 아이콘과 색을 반영한다.</summary>
         private void RefreshPromptIcon()
         {
-            if (iconImage == null || harvestPointInteractor == null)
+            if (iconImage == null)
                 return;
 
-            if (!isInteractable)
+            if (isInteractable)
             {
-                iconImage.sprite = blockedIconSprite;
-                iconImage.color = blockedColor;
+                iconImage.sprite = availableIconSprite;
+                iconImage.color = availableColor;
                 return;
             }
 
-            iconImage.sprite = availableIconSprite;
-            iconImage.color = availableColor;
+            iconImage.sprite = blockedIconSprite;
+            iconImage.color = blockedColor;
         }
 
         /// <summary>현재 월드 프롬프트를 표시해도 되는지 판단한다.</summary>
@@ -173,7 +173,8 @@ namespace Project.UI.Harvest
             if (harvestPointInteractor.CurrentTarget == null)
                 return false;
 
-            // 핵심: 소모되어 더 이상 채집 대상이 아닌 경우만 숨긴다.
+            // 이미 소모되어 타깃 자체가 끝난 경우만 숨긴다.
+            // retry penalty / day lock 상태는 blocked icon을 계속 보여준다.
             return harvestPointInteractor.CurrentTarget.IsAvailable;
         }
 
