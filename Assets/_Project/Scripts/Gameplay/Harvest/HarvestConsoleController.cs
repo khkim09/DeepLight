@@ -6,6 +6,7 @@ using Project.Data.Harvest;
 using Project.Data.Input;
 using Project.Gameplay.GameModes;
 using Project.Gameplay.Runtime;
+using Project.Gameplay.Services;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -35,16 +36,19 @@ namespace Project.Gameplay.Harvest
         private bool isDraggingTarget; // 현재 타깃 드래그 회전 여부
         private HarvestScanPoint hoveredPoint; // 현재 hover 중인 포인트
         private HarvestTargetBehaviour currentTargetBehaviour; // 현재 타깃 Behaviour
+        private HarvestTargetScanStateService harvestTargetScanStateService; // 타깃별 공개 스캔 포인트 상태 서비스
 
         /// <summary>세션과 계산기, 조정기를 주입한다.</summary>
         public void Initialize(
             HarvestModeSession newHarvestModeSession,
             HarvestResolver newHarvestResolver,
-            HarvestModeCoordinator newHarvestModeCoordinator)
+            HarvestModeCoordinator newHarvestModeCoordinator,
+            HarvestTargetScanStateService newHarvestTargetScanStateService)
         {
             harvestModeSession = newHarvestModeSession;
             harvestResolver = newHarvestResolver;
             harvestModeCoordinator = newHarvestModeCoordinator;
+            harvestTargetScanStateService = newHarvestTargetScanStateService;
         }
 
         /// <summary>Harvest 이벤트를 구독한다.</summary>
@@ -108,6 +112,8 @@ namespace Project.Gameplay.Harvest
             if (harvestModeSession == null || harvestResolver == null || harvestModeCoordinator == null)
                 return;
 
+            // 현재 세션의 휘발성 상태만 초기화한다.
+            // 단, 타깃 자체는 이미 coordinator에서 바인딩한 상태를 유지한다.
             harvestModeSession.ResetTransientState(clearTarget: false);
             harvestModeSession.SetScanMode(HarvestScanMode.Sonar);
 
@@ -118,8 +124,12 @@ namespace Project.Gameplay.Harvest
 
             ApplyHarvestCursorState();
             CacheCurrentTargetPoints();
+
+            // 화면상 포인트는 일단 전부 초기화한 뒤,
+            // 저장된 reveal 상태를 다시 복원한다.
             ResetCurrentPoints();
 
+            // 현재 타깃 포인트 개수 기준으로 순서 슬롯 개수를 맞춘다.
             harvestModeSession.EnsureSequenceCapacity(currentPoints.Count);
 
             if (currentTargetBehaviour != null && targetRotationController != null)
@@ -131,16 +141,20 @@ namespace Project.Gameplay.Harvest
             harvestModeSession.SetScanMode(HarvestScanMode.Sonar);
             EventBus.Publish(new HarvestScanModeChangedEvent((int)HarvestScanMode.Sonar));
 
+            // 타깃별로 이전에 공개했던 포인트를 복원한다.
+            RestorePersistedRevealState();
+
             PublishTargetPrepared();
             PublishRuntimeState();
             PublishSelectionChanged();
             PublishHoveredPoint(null);
 
-            PublishInitialPlanMetrics();
+            // 0짜리 강제 초기 preview를 보내지 않고,
+            // 현재 타깃 기준 실제 계산 결과만 바로 반영한다.
             RecalculatePreview();
         }
 
-        /// <summary>Harvest 카메라 전환 완료 후 현재 타깃 기준으로 패널 상태를 다시 맞춘다.</summary>
+        /// <summary>Harvest 카메라 전환 완료 후 현재 타깃 기준 HUD를 다시 맞춘다.</summary>
         private void OnHarvestCameraTransitionCompleted(HarvestCameraTransitionCompletedEvent publishedEvent)
         {
             if (!isHarvestMode)
@@ -152,7 +166,12 @@ namespace Project.Gameplay.Harvest
             if (!harvestModeSession.HasTarget)
                 return;
 
-            PublishInitialPlanMetrics();
+            // 카메라 전환 완료 시점에도 0 상태를 다시 밀어 넣지 않고,
+            // 현재 타깃 기준 실제 회수 계획 값을 다시 계산해서 반영한다.
+            PublishTargetPrepared();
+            PublishSelectionChanged();
+            PublishHoveredPoint(hoveredPoint);
+
             RecalculatePreview();
         }
 
@@ -242,7 +261,16 @@ namespace Project.Gameplay.Harvest
             for (int i = 0; i < revealedPoints.Count; i++)
             {
                 HarvestScanPoint point = revealedPoints[i];
+                if (point == null)
+                    continue;
+
+                // 현재 세션에도 반영
                 harvestModeSession.AddRevealedPoint(point.PointId);
+
+                // 타깃 영속 상태에도 반영
+                if (currentTargetBehaviour != null)
+                    harvestTargetScanStateService?.MarkPointRevealed(currentTargetBehaviour, point.PointId);
+
                 EventBus.Publish(new HarvestPointRevealedEvent(point.PointId));
             }
 
@@ -453,25 +481,32 @@ namespace Project.Gameplay.Harvest
             harvestModeSession.ClearSequence();
         }
 
-        /// <summary>현재 타깃 기준 0 상태 회수 계획 이벤트를 강제로 발행한다.</summary>
-        private void PublishInitialPlanMetrics()
+        /// <summary>저장된 공개 포인트 상태를 현재 타깃 포인트에 복원한다.</summary>
+        private void RestorePersistedRevealState()
         {
-            int totalPointCount = currentPoints.Count;
-            int recommendedPointCount = Mathf.Min(3, Mathf.Max(1, totalPointCount));
+            if (currentTargetBehaviour == null || harvestTargetScanStateService == null)
+                return;
 
-            string targetKey = currentTargetBehaviour != null
-                ? currentTargetBehaviour.GetRuntimeTargetKey()
-                : string.Empty;
+            string targetKey = currentTargetBehaviour.GetRuntimeTargetKey();
+            IReadOnlyCollection<string> revealedPointIds = harvestTargetScanStateService.GetRevealedPointIds(targetKey);
+            if (revealedPointIds == null || revealedPointIds.Count <= 0)
+                return;
 
-            EventBus.Publish(new HarvestRecoveryPlanMetricsUpdatedEvent(
-                targetKey,
-                0,
-                totalPointCount,
-                0,
-                recommendedPointCount,
-                0f,
-                0f,
-                0f));
+            for (int i = 0; i < currentPoints.Count; i++)
+            {
+                HarvestScanPoint point = currentPoints[i];
+                if (point == null)
+                    continue;
+
+                if (!revealedPointIds.Contains(point.PointId))
+                    continue;
+
+                point.Reveal();
+                harvestModeSession.AddRevealedPoint(point.PointId);
+
+                // 카운트/다른 HUD가 기존 이벤트 흐름을 그대로 재사용할 수 있게 한다.
+                EventBus.Publish(new HarvestPointRevealedEvent(point.PointId));
+            }
         }
 
         /// <summary>현재 센서 모드 기준으로 포인트를 공개한다.</summary>

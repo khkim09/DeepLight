@@ -25,6 +25,7 @@ namespace Project.Gameplay.Harvest
         private readonly InventoryService inventoryService; // 인벤토리 서비스
         private readonly HarvestRecoveryTuningSO tuning; // 회수 계산 튜닝
         private readonly HarvestRetryPenaltyService harvestRetryPenaltyService; // 타깃별 재시도 패널티 서비스
+        private readonly HarvestTargetScanStateService harvestTargetScanStateService; // 타깃별 공개 스캔 포인트 상태 서비스
 
         /// <summary>잠수함 런타임 상태를 반환한다.</summary>
         public SubmarineRuntimeState SubmarineRuntimeState => submarineRuntimeState;
@@ -34,12 +35,14 @@ namespace Project.Gameplay.Harvest
             SubmarineRuntimeState submarineRuntimeState,
             InventoryService inventoryService,
             HarvestRecoveryTuningSO tuning,
-            HarvestRetryPenaltyService harvestRetryPenaltyService)
+            HarvestRetryPenaltyService harvestRetryPenaltyService,
+            HarvestTargetScanStateService harvestTargetScanStateService)
         {
             this.submarineRuntimeState = submarineRuntimeState;
             this.inventoryService = inventoryService;
             this.tuning = tuning;
             this.harvestRetryPenaltyService = harvestRetryPenaltyService;
+            this.harvestTargetScanStateService = harvestTargetScanStateService;
         }
 
         /// <summary>대상의 기본 회수 성공률을 계산한다.</summary>
@@ -210,7 +213,13 @@ namespace Project.Gameplay.Harvest
             }
 
             if (targetData.ConsumeOnSuccess)
+            {
                 harvestTarget.Consume();
+
+                // 타깃이 완전히 사라지는 경우에만 누적 스캔 상태를 제거한다.
+                // 추후 동일 타깃 내 다중 아이템 구조로 바뀌면 "최종 소모 시점"에서만 지우면 된다.
+                harvestTargetScanStateService?.ClearTargetState(harvestTarget);
+            }
 
             HarvestRecoveryDiagnosticReport successReport = BuildDiagnosticReport(
                 harvestModeSession,
@@ -376,6 +385,16 @@ namespace Project.Gameplay.Harvest
                 dangerHullDamage);
             string guidanceMessage = BuildGuidanceMessage(reasons.Primary, selectionReadiness01);
 
+            // 현재 타깃에 retry penalty가 걸려 있으면 안내 문구를 뒤에 추가한다.
+            string retryPenaltyMessage = BuildRetryPenaltyMessage(harvestModeSession.CurrentTarget);
+            if (!string.IsNullOrWhiteSpace(retryPenaltyMessage))
+            {
+                if (!string.IsNullOrWhiteSpace(guidanceMessage))
+                    guidanceMessage += " " + retryPenaltyMessage;
+                else
+                    guidanceMessage = retryPenaltyMessage;
+            }
+
             return new HarvestRecoveryDiagnosticReport(
                 itemId,
                 isSuccess,
@@ -539,20 +558,16 @@ namespace Project.Gameplay.Harvest
             }
 
             if (forcedExitByBattery)
-            {
-                return "배터리 잔량이 회수 운영 비용을 버티지 못해 콘솔이 강제 종료되었습니다. 추가 스캔 전에 배터리 여유를 확보해야 합니다.";
-            }
+                return "The console shut down because the battery ran too low to continue the recovery.";
 
             if (isSuccess)
-            {
-                return "첫 고정점과 후속 균형축이 비교적 안정적으로 맞았고, 위험 포인트가 통제 가능한 수준이어서 회수에 성공했습니다.";
-            }
+                return "Good anchor placement kept the target stable, and the remaining points supported the lift.";
 
             string backlashText = dangerHullDamage > 0f
-                ? $" 구조 반동으로 내구도 {dangerHullDamage:0.0} 추가 손상."
+                ? $" The failed lift also caused {dangerHullDamage:0.0} hull damage."
                 : string.Empty;
 
-            return "선택한 순서가 하중 중심과 균형축을 충분히 잡지 못해 회수 도중 장력이 무너졌습니다." + backlashText;
+            return "The lifting order was unstable, so the target slipped during recovery." + backlashText;
         }
 
         /// <summary>주요 실패 원인에 맞는 다음 시도 가이드를 생성한다.</summary>
@@ -564,29 +579,42 @@ namespace Project.Gameplay.Harvest
             return primaryReason switch
             {
                 HarvestFailureReasonType.InsufficientScans =>
-                    "소나와 라이다를 더 사용해 공개 포인트 수를 먼저 늘리세요. 스캔 정보가 늘어날수록 안전한 선택지가 보이고 성공률도 올라갑니다.",
+                    "Scan a few more points first. More scan data makes it easier to spot safer choices.",
 
                 HarvestFailureReasonType.InsufficientAnchorCount =>
-                    "1개만 고정하면 회수 축이 불안정합니다. 최소 2개, 가능하면 3개까지 안정적인 포인트를 확보한 뒤 시도하세요.",
+                    "You need more anchor points before lifting. Try securing at least two, and ideally three.",
 
                 HarvestFailureReasonType.WeakFirstAnchor =>
-                    "1번 포인트는 하중 분산 시작점입니다. 첫 점은 FirstAnchorBias와 BaseStability가 높은 포인트를 우선 배치하세요.",
+                    "Your first point was too weak. Start with a point that looks safer and more stable.",
 
                 HarvestFailureReasonType.PoorSequenceBalance =>
-                    "2번 이후 포인트는 균형축과 회수 방향 보정 역할입니다. 후속 포인트는 SequenceBias가 높은 순으로 배치하세요.",
+                    "The follow-up points did not support the lift well. Try a more balanced order after the first point.",
 
                 HarvestFailureReasonType.LowStructuralStability =>
-                    "포인트 자체 안정성이 낮았습니다. BaseStability가 높은 포인트를 우선 선택하고, 애매한 포인트는 과감히 제외하세요.",
+                    "The selected points were too unstable. Favor points that look stronger and more reliable.",
 
                 HarvestFailureReasonType.HighRiskPoints =>
-                    "위험도가 높은 포인트는 확률을 깎고 내구도 손실을 키웁니다. RiskWeight가 높아 보이는 포인트는 뒤로 미루거나 빼는 것이 좋습니다.",
+                    "Too many risky points were included. Leave dangerous-looking points out unless you really need them.",
 
                 HarvestFailureReasonType.BatteryExhausted =>
-                    "배터리가 많을수록 기본 성공 판정도 유리합니다. 스캔을 줄이거나 귀환 후 재충전한 뒤 재시도하세요.",
+                    "Battery level was too low to finish the operation. Recharge first or reduce unnecessary scans.",
 
                 _ =>
-                    "기본 원칙은 동일합니다. 스캔으로 공개 수를 늘린 뒤, 1번은 하중 중심, 2번 이후는 균형축, 마지막은 저위험 보정 포인트로 배치하세요."
+                    "Scan more points, choose a strong first anchor, then build a safer lifting order around it."
             };
+        }
+
+        /// <summary>현재 타깃에 남아 있는 재시도 패널티 문구를 생성한다.</summary>
+        private string BuildRetryPenaltyMessage(IHarvestTarget harvestTarget)
+        {
+            if (harvestRetryPenaltyService == null || harvestTarget == null)
+                return string.Empty;
+
+            string remainingPenaltyText = harvestRetryPenaltyService.GetRemainingPenaltyDisplayText(harvestTarget);
+            if (string.IsNullOrWhiteSpace(remainingPenaltyText))
+                return string.Empty;
+
+            return $"Retry available in {remainingPenaltyText}.";
         }
 
         /// <summary>현재 target에서 런타임 확정된 실제 아이템을 찾아 반환한다.</summary>

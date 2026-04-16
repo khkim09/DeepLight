@@ -136,13 +136,27 @@ namespace Project.UI.Harvest
         {
             return reasonType switch
             {
-                HarvestFailureReasonType.InsufficientScans => "스캔 정보가 부족해 안전한 포인트 구분이 어려웠습니다.",
-                HarvestFailureReasonType.InsufficientAnchorCount => "고정 포인트 수가 부족해 인양 축이 안정적으로 잡히지 않았습니다.",
-                HarvestFailureReasonType.WeakFirstAnchor => "첫 고정점이 하중 중심을 제대로 잡지 못했습니다.",
-                HarvestFailureReasonType.PoorSequenceBalance => "후속 고정 순서가 균형축을 따라가지 못해 장력이 편중되었습니다.",
-                HarvestFailureReasonType.LowStructuralStability => "선택한 포인트 자체의 구조 안정성이 낮았습니다.",
-                HarvestFailureReasonType.HighRiskPoints => "위험도가 높은 포인트를 포함해 구조 손상 위험이 커졌습니다.",
-                HarvestFailureReasonType.BatteryExhausted => "회수 도중 배터리가 바닥나 시스템이 강제 종료되었습니다.",
+                HarvestFailureReasonType.InsufficientScans =>
+                    "Not enough scan data was gathered to spot the safer points.",
+
+                HarvestFailureReasonType.InsufficientAnchorCount =>
+                    "Too few anchor points were secured for a stable lift.",
+
+                HarvestFailureReasonType.WeakFirstAnchor =>
+                    "The first anchor point was too weak to hold the target properly.",
+
+                HarvestFailureReasonType.PoorSequenceBalance =>
+                    "The selected lifting order did not keep the target balanced.",
+
+                HarvestFailureReasonType.LowStructuralStability =>
+                    "The chosen points were too unstable for a safe recovery.",
+
+                HarvestFailureReasonType.HighRiskPoints =>
+                    "Too many high-risk points were included in the recovery plan.",
+
+                HarvestFailureReasonType.BatteryExhausted =>
+                    "The battery ran out and the recovery console shut down.",
+
                 _ => string.Empty
             };
         }

@@ -21,6 +21,8 @@ MonoBehaviour:
   rarity: 4
   analysisTimeHours: 12
   analysisTeaserMessage: '"The noise around it feels almost intentional."'
+  useCustomRetryPenaltyHours: 1
+  customRetryPenaltyHours: 3
   sellPrice: 380
   baseCatchDifficulty: 0.96
   shapeBounds: {x: 3, y: 2}

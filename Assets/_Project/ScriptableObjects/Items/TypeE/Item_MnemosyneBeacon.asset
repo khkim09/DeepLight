@@ -21,6 +21,8 @@ MonoBehaviour:
   rarity: 3
   analysisTimeHours: 4
   analysisTeaserMessage: '"A faint replay pulse repeats at fixed intervals."'
+  useCustomRetryPenaltyHours: 0
+  customRetryPenaltyHours: 0.5
   sellPrice: 240
   baseCatchDifficulty: 0.84
   shapeBounds: {x: 2, y: 2}

@@ -87,6 +87,15 @@ namespace Project.Gameplay.Harvest
             return "This target cannot be harvested right now.";
         }
 
+        /// <summary>외부 스포너가 안정적인 런타임 타깃 키를 주입한다.</summary>
+        public void SetRuntimeTargetKey(string newRuntimeTargetKey)
+        {
+            if (string.IsNullOrWhiteSpace(newRuntimeTargetKey))
+                return;
+
+            runtimeTargetKey = newRuntimeTargetKey;
+        }
+
         /// <summary>현재 타깃의 런타임 고유 키를 반환한다.</summary>
         public string GetRuntimeTargetKey()
         {

@@ -98,24 +98,27 @@ namespace Project.UI.Harvest
                 activeTargetKey = string.Empty;
         }
 
-        /// <summary>Harvest 진입 시 패널을 초기화하고 표시한다.</summary>
+        /// <summary>Harvest 진입 시 패널 상태를 비우고, 실제 타깃 이벤트를 기다린다.</summary>
         private void OnHarvestModeEntered(HarvestModeEnteredEvent publishedEvent)
         {
             isHarvestMode = true;
+            activeTargetKey = string.Empty;
+
+            // 즉시 0 chance를 보여주지 않도록, 내부 값만 리셋하고
+            // 실제 타깃 준비/계산 이벤트가 들어오면 그때 패널을 갱신한다.
             ResetRuntimeState();
-            ShowPanelImmediate();
-            ApplyAllTextsImmediate();
+            HidePanelImmediate();
         }
 
-        /// <summary>Harvest 카메라 전환 완료 시 패널을 다시 초기화한다.</summary>
+        /// <summary>Harvest 카메라 전환 완료 시 현재 계산값을 유지한 채 패널만 보이게 한다.</summary>
         private void OnHarvestCameraTransitionCompleted(HarvestCameraTransitionCompletedEvent publishedEvent)
         {
             if (!isHarvestMode)
                 return;
 
-            ResetRuntimeState();
+            // 여기서 0으로 다시 초기화하면 첫 진입 chance가 0으로 보이는 문제가 생긴다.
+            // 실제 값은 console controller의 RecalculatePreview 결과를 기다린다.
             ShowPanelImmediate();
-            ApplyAllTextsImmediate();
         }
 
         /// <summary>Harvest 종료 시 패널을 숨기고 초기화한다.</summary>
@@ -157,8 +160,6 @@ namespace Project.UI.Harvest
 
             ShowPanelImmediate();
             ApplyCountTextsImmediate();
-            ApplyAnchorSequenceTextsImmediate(0f, 0f);
-            ApplyChanceImmediate(0f);
         }
 
         /// <summary>회수 포인트 공개 이벤트를 반영한다.</summary>

@@ -22,6 +22,8 @@ MonoBehaviour:
   rarity: 4
   analysisTimeHours: 10
   analysisTeaserMessage: '"Something inside still waits for a signal."'
+  useCustomRetryPenaltyHours: 1
+  customRetryPenaltyHours: 2.5
   sellPrice: 340
   baseCatchDifficulty: 0.93
   shapeBounds: {x: 2, y: 3}

@@ -21,6 +21,8 @@ MonoBehaviour:
   rarity: 2
   analysisTimeHours: 0
   analysisTeaserMessage: 
+  useCustomRetryPenaltyHours: 0
+  customRetryPenaltyHours: 0.25
   sellPrice: 82
   baseCatchDifficulty: 0.54
   shapeBounds: {x: 1, y: 1}

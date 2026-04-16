@@ -64,6 +64,7 @@ namespace Project.Managers.Composition
         private InventoryService inventoryService; // 인벤토리 서비스
         private GameTimeService gameTimeService; // 인게임 시간 서비스
         private HarvestRetryPenaltyService harvestRetryPenaltyService; // 타깃별 재시도 패널티 서비스
+        private HarvestTargetScanStateService harvestTargetScanStateService; // 타깃별 공개 스캔 포인트 상태 서비스
 
         /// <summary>런타임 조립과 주입을 수행한다</summary>
         private void Awake()
@@ -90,11 +91,14 @@ namespace Project.Managers.Composition
 
             gameModeService = new GameModeService(GameModeType.Exploration3D);
             harvestRetryPenaltyService = new HarvestRetryPenaltyService(gameTimeService);
+            harvestTargetScanStateService = new HarvestTargetScanStateService();
+
             harvestResolver = new HarvestResolver(
                 submarineRuntimeState,
                 inventoryService,
                 harvestRecoveryTuning,
-                harvestRetryPenaltyService);
+                harvestRetryPenaltyService,
+                harvestTargetScanStateService);
 
             harvestModeCoordinator = new HarvestModeCoordinator(gameModeService, harvestModeSession);
 
@@ -133,7 +137,11 @@ namespace Project.Managers.Composition
                 harvestConsoleCameraController.SetCockpitViewAnchor(cockpitViewAnchor);
 
             if (harvestConsoleController != null)
-                harvestConsoleController.Initialize(harvestModeSession, harvestResolver, harvestModeCoordinator);
+                harvestConsoleController.Initialize(
+                    harvestModeSession,
+                    harvestResolver,
+                    harvestModeCoordinator,
+                    harvestTargetScanStateService);
 
             if (harvestResultUIController != null)
                 harvestResultUIController.Initialize(encyclopediaService, gameTimeService);

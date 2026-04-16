@@ -21,6 +21,8 @@ MonoBehaviour:
   rarity: 3
   analysisTimeHours: 6
   analysisTeaserMessage: '"The glass bends light in ways it should not."'
+  useCustomRetryPenaltyHours: 0
+  customRetryPenaltyHours: 0.5
   sellPrice: 255
   baseCatchDifficulty: 0.86
   shapeBounds: {x: 2, y: 2}

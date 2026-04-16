@@ -21,6 +21,8 @@ MonoBehaviour:
   rarity: 3
   analysisTimeHours: 8
   analysisTeaserMessage: '"It hums softly, as if answering a distant choir."'
+  useCustomRetryPenaltyHours: 0
+  customRetryPenaltyHours: 0.5
   sellPrice: 270
   baseCatchDifficulty: 0.88
   shapeBounds: {x: 3, y: 2}
