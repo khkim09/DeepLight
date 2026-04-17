@@ -374,6 +374,20 @@ namespace Project.Core.Events
 
     #region Inventory
 
+    /// <summary>인벤토리 레이아웃이 변경되었을 때 발행되는 이벤트이다.</summary>
+    public readonly struct InventoryLayoutChangedEvent : IEvent
+    {
+        public readonly int PreviousStageIndex; // 변경 전 업그레이드 단계 인덱스
+        public readonly int CurrentStageIndex; // 변경 후 업그레이드 단계 인덱스
+
+        /// <summary>인벤토리 레이아웃 변경 이벤트를 생성한다.</summary>
+        public InventoryLayoutChangedEvent(int previousStageIndex, int currentStageIndex)
+        {
+            PreviousStageIndex = previousStageIndex;
+            CurrentStageIndex = currentStageIndex;
+        }
+    }
+
     /// <summary>인벤토리 UI 열림/닫힘 상태 변경 이벤트</summary>
     public readonly struct InventoryUIToggledEvent : IEvent
     {

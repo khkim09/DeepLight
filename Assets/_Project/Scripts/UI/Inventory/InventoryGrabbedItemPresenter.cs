@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 namespace Project.UI.Inventory
 {
-    /// <summary>grab/release/rotate/discard와 fresh recovery grab, regrab 흐름을 총괄한다.</summary>
+    /// <summary>grab/release/rotate/discard와 fresh recovery grab, regrab, swap 배치를 총괄한다.</summary>
     public class InventoryGrabbedItemPresenter : MonoBehaviour
     {
         private enum GrabSourceType
@@ -87,9 +87,11 @@ namespace Project.UI.Inventory
             UpdateGrabTooltipVisibility();
             UpdatePreviewPosition();
 
+            // grab 중 우클릭 회전
             if (Input.GetMouseButtonDown(1) && currentItem.CanRotate)
                 RotateGrabbedItemClockwise();
 
+            // grab 중 폐기
             if (inputBindings != null && Input.GetKeyDown(inputBindings.InventoryDiscardKey))
             {
                 DiscardCurrentGrab();
@@ -97,30 +99,38 @@ namespace Project.UI.Inventory
             }
 
             bool isHoveringGrid = gridPresenter.TryGetGridCellIndex(Input.mousePosition, out Vector2Int hoveredCell);
-            bool isValidPlacement = false;
-            Vector2Int resolvedOrigin = Vector2Int.zero;
+
+            InventoryPlacementResult placementResult = new InventoryPlacementResult(
+                InventoryPlacementType.Invalid,
+                Vector2Int.zero,
+                rotationQuarterTurns,
+                null);
 
             if (isHoveringGrid)
             {
-                resolvedOrigin = ResolvePlacementOriginFromHoveredCell(hoveredCell);
-                isValidPlacement = inventoryService.SubmarineRuntimeState.InventoryGrid.CanPlaceItem(
+                Vector2Int resolvedOrigin = ResolvePlacementOriginFromHoveredCell(hoveredCell);
+
+                placementResult = inventoryService.EvaluatePlacement(
                     currentItem,
                     resolvedOrigin,
                     rotationQuarterTurns);
 
-                gridPresenter.HighlightCells(currentItem, resolvedOrigin, rotationQuarterTurns, isValidPlacement);
+                gridPresenter.HighlightPlacement(currentItem, placementResult);
             }
             else
             {
                 gridPresenter.ClearHighlight();
             }
 
+            // 배치된 아이템을 드래그로 뽑아온 경우:
+            // 마우스를 떼는 순간 release 판정
             if (placementTriggerMode == PlacementTriggerMode.HoldRelease)
             {
                 if (!Input.GetMouseButton(0))
                 {
-                    TryReleaseGrab(isHoveringGrid, resolvedOrigin);
+                    TryReleaseGrab(isHoveringGrid, placementResult);
 
+                    // 실패로 여전히 손에 들려 있으면 이후에는 토글 클릭 모드로 유지
                     if (isGrabbing)
                         placementTriggerMode = PlacementTriggerMode.ToggleClick;
                 }
@@ -128,10 +138,11 @@ namespace Project.UI.Inventory
                 return;
             }
 
+            // 토글 방식: 클릭 시 release 판정
             if (placementTriggerMode == PlacementTriggerMode.ToggleClick)
             {
                 if (Input.GetMouseButtonDown(0))
-                    TryReleaseGrab(isHoveringGrid, resolvedOrigin);
+                    TryReleaseGrab(isHoveringGrid, placementResult);
             }
         }
 
@@ -211,27 +222,81 @@ namespace Project.UI.Inventory
             UpdatePreviewPosition();
         }
 
-        /// <summary>현재 grab 상태의 release를 시도한다.</summary>
-        private void TryReleaseGrab(bool isHoveringGrid, Vector2Int resolvedOrigin)
+        /// <summary>현재 grab 상태의 release 또는 swap release를 시도한다.</summary>
+        private void TryReleaseGrab(bool isHoveringGrid, InventoryPlacementResult placementResult)
         {
             if (!isHoveringGrid)
                 return;
 
-            if (!inventoryService.TryAddItem(currentItem, resolvedOrigin, rotationQuarterTurns, out InventoryItemInstance placedInstance))
+            if (!placementResult.IsSuccess)
             {
                 PlayShakeFeedback().Forget();
                 return;
             }
 
+            bool isPlaced = inventoryService.TryAddOrSwapItem(
+                currentItem,
+                placementResult.Position,
+                placementResult.RotationQuarterTurns,
+                out InventoryItemInstance placedInstance,
+                out InventoryItemInstance swappedInstance);
+
+            if (!isPlaced)
+            {
+                PlayShakeFeedback().Forget();
+                return;
+            }
+
+            // 기존 교체 대상 뷰 제거
+            if (swappedInstance != null)
+                gridPresenter.RemovePlacedItemView(swappedInstance);
+
+            // 새로 놓인 아이템 뷰 생성
             gridPresenter.CreatePlacedItemView(placedInstance, this);
             gridPresenter.RefreshOccupiedState(inventoryService.SubmarineRuntimeState.InventoryGrid);
             gridPresenter.ClearHighlight();
 
+            // "내가 방금 놓은 아이템" 기준으로 배치 완료 이벤트 발행
             EventBus.Publish(new InventoryItemPlacementConfirmedEvent(
                 currentItem.ItemId,
                 grabSourceType == GrabSourceType.FreshRecovery));
 
+            // swap이 일어나면 기존 아이템을 그대로 손에 들고 이어서 배치한다.
+            if (swappedInstance != null)
+            {
+                ContinueGrabWithSwappedItem(swappedInstance);
+                return;
+            }
+
             EndGrabVisualOnly();
+        }
+
+        /// <summary>교체로 빠져나온 기존 아이템을 즉시 grab 상태로 이어받는다.</summary>
+        private void ContinueGrabWithSwappedItem(InventoryItemInstance swappedItemInstance)
+        {
+            if (swappedItemInstance == null || swappedItemInstance.ItemData == null)
+            {
+                EndGrabVisualOnly();
+                return;
+            }
+
+            currentItem = swappedItemInstance.ItemData;
+            grabbedFromPlacedInstance = swappedItemInstance;
+            isGrabbing = true;
+            rotationQuarterTurns = swappedItemInstance.RotationQuarterTurns;
+            grabSourceType = GrabSourceType.RegrabFromInventory;
+            placementTriggerMode = PlacementTriggerMode.ToggleClick;
+            currentShakeOffset = Vector2.zero;
+
+            previewImage.sprite = currentItem.Icon;
+            previewImage.color = Color.white;
+            previewImage.enabled = true;
+
+            ApplyPreviewVisual();
+            UpdatePreviewPosition();
+
+            if (tooltipPresenter != null)
+                tooltipPresenter.Hide();
         }
 
         /// <summary>현재 grab 중인 아이템을 폐기한다.</summary>
@@ -260,15 +325,16 @@ namespace Project.UI.Inventory
                 return;
             }
 
+            // 채집 직후 fresh item은 중앙 결과 UI에서 이미 정보가 보이므로 툴팁 숨김 유지
             if (grabSourceType == GrabSourceType.FreshRecovery)
             {
                 tooltipPresenter.Hide();
                 return;
             }
 
+            // 인벤토리에서 다시 뽑은 아이템은 preview 옆에 툴팁 표시
             if (grabSourceType == GrabSourceType.RegrabFromInventory)
             {
-                // 실제 보이는 sprite 기준으로 정렬 오차를 줄이기 위해 visualRect를 우선 사용
                 RectTransform targetRect = previewVisualRect != null ? previewVisualRect : previewRect;
                 tooltipPresenter.ShowForGrabbedPreview(currentItem, targetRect);
                 return;
@@ -394,6 +460,9 @@ namespace Project.UI.Inventory
 
             if (tooltipPresenter != null)
                 tooltipPresenter.Hide();
+
+            if (gridPresenter != null)
+                gridPresenter.ClearHighlight();
         }
     }
 }

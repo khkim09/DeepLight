@@ -7,24 +7,20 @@ using UnityEngine;
 
 namespace Project.UI.Inventory
 {
-    /// <summary>인벤토리 그리드 좌표 계산, 슬롯 피드백, 배치 아이템 뷰 생성을 담당한다.</summary>
+    /// <summary>인벤토리 그리드 좌표 계산, 슬롯 프리뷰, 배치 아이템 뷰 생성을 담당한다.</summary>
     public class InventoryGridPresenter : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private RectTransform gridContainer; // 슬롯이 생성되는 실제 그리드 루트
+        [SerializeField] private RectTransform gridContainer; // 전체 그리드 기준 Rect
         [SerializeField] private RectTransform placedItemRoot; // 배치 아이템 뷰 루트
         [SerializeField] private InventoryPlacedItemView placedItemViewPrefab; // 배치 아이템 뷰 프리팹
         [SerializeField] private InventoryItemTooltipPresenter tooltipPresenter; // 툴팁 프리젠터
 
-        [Header("Feedback Colors")]
-        [SerializeField] private Color validColor = new Color(0f, 1f, 0f, 0.6f);
-        [SerializeField] private Color invalidColor = new Color(1f, 0f, 0f, 0.6f);
+        private SubmarineInventoryLayoutSO layoutSO; // 현재 인벤토리 레이아웃
+        private readonly Dictionary<Vector2Int, InventorySlotUI> slotMap = new(); // 셀 좌표 -> 슬롯 UI
+        private readonly Dictionary<InventoryItemInstance, InventoryPlacedItemView> placedItemViewMap = new(); // 런타임 인스턴스 -> UI 뷰
 
-        private SubmarineInventoryLayoutSO layoutSO;
-        private readonly Dictionary<Vector2Int, InventorySlotUI> slotMap = new();
-        private readonly Dictionary<InventoryItemInstance, InventoryPlacedItemView> placedItemViewMap = new();
-
-        /// <summary>Bootstrapper에서 SO를 주입받고 슬롯 캐시를 구축한다.</summary>
+        /// <summary>Bootstrapper에서 SO를 주입받고 슬롯 캐시를 다시 구축한다.</summary>
         public void Initialize(
             SubmarineInventoryLayoutSO layout,
             EncyclopediaService encyclopediaService,
@@ -80,44 +76,43 @@ namespace Project.UI.Inventory
             return new Vector2(width, height);
         }
 
-        /// <summary>현재 배치 예정 셀에 초록/빨강 하이라이트를 적용한다.</summary>
-        public void HighlightCells(ItemSO itemData, Vector2Int origin, int rotationQuarterTurns, bool isValid)
+        /// <summary>현재 배치 평가 결과를 슬롯 프리뷰 색상으로 표시한다.</summary>
+        public void HighlightPlacement(ItemSO itemData, InventoryPlacementResult placementResult)
         {
             ClearHighlight();
 
             if (itemData == null)
                 return;
 
-            Color targetColor = isValid ? validColor : invalidColor;
-
-            foreach (Vector2Int localCell in itemData.OccupiedCells)
+            InventorySlotUI.SlotPreviewState previewState = placementResult.PlacementType switch
             {
-                Vector2Int rotatedLocal = InventoryRotationUtility.RotateLocalCell(
-                    localCell,
-                    itemData.ShapeBounds,
-                    rotationQuarterTurns);
+                InventoryPlacementType.Place => InventorySlotUI.SlotPreviewState.Valid,
+                InventoryPlacementType.Swap => InventorySlotUI.SlotPreviewState.Swap,
+                _ => InventorySlotUI.SlotPreviewState.Invalid
+            };
 
-                Vector2Int targetPos = origin + rotatedLocal;
-
-                if (!slotMap.TryGetValue(targetPos, out InventorySlotUI slotUI))
+            foreach (Vector2Int targetCell in BuildTargetCells(itemData, placementResult.Position, placementResult.RotationQuarterTurns))
+            {
+                if (!slotMap.TryGetValue(targetCell, out InventorySlotUI slotUI) || slotUI == null)
                     continue;
 
-                if (!slotUI.IsOccupied)
-                    slotUI.SetHighlightColor(targetColor);
+                slotUI.SetPreviewState(previewState);
             }
         }
 
-        /// <summary>모든 슬롯 하이라이트를 초기화한다.</summary>
+        /// <summary>모든 슬롯 프리뷰 상태를 기본값으로 되돌린다.</summary>
         public void ClearHighlight()
         {
             foreach (KeyValuePair<Vector2Int, InventorySlotUI> pair in slotMap)
             {
-                if (pair.Value != null)
-                    pair.Value.ApplyBaseColor();
+                if (pair.Value == null)
+                    continue;
+
+                pair.Value.ResetPreviewState();
             }
         }
 
-        /// <summary>현재 인벤토리 논리 데이터 기준으로 슬롯 점유 시각을 다시 동기화한다.</summary>
+        /// <summary>현재 인벤토리 논리 데이터 기준으로 슬롯 점유 상태를 다시 동기화한다.</summary>
         public void RefreshOccupiedState(InventoryGridData gridData)
         {
             foreach (KeyValuePair<Vector2Int, InventorySlotUI> pair in slotMap)
@@ -158,8 +153,6 @@ namespace Project.UI.Inventory
 
             RemovePlacedItemView(itemInstance);
 
-            placedItemRoot.SetAsLastSibling();
-
             InventoryPlacedItemView newView = Instantiate(placedItemViewPrefab, placedItemRoot, false);
             newView.gameObject.name = $"Placed_{itemInstance.ItemData.ItemId}";
             newView.gameObject.SetActive(true);
@@ -198,9 +191,31 @@ namespace Project.UI.Inventory
                 return;
 
             if (view != null)
-                Destroy(view.gameObject);
+            {
+                if (Application.isPlaying)
+                    Destroy(view.gameObject);
+                else
+                    DestroyImmediate(view.gameObject);
+            }
 
             placedItemViewMap.Remove(itemInstance);
+        }
+
+        /// <summary>현재 생성된 모든 배치 아이템 UI를 제거한다.</summary>
+        public void ClearAllPlacedItemViews()
+        {
+            foreach (KeyValuePair<InventoryItemInstance, InventoryPlacedItemView> pair in placedItemViewMap)
+            {
+                if (pair.Value == null)
+                    continue;
+
+                if (Application.isPlaying)
+                    Destroy(pair.Value.gameObject);
+                else
+                    DestroyImmediate(pair.Value.gameObject);
+            }
+
+            placedItemViewMap.Clear();
         }
 
         /// <summary>툴팁 프리젠터를 반환한다.</summary>
@@ -217,9 +232,10 @@ namespace Project.UI.Inventory
             if (gridContainer == null)
                 return;
 
-            for (int i = 0; i < gridContainer.childCount; i++)
+            InventorySlotUI[] slots = gridContainer.GetComponentsInChildren<InventorySlotUI>(true);
+            for (int i = 0; i < slots.Length; i++)
             {
-                InventorySlotUI slotUI = gridContainer.GetChild(i).GetComponent<InventorySlotUI>();
+                InventorySlotUI slotUI = slots[i];
                 if (slotUI == null)
                     continue;
 
@@ -227,6 +243,27 @@ namespace Project.UI.Inventory
                 if (!slotMap.ContainsKey(key))
                     slotMap.Add(key, slotUI);
             }
+        }
+
+        /// <summary>현재 origin/rotation 기준 실제 점유 대상 셀 목록을 만든다.</summary>
+        private List<Vector2Int> BuildTargetCells(ItemSO itemData, Vector2Int origin, int rotationQuarterTurns)
+        {
+            List<Vector2Int> result = new();
+
+            if (itemData == null)
+                return result;
+
+            foreach (Vector2Int localCell in itemData.OccupiedCells)
+            {
+                Vector2Int rotatedLocal = InventoryRotationUtility.RotateLocalCell(
+                    localCell,
+                    itemData.ShapeBounds,
+                    rotationQuarterTurns);
+
+                result.Add(origin + rotatedLocal);
+            }
+
+            return result;
         }
 
         /// <summary>원점 셀 기준 footprint 중심 anchoredPosition을 계산한다.</summary>

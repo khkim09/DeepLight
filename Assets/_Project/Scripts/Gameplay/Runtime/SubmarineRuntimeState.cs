@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Project.Core.Events;
 using Project.Data.Submarine;
 using Project.Gameplay.Inventory;
@@ -14,11 +15,13 @@ namespace Project.Gameplay.Runtime
         [SerializeField] private float currentBattery; // 현재 배터리
         [SerializeField] private float currentHullDurability; // 현재 선체 내구도
         [SerializeField] private InventoryGridData inventoryGrid; // 인벤토리 런타임 데이터
+        [SerializeField] private SubmarineInventoryLayoutSO currentInventoryLayout; // 현재 적용 중인 인벤토리 레이아웃
 
         public SubmarineStatsSO BaseStats => baseStats;
         public float CurrentBattery => currentBattery;
         public float CurrentHullDurability => currentHullDurability;
         public InventoryGridData InventoryGrid => inventoryGrid;
+        public SubmarineInventoryLayoutSO CurrentInventoryLayout => currentInventoryLayout;
 
         /// <summary>잠수함 런타임 상태 생성</summary>
         public SubmarineRuntimeState(SubmarineStatsSO baseStats)
@@ -27,25 +30,74 @@ namespace Project.Gameplay.Runtime
 
             currentBattery = baseStats.MaxBattery;
             currentHullDurability = baseStats.MaxHullDurability;
+            currentInventoryLayout = baseStats.InventoryLayout;
 
-            if (baseStats.InventoryLayout != null)
-                inventoryGrid = new InventoryGridData(baseStats.InventoryLayout);
+            if (currentInventoryLayout != null)
+                inventoryGrid = new InventoryGridData(currentInventoryLayout);
         }
 
         /// <summary>잠수함 런타임 상태를 지정된 스탯으로 다시 초기화한다.</summary>
         public void Initialize(SubmarineStatsSO newBaseStats)
         {
-            this.baseStats = newBaseStats;
+            baseStats = newBaseStats;
             currentBattery = baseStats.MaxBattery;
             currentHullDurability = baseStats.MaxHullDurability;
+            currentInventoryLayout = baseStats.InventoryLayout;
 
-            if (baseStats.InventoryLayout != null && baseStats.InventoryLayout.IsValid())
+            if (currentInventoryLayout != null && currentInventoryLayout.IsValid())
             {
                 if (inventoryGrid == null)
-                    inventoryGrid = new InventoryGridData(baseStats.InventoryLayout);
+                    inventoryGrid = new InventoryGridData(currentInventoryLayout);
                 else
-                    inventoryGrid.Initialize(baseStats.InventoryLayout);
+                    inventoryGrid.Initialize(currentInventoryLayout);
             }
+        }
+
+        /// <summary>현재 배치 아이템을 유지한 채 새 인벤토리 레이아웃 적용을 시도한다.</summary>
+        public bool TryApplyInventoryLayout(SubmarineInventoryLayoutSO newLayout)
+        {
+            if (newLayout == null || !newLayout.IsValid())
+                return false;
+
+            if (inventoryGrid == null)
+            {
+                currentInventoryLayout = newLayout;
+                inventoryGrid = new InventoryGridData(newLayout);
+                EventBus.Publish(new InventoryChangedEvent());
+                return true;
+            }
+
+            // 기존 아이템 상태를 안전하게 복사해 둔다.
+            List<InventoryItemInstance> previousItems = new();
+            IReadOnlyList<InventoryItemInstance> currentItems = inventoryGrid.Items;
+
+            for (int i = 0; i < currentItems.Count; i++)
+            {
+                InventoryItemInstance itemInstance = currentItems[i];
+                if (itemInstance == null || itemInstance.ItemData == null)
+                    continue;
+
+                previousItems.Add(new InventoryItemInstance(
+                    itemInstance.ItemData,
+                    itemInstance.OriginPosition,
+                    itemInstance.RotationQuarterTurns));
+            }
+
+            // 새 레이아웃 그리드에 같은 위치/회전으로 모두 들어가는지 검사한다.
+            InventoryGridData rebuiltGrid = new InventoryGridData(newLayout);
+
+            for (int i = 0; i < previousItems.Count; i++)
+            {
+                bool isPlaced = rebuiltGrid.TryPlaceExistingInstance(previousItems[i]);
+                if (!isPlaced)
+                    return false;
+            }
+
+            currentInventoryLayout = newLayout;
+            inventoryGrid = rebuiltGrid;
+
+            EventBus.Publish(new InventoryChangedEvent());
+            return true;
         }
 
         /// <summary>정상 운영 비용으로 배터리를 소비한다.</summary>

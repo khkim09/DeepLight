@@ -36,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 70, y: 70}
+  m_SizeDelta: {x: 65, y: 65}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2999836574155593048
 CanvasRenderer:
@@ -59,8 +59,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Project.UI::Project.UI.Inventory.InventorySlotUI
   background: {fileID: 9053697619704687618}
-  emptyColor: {r: 0.007843138, g: 0, b: 0, a: 0.5019608}
+  emptyColor: {r: 0.007843138, g: 0, b: 0, a: 0.8}
   occupiedColor: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 0.8}
+  validEmptyPreviewColor: {r: 0, g: 1, b: 0, a: 0.35}
+  invalidEmptyPreviewColor: {r: 1, g: 0, b: 0, a: 0.35}
+  swapEmptyPreviewColor: {r: 1, g: 0.75, b: 0, a: 0.34901962}
+  validOccupiedPreviewColor: {r: 0, g: 1, b: 0, a: 0.34901962}
+  invalidOccupiedPreviewColor: {r: 1, g: 0, b: 0, a: 0.34901962}
+  swapOccupiedPreviewColor: {r: 1, g: 0.7490196, b: 0, a: 0.34901962}
 --- !u!114 &9053697619704687618
 MonoBehaviour:
   m_ObjectHideFlags: 0

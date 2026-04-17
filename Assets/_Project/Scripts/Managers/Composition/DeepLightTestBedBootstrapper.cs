@@ -21,9 +21,12 @@ namespace Project.Managers.Composition
         [SerializeField] private SubmarineStatsSO submarineStats; // 잠수함 기본 데이터
         [SerializeField] private HarvestRecoveryTuningSO harvestRecoveryTuning; // 회수 계산 튜닝
 
+        [Header("Inventory Layout Upgrade Stages")]
+        [SerializeField] private SubmarineInventoryLayoutSO[] inventoryUpgradeLayouts; // 업그레이드 순서대로 넣는 추가 레이아웃들
+
         [Header("Time Settings")]
         [SerializeField] private int startDay = 1; // 시작 Day
-        [SerializeField] private float startHourOfDay = 9f; // 시작 시각 (12시간제 기준 예: 늦은 시간 표현 가능)
+        [SerializeField] private float startHourOfDay = 9f; // 시작 시각
         [SerializeField] private float activeRealSecondsPerGameHour = 180f; // 인게임 1시간당 실제 액티브 시간
         [SerializeField] private GameDayLengthMode initialDayLengthMode = GameDayLengthMode.TwelveHour; // 초반 하루 길이 모드
 
@@ -65,6 +68,7 @@ namespace Project.Managers.Composition
         private GameTimeService gameTimeService; // 인게임 시간 서비스
         private HarvestRetryPenaltyService harvestRetryPenaltyService; // 타깃별 재시도 패널티 서비스
         private HarvestTargetScanStateService harvestTargetScanStateService; // 타깃별 공개 스캔 포인트 상태 서비스
+        private SubmarineInventoryLayoutRuntimeService inventoryLayoutRuntimeService; // 인벤토리 레이아웃 업그레이드 서비스
 
         /// <summary>런타임 조립과 주입을 수행한다</summary>
         private void Awake()
@@ -82,7 +86,11 @@ namespace Project.Managers.Composition
             encyclopediaService = new EncyclopediaService();
             inventoryService = new InventoryService(submarineRuntimeState);
 
-            // 초반은 12시간제 하루로 시작한다.
+            inventoryLayoutRuntimeService = new SubmarineInventoryLayoutRuntimeService(
+                submarineRuntimeState,
+                submarineStats.InventoryLayout,
+                inventoryUpgradeLayouts);
+
             gameTimeService = new GameTimeService(
                 startDay,
                 startHourOfDay,
@@ -102,7 +110,6 @@ namespace Project.Managers.Composition
 
             harvestModeCoordinator = new HarvestModeCoordinator(gameModeService, harvestModeSession);
 
-            // 시스템 초기화
             if (harvestPointInteractor != null)
                 harvestPointInteractor.Initialize(harvestModeCoordinator, harvestRetryPenaltyService);
 
@@ -137,11 +144,13 @@ namespace Project.Managers.Composition
                 harvestConsoleCameraController.SetCockpitViewAnchor(cockpitViewAnchor);
 
             if (harvestConsoleController != null)
+            {
                 harvestConsoleController.Initialize(
                     harvestModeSession,
                     harvestResolver,
                     harvestModeCoordinator,
                     harvestTargetScanStateService);
+            }
 
             if (harvestResultUIController != null)
                 harvestResultUIController.Initialize(encyclopediaService, gameTimeService);
@@ -149,21 +158,7 @@ namespace Project.Managers.Composition
             if (grabbedItemPresenter != null)
                 grabbedItemPresenter.Initialize(inventoryService);
 
-            if (submarineStats != null && submarineStats.InventoryLayout != null)
-            {
-                if (gridBuilder != null)
-                    gridBuilder.Initialize(submarineStats.InventoryLayout);
-
-                if (gridPresenter != null)
-                {
-                    gridPresenter.Initialize(
-                        submarineStats.InventoryLayout,
-                        encyclopediaService,
-                        gameTimeService);
-
-                    gridPresenter.RefreshOccupiedState(submarineRuntimeState.InventoryGrid);
-                }
-            }
+            RebuildInventoryLayoutVisuals(inventoryLayoutRuntimeService.CurrentLayout);
         }
 
         /// <summary>초기 상태 이벤트를 발행한다</summary>
@@ -183,25 +178,84 @@ namespace Project.Managers.Composition
             gameTimeService?.PublishCurrentState();
         }
 
-        /// <summary>방전 강제 종료 이벤트를 구독한다</summary>
+        /// <summary>필요 이벤트를 구독한다.</summary>
         private void OnEnable()
         {
             EventBus.Subscribe<HarvestSessionForcedEndedByBatteryEvent>(OnHarvestSessionForcedEndedByBattery);
+            EventBus.Subscribe<InventoryLayoutChangedEvent>(OnInventoryLayoutChanged);
         }
 
-        /// <summary>이벤트를 해제한다</summary>
+        /// <summary>이벤트를 해제한다.</summary>
         private void OnDisable()
         {
             EventBus.Unsubscribe<HarvestSessionForcedEndedByBatteryEvent>(OnHarvestSessionForcedEndedByBattery);
+            EventBus.Unsubscribe<InventoryLayoutChangedEvent>(OnInventoryLayoutChanged);
         }
 
-        /// <summary>방전 시 회수 콘솔 모드를 종료한다</summary>
+        /// <summary>방전 시 회수 콘솔 모드를 종료한다.</summary>
         private void OnHarvestSessionForcedEndedByBattery(HarvestSessionForcedEndedByBatteryEvent publishedEvent)
         {
             if (harvestModeCoordinator == null)
                 return;
 
             harvestModeCoordinator.ExitHarvestMode();
+        }
+
+        /// <summary>인벤토리 레이아웃 변경 시 현재 서비스의 레이아웃 기준으로 UI를 다시 구성한다.</summary>
+        private void OnInventoryLayoutChanged(InventoryLayoutChangedEvent publishedEvent)
+        {
+            if (inventoryLayoutRuntimeService == null)
+                return;
+
+            RebuildInventoryLayoutVisuals(inventoryLayoutRuntimeService.CurrentLayout);
+        }
+
+        /// <summary>현재 레이아웃 기준으로 인벤토리 UI 전체를 다시 빌드한다.</summary>
+        private void RebuildInventoryLayoutVisuals(SubmarineInventoryLayoutSO layout)
+        {
+            if (layout == null || !layout.IsValid())
+                return;
+
+            if (gridBuilder != null)
+                gridBuilder.Initialize(layout);
+
+            if (gridPresenter != null)
+            {
+                gridPresenter.Initialize(
+                    layout,
+                    encyclopediaService,
+                    gameTimeService);
+
+                gridPresenter.ClearAllPlacedItemViews();
+                gridPresenter.RefreshOccupiedState(submarineRuntimeState.InventoryGrid);
+
+                if (submarineRuntimeState != null &&
+                    submarineRuntimeState.InventoryGrid != null &&
+                    grabbedItemPresenter != null)
+                {
+                    var items = submarineRuntimeState.InventoryGrid.Items;
+                    for (int i = 0; i < items.Count; i++)
+                        gridPresenter.CreatePlacedItemView(items[i], grabbedItemPresenter);
+                }
+            }
+        }
+
+        /// <summary>향후 업그레이드 UI에서 다음 인벤토리 레이아웃 단계 적용을 호출할 수 있다.</summary>
+        public bool TryAdvanceInventoryLayoutUpgrade()
+        {
+            if (inventoryLayoutRuntimeService == null)
+                return false;
+
+            return inventoryLayoutRuntimeService.TryAdvanceUpgrade();
+        }
+
+        /// <summary>향후 업그레이드 UI에서 특정 단계 인덱스를 직접 적용할 수 있다.</summary>
+        public bool TrySetInventoryLayoutStage(int stageIndex)
+        {
+            if (inventoryLayoutRuntimeService == null)
+                return false;
+
+            return inventoryLayoutRuntimeService.TrySetStage(stageIndex);
         }
     }
 }
