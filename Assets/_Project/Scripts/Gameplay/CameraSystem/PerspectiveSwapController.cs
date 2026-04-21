@@ -15,6 +15,8 @@ namespace Project.Gameplay.CameraSystem
         [SerializeField] private Camera harvestConsoleCamera; // 조종석 카메라
         [SerializeField] private ExplorationFollowCameraController explorationFollowCameraController; // 탐사 카메라 제어기
         [SerializeField] private HarvestTransitionLetterboxPresenter transitionLetterboxPresenter; // 레터박스 연출기
+        [SerializeField] private UnderwaterEffectController underwaterEffectController; // 수중 효과 제어기
+        [SerializeField] private DepthEnvironmentController depthEnvironmentController;
 
         [Header("Transition Route (Local Anchor)")]
         [SerializeField] private Transform submarineTransform; // 잠수함 기준 축
@@ -49,6 +51,13 @@ namespace Project.Gameplay.CameraSystem
         {
             isHarvestMode = false;
             SetExplorationViewImmediate();
+
+            // 게임 시작 시 탐사 카메라를 수중 판정 기준 카메라로 등록한다.
+            if (underwaterEffectController != null && explorationCamera != null)
+                underwaterEffectController.SetActiveCamera(explorationCamera.transform);
+
+            if (depthEnvironmentController != null && explorationCamera != null)
+                depthEnvironmentController.SetActiveCamera(explorationCamera.transform);
         }
 
         /// <summary>채집 모드 진입 전환을 시작한다</summary>
@@ -98,13 +107,11 @@ namespace Project.Gameplay.CameraSystem
             // 현재 탐사 카메라 위치 기준으로 가이드의 회전 방향을 유동적으로 계산한다.
             Vector3 localCamPos = submarineTransform.InverseTransformPoint(explorationCamera.transform.position);
 
-            // Z축 대신 X축(측면)과 Y축(상하)을 사용하여 카메라의 진입 방향을 파악합니다.
+            // Z축 대신 X축(측면)과 Y축(상하)을 사용하여 카메라의 진입 방향을 파악한다.
             Vector2 xyDirection = new Vector2(localCamPos.x, localCamPos.y);
             float rollAngle = 0f;
             if (xyDirection.sqrMagnitude > 0.001f)
-            {
                 rollAngle = Vector2.SignedAngle(Vector2.up, xyDirection);
-            }
 
             Quaternion zRoll = Quaternion.Euler(0f, 0f, rollAngle);
             Vector3 dynamicMidLocalPos = zRoll * transitionGuide.localPosition;
@@ -112,8 +119,7 @@ namespace Project.Gameplay.CameraSystem
             Quaternion rolledRot = zRoll * transitionGuide.localRotation;
             Vector3 lookForward = rolledRot * Vector3.forward;
 
-            // 방향(Forward)은 zRoll이 적용된 값을 그대로 사용하여 Pitch/Yaw 자연스러운 전환을 유지하되,
-            // 정수리 방향(Up)을 잠수함의 로컬 Y축(Vector3.up)으로 강제 고정하여 Roll 현상을 방지합니다.
+            // Forward는 zRoll이 적용된 값을 사용하고, Up은 잠수함 로컬 Y축으로 고정해 Roll 꼬임을 방지한다.
             Quaternion dynamicMidLocalRot = Quaternion.LookRotation(lookForward, Vector3.up);
 
             try
@@ -130,6 +136,13 @@ namespace Project.Gameplay.CameraSystem
 
                 explorationCamera.gameObject.SetActive(false);
                 harvestConsoleCamera.gameObject.SetActive(true);
+
+                // 전환 완료 후 수중 판정 기준 카메라를 조종석 카메라로 바꾼다.
+                if (underwaterEffectController != null && harvestConsoleCamera != null)
+                    underwaterEffectController.SetActiveCamera(harvestConsoleCamera.transform);
+
+                if (depthEnvironmentController != null && harvestConsoleCamera != null)
+                    depthEnvironmentController.SetActiveCamera(harvestConsoleCamera.transform);
 
                 // Harvest 카메라 전환 완료 후 HUD 활성화 이벤트
                 EventBus.Publish(new HarvestCameraTransitionCompletedEvent());
@@ -156,6 +169,13 @@ namespace Project.Gameplay.CameraSystem
             harvestConsoleCamera.gameObject.SetActive(false);
             explorationCamera.gameObject.SetActive(true);
 
+            // 복귀 시작 즉시 수중 판정 기준 카메라를 다시 탐사 카메라로 바꾼다.
+            if (underwaterEffectController != null && explorationCamera != null)
+                underwaterEffectController.SetActiveCamera(explorationCamera.transform);
+
+            if (depthEnvironmentController != null && explorationCamera != null)
+                depthEnvironmentController.SetActiveCamera(explorationCamera.transform);
+
             if (explorationFollowCameraController != null)
                 explorationFollowCameraController.SnapToTarget();
 
@@ -164,13 +184,11 @@ namespace Project.Gameplay.CameraSystem
 
             Vector3 localCamPos = submarineTransform.InverseTransformPoint(finalExplorationPos);
 
-            // Z축 대신 X축(측면)과 Y축(상하)을 사용하여 카메라의 진입 방향을 파악합니다.
+            // Z축 대신 X축(측면)과 Y축(상하)을 사용하여 카메라의 진입 방향을 파악한다.
             Vector2 xyDirection = new Vector2(localCamPos.x, localCamPos.y);
             float rollAngle = 0f;
             if (xyDirection.sqrMagnitude > 0.001f)
-            {
                 rollAngle = Vector2.SignedAngle(Vector2.up, xyDirection);
-            }
 
             Quaternion zRoll = Quaternion.Euler(0f, 0f, rollAngle);
 
