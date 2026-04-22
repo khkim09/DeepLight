@@ -1,5 +1,7 @@
 ﻿<Solution>
   <Project Path="Project.UI.csproj" />
+  <Project Path="sc.stylizedwater3.editor.csproj" />
+  <Project Path="sc.stylizedwater3.runtime.csproj" />
   <Project Path="Project.Gameplay.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />

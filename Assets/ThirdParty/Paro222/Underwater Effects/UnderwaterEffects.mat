@@ -34,11 +34,11 @@ Material:
     m_Ints: []
     m_Floats:
     - _EffectEnabled: 0
-    - _alpha: 0.0060102385
-    - _dis: 29.991468
-    - _refraction: 0.005998294
+    - _alpha: 0.006
+    - _dis: 30
+    - _refraction: 0.006
     m_Colors:
-    - _color: {r: 0.28029752, g: 0.71260357, b: 0.94318146, a: 1}
+    - _color: {r: 0.28034887, g: 0.7127711, b: 0.9433962, a: 1}
     - _normalUV: {r: 1, g: 1, b: 0.2, a: 0.1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
