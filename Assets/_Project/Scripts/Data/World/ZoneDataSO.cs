@@ -29,6 +29,9 @@ namespace Project.Data.World
         [Header("Ambient Profile (Phase 6)")]
         [SerializeField] private ZoneAmbientProfileSO ambientProfile; // 존 분위기 프로필 (null이면 fallback)
 
+        [Header("Environment Profile (Phase 1)")]
+        [SerializeField] private ZoneEnvironmentProfileSO environmentProfile; // 존 환경 프로필 (수심/바이옴/해저/프롭)
+
         /// <summary>존 식별자 (예: "E5")</summary>
         public ZoneId ZoneId => zoneId;
 
@@ -61,6 +64,9 @@ namespace Project.Data.World
 
         /// <summary>존 분위기 프로필 (null이면 fallback)</summary>
         public ZoneAmbientProfileSO AmbientProfile => ambientProfile;
+
+        /// <summary>존 환경 프로필 (수심/바이옴/해저/프롭, null이면 fallback)</summary>
+        public ZoneEnvironmentProfileSO EnvironmentProfile => environmentProfile;
 
         /// <summary>존이 항상 해금되어 있는지 확인 (시작 존 또는 항상 해금 설정)</summary>
         public bool IsAlwaysUnlocked()

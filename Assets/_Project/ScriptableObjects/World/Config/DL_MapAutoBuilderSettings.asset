@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe6989e4e2aa15445ac1ad20470da8e7, type: 3}
+  m_Name: DL_MapAutoBuilderSettings
+  m_EditorClassIdentifier: Project.Data::Project.Data.World.DeepLightMapAutoBuilderSettingsSO
+  worldMapConfig: {fileID: 11400000, guid: 16c45a6c57b899a4a8503215971d48a9, type: 2}
+  scenarioPreset: {fileID: 11400000, guid: c957124609a3c9048ab306e915a415bb, type: 2}
+  mapSettingsTemplateRoot: {fileID: 0}
+  globalWaterTemplate: {fileID: 0}
+  underwaterAreaTemplate: {fileID: 0}
+  bubbleParticleTemplate: {fileID: 0}
+  dynamicEffectTemplate: {fileID: 0}
+  generatedRootOverride: {fileID: 0}
+  generatedRootName: GeneratedWorldRoot
+  globalWaterRootName: GlobalWater
+  zoneRootParentName: ZoneRoots
+  runtimeEnvironmentRootName: RuntimeEnvironment
+  underwaterAreasRootName: UnderwaterAreas
+  dynamicEffectsRootName: DynamicEffects
+  sharedParticlesRootName: SharedParticles
+  debugRootName: Debug
+  createGlobalWaterClone: 1
+  createZoneRoots: 1
+  createZoneTriggers: 1
+  createEnvironmentRoots: 1
+  createDebugVisuals: 1
+  logVerbose: 1

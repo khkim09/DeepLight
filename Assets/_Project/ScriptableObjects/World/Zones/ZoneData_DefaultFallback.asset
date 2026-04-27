@@ -26,3 +26,4 @@ MonoBehaviour:
   zoneColor: {r: 1, g: 1, b: 1, a: 1}
   ambientSound: {fileID: 0}
   ambientProfile: {fileID: 11400000, guid: 4c40a06ac32816944b73375d88e01929, type: 2}
+  environmentProfile: {fileID: 11400000, guid: 2256b75de4d6e97428573d3fc62a1786, type: 2}

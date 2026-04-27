@@ -109,6 +109,18 @@ namespace Project.Editor.AutoTool
             WorldMapAssetHelper.CreateUpdateAllAssets();
         }
 
+        [MenuItem("Tools/World Map/Create/Update Environment Profiles Only")]
+        public static void CreateUpdateEnvironmentProfilesOnly()
+        {
+            WorldMapAssetHelper.CreateAllEnvironmentProfiles();
+        }
+
+        [MenuItem("Tools/World Map/Create/Update Scenario Presets Only")]
+        public static void CreateUpdateScenarioPresetsOnly()
+        {
+            WorldMapAssetHelper.CreateAllScenarioPresets();
+        }
+
         [MenuItem("Tools/World Map/Validate WorldMap Assets")]
         public static void ValidateWorldMapAssets()
         {

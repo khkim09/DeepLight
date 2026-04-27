@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a219df8f6c321d4c9e42ad6a6e982c8, type: 3}
+  m_Name: ZoneEnvProfile_Research_Tense
+  m_EditorClassIdentifier: Project.Data::Project.Data.World.ZoneEnvironmentProfileSO
+  depthBand: 2
+  biomeType: 2
+  waterLevelY: 0
+  minDepth: -50
+  maxDepth: -300
+  seafloorMaterial: {fileID: 0}
+  debugColor: {r: 0.8, g: 0.6, b: 0.1, a: 1}
+  basePropDensity: 0.4
+  rockDensity: 0.3
+  vegetationDensity: 0.1
+  wreckDensity: 0.15
+  ruinDensity: 0.2
+  hazardDensity: 0.25
+  underwaterAreaTemplatePrefab: {fileID: 0}
+  dynamicEffectTemplatePrefab: {fileID: 0}
+  particleTemplatePrefab: {fileID: 0}

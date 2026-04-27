@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb3c9abf9517e1b4a9a3ee244bd8ff44, type: 3}
+  m_Name: WorldMapScenario_Default
+  m_EditorClassIdentifier: Project.Data::Project.Data.World.WorldMapScenarioPresetSO
+  zoneRules:
+  - ruleName: 
+    zoneIds: []
+    regionId:
+      Id: 
+    depthBand: 0
+    biomeType: 0
+    minDepth: 0
+    maxDepth: 0
+    baseRiskLevel: 0
+    environmentProfile: {fileID: 0}
+    debugColor: {r: 0, g: 0, b: 0, a: 0}
+    zoneIdStrings: []
+    regionIdString: 
+  defaultOpenWaterProfile: {fileID: 11400000, guid: 1d4b8f5f55d59c74087462fe1424e9a0, type: 2}
+  defaultRegionId:
+    Id: OpenWater
+  defaultRiskLevel: 0.35
+  defaultDebugColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
