@@ -5,6 +5,7 @@
         "Project.Core",
         "Project.Data",
         "Unity.TextMeshPro",
+        "UnityEngine.UI",
         "UniTask",
         "Unity.RenderPipelines.Core.Runtime",
         "Unity.RenderPipelines.Universal.Runtime",

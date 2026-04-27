@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: SubmarineMovement_Tuning_Default
   m_EditorClassIdentifier: Project.Data::Project.Data.Submarine.SubmarineMovementTuningSO
   fixedMovement:
-    maxForwardSpeed: 10
+    maxForwardSpeed: 50
     maxReverseSpeed: 6
-    forwardAcceleration: 6
+    forwardAcceleration: 50
     reverseAcceleration: 4
     boostMultiplier: 1.8
     ascendSpeed: 3

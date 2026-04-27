@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71b1647ae32619d4bb4899c5c25d6026, type: 3}
+  m_Name: Ambient_OutOfBounds_Default
+  m_EditorClassIdentifier: Project.Data::Project.Data.World.ZoneAmbientProfileSO
+  profileId: ambient_out_of_bounds
+  displayName: Out Of Bounds
+  backgroundColor: {r: 0.05, g: 0.05, b: 0.08, a: 1}
+  fogColor: {r: 0.08, g: 0.08, b: 0.1, a: 1}
+  fogDensity: 0.001
+  ambientLightColor: {r: 0.2, g: 0.2, b: 0.25, a: 1}
+  bgmStateKey: bgm_none
+  riskOverlayColor: {r: 1, g: 0, b: 0, a: 0}
+  riskOverlayIntensity: 0
+  showDangerWarning: 0
+  debugDescription: Neutral fallback for out-of-bounds positions

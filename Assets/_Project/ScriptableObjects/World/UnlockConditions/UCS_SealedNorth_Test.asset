@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10625c2b453d52845b4f60a76279825b, type: 3}
+  m_Name: UCS_SealedNorth_Test
+  m_EditorClassIdentifier: Project.Data::Project.Data.World.UnlockConditionSetSO
+  traversalConditions:
+  - conditionType: 1
+    conditionKey: upgrade_pressure_hull_lv3
+    requiredValue: 0
+    displayHint: Pressure Hull Lv3 required
+  knowledgeConditions:
+  - conditionType: 3
+    conditionKey: log_base_02
+    requiredValue: 0
+    displayHint: Base log required
+  - conditionType: 3
+    conditionKey: log_research_03
+    requiredValue: 0
+    displayHint: Research log required
+  narrativeConditions: []
+  riskConditions:
+  - conditionType: 1
+    conditionKey: upgrade_resonance_filter
+    requiredValue: 0
+    displayHint: Resonance Filter required

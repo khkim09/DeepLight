@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78a09e48b05898841acee16e2921cdec, type: 3}
+  m_Name: WorldMapConfig_Main
+  m_EditorClassIdentifier: Project.Data::Project.Data.World.WorldMapConfigSO
+  gridWidth: 10
+  gridHeight: 10
+  zoneSize: 400
+  worldMinX: -2000
+  worldMaxX: 2000
+  worldMinZ: -2000
+  worldMaxZ: 2000
+  defaultZoneData: {fileID: 11400000, guid: 4af646dbfe39027488492ebcac51a550, type: 2}

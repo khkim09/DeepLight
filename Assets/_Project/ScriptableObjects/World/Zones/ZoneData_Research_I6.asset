@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 961b12ea6fa02ed4792aa12c2aa7b603, type: 3}
+  m_Name: ZoneData_Research_I6
+  m_EditorClassIdentifier: Project.Data::Project.Data.World.ZoneDataSO
+  zoneId:
+    Column: 73
+    Row: 6
+  regionId:
+    Id: East
+  displayName: Research Waters
+  unlockConditionSet: {fileID: 11400000, guid: 19fbe11814db94c46b010be5bef397e3, type: 2}
+  baseRiskLevel: 0.35
+  isStartingZone: 0
+  isAlwaysUnlocked: 0
+  isStoryCritical: 1
+  zoneColor: {r: 1, g: 0.7, b: 0.1, a: 1}
+  ambientSound: {fileID: 0}
+  ambientProfile: {fileID: 11400000, guid: 18c2560d8d924a74b9554876e9e72e27, type: 2}

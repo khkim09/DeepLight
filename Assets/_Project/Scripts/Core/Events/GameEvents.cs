@@ -567,6 +567,134 @@ namespace Project.Core.Events
 
     #endregion
 
+    #region WorldMap
+
+    /// <summary>현재 존이 변경되었을 때 발행되는 이벤트 (존 이동 시)</summary>
+    public readonly struct ZoneChangedEvent : IEvent
+    {
+        /// <summary>이전 ZoneId 문자열 (첫 초기화 시 빈 문자열)</summary>
+        public readonly string PreviousZoneId;
+
+        /// <summary>현재 ZoneId 문자열</summary>
+        public readonly string CurrentZoneId;
+
+        /// <summary>이전 RegionId 문자열 (첫 초기화 시 빈 문자열)</summary>
+        public readonly string PreviousRegionId;
+
+        /// <summary>현재 RegionId 문자열</summary>
+        public readonly string CurrentRegionId;
+
+        /// <summary>현재 존의 접근 가능성 상태 (0=Accessible, 1=AccessibleWithRisk, 2=Locked)</summary>
+        public readonly int Accessibility;
+
+        /// <summary>현재 존의 위험도 (0~1)</summary>
+        public readonly float RiskLevel;
+
+        /// <summary>현재 존의 발견 여부</summary>
+        public readonly bool IsDiscovered;
+
+        /// <summary>현재 존의 해금 여부</summary>
+        public readonly bool IsUnlocked;
+
+        /// <summary>추적 중인 월드 위치 X</summary>
+        public readonly float TrackedPositionX;
+
+        /// <summary>추적 중인 월드 위치 Z</summary>
+        public readonly float TrackedPositionZ;
+
+        /// <summary>ZoneChangedEvent 생성 (존 변경 시)</summary>
+        public ZoneChangedEvent(
+            string previousZoneId,
+            string currentZoneId,
+            string previousRegionId,
+            string currentRegionId,
+            int accessibility,
+            float riskLevel,
+            bool isDiscovered,
+            bool isUnlocked,
+            float trackedPositionX,
+            float trackedPositionZ)
+        {
+            PreviousZoneId = previousZoneId;
+            CurrentZoneId = currentZoneId;
+            PreviousRegionId = previousRegionId;
+            CurrentRegionId = currentRegionId;
+            Accessibility = accessibility;
+            RiskLevel = riskLevel;
+            IsDiscovered = isDiscovered;
+            IsUnlocked = isUnlocked;
+            TrackedPositionX = trackedPositionX;
+            TrackedPositionZ = trackedPositionZ;
+        }
+    }
+
+    /// <summary>현재 존의 런타임 상태가 재평가되었을 때 발행되는 이벤트 (같은 존 내에서 상태 변화)</summary>
+    public readonly struct CurrentZoneStateChangedEvent : IEvent
+    {
+        /// <summary>현재 ZoneId 문자열</summary>
+        public readonly string ZoneId;
+
+        /// <summary>이전 접근 가능성 (0=Accessible, 1=AccessibleWithRisk, 2=Locked)</summary>
+        public readonly int PreviousAccessibility;
+
+        /// <summary>현재 접근 가능성</summary>
+        public readonly int CurrentAccessibility;
+
+        /// <summary>이전 위험도</summary>
+        public readonly float PreviousRiskLevel;
+
+        /// <summary>현재 위험도</summary>
+        public readonly float CurrentRiskLevel;
+
+        /// <summary>이전 발견 여부</summary>
+        public readonly bool PreviousIsDiscovered;
+
+        /// <summary>현재 발견 여부</summary>
+        public readonly bool CurrentIsDiscovered;
+
+        /// <summary>CurrentZoneStateChangedEvent 생성 (상태 재평가 시)</summary>
+        public CurrentZoneStateChangedEvent(
+            string zoneId,
+            int previousAccessibility,
+            int currentAccessibility,
+            float previousRiskLevel,
+            float currentRiskLevel,
+            bool previousIsDiscovered,
+            bool currentIsDiscovered)
+        {
+            ZoneId = zoneId;
+            PreviousAccessibility = previousAccessibility;
+            CurrentAccessibility = currentAccessibility;
+            PreviousRiskLevel = previousRiskLevel;
+            CurrentRiskLevel = currentRiskLevel;
+            PreviousIsDiscovered = previousIsDiscovered;
+            CurrentIsDiscovered = currentIsDiscovered;
+        }
+    }
+
+    /// <summary>현재 존이 클리어되었을 때 발행되는 이벤트 (경계 밖으로 나가거나 초기화 실패 시)</summary>
+    public readonly struct CurrentZoneClearedEvent : IEvent
+    {
+        /// <summary>클리어되기 전 마지막 ZoneId 문자열</summary>
+        public readonly string LastZoneId;
+
+        /// <summary>클리어되기 전 마지막 RegionId 문자열</summary>
+        public readonly string LastRegionId;
+
+        /// <summary>클리어 사유</summary>
+        public readonly string Reason;
+
+        /// <summary>CurrentZoneClearedEvent 생성</summary>
+        public CurrentZoneClearedEvent(string lastZoneId, string lastRegionId, string reason)
+        {
+            LastZoneId = lastZoneId;
+            LastRegionId = lastRegionId;
+            Reason = reason;
+        }
+    }
+
+    #endregion
+
     #region Navigation
 
     /// <summary>탐사 상단 방향 HUD용 현재 헤딩 정보 이벤트</summary>

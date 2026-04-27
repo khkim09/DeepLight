@@ -254,7 +254,7 @@ namespace Project.Gameplay.World
             if (!logSpawnFlow)
                 return;
 
-            Debug.Log($"[HarvestNearbyTestSpawner] {message}");
+            UnityEngine.Debug.Log($"[HarvestNearbyTestSpawner] {message}");
         }
 
         /// <summary>씬 뷰에서 근접 스폰 반경을 시각화한다.</summary>
