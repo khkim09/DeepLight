@@ -44,7 +44,7 @@ namespace Project.Gameplay.World
         private bool _isInitialized;
 
         // 외부 주입 모드 (Phase 7: WorldMapRuntimeInstaller에서 주입)
-        private bool _hasExternalServiceGraph;
+        // [Removed unused field _hasExternalServiceGraph - CS0414]
 
         private void OnEnable()
         {
@@ -374,8 +374,8 @@ namespace Project.Gameplay.World
             }
 
             // 외부 주입 모드 활성화
-            _hasExternalServiceGraph = true;
             _worldMapService = service;
+
             trackedTransform = tracked;
             _isInitialized = true;
 

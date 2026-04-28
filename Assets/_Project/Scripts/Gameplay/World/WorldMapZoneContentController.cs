@@ -101,7 +101,7 @@ namespace Project.Gameplay.World
                 if (worldMapConfig != null)
                 {
                     // WorldMapRuntimeInstaller를 찾아서 서비스 획득 시도
-                    var installer = FindObjectOfType<WorldMapRuntimeInstaller>();
+                    var installer = FindFirstObjectByType<WorldMapRuntimeInstaller>();
                     if (installer != null && installer.WorldMapService != null)
                     {
                         Initialize(installer.WorldMapService, worldMapConfig);
@@ -334,7 +334,7 @@ namespace Project.Gameplay.World
             _bindings.Clear();
 
             // 씬 내 모든 바인딩 찾기
-            WorldMapZoneContentBinding[] foundBindings = FindObjectsOfType<WorldMapZoneContentBinding>(includeInactive: true);
+            WorldMapZoneContentBinding[] foundBindings = FindObjectsByType<WorldMapZoneContentBinding>(FindObjectsSortMode.None);
             _bindings.AddRange(foundBindings);
 
             if (debugLogging)

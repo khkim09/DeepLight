@@ -13,7 +13,8 @@ namespace Project.Editor.AutoTool
     /// GeneratedWorldRoot 하위로 제한된다.
     ///
     /// Phase 3: 기본 루트 구조 생성 (GlobalWater, ZoneRoots, RuntimeEnvironment, Debug)
-    /// Phase 4+: ZoneRoot_A1~J10, ZoneTrigger, UnderwaterArea per Zone 생성
+    /// Phase 4: ZoneRoot_A1~J10, ZoneTrigger, Environment 루트 생성
+    /// Phase 5: Zone별 UnderwaterArea 복제본, Seafloor placeholder 생성
     /// </summary>
     public static class DeepLightMapAutoBuilder
     {
@@ -300,8 +301,8 @@ namespace Project.Editor.AutoTool
 
         /// <summary>
         /// Full Scenario Map을 생성한다.
-        /// Phase 3: 기본 루트 구조만 생성 (GlobalWater, ZoneRoots, RuntimeEnvironment, Debug).
-        /// ZoneRoot_A1~J10, ZoneTrigger, UnderwaterArea per Zone은 생성하지 않는다.
+        /// Phase 3: 기본 루트 구조 생성 (GlobalWater, ZoneRoots, RuntimeEnvironment, Debug).
+        /// Phase 4: settings.CreateZoneRoots가 true이면 ZoneRoot_A1~J10, ZoneTrigger, Environment 루트를 생성한다.
         /// </summary>
         public static void GenerateFullScenarioMap(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
         {
@@ -318,7 +319,7 @@ namespace Project.Editor.AutoTool
                 return;
             }
 
-            LogIfVerbose(settings, "===== Map Auto Builder: Generate Full Scenario Map (Phase 3) =====");
+            LogIfVerbose(settings, "===== Map Auto Builder: Generate Full Scenario Map (Phase 3 + Phase 4) =====");
 
             // 1. Generated Root 획득 또는 생성
             GameObject generatedRoot = GetOrCreateSceneRoot(settings, context);
@@ -334,11 +335,108 @@ namespace Project.Editor.AutoTool
             // 3. GlobalWater 복제 (SceneContext의 템플릿 사용)
             CloneGlobalWaterIfNeeded(settings, context, generatedRoot);
 
-            // 4. 생성 완료 후 Selection 설정
+            // 4. Phase 4: ZoneRoot 생성 (settings.CreateZoneRoots가 true일 때만)
+            if (settings.CreateZoneRoots)
+            {
+                RebuildZoneRootsOnly(settings, context);
+            }
+            else
+            {
+                LogIfVerbose(settings, "[SKIP] createZoneRoots is false. Skipping ZoneRoot generation.");
+            }
+
+            // 5. Phase 5 + 5.5: Zone Environment 생성 및 Underwater volume correction (settings.CreateZoneRoots가 true일 때만)
+            if (settings.CreateZoneRoots)
+            {
+                // ZoneRoots 부모 찾기
+                Transform zoneRootsTransform = generatedRoot.transform.Find(settings.ZoneRootParentName);
+                if (zoneRootsTransform != null)
+                {
+                    // Phase 5: UnderwaterArea + Seafloor 생성
+                    DeepLightMapEnvironmentGenerationUtility.RebuildAllZoneEnvironments(settings, zoneRootsTransform.gameObject);
+                    // Phase 5.5: Underwater volume correction은 RebuildAllZoneEnvironments 내부에서 자동 호출됨
+                }
+                else
+                {
+                    Debug.LogWarning($"[MapAutoBuilder] '{settings.ZoneRootParentName}' not found. Skipping environment generation.");
+                }
+            }
+
+            // 6. 검증: Zone Setup + Environment Setup
+
+            if (settings.CreateZoneRoots)
+            {
+                DeepLightMapZoneGenerationUtility.ValidateZoneSetup(settings);
+                DeepLightMapEnvironmentGenerationUtility.ValidateEnvironmentSetup(settings);
+            }
+
+            // 7. 생성 완료 후 Selection 설정
             Selection.activeGameObject = generatedRoot;
             EditorGUIUtility.PingObject(generatedRoot);
 
             LogIfVerbose(settings, $"===== Map Auto Builder: Generation complete. Root: {generatedRoot.name} =====");
+
+        }
+
+        /// <summary>
+        /// ZoneRoot_A1~J10만 다시 생성한다.
+        /// 기존 ZoneRoot가 있으면 재사용하고 위치/이름을 보정한다.
+        /// GeneratedWorldRoot/ZoneRoots 하위에만 생성하며, 그 외 Hierarchy는 절대 수정하지 않는다.
+        /// </summary>
+        public static void RebuildZoneRootsOnly(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild zone roots.");
+                return;
+            }
+
+            if (settings.WorldMapConfig == null || settings.ScenarioPreset == null)
+            {
+                Debug.LogError("[MapAutoBuilder] WorldMapConfig or ScenarioPreset is null. Cannot rebuild zone roots.");
+                return;
+            }
+
+            // Generated Root 찾기
+            GameObject generatedRoot = FindGeneratedRoot(settings, context);
+            if (generatedRoot == null)
+            {
+                Debug.LogError("[MapAutoBuilder] GeneratedWorldRoot not found. Run Generate Full Scenario Map first.");
+                return;
+            }
+
+            // ZoneRoots 부모 찾기
+            Transform zoneRootsTransform = generatedRoot.transform.Find(settings.ZoneRootParentName);
+            if (zoneRootsTransform == null)
+            {
+                Debug.LogError($"[MapAutoBuilder] '{settings.ZoneRootParentName}' not found under '{generatedRoot.name}'. Run Generate Full Scenario Map first.");
+                return;
+            }
+
+            GameObject zoneRootsParent = zoneRootsTransform.gameObject;
+
+            // DeepLightMapZoneGenerationUtility에 위임
+            DeepLightMapZoneGenerationUtility.RebuildAllZoneRoots(settings, zoneRootsParent);
+
+            // Selection 설정
+            Selection.activeGameObject = zoneRootsParent;
+            EditorGUIUtility.PingObject(zoneRootsParent);
+        }
+
+        /// <summary>
+        /// ZoneRoot 설정의 유효성을 검사한다.
+        /// 16개 항목을 검사하고 Console에 결과를 출력한다.
+        /// </summary>
+        public static void ValidateZoneSetup(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate zone setup.");
+                return;
+            }
+
+            // DeepLightMapZoneGenerationUtility에 위임
+            DeepLightMapZoneGenerationUtility.ValidateZoneSetup(settings);
         }
 
         /// <summary>
@@ -473,7 +571,7 @@ namespace Project.Editor.AutoTool
         /// Settings + Context에 따라 Generated Root를 찾는다.
         /// 우선순위: context.GeneratedRootOverride > Scene 내 이름 검색
         /// </summary>
-        private static GameObject FindGeneratedRoot(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        public static GameObject FindGeneratedRoot(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
         {
             if (context != null && context.GeneratedRootOverride != null)
             {

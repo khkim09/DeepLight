@@ -14,12 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Data::Project.Data.World.DeepLightMapAutoBuilderSettingsSO
   worldMapConfig: {fileID: 11400000, guid: 16c45a6c57b899a4a8503215971d48a9, type: 2}
   scenarioPreset: {fileID: 11400000, guid: c957124609a3c9048ab306e915a415bb, type: 2}
-  mapSettingsTemplateRoot: {fileID: 0}
-  globalWaterTemplate: {fileID: 0}
-  underwaterAreaTemplate: {fileID: 0}
-  bubbleParticleTemplate: {fileID: 0}
-  dynamicEffectTemplate: {fileID: 0}
-  generatedRootOverride: {fileID: 0}
+  globalWaterPrefab: {fileID: 0}
+  underwaterAreaPrefab: {fileID: 0}
+  bubbleParticlePrefab: {fileID: 0}
+  dynamicEffectPrefab: {fileID: 0}
   generatedRootName: GeneratedWorldRoot
   globalWaterRootName: GlobalWater
   zoneRootParentName: ZoneRoots

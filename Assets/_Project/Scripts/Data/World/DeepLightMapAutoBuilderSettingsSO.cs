@@ -39,6 +39,23 @@ namespace Project.Data.World
         [SerializeField] private bool createEnvironmentRoots = true; // 환경 루트 생성 여부
         [SerializeField] private bool createDebugVisuals = true; // 디버그 시각화 생성 여부
 
+        [Header("Phase 5: Environment Generation")]
+        [SerializeField] private bool createZoneUnderwaterAreas = true; // Zone별 UnderwaterArea 복제 여부 (Phase 5)
+        [SerializeField] private bool createSeafloorPlaceholders = true; // Zone별 Seafloor placeholder 생성 여부 (Phase 5)
+        [SerializeField] private bool cloneParticlesPerZone = false; // Zone별 Particle 복제 여부 (기본 false)
+        [SerializeField] private bool cloneDynamicEffectsPerZone = false; // Zone별 DynamicEffect 복제 여부 (기본 false)
+        [SerializeField] private bool generateOnlyScenarioRuleZones = false; // Scenario Rule에 있는 Zone만 생성 여부 (기본 false)
+
+        [Header("Phase 5.5: Underwater Volume Correction")]
+        [SerializeField, Tooltip("UnderwaterArea BoxCollider top이 waterLevelY보다 최소 이 값만큼 위로 올라가도록 보정한다.")]
+        private float underwaterVolumeTopPadding = 20f; // 수중 볼륨 상단 패딩 (기본 20)
+        [SerializeField, Tooltip("복제된 UnderwaterArea가 Ocean source를 찾지 못해 경고를 낼 경우, 가능하면 fixed/manual water level 방식으로 전환한다.")]
+        private bool forceUnderwaterAreaFixedWaterLevel = true; // Fixed water level 강제 전환 여부 (기본 true)
+        [SerializeField, Tooltip("fixed/manual water level로 전환 가능한 경우 사용할 수면 높이")]
+        private float fixedUnderwaterWaterLevelY = 0f; // 고정 수면 높이 (기본 0)
+        [SerializeField, Tooltip("Stylized Water UnderwaterArea 컴포넌트의 SerializedProperty 이름을 조사할 때만 true로 켠다.")]
+        private bool logUnderwaterAreaSerializedProperties = false; // SerializedProperty 로그 출력 여부 (기본 false)
+
         [Header("Logging")]
         [SerializeField] private bool logVerbose = true; // 상세 로그 출력 여부
 
@@ -100,6 +117,33 @@ namespace Project.Data.World
 
         /// <summary>디버그 시각화 생성 여부</summary>
         public bool CreateDebugVisuals => createDebugVisuals;
+
+        /// <summary>Zone별 UnderwaterArea 복제 여부 (Phase 5)</summary>
+        public bool CreateZoneUnderwaterAreas => createZoneUnderwaterAreas;
+
+        /// <summary>Zone별 Seafloor placeholder 생성 여부 (Phase 5)</summary>
+        public bool CreateSeafloorPlaceholders => createSeafloorPlaceholders;
+
+        /// <summary>Zone별 Particle 복제 여부 (기본 false)</summary>
+        public bool CloneParticlesPerZone => cloneParticlesPerZone;
+
+        /// <summary>Zone별 DynamicEffect 복제 여부 (기본 false)</summary>
+        public bool CloneDynamicEffectsPerZone => cloneDynamicEffectsPerZone;
+
+        /// <summary>Scenario Rule에 있는 Zone만 생성 여부 (기본 false)</summary>
+        public bool GenerateOnlyScenarioRuleZones => generateOnlyScenarioRuleZones;
+
+        /// <summary>UnderwaterArea BoxCollider top이 waterLevelY보다 최소 이 값만큼 위로 올라가도록 보정한다. (Phase 5.5)</summary>
+        public float UnderwaterVolumeTopPadding => underwaterVolumeTopPadding;
+
+        /// <summary>복제된 UnderwaterArea가 Ocean source를 찾지 못해 경고를 낼 경우, 가능하면 fixed/manual water level 방식으로 전환한다. (Phase 5.5)</summary>
+        public bool ForceUnderwaterAreaFixedWaterLevel => forceUnderwaterAreaFixedWaterLevel;
+
+        /// <summary>fixed/manual water level로 전환 가능한 경우 사용할 수면 높이 (Phase 5.5)</summary>
+        public float FixedUnderwaterWaterLevelY => fixedUnderwaterWaterLevelY;
+
+        /// <summary>Stylized Water UnderwaterArea 컴포넌트의 SerializedProperty 이름을 조사할 때만 true로 켠다. (Phase 5.5)</summary>
+        public bool LogUnderwaterAreaSerializedProperties => logUnderwaterAreaSerializedProperties;
 
         /// <summary>상세 로그 출력 여부</summary>
         public bool LogVerbose => logVerbose;

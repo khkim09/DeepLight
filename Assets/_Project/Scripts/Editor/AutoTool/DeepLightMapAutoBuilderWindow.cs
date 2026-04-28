@@ -34,24 +34,9 @@ namespace Project.Editor.AutoTool
 
         private void OnEnable()
         {
-            // GUI 스타일 초기화
-            _titleStyle = new GUIStyle(EditorStyles.boldLabel)
-            {
-                fontSize = 16,
-                alignment = TextAnchor.MiddleCenter,
-                normal = { textColor = new Color(0.2f, 0.6f, 0.9f) }
-            };
-
-            _headerStyle = new GUIStyle(EditorStyles.boldLabel)
-            {
-                fontSize = 12
-            };
-
-            _helpBoxStyle = new GUIStyle(EditorStyles.helpBox)
-            {
-                fontSize = 11,
-                richText = true
-            };
+            // OnEnable에서는 GUIStyle을 초기화하지 않는다.
+            // EditorStyles 접근은 GUI skin이 준비되지 않은 시점에 NRE를 유발할 수 있으므로
+            // OnGUI()의 EnsureStyles()에서 lazy init으로 처리한다.
         }
 
         private void OnGUI()
@@ -59,6 +44,9 @@ namespace Project.Editor.AutoTool
             // try/finally로 GUILayout Begin/End 쌍이 예외 발생 시에도 깨지지 않도록 보호
             try
             {
+                // GUIStyle lazy init: EditorStyles 접근은 GUI skin이 준비된 OnGUI()에서만 안전
+                EnsureStyles();
+
                 _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
 
                 DrawHeader();
@@ -75,13 +63,41 @@ namespace Project.Editor.AutoTool
         }
 
         /// <summary>
+        /// GUIStyle을 lazy init한다. OnEnable에서 EditorStyles 접근 시 NRE가 발생할 수 있으므로
+        /// OnGUI()에서만 초기화한다.
+        /// </summary>
+        private void EnsureStyles()
+        {
+            if (_titleStyle != null) return;
+
+            _titleStyle = new GUIStyle(EditorStyles.boldLabel)
+            {
+                fontSize = 14,
+                alignment = TextAnchor.MiddleCenter,
+                normal = { textColor = new Color(0.2f, 0.6f, 0.9f) }
+            };
+
+            _headerStyle = new GUIStyle(EditorStyles.boldLabel)
+            {
+                fontSize = 12
+            };
+
+            _helpBoxStyle = new GUIStyle(EditorStyles.helpBox)
+            {
+                fontSize = 11,
+                richText = true
+            };
+        }
+
+        /// <summary>
         /// Window 상단 타이틀 영역
         /// </summary>
         private void DrawHeader()
         {
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("DeepLight Map Auto Builder", _titleStyle);
-            EditorGUILayout.LabelField("Phase 3: Base Root Structure Generation", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("Phase 3~5: Base Root + ZoneRoots + Zone Environment", EditorStyles.miniLabel);
+
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             EditorGUILayout.Space(5);
@@ -346,9 +362,8 @@ namespace Project.Editor.AutoTool
             }
             GUI.color = Color.white;
 
-            EditorGUILayout.Space(2);
-
             // Ping Assigned Objects
+
             GUI.enabled = _settings != null || _context != null;
             if (GUILayout.Button("Ping Assigned Objects", GUILayout.Height(25)))
             {
@@ -403,7 +418,17 @@ namespace Project.Editor.AutoTool
             EditorGUILayout.LabelField(
                 "5. 기존 Hierarchy(MapSettings, UIRoot 등)는 절대 수정하지 않음",
                 EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "6. Phase 5.5: UnderwaterArea BoxCollider top padding + water level source 보정 적용",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "7. Stylized Water 내부 property 이름을 찾을 수 없는 경우 water level source 경고는 남을 수 있음",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "8. Generate Full Scenario Map 한 번으로 BaseRoot + ZoneRoots + Environment + Volume Correction 생성",
+                EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.EndVertical();
+
         }
 
         // ===== 실행 메서드 =====
@@ -626,6 +651,78 @@ namespace Project.Editor.AutoTool
             }
 
             Debug.Log("===== Ping Complete =====");
+        }
+
+        /// <summary>
+        /// Rebuild Zone Roots Only 실행: ZoneRoot_A1~J10만 다시 생성한다.
+        /// </summary>
+        private void ExecuteRebuildZoneRoots()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.RebuildZoneRootsOnly(_settings, _context);
+        }
+
+        /// <summary>
+        /// Validate Zone Setup 실행: ZoneRoot/ZoneTrigger/BoxCollider 등 16개 항목을 검사한다.
+        /// </summary>
+        private void ExecuteValidateZoneSetup()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.ValidateZoneSetup(_settings, _context);
+        }
+
+        /// <summary>
+        /// Rebuild Zone Environments 실행: 모든 ZoneRoot에 UnderwaterArea 복제본과 Seafloor placeholder를 생성한다.
+        /// </summary>
+        private void ExecuteRebuildZoneEnvironments()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            // Generated Root 찾기
+            GameObject generatedRoot = DeepLightMapAutoBuilder.FindGeneratedRoot(_settings, _context);
+            if (generatedRoot == null)
+            {
+                Debug.LogError("[MapAutoBuilder] GeneratedWorldRoot not found. Run Generate Full Scenario Map first.");
+                return;
+            }
+
+            // ZoneRoots 부모 찾기
+            Transform zoneRootsTransform = generatedRoot.transform.Find(_settings.ZoneRootParentName);
+            if (zoneRootsTransform == null)
+            {
+                Debug.LogError($"[MapAutoBuilder] '{_settings.ZoneRootParentName}' not found under '{generatedRoot.name}'. Run Generate Full Scenario Map first.");
+                return;
+            }
+
+            DeepLightMapEnvironmentGenerationUtility.RebuildAllZoneEnvironments(_settings, zoneRootsTransform.gameObject);
+        }
+
+        /// <summary>
+        /// Validate Environment Setup 실행: UnderwaterArea/Seafloor/BoxCollider 등 25개 항목을 검사한다.
+        /// </summary>
+        private void ExecuteValidateEnvironmentSetup()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapEnvironmentGenerationUtility.ValidateEnvironmentSetup(_settings);
         }
 
         /// <summary>

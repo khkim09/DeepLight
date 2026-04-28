@@ -11,7 +11,6 @@ namespace Project.Gameplay.World
         private readonly Dictionary<ZoneId, ZoneDataSO> _zoneDataMap;
         private readonly List<ZoneDataSO> _allZoneData;
         private readonly IReadOnlyList<ZoneDataSO> _allZoneDataReadOnly;
-        private bool _isInitialized;
 
         /// <summary>ZoneRepository 생성</summary>
         /// <param name="config">월드맵 설정 (기본 존 데이터 포함)</param>
@@ -35,7 +34,6 @@ namespace Project.Gameplay.World
             if (zoneDataAssets == null || zoneDataAssets.Count == 0)
             {
                 UnityEngine.Debug.LogWarning("[ZoneRepository] No zone data assets provided. Only fallback data will be available.");
-                _isInitialized = true;
                 return;
             }
 
@@ -60,8 +58,8 @@ namespace Project.Gameplay.World
                 _allZoneData.Add(zoneData);
             }
 
-            _isInitialized = true;
             UnityEngine.Debug.Log($"[ZoneRepository] Initialized with {_zoneDataMap.Count} zone data entries.");
+
         }
 
         /// <summary>ZoneId로 ZoneDataSO 조회 시도</summary>
