@@ -31,4 +31,23 @@ MonoBehaviour:
   createZoneTriggers: 1
   createEnvironmentRoots: 1
   createDebugVisuals: 1
+  createZoneUnderwaterAreas: 1
+  createSeafloorPlaceholders: 1
+  cloneParticlesPerZone: 0
+  cloneDynamicEffectsPerZone: 0
+  generateOnlyScenarioRuleZones: 0
+  underwaterVolumeTopPadding: 20
+  forceUnderwaterAreaFixedWaterLevel: 1
+  fixedUnderwaterWaterLevelY: 0
+  logUnderwaterAreaSerializedProperties: 0
+  createRuntimeBindings: 1
+  createRuntimeZoneTracker: 1
+  runtimeZoneTrackerEnabledByDefault: 1
+  runtimeZoneTrackerSampleInterval: 0.1
+  runtimeZoneTrackerLogChanges: 1
+  visualProfileSet: {fileID: 11400000, guid: fb066ff38a33a5546b2fc16f1415ffbe, type: 2}
+  createVisualRuntimeController: 1
+  visualControllerEnabledByDefault: 1
+  visualBlendSpeed: 2
+  logVisualProfileChanges: 1
   logVerbose: 1

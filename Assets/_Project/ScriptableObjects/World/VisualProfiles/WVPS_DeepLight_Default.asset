@@ -1,0 +1,623 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09c9bfa515515b84fb5dc8b5a1c633a0, type: 3}
+  m_Name: WVPS_DeepLight_Default
+  m_EditorClassIdentifier: Project.Data::Project.Data.World.WorldMapVisualProfileSetSO
+  defaultRules:
+  - depthBand: 0
+    normalizedStart01: 0
+    normalizedEnd01: 0.05
+    profileAtStart:
+      waterTint: {r: 0.2, g: 0.6, b: 0.7, a: 1}
+      fogColor: {r: 0.3, g: 0.6, b: 0.7, a: 1}
+      ambientColor: {r: 0.4, g: 0.6, b: 0.7, a: 1}
+      fogDensity: 0.01
+      visibilityDistance: 200
+      exposure: 1.2
+      saturation: 1.2
+      contrast: 1
+      vignetteIntensity: 0
+      causticsIntensity: 0.8
+      lightShaftIntensity: 0.8
+      particleDensityMultiplier: 0.5
+      normalizedDepth01: 0
+      depthBand: 0
+      biomeType: 7
+    profileAtEnd:
+      waterTint: {r: 0.2, g: 0.6, b: 0.7, a: 1}
+      fogColor: {r: 0.3, g: 0.6, b: 0.7, a: 1}
+      ambientColor: {r: 0.4, g: 0.6, b: 0.7, a: 1}
+      fogDensity: 0.01
+      visibilityDistance: 200
+      exposure: 1.2
+      saturation: 1.2
+      contrast: 1
+      vignetteIntensity: 0
+      causticsIntensity: 0.8
+      lightShaftIntensity: 0.8
+      particleDensityMultiplier: 0.5
+      normalizedDepth01: 0.05
+      depthBand: 0
+      biomeType: 7
+  - depthBand: 1
+    normalizedStart01: 0.05
+    normalizedEnd01: 0.25
+    profileAtStart:
+      waterTint: {r: 0.15, g: 0.5, b: 0.6, a: 1}
+      fogColor: {r: 0.2, g: 0.4, b: 0.5, a: 1}
+      ambientColor: {r: 0.3, g: 0.4, b: 0.5, a: 1}
+      fogDensity: 0.03
+      visibilityDistance: 120
+      exposure: 1
+      saturation: 1
+      contrast: 1
+      vignetteIntensity: 0.05
+      causticsIntensity: 0.6
+      lightShaftIntensity: 0.5
+      particleDensityMultiplier: 0.7
+      normalizedDepth01: 0.05
+      depthBand: 1
+      biomeType: 7
+    profileAtEnd:
+      waterTint: {r: 0.1, g: 0.4, b: 0.5, a: 1}
+      fogColor: {r: 0.15, g: 0.3, b: 0.4, a: 1}
+      ambientColor: {r: 0.2, g: 0.3, b: 0.4, a: 1}
+      fogDensity: 0.05
+      visibilityDistance: 80
+      exposure: 0.9
+      saturation: 0.9
+      contrast: 1
+      vignetteIntensity: 0.1
+      causticsIntensity: 0.4
+      lightShaftIntensity: 0.3
+      particleDensityMultiplier: 0.8
+      normalizedDepth01: 0.25
+      depthBand: 1
+      biomeType: 7
+  - depthBand: 2
+    normalizedStart01: 0.25
+    normalizedEnd01: 0.55
+    profileAtStart:
+      waterTint: {r: 0.08, g: 0.3, b: 0.45, a: 1}
+      fogColor: {r: 0.08, g: 0.2, b: 0.3, a: 1}
+      ambientColor: {r: 0.1, g: 0.2, b: 0.3, a: 1}
+      fogDensity: 0.08
+      visibilityDistance: 60
+      exposure: 0.8
+      saturation: 0.8
+      contrast: 1
+      vignetteIntensity: 0.15
+      causticsIntensity: 0.3
+      lightShaftIntensity: 0.2
+      particleDensityMultiplier: 1
+      normalizedDepth01: 0.25
+      depthBand: 2
+      biomeType: 7
+    profileAtEnd:
+      waterTint: {r: 0.05, g: 0.2, b: 0.35, a: 1}
+      fogColor: {r: 0.05, g: 0.12, b: 0.2, a: 1}
+      ambientColor: {r: 0.08, g: 0.12, b: 0.2, a: 1}
+      fogDensity: 0.12
+      visibilityDistance: 40
+      exposure: 0.7
+      saturation: 0.7
+      contrast: 1
+      vignetteIntensity: 0.2
+      causticsIntensity: 0.15
+      lightShaftIntensity: 0.1
+      particleDensityMultiplier: 1.2
+      normalizedDepth01: 0.55
+      depthBand: 2
+      biomeType: 7
+  - depthBand: 3
+    normalizedStart01: 0.55
+    normalizedEnd01: 0.85
+    profileAtStart:
+      waterTint: {r: 0.03, g: 0.1, b: 0.25, a: 1}
+      fogColor: {r: 0.02, g: 0.05, b: 0.12, a: 1}
+      ambientColor: {r: 0.05, g: 0.08, b: 0.15, a: 1}
+      fogDensity: 0.15
+      visibilityDistance: 30
+      exposure: 0.6
+      saturation: 0.6
+      contrast: 1.1
+      vignetteIntensity: 0.3
+      causticsIntensity: 0.05
+      lightShaftIntensity: 0.05
+      particleDensityMultiplier: 1.5
+      normalizedDepth01: 0.55
+      depthBand: 3
+      biomeType: 7
+    profileAtEnd:
+      waterTint: {r: 0.01, g: 0.05, b: 0.15, a: 1}
+      fogColor: {r: 0.01, g: 0.02, b: 0.05, a: 1}
+      ambientColor: {r: 0.02, g: 0.03, b: 0.08, a: 1}
+      fogDensity: 0.2
+      visibilityDistance: 20
+      exposure: 0.5
+      saturation: 0.5
+      contrast: 1.2
+      vignetteIntensity: 0.4
+      causticsIntensity: 0.02
+      lightShaftIntensity: 0.02
+      particleDensityMultiplier: 1.8
+      normalizedDepth01: 0.85
+      depthBand: 3
+      biomeType: 7
+  - depthBand: 4
+    normalizedStart01: 0.85
+    normalizedEnd01: 1
+    profileAtStart:
+      waterTint: {r: 0.005, g: 0.02, b: 0.08, a: 1}
+      fogColor: {r: 0.005, g: 0.01, b: 0.03, a: 1}
+      ambientColor: {r: 0.01, g: 0.01, b: 0.05, a: 1}
+      fogDensity: 0.3
+      visibilityDistance: 10
+      exposure: 0.3
+      saturation: 0.3
+      contrast: 1.3
+      vignetteIntensity: 0.6
+      causticsIntensity: 0
+      lightShaftIntensity: 0
+      particleDensityMultiplier: 2
+      normalizedDepth01: 0.85
+      depthBand: 4
+      biomeType: 7
+    profileAtEnd:
+      waterTint: {r: 0, g: 0, b: 0.03, a: 1}
+      fogColor: {r: 0, g: 0, b: 0.01, a: 1}
+      ambientColor: {r: 0, g: 0, b: 0.02, a: 1}
+      fogDensity: 0.5
+      visibilityDistance: 5
+      exposure: 0.2
+      saturation: 0.2
+      contrast: 1.5
+      vignetteIntensity: 0.8
+      causticsIntensity: 0
+      lightShaftIntensity: 0
+      particleDensityMultiplier: 2
+      normalizedDepth01: 1
+      depthBand: 4
+      biomeType: 7
+  biomeOverrides:
+  - biomeType: 0
+    rules:
+    - depthBand: 0
+      normalizedStart01: 0
+      normalizedEnd01: 0.05
+      profileAtStart:
+        waterTint: {r: 0.2, g: 0.7, b: 0.8, a: 1}
+        fogColor: {r: 0.3, g: 0.6, b: 0.7, a: 1}
+        ambientColor: {r: 0.4, g: 0.6, b: 0.7, a: 1}
+        fogDensity: 0.01
+        visibilityDistance: 200
+        exposure: 1.2
+        saturation: 1.2
+        contrast: 1
+        vignetteIntensity: 0
+        causticsIntensity: 0.8
+        lightShaftIntensity: 0.8
+        particleDensityMultiplier: 0.5
+        normalizedDepth01: 0
+        depthBand: 0
+        biomeType: 0
+      profileAtEnd:
+        waterTint: {r: 0.2, g: 0.7, b: 0.8, a: 1}
+        fogColor: {r: 0.3, g: 0.6, b: 0.7, a: 1}
+        ambientColor: {r: 0.4, g: 0.6, b: 0.7, a: 1}
+        fogDensity: 0.01
+        visibilityDistance: 200
+        exposure: 1.2
+        saturation: 1.2
+        contrast: 1
+        vignetteIntensity: 0
+        causticsIntensity: 0.8
+        lightShaftIntensity: 0.8
+        particleDensityMultiplier: 0.5
+        normalizedDepth01: 0.05
+        depthBand: 0
+        biomeType: 0
+    - depthBand: 1
+      normalizedStart01: 0.05
+      normalizedEnd01: 0.25
+      profileAtStart:
+        waterTint: {r: 0.2, g: 0.6, b: 0.7, a: 1}
+        fogColor: {r: 0.2, g: 0.4, b: 0.5, a: 1}
+        ambientColor: {r: 0.3, g: 0.4, b: 0.5, a: 1}
+        fogDensity: 0.03
+        visibilityDistance: 120
+        exposure: 1
+        saturation: 1
+        contrast: 1
+        vignetteIntensity: 0.05
+        causticsIntensity: 0.6
+        lightShaftIntensity: 0.5
+        particleDensityMultiplier: 0.7
+        normalizedDepth01: 0.05
+        depthBand: 1
+        biomeType: 0
+      profileAtEnd:
+        waterTint: {r: 0.15, g: 0.5, b: 0.6, a: 1}
+        fogColor: {r: 0.15, g: 0.3, b: 0.4, a: 1}
+        ambientColor: {r: 0.2, g: 0.3, b: 0.4, a: 1}
+        fogDensity: 0.05
+        visibilityDistance: 80
+        exposure: 0.9
+        saturation: 0.9
+        contrast: 1
+        vignetteIntensity: 0.1
+        causticsIntensity: 0.4
+        lightShaftIntensity: 0.3
+        particleDensityMultiplier: 0.8
+        normalizedDepth01: 0.25
+        depthBand: 1
+        biomeType: 0
+  - biomeType: 1
+    rules:
+    - depthBand: 0
+      normalizedStart01: 0
+      normalizedEnd01: 0.05
+      profileAtStart:
+        waterTint: {r: 0.5, g: 0.5, b: 0.3, a: 1}
+        fogColor: {r: 0.3, g: 0.6, b: 0.7, a: 1}
+        ambientColor: {r: 0.4, g: 0.6, b: 0.7, a: 1}
+        fogDensity: 0.01
+        visibilityDistance: 200
+        exposure: 1.2
+        saturation: 1.2
+        contrast: 1
+        vignetteIntensity: 0
+        causticsIntensity: 0.8
+        lightShaftIntensity: 0.8
+        particleDensityMultiplier: 0.5
+        normalizedDepth01: 0
+        depthBand: 0
+        biomeType: 1
+      profileAtEnd:
+        waterTint: {r: 0.5, g: 0.5, b: 0.3, a: 1}
+        fogColor: {r: 0.3, g: 0.6, b: 0.7, a: 1}
+        ambientColor: {r: 0.4, g: 0.6, b: 0.7, a: 1}
+        fogDensity: 0.01
+        visibilityDistance: 200
+        exposure: 1.2
+        saturation: 1.2
+        contrast: 1
+        vignetteIntensity: 0
+        causticsIntensity: 0.8
+        lightShaftIntensity: 0.8
+        particleDensityMultiplier: 0.5
+        normalizedDepth01: 0.05
+        depthBand: 0
+        biomeType: 1
+    - depthBand: 1
+      normalizedStart01: 0.05
+      normalizedEnd01: 0.25
+      profileAtStart:
+        waterTint: {r: 0.4, g: 0.4, b: 0.25, a: 1}
+        fogColor: {r: 0.2, g: 0.4, b: 0.5, a: 1}
+        ambientColor: {r: 0.3, g: 0.4, b: 0.5, a: 1}
+        fogDensity: 0.03
+        visibilityDistance: 120
+        exposure: 1
+        saturation: 1
+        contrast: 1
+        vignetteIntensity: 0.05
+        causticsIntensity: 0.6
+        lightShaftIntensity: 0.5
+        particleDensityMultiplier: 0.7
+        normalizedDepth01: 0.05
+        depthBand: 1
+        biomeType: 1
+      profileAtEnd:
+        waterTint: {r: 0.35, g: 0.35, b: 0.2, a: 1}
+        fogColor: {r: 0.15, g: 0.3, b: 0.4, a: 1}
+        ambientColor: {r: 0.2, g: 0.3, b: 0.4, a: 1}
+        fogDensity: 0.05
+        visibilityDistance: 80
+        exposure: 0.9
+        saturation: 0.9
+        contrast: 1
+        vignetteIntensity: 0.1
+        causticsIntensity: 0.4
+        lightShaftIntensity: 0.3
+        particleDensityMultiplier: 0.8
+        normalizedDepth01: 0.25
+        depthBand: 1
+        biomeType: 1
+  - biomeType: 2
+    rules:
+    - depthBand: 0
+      normalizedStart01: 0
+      normalizedEnd01: 0.05
+      profileAtStart:
+        waterTint: {r: 0.3, g: 0.6, b: 0.9, a: 1}
+        fogColor: {r: 0.3, g: 0.6, b: 0.7, a: 1}
+        ambientColor: {r: 0.4, g: 0.6, b: 0.7, a: 1}
+        fogDensity: 0.01
+        visibilityDistance: 200
+        exposure: 1.2
+        saturation: 1.2
+        contrast: 1
+        vignetteIntensity: 0
+        causticsIntensity: 0.8
+        lightShaftIntensity: 0.8
+        particleDensityMultiplier: 0.5
+        normalizedDepth01: 0
+        depthBand: 0
+        biomeType: 2
+      profileAtEnd:
+        waterTint: {r: 0.3, g: 0.6, b: 0.9, a: 1}
+        fogColor: {r: 0.3, g: 0.6, b: 0.7, a: 1}
+        ambientColor: {r: 0.4, g: 0.6, b: 0.7, a: 1}
+        fogDensity: 0.01
+        visibilityDistance: 200
+        exposure: 1.2
+        saturation: 1.2
+        contrast: 1
+        vignetteIntensity: 0
+        causticsIntensity: 0.8
+        lightShaftIntensity: 0.8
+        particleDensityMultiplier: 0.5
+        normalizedDepth01: 0.05
+        depthBand: 0
+        biomeType: 2
+    - depthBand: 1
+      normalizedStart01: 0.05
+      normalizedEnd01: 0.25
+      profileAtStart:
+        waterTint: {r: 0.25, g: 0.5, b: 0.8, a: 1}
+        fogColor: {r: 0.2, g: 0.4, b: 0.5, a: 1}
+        ambientColor: {r: 0.3, g: 0.4, b: 0.5, a: 1}
+        fogDensity: 0.03
+        visibilityDistance: 120
+        exposure: 1
+        saturation: 1
+        contrast: 1
+        vignetteIntensity: 0.05
+        causticsIntensity: 0.6
+        lightShaftIntensity: 0.5
+        particleDensityMultiplier: 0.7
+        normalizedDepth01: 0.05
+        depthBand: 1
+        biomeType: 2
+      profileAtEnd:
+        waterTint: {r: 0.2, g: 0.4, b: 0.7, a: 1}
+        fogColor: {r: 0.15, g: 0.3, b: 0.4, a: 1}
+        ambientColor: {r: 0.2, g: 0.3, b: 0.4, a: 1}
+        fogDensity: 0.05
+        visibilityDistance: 80
+        exposure: 0.9
+        saturation: 0.9
+        contrast: 1
+        vignetteIntensity: 0.1
+        causticsIntensity: 0.4
+        lightShaftIntensity: 0.3
+        particleDensityMultiplier: 0.8
+        normalizedDepth01: 0.25
+        depthBand: 1
+        biomeType: 2
+  - biomeType: 3
+    rules:
+    - depthBand: 0
+      normalizedStart01: 0
+      normalizedEnd01: 0.05
+      profileAtStart:
+        waterTint: {r: 0.4, g: 0.3, b: 0.5, a: 1}
+        fogColor: {r: 0.3, g: 0.6, b: 0.7, a: 1}
+        ambientColor: {r: 0.4, g: 0.6, b: 0.7, a: 1}
+        fogDensity: 0.01
+        visibilityDistance: 200
+        exposure: 1.2
+        saturation: 1.2
+        contrast: 1
+        vignetteIntensity: 0
+        causticsIntensity: 0.8
+        lightShaftIntensity: 0.8
+        particleDensityMultiplier: 0.5
+        normalizedDepth01: 0
+        depthBand: 0
+        biomeType: 3
+      profileAtEnd:
+        waterTint: {r: 0.4, g: 0.3, b: 0.5, a: 1}
+        fogColor: {r: 0.3, g: 0.6, b: 0.7, a: 1}
+        ambientColor: {r: 0.4, g: 0.6, b: 0.7, a: 1}
+        fogDensity: 0.01
+        visibilityDistance: 200
+        exposure: 1.2
+        saturation: 1.2
+        contrast: 1
+        vignetteIntensity: 0
+        causticsIntensity: 0.8
+        lightShaftIntensity: 0.8
+        particleDensityMultiplier: 0.5
+        normalizedDepth01: 0.05
+        depthBand: 0
+        biomeType: 3
+    - depthBand: 1
+      normalizedStart01: 0.05
+      normalizedEnd01: 0.25
+      profileAtStart:
+        waterTint: {r: 0.35, g: 0.25, b: 0.45, a: 1}
+        fogColor: {r: 0.2, g: 0.4, b: 0.5, a: 1}
+        ambientColor: {r: 0.3, g: 0.4, b: 0.5, a: 1}
+        fogDensity: 0.03
+        visibilityDistance: 120
+        exposure: 1
+        saturation: 1
+        contrast: 1
+        vignetteIntensity: 0.05
+        causticsIntensity: 0.6
+        lightShaftIntensity: 0.5
+        particleDensityMultiplier: 0.7
+        normalizedDepth01: 0.05
+        depthBand: 1
+        biomeType: 3
+      profileAtEnd:
+        waterTint: {r: 0.3, g: 0.2, b: 0.4, a: 1}
+        fogColor: {r: 0.15, g: 0.3, b: 0.4, a: 1}
+        ambientColor: {r: 0.2, g: 0.3, b: 0.4, a: 1}
+        fogDensity: 0.05
+        visibilityDistance: 80
+        exposure: 0.9
+        saturation: 0.9
+        contrast: 1
+        vignetteIntensity: 0.1
+        causticsIntensity: 0.4
+        lightShaftIntensity: 0.3
+        particleDensityMultiplier: 0.8
+        normalizedDepth01: 0.25
+        depthBand: 1
+        biomeType: 3
+  - biomeType: 6
+    rules:
+    - depthBand: 0
+      normalizedStart01: 0
+      normalizedEnd01: 0.05
+      profileAtStart:
+        waterTint: {r: 0.2, g: 0.1, b: 0.3, a: 1}
+        fogColor: {r: 0.3, g: 0.6, b: 0.7, a: 1}
+        ambientColor: {r: 0.4, g: 0.6, b: 0.7, a: 1}
+        fogDensity: 0.01
+        visibilityDistance: 200
+        exposure: 1.2
+        saturation: 1.2
+        contrast: 1
+        vignetteIntensity: 0
+        causticsIntensity: 0.8
+        lightShaftIntensity: 0.8
+        particleDensityMultiplier: 0.5
+        normalizedDepth01: 0
+        depthBand: 0
+        biomeType: 6
+      profileAtEnd:
+        waterTint: {r: 0.2, g: 0.1, b: 0.3, a: 1}
+        fogColor: {r: 0.3, g: 0.6, b: 0.7, a: 1}
+        ambientColor: {r: 0.4, g: 0.6, b: 0.7, a: 1}
+        fogDensity: 0.01
+        visibilityDistance: 200
+        exposure: 1.2
+        saturation: 1.2
+        contrast: 1
+        vignetteIntensity: 0
+        causticsIntensity: 0.8
+        lightShaftIntensity: 0.8
+        particleDensityMultiplier: 0.5
+        normalizedDepth01: 0.05
+        depthBand: 0
+        biomeType: 6
+    - depthBand: 1
+      normalizedStart01: 0.05
+      normalizedEnd01: 0.25
+      profileAtStart:
+        waterTint: {r: 0.15, g: 0.1, b: 0.25, a: 1}
+        fogColor: {r: 0.2, g: 0.4, b: 0.5, a: 1}
+        ambientColor: {r: 0.3, g: 0.4, b: 0.5, a: 1}
+        fogDensity: 0.03
+        visibilityDistance: 120
+        exposure: 1
+        saturation: 1
+        contrast: 1
+        vignetteIntensity: 0.05
+        causticsIntensity: 0.6
+        lightShaftIntensity: 0.5
+        particleDensityMultiplier: 0.7
+        normalizedDepth01: 0.05
+        depthBand: 1
+        biomeType: 6
+      profileAtEnd:
+        waterTint: {r: 0.1, g: 0.08, b: 0.2, a: 1}
+        fogColor: {r: 0.15, g: 0.3, b: 0.4, a: 1}
+        ambientColor: {r: 0.2, g: 0.3, b: 0.4, a: 1}
+        fogDensity: 0.05
+        visibilityDistance: 80
+        exposure: 0.9
+        saturation: 0.9
+        contrast: 1
+        vignetteIntensity: 0.1
+        causticsIntensity: 0.4
+        lightShaftIntensity: 0.3
+        particleDensityMultiplier: 0.8
+        normalizedDepth01: 0.25
+        depthBand: 1
+        biomeType: 6
+  - biomeType: 7
+    rules:
+    - depthBand: 0
+      normalizedStart01: 0
+      normalizedEnd01: 0.05
+      profileAtStart:
+        waterTint: {r: 0.2, g: 0.6, b: 0.7, a: 1}
+        fogColor: {r: 0.3, g: 0.6, b: 0.7, a: 1}
+        ambientColor: {r: 0.4, g: 0.6, b: 0.7, a: 1}
+        fogDensity: 0.01
+        visibilityDistance: 200
+        exposure: 1.2
+        saturation: 1.2
+        contrast: 1
+        vignetteIntensity: 0
+        causticsIntensity: 0.8
+        lightShaftIntensity: 0.8
+        particleDensityMultiplier: 0.5
+        normalizedDepth01: 0
+        depthBand: 0
+        biomeType: 7
+      profileAtEnd:
+        waterTint: {r: 0.2, g: 0.6, b: 0.7, a: 1}
+        fogColor: {r: 0.3, g: 0.6, b: 0.7, a: 1}
+        ambientColor: {r: 0.4, g: 0.6, b: 0.7, a: 1}
+        fogDensity: 0.01
+        visibilityDistance: 200
+        exposure: 1.2
+        saturation: 1.2
+        contrast: 1
+        vignetteIntensity: 0
+        causticsIntensity: 0.8
+        lightShaftIntensity: 0.8
+        particleDensityMultiplier: 0.5
+        normalizedDepth01: 0.05
+        depthBand: 0
+        biomeType: 7
+    - depthBand: 1
+      normalizedStart01: 0.05
+      normalizedEnd01: 0.25
+      profileAtStart:
+        waterTint: {r: 0.15, g: 0.5, b: 0.6, a: 1}
+        fogColor: {r: 0.2, g: 0.4, b: 0.5, a: 1}
+        ambientColor: {r: 0.3, g: 0.4, b: 0.5, a: 1}
+        fogDensity: 0.03
+        visibilityDistance: 120
+        exposure: 1
+        saturation: 1
+        contrast: 1
+        vignetteIntensity: 0.05
+        causticsIntensity: 0.6
+        lightShaftIntensity: 0.5
+        particleDensityMultiplier: 0.7
+        normalizedDepth01: 0.05
+        depthBand: 1
+        biomeType: 7
+      profileAtEnd:
+        waterTint: {r: 0.1, g: 0.4, b: 0.5, a: 1}
+        fogColor: {r: 0.15, g: 0.3, b: 0.4, a: 1}
+        ambientColor: {r: 0.2, g: 0.3, b: 0.4, a: 1}
+        fogDensity: 0.05
+        visibilityDistance: 80
+        exposure: 0.9
+        saturation: 0.9
+        contrast: 1
+        vignetteIntensity: 0.1
+        causticsIntensity: 0.4
+        lightShaftIntensity: 0.3
+        particleDensityMultiplier: 0.8
+        normalizedDepth01: 0.25
+        depthBand: 1
+        biomeType: 7

@@ -96,7 +96,7 @@ namespace Project.Editor.AutoTool
         {
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("DeepLight Map Auto Builder", _titleStyle);
-            EditorGUILayout.LabelField("Phase 3~5: Base Root + ZoneRoots + Zone Environment", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("Phase 3~7: Base Root + ZoneRoots + Environment + Runtime Binding", EditorStyles.miniLabel);
 
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
@@ -362,6 +362,74 @@ namespace Project.Editor.AutoTool
             }
             GUI.color = Color.white;
 
+            EditorGUILayout.Space(2);
+
+            // Validate Zone Resolver (Phase 6)
+            if (GUILayout.Button("Validate Zone Resolver (Phase 6)", GUILayout.Height(25)))
+            {
+                ExecuteValidateZoneResolver();
+            }
+
+            EditorGUILayout.Space(2);
+
+            // Validate Depth Sampling (Phase 6)
+            if (GUILayout.Button("Validate Depth Sampling (Phase 6)", GUILayout.Height(25)))
+            {
+                ExecuteValidateDepthSampling();
+            }
+
+            EditorGUILayout.Space(3);
+
+            // ===== Phase 7: Runtime Binding =====
+            EditorGUILayout.LabelField("Phase 7: Runtime Binding", EditorStyles.boldLabel);
+
+            if (GUILayout.Button("Rebuild Runtime Bindings (Phase 7)", GUILayout.Height(25)))
+            {
+                ExecuteRebuildRuntimeBindings();
+            }
+
+            if (GUILayout.Button("Validate Runtime Bindings (Phase 7)", GUILayout.Height(25)))
+            {
+                ExecuteValidateRuntimeBindings();
+            }
+
+            EditorGUILayout.Space(3);
+
+            // ===== Phase 8: Visual Profiles =====
+            EditorGUILayout.LabelField("Phase 8: Visual Profiles", EditorStyles.boldLabel);
+
+            if (GUILayout.Button("Create Default Visual Profile Set", GUILayout.Height(25)))
+            {
+                ExecuteCreateDefaultVisualProfileSet();
+            }
+
+            if (GUILayout.Button("Rebuild Visual Runtime Binding (Phase 8)", GUILayout.Height(25)))
+            {
+                ExecuteRebuildVisualRuntimeBinding();
+            }
+
+            if (GUILayout.Button("Validate Visual Profiles (Phase 8)", GUILayout.Height(25)))
+            {
+                ExecuteValidateVisualRuntimeBinding();
+            }
+
+            EditorGUILayout.Space(3);
+
+            // ===== Phase 9: Visual Adapters =====
+            EditorGUILayout.LabelField("Phase 9: Visual Adapters", EditorStyles.boldLabel);
+
+            if (GUILayout.Button("Rebuild Visual Adapter Binding (Phase 9)", GUILayout.Height(25)))
+            {
+                ExecuteRebuildVisualAdapterBinding();
+            }
+
+            if (GUILayout.Button("Validate Visual Adapter Binding (Phase 9)", GUILayout.Height(25)))
+            {
+                ExecuteValidateVisualAdapterBinding();
+            }
+
+            EditorGUILayout.Space(5);
+
             // Ping Assigned Objects
 
             GUI.enabled = _settings != null || _context != null;
@@ -425,7 +493,25 @@ namespace Project.Editor.AutoTool
                 "7. Stylized Water 내부 property 이름을 찾을 수 없는 경우 water level source 경고는 남을 수 있음",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "8. Generate Full Scenario Map 한 번으로 BaseRoot + ZoneRoots + Environment + Volume Correction 생성",
+                "8. Generate Full Scenario Map 한 번으로 Phase 3~8 전체 생성/검증 완료",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "9. Phase 6: ZoneResolver + DepthSampling 검증 자동 실행",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "10. Phase 7: Runtime Binding (GeneratedWorldZoneNode + Registry + Tracker) 생성 + 검증",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "11. Phase 8: Visual Profile Binding 생성 + 검증 (CreateVisualRuntimeController=true 시)",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "12. Runtime Zone 판정은 Trigger보다 ZoneResolver 좌표 계산을 우선",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "13. Trigger는 보조/디버그 용도로 유지",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "14. WorldMapRuntimeZoneTracker는 기존 WorldMapService를 대체하지 않음",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.EndVertical();
 
@@ -723,6 +809,126 @@ namespace Project.Editor.AutoTool
             }
 
             DeepLightMapEnvironmentGenerationUtility.ValidateEnvironmentSetup(_settings);
+        }
+
+        /// <summary>
+        /// Validate Zone Resolver 실행: 좌표 기반 Zone 판정 12개 항목을 검사한다.
+        /// </summary>
+        private void ExecuteValidateZoneResolver()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.ValidateZoneResolver(_settings, _context);
+        }
+
+        /// <summary>
+        /// Validate Depth Sampling 실행: Depth Band 세분화 8개 항목을 검사한다.
+        /// </summary>
+        private void ExecuteValidateDepthSampling()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.ValidateDepthSampling(_settings, _context);
+        }
+
+        /// <summary>
+        /// Rebuild Runtime Bindings 실행 (Phase 7)
+        /// </summary>
+        private void ExecuteRebuildRuntimeBindings()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.RebuildRuntimeBindings(_settings, _context);
+        }
+
+        /// <summary>
+        /// Validate Runtime Bindings 실행 (Phase 7)
+        /// </summary>
+        private void ExecuteValidateRuntimeBindings()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.ValidateRuntimeBindings(_settings, _context);
+        }
+
+        /// <summary>
+        /// Create Default Visual Profile Set 실행 (Phase 8)
+        /// </summary>
+        private void ExecuteCreateDefaultVisualProfileSet()
+        {
+            DeepLightMapVisualProfileAssetCreator.CreateOrUpdateDefaultVisualProfileSet();
+        }
+
+        /// <summary>
+        /// Rebuild Visual Runtime Binding 실행 (Phase 8)
+        /// </summary>
+        private void ExecuteRebuildVisualRuntimeBinding()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.RebuildVisualRuntimeBinding(_settings, _context);
+        }
+
+        /// <summary>
+        /// Validate Visual Profiles 실행 (Phase 8)
+        /// </summary>
+        private void ExecuteValidateVisualRuntimeBinding()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.ValidateVisualRuntimeBinding(_settings, _context);
+        }
+
+        /// <summary>
+        /// Rebuild Visual Adapter Binding 실행 (Phase 9)
+        /// </summary>
+        private void ExecuteRebuildVisualAdapterBinding()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.RebuildVisualAdapterBinding(_settings, _context);
+        }
+
+        /// <summary>
+        /// Validate Visual Adapter Binding 실행 (Phase 9)
+        /// </summary>
+        private void ExecuteValidateVisualAdapterBinding()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.ValidateVisualAdapterBinding(_settings, _context);
         }
 
         /// <summary>

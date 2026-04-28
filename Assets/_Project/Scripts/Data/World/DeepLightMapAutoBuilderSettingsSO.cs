@@ -56,6 +56,30 @@ namespace Project.Data.World
         [SerializeField, Tooltip("Stylized Water UnderwaterArea 컴포넌트의 SerializedProperty 이름을 조사할 때만 true로 켠다.")]
         private bool logUnderwaterAreaSerializedProperties = false; // SerializedProperty 로그 출력 여부 (기본 false)
 
+        [Header("Phase 7: Runtime Binding")]
+        [SerializeField, Tooltip("Runtime Binding 생성 여부 (Phase 7)")]
+        private bool createRuntimeBindings = true;
+        [SerializeField, Tooltip("Runtime Zone Tracker 생성 여부 (Phase 7)")]
+        private bool createRuntimeZoneTracker = true;
+        [SerializeField, Tooltip("Runtime Zone Tracker 기본 활성화 여부")]
+        private bool runtimeZoneTrackerEnabledByDefault = true;
+        [SerializeField, Tooltip("Runtime Zone Tracker 샘플 간격 (초)")]
+        private float runtimeZoneTrackerSampleInterval = 0.1f;
+        [SerializeField, Tooltip("Runtime Zone Tracker Zone 변경 로그 출력 여부")]
+        private bool runtimeZoneTrackerLogChanges = true;
+
+        [Header("Phase 8: Visual Profile Runtime")]
+        [SerializeField, Tooltip("Visual Profile Set (Project Asset)")]
+        private WorldMapVisualProfileSetSO visualProfileSet;
+        [SerializeField, Tooltip("Visual Runtime Controller 생성 여부 (Phase 8)")]
+        private bool createVisualRuntimeController = true;
+        [SerializeField, Tooltip("Visual Controller 기본 활성화 여부")]
+        private bool visualControllerEnabledByDefault = true;
+        [SerializeField, Tooltip("Visual Profile 보간 속도")]
+        private float visualBlendSpeed = 2f;
+        [SerializeField, Tooltip("Visual Profile 변경 로그 출력 여부")]
+        private bool logVisualProfileChanges = true;
+
         [Header("Logging")]
         [SerializeField] private bool logVerbose = true; // 상세 로그 출력 여부
 
@@ -145,6 +169,36 @@ namespace Project.Data.World
         /// <summary>Stylized Water UnderwaterArea 컴포넌트의 SerializedProperty 이름을 조사할 때만 true로 켠다. (Phase 5.5)</summary>
         public bool LogUnderwaterAreaSerializedProperties => logUnderwaterAreaSerializedProperties;
 
+        /// <summary>Runtime Binding 생성 여부 (Phase 7)</summary>
+        public bool CreateRuntimeBindings => createRuntimeBindings;
+
+        /// <summary>Runtime Zone Tracker 생성 여부 (Phase 7)</summary>
+        public bool CreateRuntimeZoneTracker => createRuntimeZoneTracker;
+
+        /// <summary>Runtime Zone Tracker 기본 활성화 여부</summary>
+        public bool RuntimeZoneTrackerEnabledByDefault => runtimeZoneTrackerEnabledByDefault;
+
+        /// <summary>Runtime Zone Tracker 샘플 간격 (초)</summary>
+        public float RuntimeZoneTrackerSampleInterval => runtimeZoneTrackerSampleInterval;
+
+        /// <summary>Runtime Zone Tracker Zone 변경 로그 출력 여부</summary>
+        public bool RuntimeZoneTrackerLogChanges => runtimeZoneTrackerLogChanges;
+
+        /// <summary>Visual Profile Set (Project Asset)</summary>
+        public WorldMapVisualProfileSetSO VisualProfileSet => visualProfileSet;
+
+        /// <summary>Visual Runtime Controller 생성 여부 (Phase 8)</summary>
+        public bool CreateVisualRuntimeController => createVisualRuntimeController;
+
+        /// <summary>Visual Controller 기본 활성화 여부</summary>
+        public bool VisualControllerEnabledByDefault => visualControllerEnabledByDefault;
+
+        /// <summary>Visual Profile 보간 속도</summary>
+        public float VisualBlendSpeed => visualBlendSpeed;
+
+        /// <summary>Visual Profile 변경 로그 출력 여부</summary>
+        public bool LogVisualProfileChanges => logVisualProfileChanges;
+
         /// <summary>상세 로그 출력 여부</summary>
         public bool LogVerbose => logVerbose;
 
@@ -167,5 +221,8 @@ namespace Project.Data.World
 
         /// <summary>Dynamic Effect Prefab Asset 설정 (Editor Auto-Fill 전용)</summary>
         public void SetDynamicEffectPrefab(GameObject value) { dynamicEffectPrefab = value; }
+
+        /// <summary>Visual Profile Set 설정 (Editor Auto-Fill 전용)</summary>
+        public void SetVisualProfileSet(WorldMapVisualProfileSetSO value) { visualProfileSet = value; }
     }
 }

@@ -15,6 +15,7 @@ namespace Project.Editor.AutoTool
     /// Phase 3: 기본 루트 구조 생성 (GlobalWater, ZoneRoots, RuntimeEnvironment, Debug)
     /// Phase 4: ZoneRoot_A1~J10, ZoneTrigger, Environment 루트 생성
     /// Phase 5: Zone별 UnderwaterArea 복제본, Seafloor placeholder 생성
+    /// Phase 7: Runtime Binding (GeneratedWorldZoneNode + Registry + Tracker)
     /// </summary>
     public static class DeepLightMapAutoBuilder
     {
@@ -370,11 +371,50 @@ namespace Project.Editor.AutoTool
                 DeepLightMapEnvironmentGenerationUtility.ValidateEnvironmentSetup(settings);
             }
 
-            // 7. 생성 완료 후 Selection 설정
+            // 7. Phase 7: Runtime Binding 생성 (settings.CreateRuntimeBindings가 true일 때만)
+            if (settings.CreateRuntimeBindings)
+            {
+                RebuildRuntimeBindings(settings, context);
+            }
+            else
+            {
+                LogIfVerbose(settings, "[SKIP] createRuntimeBindings is false. Skipping runtime binding generation.");
+            }
+
+            // 8. Phase 6: ZoneResolver + DepthSampling 검증
+            if (settings.CreateZoneRoots)
+            {
+                Debug.Log("[MapAutoBuilder] === Phase 6: Validating Zone Resolver ===");
+                ValidateZoneResolver(settings, context);
+                Debug.Log("[MapAutoBuilder] === Phase 6: Validating Depth Sampling ===");
+                ValidateDepthSampling(settings, context);
+            }
+
+            // 9. Phase 7: Runtime Binding 검증
+            if (settings.CreateRuntimeBindings)
+            {
+                Debug.Log("[MapAutoBuilder] === Phase 7: Validating Runtime Bindings ===");
+                ValidateRuntimeBindings(settings, context);
+            }
+
+            // 10. Phase 8: Visual Profile Binding 생성 + 검증 (settings.CreateVisualRuntimeController가 true일 때만)
+            if (settings.CreateVisualRuntimeController)
+            {
+                Debug.Log("[MapAutoBuilder] === Phase 8: Rebuilding Visual Runtime Binding ===");
+                RebuildVisualRuntimeBinding(settings, context);
+                Debug.Log("[MapAutoBuilder] === Phase 8: Validating Visual Profiles ===");
+                ValidateVisualRuntimeBinding(settings, context);
+            }
+            else
+            {
+                LogIfVerbose(settings, "[SKIP] createVisualRuntimeController is false. Skipping visual runtime binding.");
+            }
+
+            // 11. 생성 완료 후 Selection 설정
             Selection.activeGameObject = generatedRoot;
             EditorGUIUtility.PingObject(generatedRoot);
 
-            LogIfVerbose(settings, $"===== Map Auto Builder: Generation complete. Root: {generatedRoot.name} =====");
+            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES COMPLETE =====");
 
         }
 
@@ -437,6 +477,36 @@ namespace Project.Editor.AutoTool
 
             // DeepLightMapZoneGenerationUtility에 위임
             DeepLightMapZoneGenerationUtility.ValidateZoneSetup(settings);
+        }
+
+        /// <summary>
+        /// ZoneResolver의 좌표 기반 Zone 판정을 검증한다.
+        /// Phase 6: DeepLightMapZoneResolverValidationUtility에 위임한다.
+        /// </summary>
+        public static void ValidateZoneResolver(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate ZoneResolver.");
+                return;
+            }
+
+            DeepLightMapZoneResolverValidationUtility.ValidateZoneResolver(settings);
+        }
+
+        /// <summary>
+        /// Depth Sampling 검증을 수행한다.
+        /// Phase 6: DeepLightMapZoneResolverValidationUtility에 위임한다.
+        /// </summary>
+        public static void ValidateDepthSampling(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate depth sampling.");
+                return;
+            }
+
+            DeepLightMapZoneResolverValidationUtility.ValidateDepthSampling(settings);
         }
 
         /// <summary>
@@ -739,6 +809,102 @@ namespace Project.Editor.AutoTool
             }
 
             return false;
+        }
+
+        // ======================================================================
+        //  Phase 7: Runtime Binding
+        // ======================================================================
+
+        /// <summary>
+        /// Runtime Binding을 재구축한다.
+        /// Phase 7: DeepLightMapRuntimeBindingUtility에 위임한다.
+        /// </summary>
+        public static void RebuildRuntimeBindings(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild runtime bindings.");
+                return;
+            }
+
+            DeepLightMapRuntimeBindingUtility.RebuildRuntimeBindings(settings, context);
+        }
+
+        /// <summary>
+        /// Runtime Binding의 유효성을 검사한다.
+        /// Phase 7: DeepLightMapRuntimeBindingUtility에 위임한다.
+        /// </summary>
+        public static void ValidateRuntimeBindings(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate runtime bindings.");
+                return;
+            }
+
+            DeepLightMapRuntimeBindingUtility.ValidateRuntimeBindings(settings, context);
+        }
+
+        // ======================================================================
+        //  Phase 8: Visual Runtime Binding
+        // ======================================================================
+
+        /// <summary>
+        /// Visual Runtime Binding을 재구축한다.
+        /// Phase 8: DeepLightMapVisualBindingUtility에 위임한다.
+        /// </summary>
+        public static void RebuildVisualRuntimeBinding(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild visual runtime binding.");
+                return;
+            }
+
+            DeepLightMapVisualBindingUtility.RebuildVisualRuntimeBinding(settings, context);
+        }
+
+        /// <summary>
+        /// Visual Runtime Binding의 유효성을 검사한다.
+        /// Phase 8: DeepLightMapVisualBindingUtility에 위임한다.
+        /// </summary>
+        public static void ValidateVisualRuntimeBinding(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate visual runtime binding.");
+                return;
+            }
+
+            DeepLightMapVisualBindingUtility.ValidateVisualRuntimeBinding(settings, context);
+        }
+
+        /// <summary>
+        /// Phase 9: Visual Adapter Binding을 재구축한다.
+        /// </summary>
+        public static void RebuildVisualAdapterBinding(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild visual adapter binding.");
+                return;
+            }
+
+            DeepLightMapVisualBindingUtility.RebuildVisualAdapterBinding(settings, context);
+        }
+
+        /// <summary>
+        /// Phase 9: Visual Adapter Binding의 유효성을 검사한다.
+        /// </summary>
+        public static void ValidateVisualAdapterBinding(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate visual adapter binding.");
+                return;
+            }
+
+            DeepLightMapVisualBindingUtility.ValidateVisualAdapterBinding(settings, context);
         }
 
         /// <summary>
