@@ -451,11 +451,39 @@ namespace Project.Editor.AutoTool
                 LogIfVerbose(settings, "[SKIP] createSafeRuntimeRendering is false. Skipping Phase 11.");
             }
 
-            // 14. 생성 완료 후 Selection 설정
+            // 14. Phase 12: Terrain Source Binding (settings.CreateTerrainSourceBinding이 true일 때만)
+            if (settings.CreateTerrainSourceBinding)
+            {
+                Debug.Log("[MapAutoBuilder] === Phase 12: Rebuilding Terrain Source Binding ===");
+                RebuildTerrainSourceBinding(settings, context);
+
+                Debug.Log("[MapAutoBuilder] === Phase 12: Validating Terrain Source Binding ===");
+                ValidateTerrainSourceBinding(settings, context);
+            }
+            else
+            {
+                LogIfVerbose(settings, "[SKIP] createTerrainSourceBinding is false. Skipping Phase 12.");
+            }
+
+            // 15. Phase 13: Terrain Source Layout Stabilization (settings.CreateTerrainSourceLayout이 true일 때만)
+            if (settings.CreateTerrainSourceLayout)
+            {
+                Debug.Log("[MapAutoBuilder] === Phase 13: Rebuilding Terrain Source Layout ===");
+                RebuildTerrainSourceLayout(settings, context);
+
+                Debug.Log("[MapAutoBuilder] === Phase 13: Validating Terrain Source Layout ===");
+                ValidateTerrainSourceLayout(settings, context);
+            }
+            else
+            {
+                LogIfVerbose(settings, "[SKIP] createTerrainSourceLayout is false. Skipping Phase 13.");
+            }
+
+            // 16. 생성 완료 후 Selection 설정
             Selection.activeGameObject = generatedRoot;
             EditorGUIUtility.PingObject(generatedRoot);
 
-            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~11) COMPLETE =====");
+            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~13) COMPLETE =====");
 
         }
 
@@ -997,658 +1025,74 @@ namespace Project.Editor.AutoTool
             DeepLightMapSafeRuntimeRenderingUtility.ValidateRuntimeRendering(settings, context);
         }
 
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
-        /// <summary>
-        /// logVerbose가 true일 때만 로그를 출력한다.
+        // ======================================================================
+        //  Phase 12: Terrain Source Binding
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 12: Terrain Source Binding을 재구축한다.
+        /// DeepLightMapTerrainSourceBindingUtility에 위임한다.
+        /// </summary>
+        public static void RebuildTerrainSourceBinding(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild terrain source binding.");
+                return;
+            }
+
+            DeepLightMapTerrainSourceBindingUtility.RebuildTerrainSourceBinding(settings, context);
+        }
+
+        /// <summary>
+        /// Phase 12: Terrain Source Binding의 유효성을 검사한다.
+        /// DeepLightMapTerrainSourceBindingUtility에 위임한다.
+        /// </summary>
+        public static void ValidateTerrainSourceBinding(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate terrain source binding.");
+                return;
+            }
+
+            DeepLightMapTerrainSourceBindingUtility.ValidateTerrainSourceBinding(settings, context);
+        }
+
+        // ======================================================================
+        //  Phase 13: Terrain Source Layout Stabilization
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 13: Terrain Source Layout을 재구축한다.
+        /// DeepLightMapTerrainSourceLayoutUtility에 위임한다.
+        /// </summary>
+        public static void RebuildTerrainSourceLayout(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild terrain source layout.");
+                return;
+            }
+
+            DeepLightMapTerrainSourceLayoutUtility.RebuildTerrainSourceLayout(settings, context);
+        }
+
+        /// <summary>
+        /// Phase 13: Terrain Source Layout의 유효성을 검사한다.
+        /// DeepLightMapTerrainSourceLayoutUtility에 위임한다.
+        /// </summary>
+        public static void ValidateTerrainSourceLayout(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate terrain source layout.");
+                return;
+            }
+
+            DeepLightMapTerrainSourceLayoutUtility.ValidateTerrainSourceLayout(settings, context);
+        }
+
         /// <summary>
         /// logVerbose가 true일 때만 로그를 출력한다
         /// </summary>

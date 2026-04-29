@@ -96,7 +96,7 @@ namespace Project.Editor.AutoTool
         {
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("DeepLight Map Auto Builder", _titleStyle);
-            EditorGUILayout.LabelField("Phase 3~11: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("Phase 3~13: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
 
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
@@ -426,7 +426,7 @@ namespace Project.Editor.AutoTool
                 "7. Stylized Water 내부 property 이름을 찾을 수 없는 경우 water level source 경고는 남을 수 있음",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "8. Generate Full Scenario Map 한 번으로 Phase 3~11 전체 생성/검증 완료",
+                "8. Generate Full Scenario Map 한 번으로 Phase 3~13 전체 생성/검증 완료",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
                 "9. Phase 6: ZoneResolver + DepthSampling 검증 자동 실행",

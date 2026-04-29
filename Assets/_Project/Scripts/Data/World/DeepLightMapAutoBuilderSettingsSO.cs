@@ -102,6 +102,50 @@ namespace Project.Data.World
         [SerializeField, Tooltip("Runtime Rendering 검증 실행 여부")]
         private bool validateRuntimeRenderingAfterGenerate = true;
 
+        [Header("Phase 12: Terrain Source Binding")]
+        [SerializeField, Tooltip("Terrain Source Binding 생성 여부 (Phase 12)")]
+        private bool createTerrainSourceBinding = true;
+        [SerializeField, Tooltip("Scene 내 기존 Terrain 오브젝트를 clone할지 여부")]
+        private bool cloneTerrainSourceFromScene = true;
+        [SerializeField, Tooltip("Project Asset에서 Terrain Prefab/Model을 검색하여 clone할지 여부")]
+        private bool cloneTerrainSourceFromProjectAsset = true;
+        [SerializeField, Tooltip("Terrain Source가 존재할 때 Seafloor placeholder를 숨길지 여부")]
+        private bool hideSeafloorPlaceholdersWhenTerrainSourceExists = true;
+        [SerializeField, Tooltip("Terrain Source 루트 이름")]
+        private string terrainSourceRootName = "TerrainSource";
+        [SerializeField, Tooltip("생성된 Terrain 루트 이름")]
+        private string generatedTerrainRootName = "Terrain";
+        [SerializeField, Tooltip("Terrain Fallback Material (pink material 방지)")]
+        private Material terrainFallbackMaterial;
+        [SerializeField, Tooltip("Terrain Source 상세 로그 출력 여부")]
+        private bool logTerrainSourceVerbose = true;
+
+        [Header("Phase 13: Terrain Source Layout Stabilization")]
+        [SerializeField, Tooltip("Terrain Source Layout 생성 여부 (Phase 13)")]
+        private bool createTerrainSourceLayout = true;
+        [SerializeField, Tooltip("최종 Terrain 루트 이름")]
+        private string terrainLayoutRootName = "Terrain";
+        [SerializeField, Tooltip("Terrain Source Staging 루트 이름")]
+        private string terrainSourceStagingRootName = "TerrainSource";
+        [SerializeField, Tooltip("Decorative 후보 루트 이름")]
+        private string decorativeCandidateRootName = "TerrainDecorativeCandidates";
+        [SerializeField, Tooltip("Disabled 후보 루트 이름")]
+        private string disabledCandidateRootName = "TerrainDisabledCandidates";
+        [SerializeField, Tooltip("Scene Source clone을 Base Terrain으로 우선할지 여부")]
+        private bool preferSceneTerrainSource = true;
+        [SerializeField, Tooltip("Project Asset은 Scene Source가 없을 때만 fallback으로 사용")]
+        private bool useProjectAssetAsFallbackOnly = true;
+        [SerializeField, Tooltip("최대 Base Terrain clone 개수")]
+        private int maxBaseTerrainCloneCount = 1;
+        [SerializeField, Tooltip("Base Terrain을 Map Bounds에 자동 맞춤")]
+        private bool autoFitBaseTerrainToMapBounds = true;
+        [SerializeField, Tooltip("Terrain Source의 World Transform 유지")]
+        private bool preserveTerrainSourceWorldTransform = true;
+        [SerializeField, Tooltip("사용하지 않는 Terrain Source Renderer 비활성화")]
+        private bool disableUnusedTerrainSourceRenderers = true;
+        [SerializeField, Tooltip("Terrain Layout 상세 로그 출력 여부")]
+        private bool logTerrainLayoutVerbose = false;
+
         [Header("Logging")]
         [SerializeField] private bool logVerbose = true; // 상세 로그 출력 여부
 
@@ -248,8 +292,69 @@ namespace Project.Data.World
         /// <summary>Runtime Rendering 검증 실행 여부</summary>
         public bool ValidateRuntimeRenderingAfterGenerate => validateRuntimeRenderingAfterGenerate;
 
+        /// <summary>Terrain Source Binding 생성 여부 (Phase 12)</summary>
+        public bool CreateTerrainSourceBinding => createTerrainSourceBinding;
+
+        /// <summary>Scene 내 기존 Terrain 오브젝트를 clone할지 여부</summary>
+        public bool CloneTerrainSourceFromScene => cloneTerrainSourceFromScene;
+
+        /// <summary>Project Asset에서 Terrain Prefab/Model을 검색하여 clone할지 여부</summary>
+        public bool CloneTerrainSourceFromProjectAsset => cloneTerrainSourceFromProjectAsset;
+
+        /// <summary>Terrain Source가 존재할 때 Seafloor placeholder를 숨길지 여부</summary>
+        public bool HideSeafloorPlaceholdersWhenTerrainSourceExists => hideSeafloorPlaceholdersWhenTerrainSourceExists;
+
+        /// <summary>Terrain Source 루트 이름</summary>
+        public string TerrainSourceRootName => string.IsNullOrEmpty(terrainSourceRootName) ? "TerrainSource" : terrainSourceRootName;
+
+        /// <summary>생성된 Terrain 루트 이름</summary>
+        public string GeneratedTerrainRootName => string.IsNullOrEmpty(generatedTerrainRootName) ? "Terrain" : generatedTerrainRootName;
+
+        /// <summary>Terrain Fallback Material (pink material 방지)</summary>
+        public Material TerrainFallbackMaterial => terrainFallbackMaterial;
+
+        /// <summary>Terrain Source 상세 로그 출력 여부</summary>
+        public bool LogTerrainSourceVerbose => logTerrainSourceVerbose;
+
+        /// <summary>Terrain Source Layout 생성 여부 (Phase 13)</summary>
+        public bool CreateTerrainSourceLayout => createTerrainSourceLayout;
+
+        /// <summary>최종 Terrain 루트 이름</summary>
+        public string TerrainLayoutRootName => string.IsNullOrEmpty(terrainLayoutRootName) ? "Terrain" : terrainLayoutRootName;
+
+        /// <summary>Terrain Source Staging 루트 이름</summary>
+        public string TerrainSourceStagingRootName => string.IsNullOrEmpty(terrainSourceStagingRootName) ? "TerrainSource" : terrainSourceStagingRootName;
+
+        /// <summary>Decorative 후보 루트 이름</summary>
+        public string DecorativeCandidateRootName => string.IsNullOrEmpty(decorativeCandidateRootName) ? "TerrainDecorativeCandidates" : decorativeCandidateRootName;
+
+        /// <summary>Disabled 후보 루트 이름</summary>
+        public string DisabledCandidateRootName => string.IsNullOrEmpty(disabledCandidateRootName) ? "TerrainDisabledCandidates" : disabledCandidateRootName;
+
+        /// <summary>Scene Source clone을 Base Terrain으로 우선할지 여부</summary>
+        public bool PreferSceneTerrainSource => preferSceneTerrainSource;
+
+        /// <summary>Project Asset은 Scene Source가 없을 때만 fallback으로 사용</summary>
+        public bool UseProjectAssetAsFallbackOnly => useProjectAssetAsFallbackOnly;
+
+        /// <summary>최대 Base Terrain clone 개수</summary>
+        public int MaxBaseTerrainCloneCount => maxBaseTerrainCloneCount;
+
+        /// <summary>Base Terrain을 Map Bounds에 자동 맞춤</summary>
+        public bool AutoFitBaseTerrainToMapBounds => autoFitBaseTerrainToMapBounds;
+
+        /// <summary>Terrain Source의 World Transform 유지</summary>
+        public bool PreserveTerrainSourceWorldTransform => preserveTerrainSourceWorldTransform;
+
+        /// <summary>사용하지 않는 Terrain Source Renderer 비활성화</summary>
+        public bool DisableUnusedTerrainSourceRenderers => disableUnusedTerrainSourceRenderers;
+
+        /// <summary>Terrain Layout 상세 로그 출력 여부</summary>
+        public bool LogTerrainLayoutVerbose => logTerrainLayoutVerbose;
+
         /// <summary>상세 로그 출력 여부</summary>
         public bool LogVerbose => logVerbose;
+
 
         // ===== Public Setters (Editor Auto-Fill 용, Runtime에서는 사용 금지) =====
 
