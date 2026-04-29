@@ -80,6 +80,28 @@ namespace Project.Data.World
         [SerializeField, Tooltip("Visual Profile 변경 로그 출력 여부")]
         private bool logVisualProfileChanges = true;
 
+        [Header("Phase 9: Visual Adapter Binding")]
+        [SerializeField, Tooltip("Visual Adapter Binding 생성 여부 (Phase 9)")]
+        private bool createVisualAdapterBinding = true;
+        [SerializeField, Tooltip("RuntimeVisualVolume GameObject 생성 시 Volume component의 isGlobal 기본값")]
+        private bool runtimeVolumeIsGlobal = true;
+        [SerializeField, Tooltip("RuntimeVisualVolume의 priority 값")]
+        private float runtimeVolumePriority = 0f;
+
+        [Header("Phase 11: Safe Runtime Rendering Finalization")]
+        [SerializeField, Tooltip("Safe Runtime Rendering 활성화 여부 (Phase 11)")]
+        private bool createSafeRuntimeRendering = true;
+        [SerializeField, Tooltip("Visual Controller 기본 활성화 여부 (Phase 11)")]
+        private bool safeRuntimeRenderingEnabledByDefault = true;
+        [SerializeField, Tooltip("Visual Controller applyToAdapters 기본값 (반드시 false)")]
+        private bool visualControllerApplyToAdaptersByDefault = false;
+        [SerializeField, Tooltip("Safe Runtime Blend Speed")]
+        private float safeRuntimeBlendSpeed = 2f;
+        [SerializeField, Tooltip("RuntimeVisualVolume의 profile을 neutral 값으로 복구할지 여부")]
+        private bool restoreNeutralRuntimeVisualProfileOnGenerate = true;
+        [SerializeField, Tooltip("Runtime Rendering 검증 실행 여부")]
+        private bool validateRuntimeRenderingAfterGenerate = true;
+
         [Header("Logging")]
         [SerializeField] private bool logVerbose = true; // 상세 로그 출력 여부
 
@@ -198,6 +220,33 @@ namespace Project.Data.World
 
         /// <summary>Visual Profile 변경 로그 출력 여부</summary>
         public bool LogVisualProfileChanges => logVisualProfileChanges;
+
+        /// <summary>Visual Adapter Binding 생성 여부 (Phase 9)</summary>
+        public bool CreateVisualAdapterBinding => createVisualAdapterBinding;
+
+        /// <summary>RuntimeVisualVolume GameObject 생성 시 Volume component의 isGlobal 기본값</summary>
+        public bool RuntimeVolumeIsGlobal => runtimeVolumeIsGlobal;
+
+        /// <summary>RuntimeVisualVolume의 priority 값</summary>
+        public float RuntimeVolumePriority => runtimeVolumePriority;
+
+        /// <summary>Safe Runtime Rendering 활성화 여부 (Phase 11)</summary>
+        public bool CreateSafeRuntimeRendering => createSafeRuntimeRendering;
+
+        /// <summary>Visual Controller 기본 활성화 여부 (Phase 11)</summary>
+        public bool SafeRuntimeRenderingEnabledByDefault => safeRuntimeRenderingEnabledByDefault;
+
+        /// <summary>Visual Controller applyToAdapters 기본값 (반드시 false)</summary>
+        public bool VisualControllerApplyToAdaptersByDefault => visualControllerApplyToAdaptersByDefault;
+
+        /// <summary>Safe Runtime Blend Speed</summary>
+        public float SafeRuntimeBlendSpeed => safeRuntimeBlendSpeed;
+
+        /// <summary>RuntimeVisualVolume의 profile을 neutral 값으로 복구할지 여부</summary>
+        public bool RestoreNeutralRuntimeVisualProfileOnGenerate => restoreNeutralRuntimeVisualProfileOnGenerate;
+
+        /// <summary>Runtime Rendering 검증 실행 여부</summary>
+        public bool ValidateRuntimeRenderingAfterGenerate => validateRuntimeRenderingAfterGenerate;
 
         /// <summary>상세 로그 출력 여부</summary>
         public bool LogVerbose => logVerbose;

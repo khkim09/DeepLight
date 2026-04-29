@@ -22,6 +22,7 @@ namespace Project.Editor.AutoTool
         private const string DebugAdapterName = "DebugAdapter";
         private const string WaterMaterialAdapterName = "WaterMaterialAdapter";
         private const string RuntimeVolumeAdapterName = "RuntimeVolumeAdapter";
+        private const string RuntimeVisualVolumeName = "RuntimeVisualVolume";
 
         // ===== Public API =====
 
@@ -91,12 +92,13 @@ namespace Project.Editor.AutoTool
         /// <summary>
         /// Phase 9: Visual Adapter Binding을 재구축한다.
         /// 1. RuntimeBinding root 찾기
-        /// 2. VisualAdapters root 찾기 또는 생성
-        /// 3. DebugAdapter 생성/설정
-        /// 4. WaterMaterialAdapter 생성/설정 (GlobalWater Renderer 찾기)
-        /// 5. RuntimeVolumeAdapter 생성/설정 (Runtime Volume 찾기)
-        /// 6. WorldMapVisualAdapterRoot 생성/설정
-        /// 7. WorldMapVisualController에 adapterRoot 연결
+        /// 2. RuntimeVisualVolume GameObject 생성 (Volume component 포함)
+        /// 3. VisualAdapters root 찾기 또는 생성
+        /// 4. DebugAdapter 생성/설정
+        /// 5. WaterMaterialAdapter 생성/설정 (GlobalWater Renderer 찾기)
+        /// 6. RuntimeVolumeAdapter 생성/설정 (RuntimeVisualVolume 찾기)
+        /// 7. WorldMapVisualAdapterRoot 생성/설정
+        /// 8. WorldMapVisualController에 adapterRoot 연결
         /// </summary>
         public static void RebuildVisualAdapterBinding(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
         {
@@ -117,22 +119,25 @@ namespace Project.Editor.AutoTool
             // 2. RuntimeBinding root 찾기
             GameObject runtimeBindingRoot = GetOrCreateChild(generatedRoot, RuntimeBindingRootName);
 
-            // 3. VisualAdapters root 찾기 또는 생성
+            // 3. RuntimeVisualVolume GameObject 생성 (Volume component 포함)
+            CreateOrUpdateRuntimeVisualVolume(runtimeBindingRoot, settings);
+
+            // 4. VisualAdapters root 찾기 또는 생성
             GameObject visualAdaptersRoot = GetOrCreateChild(runtimeBindingRoot, VisualAdaptersRootName);
 
-            // 4. DebugAdapter 생성/설정
+            // 5. DebugAdapter 생성/설정
             CreateOrUpdateDebugAdapter(visualAdaptersRoot);
 
-            // 5. WaterMaterialAdapter 생성/설정 (GlobalWater Renderer 찾기)
+            // 6. WaterMaterialAdapter 생성/설정 (GlobalWater Renderer 찾기)
             CreateOrUpdateWaterMaterialAdapter(visualAdaptersRoot, generatedRoot);
 
-            // 6. RuntimeVolumeAdapter 생성/설정 (Runtime Volume 찾기)
+            // 7. RuntimeVolumeAdapter 생성/설정 (RuntimeVisualVolume 찾기)
             CreateOrUpdateRuntimeVolumeAdapter(visualAdaptersRoot, runtimeBindingRoot);
 
-            // 7. WorldMapVisualAdapterRoot 생성/설정
+            // 8. WorldMapVisualAdapterRoot 생성/설정
             WorldMapVisualAdapterRoot adapterRoot = CreateOrUpdateAdapterRoot(visualAdaptersRoot);
 
-            // 8. WorldMapVisualController에 adapterRoot 연결
+            // 9. WorldMapVisualController에 adapterRoot 연결
             LinkAdapterRootToVisualController(runtimeBindingRoot, adapterRoot);
 
             Debug.Log("[MapAutoBuilder] Visual adapter binding completed.");
@@ -259,6 +264,74 @@ namespace Project.Editor.AutoTool
         }
 
         // ===== Phase 9 Internal Helpers =====
+
+        /// <summary>
+        /// RuntimeVisualVolume GameObject를 찾거나 생성하고 Volume component를 부착한다.
+        /// RuntimeBinding root 아래에 위치하며, RuntimeVolumeAdapter가 참조하는 대상이다.
+        /// </summary>
+        private static void CreateOrUpdateRuntimeVisualVolume(GameObject runtimeBindingRoot, DeepLightMapAutoBuilderSettingsSO settings)
+        {
+            Transform existing = runtimeBindingRoot.transform.Find(RuntimeVisualVolumeName);
+            GameObject volumeObj;
+
+            if (existing != null)
+            {
+                volumeObj = existing.gameObject;
+            }
+            else
+            {
+                volumeObj = new GameObject(RuntimeVisualVolumeName);
+                volumeObj.transform.SetParent(runtimeBindingRoot.transform);
+                volumeObj.transform.localPosition = Vector3.zero;
+                volumeObj.transform.localRotation = Quaternion.identity;
+                volumeObj.transform.localScale = Vector3.one;
+                Undo.RegisterCreatedObjectUndo(volumeObj, $"Create {RuntimeVisualVolumeName}");
+            }
+
+            // Volume component 부착
+            Volume volume = volumeObj.GetComponent<Volume>();
+            if (volume == null)
+            {
+                volume = volumeObj.AddComponent<Volume>();
+                Undo.RegisterCreatedObjectUndo(volume, "Add Volume component");
+            }
+
+            // Volume 설정
+            SerializedObject so = new SerializedObject(volume);
+            SerializedProperty isGlobalProp = so.FindProperty("m_IsGlobal");
+            if (isGlobalProp != null)
+            {
+                isGlobalProp.boolValue = settings.RuntimeVolumeIsGlobal;
+            }
+            else
+            {
+                Debug.LogWarning("[MapAutoBuilder] Volume.m_IsGlobal property not found. Skipping isGlobal setting.");
+            }
+
+            SerializedProperty priorityProp = so.FindProperty("m_Priority");
+            if (priorityProp != null)
+            {
+                priorityProp.floatValue = settings.RuntimeVolumePriority;
+            }
+            else
+            {
+                // Fallback: "priority" (일부 Unity 버전)
+                priorityProp = so.FindProperty("priority");
+                if (priorityProp != null)
+                {
+                    priorityProp.floatValue = settings.RuntimeVolumePriority;
+                }
+                else
+                {
+                    Debug.LogWarning("[MapAutoBuilder] Volume priority property not found. Skipping priority setting.");
+                }
+            }
+            so.ApplyModifiedProperties();
+
+            // VolumeProfile은 null로 두고, RuntimeVolumeAdapter가 런타임에 동적으로 할당한다.
+
+            Debug.Log($"[MapAutoBuilder] RuntimeVisualVolume ready: {volumeObj.name} (isGlobal={settings.RuntimeVolumeIsGlobal}, priority={settings.RuntimeVolumePriority})");
+        }
 
         /// <summary>
         /// DebugAdapter GameObject를 찾거나 생성하고 WorldMapVisualDebugAdapter를 부착한다.

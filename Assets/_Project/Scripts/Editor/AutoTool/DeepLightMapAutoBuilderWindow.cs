@@ -96,7 +96,7 @@ namespace Project.Editor.AutoTool
         {
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("DeepLight Map Auto Builder", _titleStyle);
-            EditorGUILayout.LabelField("Phase 3~7: Base Root + ZoneRoots + Environment + Runtime Binding", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("Phase 3~11: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
 
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
@@ -346,97 +346,13 @@ namespace Project.Editor.AutoTool
 
             EditorGUILayout.Space(2);
 
-            // Dry Run Preview
-            if (GUILayout.Button("Dry Run Preview", GUILayout.Height(30)))
-            {
-                ExecuteDryRun();
-            }
-
-            EditorGUILayout.Space(2);
-
-            // Generate Full Scenario Map
+            // Generate Full Scenario Map (Phase 3~11 통합)
             GUI.color = new Color(0.3f, 0.8f, 0.3f);
             if (GUILayout.Button("Generate Full Scenario Map", GUILayout.Height(35)))
             {
                 ExecuteGenerate();
             }
             GUI.color = Color.white;
-
-            EditorGUILayout.Space(2);
-
-            // Validate Zone Resolver (Phase 6)
-            if (GUILayout.Button("Validate Zone Resolver (Phase 6)", GUILayout.Height(25)))
-            {
-                ExecuteValidateZoneResolver();
-            }
-
-            EditorGUILayout.Space(2);
-
-            // Validate Depth Sampling (Phase 6)
-            if (GUILayout.Button("Validate Depth Sampling (Phase 6)", GUILayout.Height(25)))
-            {
-                ExecuteValidateDepthSampling();
-            }
-
-            EditorGUILayout.Space(3);
-
-            // ===== Phase 7: Runtime Binding =====
-            EditorGUILayout.LabelField("Phase 7: Runtime Binding", EditorStyles.boldLabel);
-
-            if (GUILayout.Button("Rebuild Runtime Bindings (Phase 7)", GUILayout.Height(25)))
-            {
-                ExecuteRebuildRuntimeBindings();
-            }
-
-            if (GUILayout.Button("Validate Runtime Bindings (Phase 7)", GUILayout.Height(25)))
-            {
-                ExecuteValidateRuntimeBindings();
-            }
-
-            EditorGUILayout.Space(3);
-
-            // ===== Phase 8: Visual Profiles =====
-            EditorGUILayout.LabelField("Phase 8: Visual Profiles", EditorStyles.boldLabel);
-
-            if (GUILayout.Button("Create Default Visual Profile Set", GUILayout.Height(25)))
-            {
-                ExecuteCreateDefaultVisualProfileSet();
-            }
-
-            if (GUILayout.Button("Rebuild Visual Runtime Binding (Phase 8)", GUILayout.Height(25)))
-            {
-                ExecuteRebuildVisualRuntimeBinding();
-            }
-
-            if (GUILayout.Button("Validate Visual Profiles (Phase 8)", GUILayout.Height(25)))
-            {
-                ExecuteValidateVisualRuntimeBinding();
-            }
-
-            EditorGUILayout.Space(3);
-
-            // ===== Phase 9: Visual Adapters =====
-            EditorGUILayout.LabelField("Phase 9: Visual Adapters", EditorStyles.boldLabel);
-
-            if (GUILayout.Button("Rebuild Visual Adapter Binding (Phase 9)", GUILayout.Height(25)))
-            {
-                ExecuteRebuildVisualAdapterBinding();
-            }
-
-            if (GUILayout.Button("Validate Visual Adapter Binding (Phase 9)", GUILayout.Height(25)))
-            {
-                ExecuteValidateVisualAdapterBinding();
-            }
-
-            EditorGUILayout.Space(5);
-
-            // Ping Assigned Objects
-
-            GUI.enabled = _settings != null || _context != null;
-            if (GUILayout.Button("Ping Assigned Objects", GUILayout.Height(25)))
-            {
-                ExecutePingAssignedObjects();
-            }
 
             EditorGUILayout.Space(5);
 
@@ -447,6 +363,23 @@ namespace Project.Editor.AutoTool
                 ExecuteClear();
             }
             GUI.color = Color.white;
+
+            EditorGUILayout.Space(5);
+
+            // Dry Run Preview (선택적 유지)
+            if (GUILayout.Button("Dry Run Preview", GUILayout.Height(25)))
+            {
+                ExecuteDryRun();
+            }
+
+            EditorGUILayout.Space(2);
+
+            // Ping Assigned Objects
+            GUI.enabled = _settings != null || _context != null;
+            if (GUILayout.Button("Ping Assigned Objects", GUILayout.Height(25)))
+            {
+                ExecutePingAssignedObjects();
+            }
 
             GUI.enabled = true;
 
@@ -493,7 +426,7 @@ namespace Project.Editor.AutoTool
                 "7. Stylized Water 내부 property 이름을 찾을 수 없는 경우 water level source 경고는 남을 수 있음",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "8. Generate Full Scenario Map 한 번으로 Phase 3~8 전체 생성/검증 완료",
+                "8. Generate Full Scenario Map 한 번으로 Phase 3~11 전체 생성/검증 완료",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
                 "9. Phase 6: ZoneResolver + DepthSampling 검증 자동 실행",
@@ -505,13 +438,19 @@ namespace Project.Editor.AutoTool
                 "11. Phase 8: Visual Profile Binding 생성 + 검증 (CreateVisualRuntimeController=true 시)",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "12. Runtime Zone 판정은 Trigger보다 ZoneResolver 좌표 계산을 우선",
+                "12. Phase 9: Visual Adapter Binding 생성 + 검증 (RuntimeVisualVolume + DebugAdapter + WaterMaterialAdapter + RuntimeVolumeAdapter)",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "13. Trigger는 보조/디버그 용도로 유지",
+                "13. Runtime Zone 판정은 Trigger보다 ZoneResolver 좌표 계산을 우선",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "14. WorldMapRuntimeZoneTracker는 기존 WorldMapService를 대체하지 않음",
+                "14. Trigger는 보조/디버그 용도로 유지",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "15. WorldMapRuntimeZoneTracker는 기존 WorldMapService를 대체하지 않음",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "16. Phase 10: Visual Adapter Runtime Flow 검증 (Non-destructive, 31개 항목)",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.EndVertical();
 
