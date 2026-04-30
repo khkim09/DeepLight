@@ -200,7 +200,42 @@ namespace Project.Data.World
         [SerializeField, Tooltip("Terrain Patch 노이즈 강도")]
         private float terrainPatchNoiseStrength = 8f;
 
+        [Header("Phase 14.5: Zone Terrain Patch Interior Detail")]
+        [SerializeField, Tooltip("Terrain Patch 내부 디테일 변형 생성 여부 (Phase 14.5)")]
+        private bool createZoneTerrainPatchInteriorDetail = true;
+        [SerializeField, Tooltip("Terrain Patch 내부 디테일 변형 강도 (0=없음, 1=최대)")]
+        private float terrainPatchInteriorDetailStrength = 0.6f;
+        [SerializeField, Tooltip("Terrain Patch 경계 edge falloff 폭 (vertex 단위, seam 보호용)")]
+        private int terrainPatchEdgeFalloffWidth = 3;
+        [SerializeField, Tooltip("Terrain Patch 내부 디테일 생성 후 검증 실행 여부")]
+        private bool validateZoneTerrainPatchInteriorDetailAfterGenerate = true;
+        [SerializeField, Tooltip("Terrain Patch 내부 디테일 노이즈 스케일 (PerlinNoise 주파수)")]
+        private float terrainPatchInteriorNoiseScale = 0.025f;
+        [SerializeField, Tooltip("Terrain Patch 내부 디테일 노이즈 강도 (최대 높이 변화)")]
+        private float terrainPatchInteriorNoiseStrength = 6f;
+        [SerializeField, Tooltip("Terrain Patch 내부 디테일 canyon/cliff 추가 강도 승수")]
+        private float terrainPatchInteriorFeatureStrength = 1.2f;
+        [SerializeField, Tooltip("Terrain Patch 내부 디테일 상세 로그 출력 여부")]
+        private bool logZoneTerrainPatchInteriorDetailVerbose = false;
+
+        [Header("Phase 14.6: Zone Content Placeholder Foundation")]
+        [SerializeField, Tooltip("Zone Content Placeholder 생성 여부 (Phase 14.6)")]
+        private bool createZoneContentPlaceholders = true;
+        [SerializeField, Tooltip("Zone Content Placeholder 생성 후 검증 실행 여부")]
+        private bool validateZoneContentPlaceholdersAfterGenerate = true;
+        [SerializeField, Tooltip("Zone Content Placeholder 상세 로그 출력 여부")]
+        private bool logZoneContentPlaceholderVerbose = false;
+        [SerializeField, Tooltip("Visible Content Debug Marker 생성 여부")]
+        private bool createVisibleContentDebugMarkers = true;
+        [SerializeField, Tooltip("Zone 당 최대 Resource Marker 개수")]
+        private int maxResourceMarkersPerZone = 4;
+        [SerializeField, Tooltip("Zone 당 최대 Hazard Marker 개수")]
+        private int maxHazardMarkersPerZone = 3;
+        [SerializeField, Tooltip("Zone 당 최대 Landmark Marker 개수")]
+        private int maxLandmarkMarkersPerZone = 2;
+
         [Header("Logging")]
+
 
 
         [SerializeField] private bool logVerbose = true; // 상세 로그 출력 여부
@@ -475,9 +510,60 @@ namespace Project.Data.World
         /// <summary>Terrain Patch 노이즈 강도</summary>
         public float TerrainPatchNoiseStrength => terrainPatchNoiseStrength;
 
+        // ===== Phase 14.5 Public Getters =====
+
+        /// <summary>Terrain Patch 내부 디테일 변형 생성 여부 (Phase 14.5)</summary>
+        public bool CreateZoneTerrainPatchInteriorDetail => createZoneTerrainPatchInteriorDetail;
+
+        /// <summary>Terrain Patch 내부 디테일 변형 강도 (0=없음, 1=최대)</summary>
+        public float TerrainPatchInteriorDetailStrength => terrainPatchInteriorDetailStrength;
+
+        /// <summary>Terrain Patch 경계 edge falloff 폭 (vertex 단위, seam 보호용)</summary>
+        public int TerrainPatchEdgeFalloffWidth => terrainPatchEdgeFalloffWidth;
+
+        /// <summary>Terrain Patch 내부 디테일 생성 후 검증 실행 여부</summary>
+        public bool ValidateZoneTerrainPatchInteriorDetailAfterGenerate => validateZoneTerrainPatchInteriorDetailAfterGenerate;
+
+        /// <summary>Terrain Patch 내부 디테일 노이즈 스케일 (PerlinNoise 주파수)</summary>
+        public float TerrainPatchInteriorNoiseScale => terrainPatchInteriorNoiseScale;
+
+        /// <summary>Terrain Patch 내부 디테일 노이즈 강도 (최대 높이 변화)</summary>
+        public float TerrainPatchInteriorNoiseStrength => terrainPatchInteriorNoiseStrength;
+
+        /// <summary>Terrain Patch 내부 디테일 canyon/cliff 추가 강도 승수</summary>
+        public float TerrainPatchInteriorFeatureStrength => terrainPatchInteriorFeatureStrength;
+
+        /// <summary>Terrain Patch 내부 디테일 상세 로그 출력 여부</summary>
+        public bool LogZoneTerrainPatchInteriorDetailVerbose => logZoneTerrainPatchInteriorDetailVerbose;
+
+        // ===== Phase 14.6 Public Getters =====
+
+        /// <summary>Zone Content Placeholder 생성 여부 (Phase 14.6)</summary>
+        public bool CreateZoneContentPlaceholders => createZoneContentPlaceholders;
+
+        /// <summary>Zone Content Placeholder 생성 후 검증 실행 여부</summary>
+        public bool ValidateZoneContentPlaceholdersAfterGenerate => validateZoneContentPlaceholdersAfterGenerate;
+
+        /// <summary>Zone Content Placeholder 상세 로그 출력 여부</summary>
+        public bool LogZoneContentPlaceholderVerbose => logZoneContentPlaceholderVerbose;
+
+        /// <summary>Visible Content Debug Marker 생성 여부</summary>
+        public bool CreateVisibleContentDebugMarkers => createVisibleContentDebugMarkers;
+
+        /// <summary>Zone 당 최대 Resource Marker 개수</summary>
+        public int MaxResourceMarkersPerZone => maxResourceMarkersPerZone;
+
+        /// <summary>Zone 당 최대 Hazard Marker 개수</summary>
+        public int MaxHazardMarkersPerZone => maxHazardMarkersPerZone;
+
+        /// <summary>Zone 당 최대 Landmark Marker 개수</summary>
+        public int MaxLandmarkMarkersPerZone => maxLandmarkMarkersPerZone;
+
         /// <summary>상세 로그 출력 여부</summary>
 
         public bool LogVerbose => logVerbose;
+
+
 
 
         // ===== Public Setters (Editor Auto-Fill 용, Runtime에서는 사용 금지) =====

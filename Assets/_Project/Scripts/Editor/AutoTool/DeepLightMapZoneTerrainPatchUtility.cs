@@ -22,6 +22,12 @@ namespace Project.Editor.AutoTool
     /// - Seafloor placeholder 재귀 탐색 및 확실한 비활성화
     /// - MeshCollider sharedMesh 갱신
     /// - 검증 항목 보강 (row seam delta, seafloor placeholder 30/30)
+    ///
+    /// Phase 14.5: Zone Terrain Patch Interior Detail Pass.
+    /// - 각 TerrainPatch 내부의 해저 굴곡을 강화 (seam 경계 보호 + route corridor 보호 포함)
+    /// - zoneId 기반 deterministic hash/noise 사용
+    /// - edge falloff로 seam 경계 보호
+    /// - route corridor mask로 통로 영역 noise 감소
     /// </summary>
     public static class DeepLightMapZoneTerrainPatchUtility
     {
@@ -207,10 +213,25 @@ namespace Project.Editor.AutoTool
             }
 
             log.AppendLine($"Total patches created: {totalPatches}, Skipped: {skippedPatches}");
-            log.AppendLine("===== Phase 14.4: Rebuild Complete =====");
+
+            // Phase 14.5: Interior Detail Deformation (base mesh 생성 직후, seam stabilization 이전에 적용)
+            if (totalPatches > 0 && settings.CreateZoneTerrainPatchInteriorDetail)
+            {
+                log.AppendLine("===== Phase 14.5: Applying Interior Detail Deformation =====");
+                ApplyInteriorDetailDeformation(settings, zoneRootsTransform, config, planDb, resolution);
+                log.AppendLine("===== Phase 14.5: Interior Detail Complete =====");
+            }
+            else if (totalPatches > 0)
+            {
+                log.AppendLine("[SKIP] createZoneTerrainPatchInteriorDetail is false. Skipping Phase 14.5.");
+            }
+
+            log.AppendLine("===== Phase 14.4 + 14.5: Rebuild Complete =====");
             Debug.Log(log.ToString());
 
             // Seam stabilization: 인접 경계 높이 보정 (column seam + row seam 모두 처리)
+            // Phase 14.5 interior detail이 적용된 후 seam stabilization이 실행되므로
+            // interior detail이 seam 경계를 깨뜨리지 않도록 edge falloff가 적용되어 있음
             if (totalPatches > 0)
             {
                 StabilizeAllPatchSeams(settings, zoneRootsTransform, config, planDb, resolution);
@@ -868,6 +889,13 @@ namespace Project.Editor.AutoTool
             {
                 log.AppendLine($"  [WARN] C row seam max delta: {cRowMaxDelta:F2}m (> {seamThreshold:F2}m)");
                 warnCount++;
+            }
+
+            // ===== Phase 14.5: Interior Detail Validation =====
+            if (settings.CreateZoneTerrainPatchInteriorDetail && settings.ValidateZoneTerrainPatchInteriorDetailAfterGenerate)
+            {
+                log.AppendLine("===== Phase 14.5: Interior Detail Validation =====");
+                ValidateInteriorDetail(settings, zoneRootsTransform, log, ref passCount, ref failCount, ref warnCount);
             }
 
             // Summary
@@ -1864,6 +1892,749 @@ namespace Project.Editor.AutoTool
             Debug.Log(debugLog.ToString());
         }
 
+        // ======================================================================
+        //  Phase 14.5: Zone Terrain Patch Interior Detail Pass
+        // ======================================================================
+
+        /// <summary>
+        /// 모든 TerrainPatch의 내부 디테일 변형을 적용한다.
+        /// base mesh 생성 직후, seam stabilization 이전에 호출되어야 한다.
+        /// 각 patch의 vertex height를 plan 값 기반으로 변형하고,
+        /// route corridor 보호 + seam edge falloff를 적용한다.
+        /// </summary>
+        public static void ApplyInteriorDetailDeformation(DeepLightMapAutoBuilderSettingsSO settings, Transform zoneRootsParent, WorldMapConfigSO config, WorldMapZoneTerrainPlanDatabaseSO planDb, int resolution)
+        {
+            if (settings == null || zoneRootsParent == null || config == null || planDb == null)
+            {
+                Debug.LogError("[ZoneTerrainPatch] Phase 14.5: Invalid parameters for interior detail deformation.");
+                return;
+            }
+
+            if (!settings.CreateZoneTerrainPatchInteriorDetail)
+            {
+                LogIfVerbose(settings, "[Phase 14.5] createZoneTerrainPatchInteriorDetail is false. Skipping interior detail.");
+                return;
+            }
+
+            float detailStrength = settings.TerrainPatchInteriorDetailStrength;
+            float noiseScale = settings.TerrainPatchInteriorNoiseScale;
+            float noiseStrength = settings.TerrainPatchInteriorNoiseStrength;
+            float featureStrength = settings.TerrainPatchInteriorFeatureStrength;
+            int edgeFalloffWidth = Mathf.Max(0, settings.TerrainPatchEdgeFalloffWidth);
+            float zoneSize = config.ZoneSize;
+            float halfSize = zoneSize * 0.5f;
+            float step = zoneSize / resolution;
+            int vertexCountPerAxis = resolution + 1;
+
+            var log = new StringBuilder();
+            log.AppendLine("===== Phase 14.5: Apply Interior Detail Deformation =====");
+            log.AppendLine($"DetailStrength: {detailStrength}, NoiseScale: {noiseScale}, NoiseStrength: {noiseStrength}");
+            log.AppendLine($"FeatureStrength: {featureStrength}, EdgeFalloffWidth: {edgeFalloffWidth}");
+
+            int modifiedCount = 0;
+
+            for (int colIndex = 0; colIndex < 3; colIndex++)
+            {
+                for (int rowIndex = 0; rowIndex < 10; rowIndex++)
+                {
+                    char columnChar = (char)('A' + colIndex);
+                    int rowNumber = rowIndex + 1;
+                    string zoneIdStr = $"{columnChar}{rowNumber}";
+
+                    WorldMapZoneTerrainPlan plan = planDb.GetPlan(zoneIdStr);
+                    if (plan == null) continue;
+
+                    Mesh patchMesh = GetPatchMesh(zoneRootsParent, zoneIdStr);
+                    if (patchMesh == null) continue;
+
+                    Vector3[] vertices = patchMesh.vertices;
+                    if (vertices.Length != vertexCountPerAxis * vertexCountPerAxis) continue;
+
+                    // Zone center 계산
+                    ZoneCoordinate coord = new ZoneCoordinate(colIndex, rowIndex);
+                    Vector3 zoneCenter = coord.GetZoneCenterWorldPosition(config);
+
+                    // Deterministic seed for this zone
+                    int zoneSeed = GetDeterministicZoneSeed(zoneIdStr);
+
+                    // Pre-compute route corridor mask (0~1, 1=corridor 내부)
+                    float[,] corridorMask = BuildRouteCorridorMask(plan, resolution);
+
+                    bool anyModified = false;
+
+                    for (int z = 0; z < vertexCountPerAxis; z++)
+                    {
+                        for (int x = 0; x < vertexCountPerAxis; x++)
+                        {
+                            int idx = z * vertexCountPerAxis + x;
+
+                            // Normalized coordinates
+                            float u = (float)x / resolution;
+                            float v = (float)z / resolution;
+
+                            // Local position
+                            float localX = -halfSize + x * step;
+                            float localZ = -halfSize + z * step;
+
+                            // 1. Edge falloff: seam 경계 보호
+                            float edgeWeight = ComputeEdgeFalloffWeight(x, z, resolution, edgeFalloffWidth);
+
+                            // 2. Route corridor mask: 통로 내부 noise 감소
+                            float corridorWeight = corridorMask[z, x]; // 0=외곽, 1=통로 내부
+
+                            // 3. Interior height offset 계산 (plan 기반)
+                            float interiorOffset = CalculateInteriorHeightOffset(
+                                plan, u, v, localX, localZ, halfSize,
+                                zoneSeed, noiseScale, noiseStrength, featureStrength);
+
+                            // 4. Detail strength 적용
+                            interiorOffset *= detailStrength;
+
+                            // 5. Edge falloff 적용 (seam 근처에서는 변형 감소)
+                            interiorOffset *= edgeWeight;
+
+                            // 6. Route corridor 보호 (통로 내부에서는 변형 더 감소)
+                            // corridorWeight=1일 때 0.3배, corridorWeight=0일 때 1.0배
+                            float corridorProtection = Mathf.Lerp(1f, 0.3f, corridorWeight);
+                            interiorOffset *= corridorProtection;
+
+                            // 7. Flat area 추가 보호 (flatAreaWeight01이 높으면 변형 감소)
+                            interiorOffset *= (1f - plan.flatAreaWeight01 * 0.7f);
+
+                            // 8. 기존 vertex height에 offset 적용
+                            Vector3 vtx = vertices[idx];
+                            vtx.y += interiorOffset;
+                            vertices[idx] = vtx;
+
+                            anyModified = true;
+                        }
+                    }
+
+                    if (anyModified)
+                    {
+                        ApplyMeshChanges(patchMesh, vertices);
+                        modifiedCount++;
+                    }
+                }
+            }
+
+            log.AppendLine($"Patches modified with interior detail: {modifiedCount}/30");
+            log.AppendLine("===== Phase 14.5: Interior Detail Deformation Complete =====");
+            Debug.Log(log.ToString());
+        }
+
+        /// <summary>
+        /// zoneId 기반의 deterministic seed를 생성한다.
+        /// UnityEngine.Random 전역 상태에 의존하지 않으며,
+        /// 같은 zoneId에 대해 항상 같은 값을 반환한다.
+        /// </summary>
+        private static int GetDeterministicZoneSeed(string zoneId)
+        {
+            // 간단한 문자열 해시: zoneId의 각 문자 ASCII 값을 기반으로 고유한 seed 생성
+            int hash = 17;
+            for (int i = 0; i < zoneId.Length; i++)
+            {
+                hash = hash * 31 + zoneId[i];
+            }
+            return Mathf.Abs(hash);
+        }
+
+        /// <summary>
+        /// Seam 경계 보호를 위한 edge falloff weight를 계산한다.
+        /// patch의 4개 edge 근처에서 weight가 0에 가까워지고,
+        /// edgeFalloffWidth 이상 떨어진 내부에서는 1이 된다.
+        /// </summary>
+        private static float ComputeEdgeFalloffWeight(int x, int z, int resolution, int edgeFalloffWidth)
+        {
+            if (edgeFalloffWidth <= 0) return 1f;
+
+            // 4개 edge로부터의 거리 계산
+            int distToLeft = x;
+            int distToRight = resolution - x;
+            int distToTop = z;
+            int distToBottom = resolution - z;
+
+            // 가장 가까운 edge까지의 거리
+            int minDist = Mathf.Min(distToLeft, distToRight, distToTop, distToBottom);
+
+            if (minDist >= edgeFalloffWidth) return 1f;
+
+            // smoothstep falloff: edgeFalloffWidth 범위 내에서 0~1로 부드럽게 증가
+            float t = (float)minDist / Mathf.Max(1, edgeFalloffWidth);
+            return t * t * (3f - 2f * t); // smoothstep
+        }
+
+        /// <summary>
+        /// Route corridor 보호 mask를 생성한다.
+        /// routeShapeMode와 navigationCorridorWidth01을 기반으로
+        /// 각 vertex가 corridor 내부에 있는지(1) 외부에 있는지(0)를 계산한다.
+        /// </summary>
+        private static float[,] BuildRouteCorridorMask(WorldMapZoneTerrainPlan plan, int resolution)
+        {
+            int size = resolution + 1;
+            float[,] mask = new float[size, size];
+
+            // Corridor width in normalized space (0~1)
+            float corridorHalfWidth = Mathf.Lerp(0.05f, 0.45f, plan.navigationCorridorWidth01);
+
+            for (int z = 0; z < size; z++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float u = (float)x / resolution;
+                    float v = (float)z / resolution;
+
+                    float corridorValue = 0f;
+
+                    switch (plan.routeShapeMode)
+                    {
+                        case ZoneRouteShapeMode.FreeRoam:
+                            // FreeRoam: 전체가 통로 (mask=1)
+                            corridorValue = 1f;
+                            break;
+
+                        case ZoneRouteShapeMode.WideMainPath:
+                            // 중앙을 따라 넓은 통로
+                            corridorValue = 1f - Mathf.Clamp01(Mathf.Abs(u - 0.5f) / Mathf.Max(0.01f, corridorHalfWidth));
+                            break;
+
+                        case ZoneRouteShapeMode.NarrowPassage:
+                            // 좁은 중앙 통로
+                            corridorValue = 1f - Mathf.Clamp01(Mathf.Abs(u - 0.5f) / Mathf.Max(0.01f, corridorHalfWidth * 0.5f));
+                            break;
+
+                        case ZoneRouteShapeMode.BranchingPath:
+                            // 중앙 경로 + 측면 분기
+                            float mainPath = 1f - Mathf.Clamp01(Mathf.Abs(u - 0.5f) / Mathf.Max(0.01f, corridorHalfWidth));
+                            float branchPath = 0f;
+                            if (Mathf.Abs(u - 0.2f) < corridorHalfWidth * 0.5f && v > 0.3f && v < 0.7f)
+                            {
+                                branchPath = 1f - Mathf.Abs(u - 0.2f) / Mathf.Max(0.01f, corridorHalfWidth * 0.5f);
+                            }
+                            corridorValue = Mathf.Max(mainPath, branchPath);
+                            break;
+
+                        case ZoneRouteShapeMode.DeadEndClue:
+                            // v 방향으로 갈수록 좁아지는 통로
+                            float deadEndWidth = corridorHalfWidth * (1f - v * 0.5f);
+                            corridorValue = 1f - Mathf.Clamp01(Mathf.Abs(u - 0.5f) / Mathf.Max(0.01f, deadEndWidth));
+                            break;
+
+                        case ZoneRouteShapeMode.BoundaryEdge:
+                            // 경계를 따라 흐르는 통로
+                            float edgeDist = Mathf.Min(u, 1f - u, v, 1f - v);
+                            corridorValue = 1f - Mathf.Clamp01(edgeDist / Mathf.Max(0.01f, corridorHalfWidth));
+                            break;
+
+                        case ZoneRouteShapeMode.HubApproach:
+                            // 중앙으로 접근하는 통로
+                            float hubDist = Mathf.Sqrt((u - 0.5f) * (u - 0.5f) + (v - 0.5f) * (v - 0.5f));
+                            corridorValue = 1f - Mathf.Clamp01(hubDist / Mathf.Max(0.01f, corridorHalfWidth * 1.5f));
+                            break;
+
+                        default:
+                            corridorValue = 0f;
+                            break;
+                    }
+
+                    mask[z, x] = Mathf.Clamp01(corridorValue);
+                }
+            }
+
+            return mask;
+        }
+
+        /// <summary>
+        /// Plan의 terrain profile 값을 기반으로 interior height offset을 계산한다.
+        /// deterministic seed를 사용한 PerlinNoise + plan-specific feature를 결합한다.
+        /// </summary>
+        private static float CalculateInteriorHeightOffset(
+            WorldMapZoneTerrainPlan plan, float u, float v, float localX, float localZ, float halfSize,
+            int zoneSeed, float noiseScale, float noiseStrength, float featureStrength)
+        {
+            float offset = 0f;
+
+            // ===== 1. Base noise (roughness 기반) =====
+            // deterministic offset: zoneSeed를 PerlinNoise 좌표에 더해서 zone마다 다른 패턴 생성
+            float detU = u * 10f + zoneSeed * 0.01f;
+            float detV = v * 10f + zoneSeed * 0.013f;
+
+            float baseNoise = (Mathf.PerlinNoise(detU * noiseScale * 100f, detV * noiseScale * 100f) - 0.5f) * 2f;
+            offset += baseNoise * noiseStrength * plan.roughnessScale;
+
+            // ===== 2. Slope contribution =====
+            // slopeIntensity01이 높을수록 u 방향 경사 추가
+            float slopeOffset = (u - 0.5f) * plan.slopeScale * 15f;
+            offset += slopeOffset * 0.3f;
+
+            // ===== 3. Canyon contribution =====
+            // canyonIntensity01과 canyonWidth01/canyonDepth01 기반 V자형 굴곡
+            float canyonCenter = 0.5f;
+            float canyonHalfWidth = Mathf.Lerp(0.05f, 0.4f, plan.canyonWidth01);
+            float canyonDist = Mathf.Abs(u - canyonCenter) / Mathf.Max(0.01f, canyonHalfWidth);
+            if (canyonDist < 1f)
+            {
+                float canyonShape = -(1f - canyonDist) * plan.canyonDepth01 * 12f * featureStrength;
+                // canyonIntensity01로 강도 조절
+                offset += canyonShape * plan.canyonDepth01;
+            }
+
+            // ===== 4. Cliff contribution =====
+            // cliffIntensity01과 cliffHeight01 기반 급격한 높이 변화
+            float cliffNoise = Mathf.PerlinNoise(u * 15f + zoneSeed * 0.07f, v * 15f + zoneSeed * 0.11f);
+            if (cliffNoise > (1f - plan.cliffHeight01 * 0.5f))
+            {
+                float cliffHeight = (cliffNoise - (1f - plan.cliffHeight01 * 0.5f)) / (plan.cliffHeight01 * 0.5f + 0.01f);
+                offset += cliffHeight * 8f * featureStrength;
+            }
+
+            // ===== 5. SeabedShapeMode-specific detail =====
+            switch (plan.seabedShapeMode)
+            {
+                case ZoneSeabedShapeMode.Flat:
+                case ZoneSeabedShapeMode.FacilityFloor:
+                case ZoneSeabedShapeMode.SparseVoid:
+                    // 평탄: 추가 변형 최소화
+                    offset *= 0.1f;
+                    break;
+
+                case ZoneSeabedShapeMode.GentleSlope:
+                    // 완만한 경사: 부드러운 굴곡
+                    float gentleWave = Mathf.Sin(u * Mathf.PI * 2f + zoneSeed * 0.1f) * 1.5f * plan.roughnessScale;
+                    offset += gentleWave * 0.5f;
+                    break;
+
+                case ZoneSeabedShapeMode.RollingSeabed:
+                    // 구릉: sin/cos 기반 부드러운 굴곡 강화
+                    float roll1 = Mathf.Sin(u * Mathf.PI * 4f + zoneSeed * 0.05f) * 2f * plan.roughnessScale;
+                    float roll2 = Mathf.Cos(v * Mathf.PI * 3.5f + zoneSeed * 0.07f) * 1.5f * plan.roughnessScale;
+                    offset += (roll1 + roll2) * 0.6f;
+                    break;
+
+                case ZoneSeabedShapeMode.DebrisScattered:
+                    // 잔해 산재: 불규칙한 mound/depression 강화
+                    float debrisNoise = Mathf.PerlinNoise(u * 12f + zoneSeed * 0.03f, v * 12f + zoneSeed * 0.05f);
+                    if (debrisNoise > 0.6f)
+                    {
+                        offset += (debrisNoise - 0.6f) * 8f * plan.roughnessScale;
+                    }
+                    else if (debrisNoise < 0.3f)
+                    {
+                        offset -= (0.3f - debrisNoise) * 6f * plan.roughnessScale;
+                    }
+                    break;
+
+                case ZoneSeabedShapeMode.WreckDepression:
+                    // 폐선 함몰: 중앙 depression 강화
+                    float wreckDist = Mathf.Sqrt((u - 0.5f) * (u - 0.5f) + (v - 0.5f) * (v - 0.5f));
+                    float wreckDepression = -Mathf.Exp(-wreckDist * wreckDist * 10f) * 8f * plan.canyonDepth01 * featureStrength;
+                    offset += wreckDepression;
+                    break;
+
+                case ZoneSeabedShapeMode.CanyonCut:
+                    // 협곡 절개: V자형 깊이 변화 강화
+                    float cutDist = Mathf.Abs(u - 0.5f) / Mathf.Max(0.01f, plan.canyonWidth01 * 0.4f + 0.05f);
+                    if (cutDist < 1f)
+                    {
+                        float cutDepth = -(1f - cutDist) * 15f * plan.canyonDepth01 * featureStrength;
+                        offset += cutDepth;
+                    }
+                    break;
+
+                case ZoneSeabedShapeMode.DeepCanyon:
+                    // 깊은 협곡: 더 깊고 좁은 V자형
+                    float deepDist = Mathf.Abs(u - 0.5f) / Mathf.Max(0.01f, plan.canyonWidth01 * 0.25f + 0.05f);
+                    if (deepDist < 1f)
+                    {
+                        float deepDepth = -(1f - deepDist) * 25f * plan.canyonDepth01 * featureStrength;
+                        offset += deepDepth;
+                    }
+                    break;
+
+                case ZoneSeabedShapeMode.CliffDrop:
+                    // 절벽 낙하: 급격한 높이 변화
+                    float cliffEdge = Mathf.Min(u, 1f - u, v, 1f - v);
+                    if (cliffEdge < 0.15f)
+                    {
+                        float cliffRise = (0.15f - cliffEdge) / 0.15f * plan.cliffHeight01 * 15f * featureStrength;
+                        offset += cliffRise;
+                    }
+                    break;
+            }
+
+            // ===== 6. Obstacle-like mound (obstacleDensity01 기반) =====
+            float obstacleNoise = Mathf.PerlinNoise(u * 20f + zoneSeed * 0.09f, v * 20f + zoneSeed * 0.13f);
+            if (obstacleNoise > (1f - plan.obstacleDensity01 * 0.5f))
+            {
+                float moundHeight = (obstacleNoise - (1f - plan.obstacleDensity01 * 0.5f)) / (plan.obstacleDensity01 * 0.5f + 0.01f);
+                offset += moundHeight * 4f * plan.roughnessScale;
+            }
+
+            // ===== 7. Landmark placement weight (높은 곳은 더 높게) =====
+            offset *= (1f + plan.landmarkPlacementWeight01 * 0.3f);
+
+            return offset;
+        }
+
+        /// <summary>
+        /// Phase 14.5 전용 검증 항목을 ValidateZoneTerrainPatches에 추가한다.
+        /// 기존 검증 항목(1~30) 이후에 31~37번으로 추가된다.
+        /// </summary>
+        public static void ValidateInteriorDetail(DeepLightMapAutoBuilderSettingsSO settings, Transform zoneRootsParent, StringBuilder log, ref int passCount, ref int failCount, ref int warnCount)
+        {
+            if (settings == null || zoneRootsParent == null)
+            {
+                Debug.LogError("[ZoneTerrainPatch] Phase 14.5: Cannot validate interior detail - invalid parameters.");
+                return;
+            }
+
+            if (!settings.CreateZoneTerrainPatchInteriorDetail)
+            {
+                log.AppendLine("  [INFO] Phase 14.5 interior detail is disabled. Skipping validation.");
+                passCount++;
+                return;
+            }
+
+            int resolution = Mathf.Max(2, settings.TerrainPatchResolution);
+            int vertexCountPerAxis = resolution + 1;
+            float seamThreshold = MaxPatchNeighborHeightDelta;
+
+            // 31. Interior height range 검사 (plan에 따른 최소 변화량)
+            int heightRangePassCount = 0;
+            int heightRangeCheckCount = 0;
+
+            // 32. Seam edge height delta (기존 threshold 이하)
+            float abMaxDelta = MeasureColumnSeamDelta(zoneRootsParent, 'A', 'B', settings);
+            float bcMaxDelta = MeasureColumnSeamDelta(zoneRootsParent, 'B', 'C', settings);
+            float aRowMaxDelta = MeasureRowSeamDelta(zoneRootsParent, 'A', settings);
+            float bRowMaxDelta = MeasureRowSeamDelta(zoneRootsParent, 'B', settings);
+            float cRowMaxDelta = MeasureRowSeamDelta(zoneRootsParent, 'C', settings);
+
+            // 33. Route corridor height variance 검사
+            int corridorVariancePassCount = 0;
+            int corridorVarianceCheckCount = 0;
+
+            // 34. Mesh vertex normal 유효성 검사
+            int normalValidCount = 0;
+            int normalCheckCount = 0;
+
+            // 35. MeshCollider count
+            int colliderValidCount = 0;
+            int colliderCheckCount = 0;
+
+            for (int colIndex = 0; colIndex < 3; colIndex++)
+            {
+                for (int rowIndex = 0; rowIndex < 10; rowIndex++)
+                {
+                    char columnChar = (char)('A' + colIndex);
+                    int rowNumber = rowIndex + 1;
+                    string zoneIdStr = $"{columnChar}{rowNumber}";
+
+                    WorldMapZoneTerrainPlan plan = settings.ZoneTerrainPlanDatabase?.GetPlan(zoneIdStr);
+                    if (plan == null) continue;
+
+                    Mesh patchMesh = GetPatchMesh(zoneRootsParent, zoneIdStr);
+                    if (patchMesh == null) continue;
+
+                    Vector3[] vertices = patchMesh.vertices;
+                    Vector3[] normals = patchMesh.normals;
+
+                    if (vertices.Length != vertexCountPerAxis * vertexCountPerAxis) continue;
+
+                    // 31. Interior height range 검사
+                    heightRangeCheckCount++;
+                    float minY = float.MaxValue;
+                    float maxY = float.MinValue;
+                    for (int i = 0; i < vertices.Length; i++)
+                    {
+                        if (vertices[i].y < minY) minY = vertices[i].y;
+                        if (vertices[i].y > maxY) maxY = vertices[i].y;
+                    }
+                    float heightRange = maxY - minY;
+
+                    // OpenFlat/SparseVoid/FacilityFloor는 낮은 변화량 허용
+                    bool isFlatType = (plan.seabedShapeMode == ZoneSeabedShapeMode.Flat ||
+                                       plan.seabedShapeMode == ZoneSeabedShapeMode.SparseVoid ||
+                                       plan.seabedShapeMode == ZoneSeabedShapeMode.FacilityFloor);
+                    float minRequiredRange = isFlatType ? 0.5f : 2f;
+
+                    if (heightRange >= minRequiredRange)
+                    {
+                        heightRangePassCount++;
+                    }
+                    else
+                    {
+                        log.AppendLine($"  [WARN] Phase 14.5: {zoneIdStr} interior height range {heightRange:F2}m < {minRequiredRange:F2}m (plan: {plan.seabedShapeMode})");
+                        warnCount++;
+                    }
+
+                    // 33. Route corridor height variance 검사
+                    corridorVarianceCheckCount++;
+                    float[,] corridorMask = BuildRouteCorridorMask(plan, resolution);
+                    float corridorHeightSum = 0f;
+                    float corridorHeightCount = 0f;
+                    float exteriorHeightSum = 0f;
+                    float exteriorHeightCount = 0f;
+
+                    for (int z = 0; z < vertexCountPerAxis; z++)
+                    {
+                        for (int x = 0; x < vertexCountPerAxis; x++)
+                        {
+                            int idx = z * vertexCountPerAxis + x;
+                            float y = vertices[idx].y;
+                            float mask = corridorMask[z, x];
+
+                            if (mask > 0.5f)
+                            {
+                                corridorHeightSum += y;
+                                corridorHeightCount++;
+                            }
+                            else
+                            {
+                                exteriorHeightSum += y;
+                                exteriorHeightCount++;
+                            }
+                        }
+                    }
+
+                    if (corridorHeightCount > 0 && exteriorHeightCount > 0)
+                    {
+                        float corridorAvg = corridorHeightSum / corridorHeightCount;
+                        float exteriorAvg = exteriorHeightSum / exteriorHeightCount;
+
+                        // Corridor variance 계산
+                        float corridorVar = 0f;
+                        float exteriorVar = 0f;
+                        int corridorN = 0;
+                        int exteriorN = 0;
+
+                        for (int z = 0; z < vertexCountPerAxis; z++)
+                        {
+                            for (int x = 0; x < vertexCountPerAxis; x++)
+                            {
+                                int idx = z * vertexCountPerAxis + x;
+                                float y = vertices[idx].y;
+                                float mask = corridorMask[z, x];
+
+                                if (mask > 0.5f)
+                                {
+                                    corridorVar += (y - corridorAvg) * (y - corridorAvg);
+                                    corridorN++;
+                                }
+                                else
+                                {
+                                    exteriorVar += (y - exteriorAvg) * (y - exteriorAvg);
+                                    exteriorN++;
+                                }
+                            }
+                        }
+
+                        corridorVar = corridorN > 0 ? corridorVar / corridorN : 0f;
+                        exteriorVar = exteriorN > 0 ? exteriorVar / exteriorN : 0f;
+
+                        // Corridor variance가 exterior variance보다 낮거나 같은 경향이어야 함
+                        if (corridorVar <= exteriorVar * 1.5f) // 50% margin 허용
+                        {
+                            corridorVariancePassCount++;
+                        }
+                        else
+                        {
+                            log.AppendLine($"  [WARN] Phase 14.5: {zoneIdStr} corridor variance ({corridorVar:F2}) > exterior variance ({exteriorVar:F2}) by more than 50% margin.");
+                            warnCount++;
+                        }
+                    }
+
+                    // 34. Normal 유효성 검사
+                    normalCheckCount++;
+                    bool normalValid = true;
+                    if (normals == null || normals.Length != vertices.Length)
+                    {
+                        normalValid = false;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < normals.Length; i++)
+                        {
+                            if (float.IsNaN(normals[i].x) || float.IsNaN(normals[i].y) || float.IsNaN(normals[i].z) ||
+                                normals[i].magnitude < 0.5f)
+                            {
+                                normalValid = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (normalValid)
+                    {
+                        normalValidCount++;
+                    }
+                    else
+                    {
+                        log.AppendLine($"  [FAIL] Phase 14.5: {zoneIdStr} mesh normals are invalid (NaN or zero magnitude).");
+                        failCount++;
+                    }
+
+                    // 35. MeshCollider 유효성 검사
+                    colliderCheckCount++;
+                    string zoneRootName = $"ZoneRoot_{zoneIdStr}";
+                    Transform zr = zoneRootsParent.Find(zoneRootName);
+                    if (zr != null)
+                    {
+                        Transform geo = zr.Find(GeometryRootName);
+                        if (geo != null)
+                        {
+                            Transform tpRoot = geo.Find(TerrainPatchRootName);
+                            if (tpRoot != null)
+                            {
+                                Transform patchT = tpRoot.Find($"TerrainPatch_{zoneIdStr}");
+                                if (patchT != null)
+                                {
+                                    MeshCollider mc = patchT.GetComponent<MeshCollider>();
+                                    if (mc != null && mc.sharedMesh != null)
+                                    {
+                                        colliderValidCount++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 31. Height range summary
+            if (heightRangeCheckCount > 0 && heightRangePassCount >= heightRangeCheckCount - 2) // 2개까지 WARN 허용
+            {
+                log.AppendLine($"  [PASS] Phase 14.5: Interior height range check: {heightRangePassCount}/{heightRangeCheckCount} passed.");
+                passCount++;
+            }
+            else
+            {
+                log.AppendLine($"  [WARN] Phase 14.5: Interior height range check: {heightRangePassCount}/{heightRangeCheckCount} passed (some flat zones may have low range).");
+                warnCount++;
+            }
+
+            // 32. Seam edge height delta (기존 threshold 이하)
+            if (abMaxDelta <= seamThreshold && bcMaxDelta <= seamThreshold &&
+                aRowMaxDelta <= seamThreshold && bRowMaxDelta <= seamThreshold && cRowMaxDelta <= seamThreshold)
+            {
+                log.AppendLine($"  [PASS] Phase 14.5: All seam deltas <= {seamThreshold:F2}m (A/B:{abMaxDelta:F2}, B/C:{bcMaxDelta:F2}, A-row:{aRowMaxDelta:F2}, B-row:{bRowMaxDelta:F2}, C-row:{cRowMaxDelta:F2})");
+                passCount++;
+            }
+            else
+            {
+                log.AppendLine($"  [WARN] Phase 14.5: Some seam deltas exceed threshold {seamThreshold:F2}m (A/B:{abMaxDelta:F2}, B/C:{bcMaxDelta:F2}, A-row:{aRowMaxDelta:F2}, B-row:{bRowMaxDelta:F2}, C-row:{cRowMaxDelta:F2})");
+                warnCount++;
+            }
+
+            // 33. Corridor variance summary
+            if (corridorVarianceCheckCount > 0 && corridorVariancePassCount >= corridorVarianceCheckCount - 3) // 3개까지 WARN 허용
+            {
+                log.AppendLine($"  [PASS] Phase 14.5: Route corridor variance check: {corridorVariancePassCount}/{corridorVarianceCheckCount} passed.");
+                passCount++;
+            }
+            else
+            {
+                log.AppendLine($"  [WARN] Phase 14.5: Route corridor variance check: {corridorVariancePassCount}/{corridorVarianceCheckCount} passed.");
+                warnCount++;
+            }
+
+            // 34. Normal validity summary
+            if (normalValidCount >= normalCheckCount)
+            {
+                log.AppendLine($"  [PASS] Phase 14.5: All mesh normals valid ({normalValidCount}/{normalCheckCount}).");
+                passCount++;
+            }
+            else
+            {
+                log.AppendLine($"  [FAIL] Phase 14.5: Some mesh normals invalid ({normalValidCount}/{normalCheckCount}).");
+                failCount++;
+            }
+
+            // 35. MeshCollider validity summary
+            if (colliderValidCount >= colliderCheckCount - 2) // 2개까지 WARN 허용
+            {
+                log.AppendLine($"  [PASS] Phase 14.5: MeshCollider valid count: {colliderValidCount}/{colliderCheckCount}.");
+                passCount++;
+            }
+            else
+            {
+                log.AppendLine($"  [WARN] Phase 14.5: MeshCollider valid count: {colliderValidCount}/{colliderCheckCount}.");
+                warnCount++;
+            }
+
+            // 36. Bounds 유효성 검사
+            int boundsValidCount = 0;
+            int boundsCheckCount = 0;
+            for (int colIndex = 0; colIndex < 3; colIndex++)
+            {
+                for (int rowIndex = 0; rowIndex < 10; rowIndex++)
+                {
+                    char columnChar = (char)('A' + colIndex);
+                    int rowNumber = rowIndex + 1;
+                    string zoneIdStr = $"{columnChar}{rowNumber}";
+                    Mesh patchMesh = GetPatchMesh(zoneRootsParent, zoneIdStr);
+                    if (patchMesh == null) continue;
+                    boundsCheckCount++;
+                    if (patchMesh.bounds.size.magnitude > 0.01f && !float.IsNaN(patchMesh.bounds.size.x))
+                    {
+                        boundsValidCount++;
+                    }
+                }
+            }
+            if (boundsValidCount >= boundsCheckCount)
+            {
+                log.AppendLine($"  [PASS] Phase 14.5: All mesh bounds valid ({boundsValidCount}/{boundsCheckCount}).");
+                passCount++;
+            }
+            else
+            {
+                log.AppendLine($"  [WARN] Phase 14.5: Some mesh bounds invalid ({boundsValidCount}/{boundsCheckCount}).");
+                warnCount++;
+            }
+
+            // 37. Seafloor placeholder 30/30 disabled (기존 검증 유지 확인)
+            int placeholderDisabled = 0;
+            int placeholderChecked = 0;
+            for (int col = 0; col < 3; col++)
+            {
+                for (int row = 0; row < 10; row++)
+                {
+                    char colChar = (char)('A' + col);
+                    string zrName = $"ZoneRoot_{colChar}{row + 1}";
+                    Transform zr = zoneRootsParent.Find(zrName);
+                    if (zr == null) continue;
+
+                    bool foundDisabled = false;
+                    bool foundAny = false;
+                    CheckSeafloorPlaceholderRecursive(zr, ref foundAny, ref foundDisabled);
+
+                    if (foundAny)
+                    {
+                        placeholderChecked++;
+                        if (foundDisabled)
+                        {
+                            placeholderDisabled++;
+                        }
+                    }
+                }
+            }
+            if (placeholderChecked == 0)
+            {
+                log.AppendLine("  [WARN] Phase 14.5: No seafloor placeholders found to check.");
+                warnCount++;
+            }
+            else if (placeholderDisabled >= placeholderChecked)
+            {
+                log.AppendLine($"  [PASS] Phase 14.5: Seafloor placeholders disabled: {placeholderDisabled}/{placeholderChecked}");
+                passCount++;
+            }
+            else
+            {
+                log.AppendLine($"  [WARN] Phase 14.5: Seafloor placeholders disabled: {placeholderDisabled}/{placeholderChecked}");
+                warnCount++;
+            }
+        }
+
         /// <summary>
         /// Verbose 로그가 활성화된 경우에만 로그를 출력한다.
         /// </summary>
@@ -1876,3 +2647,4 @@ namespace Project.Editor.AutoTool
         }
     }
 }
+

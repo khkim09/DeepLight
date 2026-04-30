@@ -96,7 +96,8 @@ namespace Project.Editor.AutoTool
         {
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("DeepLight Map Auto Builder", _titleStyle);
-            EditorGUILayout.LabelField("Phase 3~14.4: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("Phase 3~14.7: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
+
 
 
 
@@ -466,7 +467,17 @@ namespace Project.Editor.AutoTool
             EditorGUILayout.LabelField(
                 "20. Phase 14.4: Zone Terrain Plan Mesh Patch Generation - A1~C10 seafloor mesh + collision 생성 + 검증",
                 EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "21. Phase 14.5: Zone Terrain Patch Interior Detail Pass - patch 내부 해저 굴곡 강화 + route corridor 보호 + seam 보호",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "22. Phase 14.6: Zone Content Placeholder Foundation - A1~C10 Content/ResourceSpawns/HazardSpawns/LandmarkSpawns/NarrativeSpawns/RouteMarkers/DebugMarkers 생성 + 검증",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "23. Phase 14.7: Zone Content Marker Metadata Binding + Runtime Query Foundation - WorldMapZoneContentMarker/Registry 부착 + 검증",
+                EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.EndVertical();
+
 
 
 

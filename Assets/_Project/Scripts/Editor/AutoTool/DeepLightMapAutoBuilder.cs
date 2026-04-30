@@ -532,30 +532,51 @@ namespace Project.Editor.AutoTool
                 LogIfVerbose(settings, "[SKIP] createZoneTerrainPlans is false. Skipping Phase 14.3.");
             }
 
-            // 19. Phase 14.4: Zone Terrain Plan Mesh Patch Generation (settings.CreateZoneTerrainPatches이 true일 때만)
+            // 19. Phase 14.4 + 14.5: Zone Terrain Plan Mesh Patch Generation + Interior Detail
+            // (settings.CreateZoneTerrainPatches이 true일 때만)
+            // Phase 14.5 interior detail deformation은 RebuildZoneTerrainPatches 내부에서
+            // base mesh 생성 직후, seam stabilization 이전에 자동 실행됨
             if (settings.CreateZoneTerrainPatches)
             {
-                Debug.Log("[MapAutoBuilder] === Phase 14.4: Rebuilding Zone Terrain Patches ===");
+                Debug.Log("[MapAutoBuilder] === Phase 14.4 + 14.5: Rebuilding Zone Terrain Patches with Interior Detail ===");
                 RebuildZoneTerrainPatches(settings, context);
 
                 if (settings.ValidateZoneTerrainPatchesAfterGenerate)
                 {
-                    Debug.Log("[MapAutoBuilder] === Phase 14.4: Validating Zone Terrain Patches ===");
+                    Debug.Log("[MapAutoBuilder] === Phase 14.4 + 14.5: Validating Zone Terrain Patches ===");
                     ValidateZoneTerrainPatches(settings, context);
                 }
             }
             else
             {
-                LogIfVerbose(settings, "[SKIP] createZoneTerrainPatches is false. Skipping Phase 14.4.");
+                LogIfVerbose(settings, "[SKIP] createZoneTerrainPatches is false. Skipping Phase 14.4/14.5.");
             }
 
-            // 20. 생성 완료 후 Selection 설정
+            // 20. Phase 14.6 + 14.7: Zone Content Placeholder Foundation + Metadata Binding (settings.CreateZoneContentPlaceholders이 true일 때만)
+            if (settings.CreateZoneContentPlaceholders)
+            {
+                Debug.Log("[MapAutoBuilder] === Phase 14.6 + 14.7: Rebuilding Zone Content Placeholders with Metadata Binding ===");
+                RebuildZoneContentPlaceholders(settings, context);
+
+                if (settings.ValidateZoneContentPlaceholdersAfterGenerate)
+                {
+                    Debug.Log("[MapAutoBuilder] === Phase 14.6 + 14.7: Validating Zone Content Placeholders + Metadata ===");
+                    ValidateZoneContentPlaceholders(settings, context);
+                }
+            }
+            else
+            {
+                LogIfVerbose(settings, "[SKIP] createZoneContentPlaceholders is false. Skipping Phase 14.6/14.7.");
+            }
+
+            // 21. 생성 완료 후 Selection 설정
             Selection.activeGameObject = generatedRoot;
             EditorGUIUtility.PingObject(generatedRoot);
 
-            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.4) COMPLETE =====");
+            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.7) COMPLETE =====");
 
         }
+
 
         /// <summary>
         /// ZoneRoot_A1~J10만 다시 생성한다.
@@ -1325,13 +1346,48 @@ namespace Project.Editor.AutoTool
             DeepLightMapZoneTerrainPatchUtility.ValidateZoneTerrainPatches(settings, context);
         }
 
+        // ======================================================================
+        //  Phase 14.6 + 14.7: Zone Content Placeholder Foundation + Metadata Binding
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.6 + 14.7: Zone Content Placeholders를 재구축하고 metadata를 부착한다.
+        /// A1~C10 각 ZoneRoot 하위에 Content/ResourceSpawns/HazardSpawns/LandmarkSpawns/NarrativeSpawns/RouteMarkers/DebugMarkers 구조를 생성한다.
+        /// Phase 14.7: WorldMapZoneContentMarker metadata component를 각 marker root에 부착하고,
+        /// WorldMapZoneContentRegistry를 GeneratedWorldRoot에 추가한다.
+        /// DeepLightMapZoneContentPlaceholderUtility에 위임한다.
+        /// </summary>
+        public static void RebuildZoneContentPlaceholders(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild zone content placeholders.");
+                return;
+            }
+
+            DeepLightMapZoneContentPlaceholderUtility.RebuildZoneContentPlaceholders(settings, context);
+        }
+
+        /// <summary>
+        /// Phase 14.6 + 14.7: Zone Content Placeholders + Metadata의 유효성을 검사한다.
+        /// 기존 22개 항목 + Phase 14.7 17개 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN]을 출력한다.
+        /// DeepLightMapZoneContentPlaceholderUtility에 위임한다.
+        /// </summary>
+        public static void ValidateZoneContentPlaceholders(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate zone content placeholders.");
+                return;
+            }
+
+            DeepLightMapZoneContentPlaceholderUtility.ValidateZoneContentPlaceholders(settings, context);
+        }
+
         /// <summary>
         /// logVerbose가 true일 때만 로그를 출력한다
         /// </summary>
-
         private static void LogIfVerbose(DeepLightMapAutoBuilderSettingsSO settings, string message)
-
-
         {
             if (settings != null && settings.LogVerbose)
             {
@@ -1340,3 +1396,4 @@ namespace Project.Editor.AutoTool
         }
     }
 }
+
