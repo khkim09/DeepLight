@@ -47,8 +47,10 @@ namespace Project.Editor.AutoTool
 
         // ===== Phase 13.1: Decorative child 분류 키워드 (base terrain 내부 child 탐색용) =====
         // tree/trees 계열 billboard/vegetation child를 base terrain에서 분리하기 위한 키워드
+        // backgroundtrees는 별도로 명시하여 backgroundterrain보다 우선 매치되도록 함
         private static readonly string[] DecorativeChildKeywords = new string[]
         {
+            "backgroundtrees",
             "tree",
             "trees",
             "vegetation",
@@ -261,30 +263,30 @@ namespace Project.Editor.AutoTool
                 }
             }
 
-            // 11. 선택되지 않은 base 후보는 DisabledCandidates로 이동
+            // 11. 선택되지 않은 base 후보는 DisabledCandidates로 이동 (통합 비활성화 적용)
             foreach (GameObject candidate in baseCandidates)
             {
                 if (!selectedForTerrain.Contains(candidate))
                 {
                     MoveCloneToRoot(candidate, disabledRoot, settings);
-                    SetCloneInactive(candidate, settings);
+                    DisableCandidateObject(candidate);
                     LogLayoutVerbose(settings, $"  [DISABLED-BASE] {candidate.name} -> {disabledRoot.name} (not selected)");
                 }
             }
 
-            // 12. Decorative 후보를 DecorativeCandidates root로 이동
+            // 12. Decorative 후보를 DecorativeCandidates root로 이동 (통합 비활성화 적용)
             foreach (GameObject decorative in decorativeCandidates)
             {
                 MoveCloneToRoot(decorative, decorativeRoot, settings);
-                DisableRenderer(decorative, settings);
+                DisableCandidateObject(decorative);
                 LogLayoutVerbose(settings, $"  [DECORATIVE] {decorative.name} -> {decorativeRoot.name}");
             }
 
-            // 13. Disabled 후보를 DisabledCandidates root로 이동
+            // 13. Disabled 후보를 DisabledCandidates root로 이동 (통합 비활성화 적용)
             foreach (GameObject disabled in disabledCandidates)
             {
                 MoveCloneToRoot(disabled, disabledRoot, settings);
-                SetCloneInactive(disabled, settings);
+                DisableCandidateObject(disabled);
                 LogLayoutVerbose(settings, $"  [DISABLED] {disabled.name} -> {disabledRoot.name}");
             }
 
@@ -306,11 +308,21 @@ namespace Project.Editor.AutoTool
             int extractedCount = CleanupFinalTerrainChildren(settings, generatedRoot, terrainRoot, decorativeRoot, disabledRoot);
             Debug.Log($"[MapAutoBuilder] Phase 13.1: Extracted {extractedCount} decorative children from final terrain.");
 
-            // 16. 완료 로그
+            // 16. Phase 13.2: SW3 terrain source material binding
+            Debug.Log("[MapAutoBuilder] === Phase 13.2: Applying SW3 terrain source materials ===");
+            int materialAssignedCount = ApplySw3TerrainSourceMaterials(generatedRoot);
+            Debug.Log($"[MapAutoBuilder] Phase 13.2: Assigned materials to {materialAssignedCount} renderer(s).");
+
+            // 17. Phase 13.2: Underwater collision policy
+            Debug.Log("[MapAutoBuilder] === Phase 13.2: Applying terrain collision policy ===");
+            ApplyTerrainCollisionPolicy(generatedRoot);
+
+            // 18. 완료 로그
             Debug.Log($"[MapAutoBuilder] Phase 13: Terrain Source Layout complete. " +
                 $"Base terrain: {selectedForTerrain.Count}, " +
                 $"Decorative: {decorativeCandidates.Count}, " +
                 $"Disabled: {disabledCandidates.Count + (baseCandidates.Count - selectedForTerrain.Count)}");
+
 
             // Selection 설정
             Selection.activeGameObject = terrainRoot;
@@ -320,6 +332,8 @@ namespace Project.Editor.AutoTool
         /// <summary>
         /// Phase 13: Terrain Source Layout의 유효성을 검사한다.
         /// Non-destructive 검증만 수행하며, 실제 렌더링 상태를 변경하지 않는다.
+        /// Phase 13.1 검증 항목 포함: Terrain root 내 decorative child 없음,
+        /// DecorativeCandidates/DisabledCandidates 하위 Renderer/Collider disabled 확인.
         /// </summary>
         public static void ValidateTerrainSourceLayout(
             DeepLightMapAutoBuilderSettingsSO settings,
@@ -348,14 +362,14 @@ namespace Project.Editor.AutoTool
                 return;
             }
 
-            // 2. TerrainSource root exists
+            // 2. TerrainSource root exists (비어 있어도 허용, 없으면 WARN)
             string sourceRootName = settings.TerrainSourceStagingRootName;
             Transform sourceRootTransform = generatedRoot.transform.Find(sourceRootName);
             if (sourceRootTransform == null)
             {
                 sourceRootTransform = generatedRoot.transform.Find(settings.TerrainSourceRootName);
             }
-            results.Add(new ValidationResult("TerrainSource root exists", sourceRootTransform != null));
+            results.Add(new ValidationResult("TerrainSource root exists", sourceRootTransform != null, isWarning: sourceRootTransform == null));
 
             // 3. Terrain root exists
             string terrainRootName = settings.TerrainLayoutRootName;
@@ -589,12 +603,21 @@ namespace Project.Editor.AutoTool
             results.Add(new ValidationResult("TerrainDecorativeCandidates all Renderer disabled or GameObject inactive",
                 decorativeAllInactive));
 
-            // 24. TerrainDisabledCandidates root exists
+            // 24. TerrainDecorativeCandidates 하위 모든 Collider disabled 또는 GameObject inactive
+            bool decorativeAllCollidersDisabled = true;
+            if (decorativeRootTransform2 != null)
+            {
+                decorativeAllCollidersDisabled = CheckAllCollidersDisabledOrInactive(decorativeRootTransform2);
+            }
+            results.Add(new ValidationResult("TerrainDecorativeCandidates all Collider disabled or GameObject inactive",
+                decorativeAllCollidersDisabled));
+
+            // 25. TerrainDisabledCandidates root exists
             Transform disabledRootTransform2 = generatedRoot.transform.Find(disabledRootName);
             bool disabledRootExists = disabledRootTransform2 != null;
             results.Add(new ValidationResult("TerrainDisabledCandidates root exists", disabledRootExists));
 
-            // 25. TerrainDisabledCandidates 하위 모든 Renderer disabled 또는 GameObject inactive
+            // 26. TerrainDisabledCandidates 하위 모든 Renderer disabled 또는 GameObject inactive
             bool disabledAllInactive = true;
             if (disabledRootTransform2 != null)
             {
@@ -603,7 +626,102 @@ namespace Project.Editor.AutoTool
             results.Add(new ValidationResult("TerrainDisabledCandidates all Renderer disabled or GameObject inactive",
                 disabledAllInactive));
 
+            // 27. TerrainDisabledCandidates 하위 모든 Collider disabled 또는 GameObject inactive
+            bool disabledAllCollidersDisabled = true;
+            if (disabledRootTransform2 != null)
+            {
+                disabledAllCollidersDisabled = CheckAllCollidersDisabledOrInactive(disabledRootTransform2);
+            }
+            results.Add(new ValidationResult("TerrainDisabledCandidates all Collider disabled or GameObject inactive",
+                disabledAllCollidersDisabled));
+
+            // ===== Phase 13.2: SW3 Material Binding + Collision Policy Validation =====
+
+            // 28. Terrain root 하위 SW3_BackgroundTerrain 계열 Renderer가 SW3_BackdropTerrain material 사용
+            bool terrainBaseMatOk = true;
+            if (terrainRootTransform != null)
+            {
+                terrainBaseMatOk = CheckTerrainBaseMaterials(terrainRootTransform);
+            }
+            results.Add(new ValidationResult("Terrain base renderers use SW3_BackdropTerrain material",
+                terrainBaseMatOk, isWarning: !terrainBaseMatOk));
+
+            // 29. Terrain root 하위 BackgroundTrees/tree/billboard 계열 Renderer가 SW3_BackdropTerrain_FagaceaeBillboard material 사용
+            bool treeBillboardMatOk = true;
+            if (terrainRootTransform != null)
+            {
+                treeBillboardMatOk = CheckTreeBillboardMaterials(terrainRootTransform);
+            }
+            results.Add(new ValidationResult("Tree/billboard renderers use SW3_BackdropTerrain_FagaceaeBillboard material",
+                treeBillboardMatOk, isWarning: !treeBillboardMatOk));
+
+            // 30. BackgroundTrees/tree/billboard 계열에 enabled Collider가 없어야 함
+            bool noEnabledColliderOnDecorative = true;
+            if (terrainRootTransform != null)
+            {
+                noEnabledColliderOnDecorative = CheckNoEnabledColliderOnDecorative(terrainRootTransform);
+            }
+            results.Add(new ValidationResult("No enabled Collider on decorative objects (tree/billboard/vegetation/grass)",
+                noEnabledColliderOnDecorative));
+
+            // 31. Base terrain에 MeshCollider가 최소 1개 있어야 함
+            bool hasMeshCollider = false;
+            if (terrainRootTransform != null)
+            {
+                hasMeshCollider = CheckHasMeshColliderOnBaseTerrain(terrainRootTransform);
+            }
+            results.Add(new ValidationResult("Base terrain has at least 1 MeshCollider for underwater collision",
+                hasMeshCollider));
+
+            // 32. Terrain root 하위 MeshCollider 개수 검사 (1: PASS, 2~9: WARN, 10+: FAIL)
+            int meshColliderCount = 0;
+            if (terrainRootTransform != null)
+            {
+                meshColliderCount = CountMeshColliders(terrainRootTransform);
+            }
+            if (meshColliderCount == 0)
+            {
+                results.Add(new ValidationResult("Terrain root MeshCollider count (0 = FAIL)", false));
+            }
+            else if (meshColliderCount >= 10)
+            {
+                results.Add(new ValidationResult($"Terrain root MeshCollider count ({meshColliderCount} >= 10 = FAIL)", false));
+            }
+            else if (meshColliderCount >= 2)
+            {
+                results.Add(new ValidationResult($"Terrain root MeshCollider count ({meshColliderCount} = WARN)", true, isWarning: true));
+            }
+            else
+            {
+                results.Add(new ValidationResult($"Terrain root MeshCollider count ({meshColliderCount} = PASS)", true));
+            }
+
+            // 33. Terrain root 하위 Rigidbody가 없어야 함
+            bool noRigidbody = true;
+            if (terrainRootTransform != null)
+            {
+                noRigidbody = CheckNoRigidbodyInTerrain(terrainRootTransform);
+            }
+            results.Add(new ValidationResult("No Rigidbody in Terrain root", noRigidbody));
+
+            // 34. Terrain root 하위 missing material count == 0
+            int missingMatCount = 0;
+            if (terrainRootTransform != null)
+            {
+                missingMatCount = CountMissingMaterialsInTerrain(terrainRootTransform);
+            }
+            results.Add(new ValidationResult("Terrain root missing material count == 0", missingMatCount == 0));
+
+            // 35. Terrain root 하위 pink material risk count == 0
+            int pinkMatCount = 0;
+            if (terrainRootTransform != null)
+            {
+                pinkMatCount = CountPinkMaterialRiskInTerrain(terrainRootTransform);
+            }
+            results.Add(new ValidationResult("Terrain root pink material risk count == 0", pinkMatCount == 0));
+
             // 결과 집계
+
             int passed = 0;
             int failed = 0;
             int warned = 0;
@@ -770,6 +888,32 @@ namespace Project.Editor.AutoTool
             {
                 r.enabled = false;
             }
+        }
+
+        /// <summary>
+        /// Phase 13.1: 후보 오브젝트에 대해 Renderer/Collider 비활성화 + GameObject inactive를 통합 적용한다.
+        /// DecorativeCandidates와 DisabledCandidates 하위 후보들은 아직 배치 전이므로 Scene/Game View에 보이면 안 된다.
+        /// </summary>
+        private static void DisableCandidateObject(GameObject target)
+        {
+            if (target == null) return;
+
+            // 모든 Renderer 비활성화
+            Renderer[] renderers = target.GetComponentsInChildren<Renderer>(true);
+            foreach (Renderer r in renderers)
+            {
+                r.enabled = false;
+            }
+
+            // 모든 Collider 비활성화
+            Collider[] colliders = target.GetComponentsInChildren<Collider>(true);
+            foreach (Collider c in colliders)
+            {
+                c.enabled = false;
+            }
+
+            // GameObject 자체 비활성화
+            target.SetActive(false);
         }
 
         // ======================================================================
@@ -979,6 +1123,44 @@ namespace Project.Editor.AutoTool
         }
 
         /// <summary>
+        /// 모든 Seafloor placeholder의 Collider가 비활성화되었는지 확인한다.
+        /// </summary>
+        private static bool CheckSeafloorCollidersDisabled(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            GameObject generatedRoot)
+        {
+            if (settings.WorldMapConfig == null || generatedRoot == null) return true;
+
+            Transform zoneRootsTransform = generatedRoot.transform.Find(settings.ZoneRootParentName);
+            if (zoneRootsTransform == null) return true;
+
+            foreach (Transform zoneRoot in zoneRootsTransform)
+            {
+                if (!zoneRoot.name.StartsWith("ZoneRoot_")) continue;
+
+                Transform envTransform = zoneRoot.Find("Environment");
+                if (envTransform == null) continue;
+
+                Transform seafloorRoot = envTransform.Find("Seafloor");
+                if (seafloorRoot == null) continue;
+
+                foreach (Transform child in seafloorRoot)
+                {
+                    if (child.name.Contains("Seafloor") && child.name.Contains("PLACEHOLDER"))
+                    {
+                        Collider collider = child.GetComponent<Collider>();
+                        if (collider != null && collider.enabled)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Phase 13.1: Terrain root 내부에 DecorativeChildKeywords 계열 active Renderer가 있는지 확인한다.
         /// </summary>
         private static bool CheckNoDecorativeActiveRendererInTerrain(Transform terrainRoot)
@@ -1034,37 +1216,18 @@ namespace Project.Editor.AutoTool
         }
 
         /// <summary>
-        /// 모든 Seafloor placeholder의 Collider가 비활성화되었는지 확인한다.
+        /// Phase 13.1: Transform 하위의 모든 Collider가 disabled이거나 GameObject가 inactive인지 확인한다.
         /// </summary>
-        private static bool CheckSeafloorCollidersDisabled(
-            DeepLightMapAutoBuilderSettingsSO settings,
-            GameObject generatedRoot)
+        private static bool CheckAllCollidersDisabledOrInactive(Transform root)
         {
-            if (settings.WorldMapConfig == null || generatedRoot == null) return true;
+            if (root == null) return true;
 
-            Transform zoneRootsTransform = generatedRoot.transform.Find(settings.ZoneRootParentName);
-            if (zoneRootsTransform == null) return true;
-
-            foreach (Transform zoneRoot in zoneRootsTransform)
+            Collider[] colliders = root.GetComponentsInChildren<Collider>(true);
+            foreach (Collider c in colliders)
             {
-                if (!zoneRoot.name.StartsWith("ZoneRoot_")) continue;
-
-                Transform envTransform = zoneRoot.Find("Environment");
-                if (envTransform == null) continue;
-
-                Transform seafloorRoot = envTransform.Find("Seafloor");
-                if (seafloorRoot == null) continue;
-
-                foreach (Transform child in seafloorRoot)
+                if (c.enabled && c.gameObject.activeInHierarchy)
                 {
-                    if (child.name.Contains("Seafloor") && child.name.Contains("PLACEHOLDER"))
-                    {
-                        Collider collider = child.GetComponent<Collider>();
-                        if (collider != null && collider.enabled)
-                        {
-                            return false;
-                        }
-                    }
+                    return false;
                 }
             }
 
@@ -1147,29 +1310,72 @@ namespace Project.Editor.AutoTool
             int decorativeCount = 0;
             int disabledCount = 0;
 
+            // 검사한 base terrain clone 개수
+            int baseTerrainCloneCount = 0;
+
             // Terrain root 하위의 모든 _GeneratedClone을 대상으로 재귀 탐색
             foreach (Transform baseTerrain in terrainRoot.transform)
             {
                 if (!baseTerrain.name.EndsWith("_GeneratedClone")) continue;
+                baseTerrainCloneCount++;
 
                 // base terrain 자신은 분리하지 않고, 내부 child만 탐색
-                var extracted = ExtractDecorativeChildrenFromFinalTerrain(
+                var result = ExtractDecorativeChildrenFromFinalTerrain(
                     baseTerrain.gameObject, decorativeRoot, disabledRoot, settings);
 
-                totalExtracted += extracted.decorativeCount + extracted.disabledCount;
-                decorativeCount += extracted.decorativeCount;
-                disabledCount += extracted.disabledCount;
+                totalExtracted += result.decorativeCount + result.disabledCount;
+                decorativeCount += result.decorativeCount;
+                disabledCount += result.disabledCount;
             }
 
+            // 항상 로그 출력 (verbose 무관)
+            Debug.Log($"[MapAutoBuilder] Phase 13.1: Inspected {baseTerrainCloneCount} base terrain clone(s). " +
+                $"Extracted {totalExtracted} decorative children (Decorative: {decorativeCount}, Disabled: {disabledCount}).");
+
+            // 추출된 대표 오브젝트 경로 최대 10개 출력
             if (totalExtracted > 0)
             {
-                Debug.Log($"[MapAutoBuilder] Phase 13.1: Extracted {totalExtracted} decorative children from final terrain. " +
-                    $"(Decorative: {decorativeCount}, Disabled: {disabledCount})");
+                var samplePaths = new List<string>();
+                foreach (Transform baseTerrain in terrainRoot.transform)
+                {
+                    if (!baseTerrain.name.EndsWith("_GeneratedClone")) continue;
+                    Transform[] allChildren = baseTerrain.GetComponentsInChildren<Transform>(true);
+                    foreach (Transform child in allChildren)
+                    {
+                        if (child == baseTerrain) continue;
+                        // decorativeRoot 또는 disabledRoot 하위로 이동되었는지 확인
+                        if (child.parent == decorativeRoot.transform || child.parent == disabledRoot.transform)
+                        {
+                            samplePaths.Add($"{child.parent.name}/{child.name}");
+                            if (samplePaths.Count >= 10) break;
+                        }
+                    }
+                    if (samplePaths.Count >= 10) break;
+                }
+
+                if (samplePaths.Count > 0)
+                {
+                    Debug.Log("[MapAutoBuilder] Phase 13.1: Extracted objects (sample):");
+                    foreach (string path in samplePaths)
+                    {
+                        Debug.Log($"  - {path}");
+                    }
+                }
             }
-            else
+
+            // DecorativeCandidates/DisabledCandidates 하위 후보 개수 로그
+            int decorativeCandidateCount = 0;
+            foreach (Transform child in decorativeRoot.transform)
             {
-                LogLayoutVerbose(settings, "[INFO] No decorative children found in final terrain.");
+                decorativeCandidateCount++;
             }
+            int disabledCandidateCount = 0;
+            foreach (Transform child in disabledRoot.transform)
+            {
+                disabledCandidateCount++;
+            }
+            Debug.Log($"[MapAutoBuilder] Phase 13.1: TerrainDecorativeCandidates has {decorativeCandidateCount} candidate(s). " +
+                $"TerrainDisabledCandidates has {disabledCandidateCount} candidate(s).");
 
             return totalExtracted;
         }
@@ -1193,8 +1399,7 @@ namespace Project.Editor.AutoTool
             // 재귀적으로 모든 child Transform 수집 (root 자신 제외)
             Transform[] allChildren = baseTerrainClone.GetComponentsInChildren<Transform>(true);
 
-            // root 자신은 제외하고, leaf에 가까운 순서로 처리하기 위해 역순 정렬
-            // (자식이 먼저 분리되어야 부모 참조가 깨지지 않음)
+            // root 자신은 제외
             var childrenToProcess = new List<Transform>();
             foreach (Transform child in allChildren)
             {
@@ -1203,13 +1408,20 @@ namespace Project.Editor.AutoTool
             }
 
             // 깊이 우선으로 처리하기 위해 depth 기준 내림차순 정렬
+            // (깊은 child부터 처리하면 부모가 분리될 때 child가 중복 처리되지 않음)
             childrenToProcess.Sort((a, b) => GetDepth(b).CompareTo(GetDepth(a)));
+
+            // 이미 decorative parent 하위에 포함된 Transform을 추적하여 중복 이동 방지
+            var alreadyMovedParents = new HashSet<Transform>();
 
             foreach (Transform child in childrenToProcess)
             {
                 // 이미 분리되었거나 부모가 baseTerrainClone 체인이 아니면 스킵
                 if (child == null || child.parent == null) continue;
                 if (!IsChildOfTransform(child, baseTerrainClone.transform)) continue;
+
+                // 이미 decorative parent 하위에 포함된 child는 중복 이동하지 않음
+                if (IsChildOfAnyMovedParent(child, alreadyMovedParents)) continue;
 
                 string lowerName = child.name.ToLowerInvariant();
 
@@ -1233,9 +1445,10 @@ namespace Project.Editor.AutoTool
                     child.localScale = worldScale;
 
                     // Renderer/Collider 비활성화 + GameObject inactive
-                    DisableRenderer(child.gameObject, settings);
-                    DisableCollider(child.gameObject);
-                    child.gameObject.SetActive(false);
+                    DisableCandidateObject(child.gameObject);
+
+                    // 이 parent가 이동되었음을 기록 (하위 child 중복 방지)
+                    alreadyMovedParents.Add(child);
 
                     decorativeCount++;
                     LogLayoutVerbose(settings, $"  [EXTRACT-DECORATIVE] {child.name} -> {decorativeRoot.name}");
@@ -1252,9 +1465,10 @@ namespace Project.Editor.AutoTool
                     child.localScale = worldScale;
 
                     // Renderer/Collider 비활성화 + GameObject inactive
-                    DisableRenderer(child.gameObject, settings);
-                    DisableCollider(child.gameObject);
-                    child.gameObject.SetActive(false);
+                    DisableCandidateObject(child.gameObject);
+
+                    // 이 parent가 이동되었음을 기록 (하위 child 중복 방지)
+                    alreadyMovedParents.Add(child);
 
                     disabledCount++;
                     LogLayoutVerbose(settings, $"  [EXTRACT-DISABLED] {child.name} -> {disabledRoot.name}");
@@ -1265,15 +1479,20 @@ namespace Project.Editor.AutoTool
         }
 
         /// <summary>
-        /// GameObject의 모든 Collider를 비활성화한다.
+        /// Phase 13.1: Transform이 이미 이동된 parent 하위에 포함되어 있는지 확인한다.
         /// </summary>
-        private static void DisableCollider(GameObject target)
+        private static bool IsChildOfAnyMovedParent(Transform target, HashSet<Transform> movedParents)
         {
-            Collider[] colliders = target.GetComponents<Collider>();
-            foreach (Collider c in colliders)
+            Transform current = target.parent;
+            while (current != null)
             {
-                c.enabled = false;
+                if (movedParents.Contains(current))
+                {
+                    return true;
+                }
+                current = current.parent;
             }
+            return false;
         }
 
         /// <summary>
@@ -1307,13 +1526,460 @@ namespace Project.Editor.AutoTool
 
         /// <summary>
         /// settings.LogTerrainLayoutVerbose가 true일 때만 로그를 출력한다.
+        /// settings가 null이면 항상 출력한다.
         /// </summary>
         private static void LogLayoutVerbose(DeepLightMapAutoBuilderSettingsSO settings, string message)
         {
-            if (settings.LogTerrainLayoutVerbose)
+            if (settings == null || settings.LogTerrainLayoutVerbose)
             {
                 Debug.Log(message);
             }
         }
+
+
+        // ======================================================================
+        //  Phase 13.2: SW3 Terrain Source Material Binding + Collision Policy
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 13.2: 이름 기반으로 material을 AssetDatabase에서 검색한다.
+        /// 정확히 일치하는 material이 없으면 null을 반환한다.
+        /// </summary>
+        private static Material FindMaterialByExactName(string materialName)
+        {
+            string[] guids = AssetDatabase.FindAssets($"{materialName} t:Material");
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                Material mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+                if (mat != null && mat.name == materialName)
+                {
+                    Debug.Log($"[MapAutoBuilder] Phase 13.2: Found material '{materialName}' at: {path}");
+                    return mat;
+                }
+            }
+
+            Debug.LogWarning($"[MapAutoBuilder] [WARN] Phase 13.2: Material '{materialName}' not found in AssetDatabase.");
+            return null;
+        }
+
+        /// <summary>
+        /// Phase 13.2: GeneratedWorldRoot/Terrain 하위 모든 Renderer를 검사하여
+        /// SW3_BackdropTerrain 또는 SW3_BackdropTerrain_FagaceaeBillboard material을 자동 할당한다.
+        /// 원본 material asset의 property는 수정하지 않는다.
+        /// 할당된 renderer 수를 반환한다.
+        /// </summary>
+        private static int ApplySw3TerrainSourceMaterials(GameObject generatedRoot)
+        {
+            if (generatedRoot == null) return 0;
+
+            Transform terrainRoot = generatedRoot.transform.Find("Terrain");
+            if (terrainRoot == null)
+            {
+                Debug.LogWarning("[MapAutoBuilder] [WARN] Phase 13.2: Terrain root not found under GeneratedWorldRoot.");
+                return 0;
+            }
+
+            // Material 검색
+            Material backdropTerrainMat = FindMaterialByExactName("SW3_BackdropTerrain");
+            Material billboardMat = FindMaterialByExactName("SW3_BackdropTerrain_FagaceaeBillboard");
+
+            int terrainMatCount = 0;
+            int billboardMatCount = 0;
+
+            // Terrain root 하위 모든 Renderer 검색
+            Renderer[] allRenderers = terrainRoot.GetComponentsInChildren<Renderer>(true);
+            foreach (Renderer renderer in allRenderers)
+            {
+                if (renderer == null) continue;
+
+                string lowerName = renderer.gameObject.name.ToLowerInvariant();
+                string lowerParentName = renderer.transform.parent != null
+                    ? renderer.transform.parent.name.ToLowerInvariant()
+                    : "";
+
+                // tree/billboard 계열 우선 검사
+                bool isTreeOrBillboard = lowerName.Contains("backgroundtrees") ||
+                    lowerName.Contains("tree") ||
+                    lowerName.Contains("trees") ||
+                    lowerName.Contains("billboard") ||
+                    lowerName.Contains("fagaceae") ||
+                    lowerParentName.Contains("backgroundtrees") ||
+                    lowerParentName.Contains("tree") ||
+                    lowerParentName.Contains("trees") ||
+                    lowerParentName.Contains("billboard") ||
+                    lowerParentName.Contains("fagaceae");
+
+                if (isTreeOrBillboard)
+                {
+                    if (billboardMat != null)
+                    {
+                        renderer.sharedMaterial = billboardMat;
+                        billboardMatCount++;
+                        LogLayoutVerbose(null, $"  [MAT-BILLBOARD] {renderer.gameObject.name} -> {billboardMat.name}");
+                    }
+                    continue;
+                }
+
+                // terrain 계열 검사 (tree/billboard가 아닌 경우)
+                bool isTerrain = lowerName.Contains("sw3_backgroundterrain") ||
+                    lowerName.Contains("backgroundterrain") ||
+                    lowerName.Contains("backdropterrain") ||
+                    lowerName.Contains("terrain") ||
+                    lowerParentName.Contains("sw3_backgroundterrain") ||
+                    lowerParentName.Contains("backgroundterrain") ||
+                    lowerParentName.Contains("backdropterrain") ||
+                    lowerParentName.Contains("terrain");
+
+                if (isTerrain)
+                {
+                    if (backdropTerrainMat != null)
+                    {
+                        renderer.sharedMaterial = backdropTerrainMat;
+                        terrainMatCount++;
+                        LogLayoutVerbose(null, $"  [MAT-TERRAIN] {renderer.gameObject.name} -> {backdropTerrainMat.name}");
+                    }
+                    continue;
+                }
+            }
+
+            Debug.Log($"[MapAutoBuilder] Phase 13.2: SW3 material binding complete. " +
+                $"Terrain material assigned: {terrainMatCount}, " +
+                $"Tree/Billboard material assigned: {billboardMatCount}.");
+
+            return terrainMatCount + billboardMatCount;
+        }
+
+        /// <summary>
+        /// Phase 13.2: Terrain root 하위의 Collider 정책을 적용한다.
+        /// BackgroundTrees/tree/billboard/vegetation/grass 계열 Collider는 비활성화하고,
+        /// base terrain mesh에는 잠수정 충돌용 MeshCollider 1개를 유지/생성한다.
+        /// </summary>
+        private static void ApplyTerrainCollisionPolicy(GameObject generatedRoot)
+        {
+            if (generatedRoot == null) return;
+
+            Transform terrainRoot = generatedRoot.transform.Find("Terrain");
+            if (terrainRoot == null) return;
+
+            int disabledColliderCount = 0;
+            int meshColliderCount = 0;
+            GameObject baseTerrainMeshObject = null;
+
+            // Terrain root 하위 모든 Collider 검사
+            Collider[] allColliders = terrainRoot.GetComponentsInChildren<Collider>(true);
+            foreach (Collider collider in allColliders)
+            {
+                if (collider == null) continue;
+
+                string lowerName = collider.gameObject.name.ToLowerInvariant();
+                string lowerParentName = collider.transform.parent != null
+                    ? collider.transform.parent.name.ToLowerInvariant()
+                    : "";
+
+                // BackgroundTrees/tree/billboard/vegetation/grass 계열 Collider 비활성화
+                bool isDecorative = lowerName.Contains("backgroundtrees") ||
+                    lowerName.Contains("tree") ||
+                    lowerName.Contains("trees") ||
+                    lowerName.Contains("billboard") ||
+                    lowerName.Contains("vegetation") ||
+                    lowerName.Contains("grass") ||
+                    lowerName.Contains("coral") ||
+                    lowerName.Contains("kelp") ||
+                    lowerName.Contains("particle") ||
+                    lowerName.Contains("random") ||
+                    lowerParentName.Contains("backgroundtrees") ||
+                    lowerParentName.Contains("tree") ||
+                    lowerParentName.Contains("trees") ||
+                    lowerParentName.Contains("billboard") ||
+                    lowerParentName.Contains("vegetation") ||
+                    lowerParentName.Contains("grass") ||
+                    lowerParentName.Contains("coral") ||
+                    lowerParentName.Contains("kelp") ||
+                    lowerParentName.Contains("particle") ||
+                    lowerParentName.Contains("random");
+
+                if (isDecorative)
+                {
+                    if (collider.enabled)
+                    {
+                        collider.enabled = false;
+                        disabledColliderCount++;
+                        LogLayoutVerbose(null, $"  [COLLIDER-DISABLE] {collider.gameObject.name}");
+                    }
+                    continue;
+                }
+
+                // base terrain mesh로 판단되는 MeshCollider 카운트
+                bool isBaseTerrain = lowerName.Contains("sw3_backgroundterrain") ||
+                    lowerName.Contains("backgroundterrain") ||
+                    lowerName.Contains("backdropterrain") ||
+                    lowerName.Contains("terrain") ||
+                    lowerParentName.Contains("sw3_backgroundterrain") ||
+                    lowerParentName.Contains("backgroundterrain") ||
+                    lowerParentName.Contains("backdropterrain") ||
+                    lowerParentName.Contains("terrain");
+
+                if (isBaseTerrain && collider is MeshCollider meshCol)
+                {
+                    meshColliderCount++;
+                    if (baseTerrainMeshObject == null)
+                    {
+                        baseTerrainMeshObject = collider.gameObject;
+                    }
+
+                    // MeshCollider 설정 보장
+                    meshCol.convex = false;
+                    meshCol.isTrigger = false;
+
+                    // sharedMesh가 없으면 MeshFilter에서 가져오기
+                    if (meshCol.sharedMesh == null)
+                    {
+                        MeshFilter mf = collider.GetComponent<MeshFilter>();
+                        if (mf != null && mf.sharedMesh != null)
+                        {
+                            meshCol.sharedMesh = mf.sharedMesh;
+                        }
+                    }
+                }
+            }
+
+            // MeshCollider가 없으면 base terrain mesh object에 생성
+            if (meshColliderCount == 0)
+            {
+                // Terrain root 하위에서 base terrain mesh object 찾기
+                foreach (Transform child in terrainRoot)
+                {
+                    if (!child.name.EndsWith("_GeneratedClone")) continue;
+
+                    MeshFilter[] meshFilters = child.GetComponentsInChildren<MeshFilter>(true);
+                    foreach (MeshFilter mf in meshFilters)
+                    {
+                        if (mf.sharedMesh == null) continue;
+                        string lowerName = mf.gameObject.name.ToLowerInvariant();
+                        if (lowerName.Contains("terrain") || lowerName.Contains("backgroundterrain"))
+                        {
+                            MeshCollider mc = mf.gameObject.GetComponent<MeshCollider>();
+                            if (mc == null)
+                            {
+                                mc = mf.gameObject.AddComponent<MeshCollider>();
+                                Undo.RegisterCreatedObjectUndo(mc, "Add MeshCollider");
+                            }
+                            mc.sharedMesh = mf.sharedMesh;
+                            mc.convex = false;
+                            mc.isTrigger = false;
+                            mc.enabled = true;
+                            meshColliderCount++;
+                            baseTerrainMeshObject = mf.gameObject;
+                            Debug.Log($"[MapAutoBuilder] Phase 13.2: Created MeshCollider on {mf.gameObject.name} for underwater collision.");
+                            break;
+                        }
+                    }
+                    if (meshColliderCount > 0) break;
+                }
+            }
+
+            // MeshCollider가 2개 이상이면 경고 출력하고 1개만 남기고 비활성화
+            if (meshColliderCount >= 2)
+            {
+                Debug.LogWarning($"[MapAutoBuilder] [WARN] Phase 13.2: Found {meshColliderCount} MeshColliders under Terrain root. " +
+                    $"Keeping 1 on '{baseTerrainMeshObject?.name ?? "unknown"}', disabling others.");
+
+                int keptCount = 0;
+                foreach (Collider collider in allColliders)
+                {
+                    if (collider == null) continue;
+                    if (!(collider is MeshCollider)) continue;
+                    if (collider.gameObject == baseTerrainMeshObject)
+                    {
+                        keptCount++;
+                        continue;
+                    }
+                    if (keptCount >= 1)
+                    {
+                        collider.enabled = false;
+                        disabledColliderCount++;
+                    }
+                    else
+                    {
+                        keptCount++;
+                    }
+                }
+            }
+
+            Debug.Log($"[MapAutoBuilder] Phase 13.2: Collision policy applied. " +
+                $"Disabled colliders: {disabledColliderCount}, " +
+                $"Final MeshCollider count: {Mathf.Max(meshColliderCount, 1)}.");
+        }
+
+        /// <summary>
+        /// Phase 13.2: Terrain root 하위의 BackgroundTrees/tree/billboard 계열 Renderer가
+        /// SW3_BackdropTerrain_FagaceaeBillboard material을 사용 중인지 확인한다.
+        /// </summary>
+        private static bool CheckTreeBillboardMaterials(Transform terrainRoot)
+        {
+            if (terrainRoot == null) return true;
+
+            Material expectedMat = FindMaterialByExactName("SW3_BackdropTerrain_FagaceaeBillboard");
+            if (expectedMat == null) return true; // material이 없으면 검사 불가 -> pass
+
+            Renderer[] renderers = terrainRoot.GetComponentsInChildren<Renderer>(true);
+            foreach (Renderer r in renderers)
+            {
+                if (r == null) continue;
+                string lowerName = r.gameObject.name.ToLowerInvariant();
+                if (!lowerName.Contains("backgroundtrees") &&
+                    !lowerName.Contains("tree") &&
+                    !lowerName.Contains("trees") &&
+                    !lowerName.Contains("billboard") &&
+                    !lowerName.Contains("fagaceae"))
+                {
+                    continue;
+                }
+
+                // tree/billboard 계열 renderer의 material 검사
+                foreach (Material mat in r.sharedMaterials)
+                {
+                    if (mat != null && mat.name != expectedMat.name)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Phase 13.2: Terrain root 하위의 SW3_BackgroundTerrain 계열 Renderer가
+        /// SW3_BackdropTerrain material을 사용 중인지 확인한다.
+        /// </summary>
+        private static bool CheckTerrainBaseMaterials(Transform terrainRoot)
+        {
+            if (terrainRoot == null) return true;
+
+            Material expectedMat = FindMaterialByExactName("SW3_BackdropTerrain");
+            if (expectedMat == null) return true;
+
+            Renderer[] renderers = terrainRoot.GetComponentsInChildren<Renderer>(true);
+            foreach (Renderer r in renderers)
+            {
+                if (r == null) continue;
+                string lowerName = r.gameObject.name.ToLowerInvariant();
+                if (!lowerName.Contains("sw3_backgroundterrain") &&
+                    !lowerName.Contains("backgroundterrain") &&
+                    !lowerName.Contains("backdropterrain"))
+                {
+                    continue;
+                }
+
+                // tree/billboard 계열은 제외
+                if (lowerName.Contains("tree") || lowerName.Contains("billboard") || lowerName.Contains("fagaceae"))
+                {
+                    continue;
+                }
+
+                foreach (Material mat in r.sharedMaterials)
+                {
+                    if (mat != null && mat.name != expectedMat.name)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Phase 13.2: BackgroundTrees/tree/billboard 계열에 enabled Collider가 없는지 확인한다.
+        /// </summary>
+        private static bool CheckNoEnabledColliderOnDecorative(Transform terrainRoot)
+        {
+            if (terrainRoot == null) return true;
+
+            Collider[] colliders = terrainRoot.GetComponentsInChildren<Collider>(true);
+            foreach (Collider c in colliders)
+            {
+                if (c == null || !c.enabled) continue;
+                string lowerName = c.gameObject.name.ToLowerInvariant();
+                if (lowerName.Contains("backgroundtrees") ||
+                    lowerName.Contains("tree") ||
+                    lowerName.Contains("trees") ||
+                    lowerName.Contains("billboard") ||
+                    lowerName.Contains("vegetation") ||
+                    lowerName.Contains("grass"))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Phase 13.2: Base terrain에 MeshCollider가 최소 1개 있는지 확인한다.
+        /// </summary>
+        private static bool CheckHasMeshColliderOnBaseTerrain(Transform terrainRoot)
+        {
+            if (terrainRoot == null) return false;
+
+            MeshCollider[] meshColliders = terrainRoot.GetComponentsInChildren<MeshCollider>(true);
+            foreach (MeshCollider mc in meshColliders)
+            {
+                if (mc == null || !mc.enabled) continue;
+                string lowerName = mc.gameObject.name.ToLowerInvariant();
+                if (lowerName.Contains("terrain") || lowerName.Contains("backgroundterrain"))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Phase 13.2: Terrain root 하위 MeshCollider 개수를 반환한다.
+        /// </summary>
+        private static int CountMeshColliders(Transform terrainRoot)
+        {
+            if (terrainRoot == null) return 0;
+            MeshCollider[] meshColliders = terrainRoot.GetComponentsInChildren<MeshCollider>(true);
+            int count = 0;
+            foreach (MeshCollider mc in meshColliders)
+            {
+                if (mc != null && mc.enabled) count++;
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Phase 13.2: Terrain root 하위에 Rigidbody가 있는지 확인한다.
+        /// </summary>
+        private static bool CheckNoRigidbodyInTerrain(Transform terrainRoot)
+        {
+            if (terrainRoot == null) return true;
+            Rigidbody[] rigidbodies = terrainRoot.GetComponentsInChildren<Rigidbody>(true);
+            return rigidbodies.Length == 0;
+        }
+
+        /// <summary>
+        /// Phase 13.2: Terrain root 하위의 missing material 개수를 센다.
+        /// </summary>
+        private static int CountMissingMaterialsInTerrain(Transform terrainRoot)
+        {
+            if (terrainRoot == null) return 0;
+            return CountMissingMaterials(terrainRoot.gameObject);
+        }
+
+        /// <summary>
+        /// Phase 13.2: Terrain root 하위의 pink material risk 개수를 센다.
+        /// </summary>
+        private static int CountPinkMaterialRiskInTerrain(Transform terrainRoot)
+        {
+            if (terrainRoot == null) return 0;
+            return CountPinkMaterialRisk(terrainRoot.gameObject);
+        }
     }
 }
+
