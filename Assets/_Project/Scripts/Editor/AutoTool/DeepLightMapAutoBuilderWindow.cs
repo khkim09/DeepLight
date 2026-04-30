@@ -96,7 +96,9 @@ namespace Project.Editor.AutoTool
         {
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("DeepLight Map Auto Builder", _titleStyle);
-            EditorGUILayout.LabelField("Phase 3~13: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("Phase 3~14.4: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
+
+
 
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
@@ -452,7 +454,21 @@ namespace Project.Editor.AutoTool
             EditorGUILayout.LabelField(
                 "16. Phase 10: Visual Adapter Runtime Flow 검증 (Non-destructive, 31개 항목)",
                 EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "17. Phase 14.1: Zone Design Database 생성 + 검증 (A1~C10, 30개 entry, ScriptableObject only)",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "18. Phase 14.2: Zone Design Rule Interpreter - 자연어 텍스트를 정형화된 numeric rule로 변환 + 검증",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "19. Phase 14.3: Zone Terrain Plan Foundation - Rule → TerrainPlan 변환 + 검증 (ScriptableObject only)",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "20. Phase 14.4: Zone Terrain Plan Mesh Patch Generation - A1~C10 seafloor mesh + collision 생성 + 검증",
+                EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.EndVertical();
+
+
 
         }
 

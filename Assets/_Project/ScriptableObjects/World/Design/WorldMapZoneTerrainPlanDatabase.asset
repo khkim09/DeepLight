@@ -1,0 +1,1335 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99c5236db02b4c840942b36aa1a7ab7d, type: 3}
+  m_Name: WorldMapZoneTerrainPlanDatabase
+  m_EditorClassIdentifier: Project.Data::Project.Data.World.Design.WorldMapZoneTerrainPlanDatabaseSO
+  plans:
+  - zoneId: A1
+    baseSurfaceMode: 0
+    seabedShapeMode: 0
+    routeShapeMode: 0
+    boundaryMode: 0
+    colliderMode: 1
+    targetCenterDepth: -165
+    depthRange: 170
+    floorHeight: -250
+    ceilingHeight: -80
+    slopeScale: 0.1
+    roughnessScale: 0.15
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0
+    flatAreaWeight01: 0.9
+    navigationCorridorWidth01: 0.85
+    obstacleDensity01: 0.1
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.15
+    hazardSpawnWeight01: 0.15
+    recommendedLargePropCount: 0
+    recommendedSmallPropCount: 1
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - open
+    - flat
+    - wreck
+    propTags:
+    - wreck
+    - marker
+    - iron
+    - fuel
+    hazardTags:
+    - current
+    debugSummary: "[A1] Surface=OpenWater Seabed=Flat Route=FreeRoam Boundary=None
+      Collider=SeafloorOnly | Depth=-165\xB1170 Floor=-250 Ceiling=-80 | Slope=0.10
+      Rough=0.15 CanyonW=0.10 CanyonD=0.00 Cliff=0.00 Flat=0.90 | Nav=0.85 Obs=0.10
+      LM=0.20 Res=0.15 Haz=0.15 | LargeProp=0 SmallProp=1 | ClearRoute=False Blocker=False
+      Collider=True DecoOnly=False"
+  - zoneId: A2
+    baseSurfaceMode: 3
+    seabedShapeMode: 4
+    routeShapeMode: 1
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -190
+    depthRange: 220
+    floorHeight: -300
+    ceilingHeight: -80
+    slopeScale: 0.25
+    roughnessScale: 0.6
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0.1
+    flatAreaWeight01: 0.4
+    navigationCorridorWidth01: 0.7
+    obstacleDensity01: 0.6
+    landmarkPlacementWeight01: 0.7
+    resourceSpawnWeight01: 0.55
+    hazardSpawnWeight01: 0.15
+    recommendedLargePropCount: 3
+    recommendedSmallPropCount: 8
+    requiresMainRouteClearance: 1
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - wreck
+    - depression
+    - wreck
+    - log
+    propTags:
+    - wreck_part
+    - wreck
+    - log
+    - cable
+    - console
+    - iron
+    hazardTags:
+    - visibility_block
+    - debris
+    - obstacle
+    debugSummary: "[A2] Surface=DeepSea Seabed=WreckDepression Route=WideMainPath
+      Boundary=None Collider=SeafloorAndLargeProps | Depth=-190\xB1220 Floor=-300
+      Ceiling=-80 | Slope=0.25 Rough=0.60 CanyonW=0.10 CanyonD=0.00 Cliff=0.10 Flat=0.40
+      | Nav=0.70 Obs=0.60 LM=0.70 Res=0.55 Haz=0.15 | LargeProp=3 SmallProp=8 | ClearRoute=True
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: A3
+    baseSurfaceMode: 3
+    seabedShapeMode: 3
+    routeShapeMode: 0
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -210
+    depthRange: 220
+    floorHeight: -320
+    ceilingHeight: -100
+    slopeScale: 0.2
+    roughnessScale: 0.5
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0
+    flatAreaWeight01: 0.5
+    navigationCorridorWidth01: 0.55
+    obstacleDensity01: 0.5
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.45
+    hazardSpawnWeight01: 0.15
+    recommendedLargePropCount: 1
+    recommendedSmallPropCount: 10
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - debris
+    - scattered
+    - wreck
+    propTags:
+    - wreck
+    - marker
+    - iron
+    - battery
+    - fuel
+    hazardTags: []
+    debugSummary: "[A3] Surface=DeepSea Seabed=DebrisScattered Route=FreeRoam Boundary=None
+      Collider=SeafloorAndLargeProps | Depth=-210\xB1220 Floor=-320 Ceiling=-100
+      | Slope=0.20 Rough=0.50 CanyonW=0.10 CanyonD=0.00 Cliff=0.00 Flat=0.50 | Nav=0.55
+      Obs=0.50 LM=0.20 Res=0.45 Haz=0.15 | LargeProp=1 SmallProp=10 | ClearRoute=False
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: A4
+    baseSurfaceMode: 1
+    seabedShapeMode: 1
+    routeShapeMode: 1
+    boundaryMode: 0
+    colliderMode: 1
+    targetCenterDepth: -235
+    depthRange: 230
+    floorHeight: -350
+    ceilingHeight: -120
+    slopeScale: 0.3
+    roughnessScale: 0.25
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0
+    flatAreaWeight01: 0.7
+    navigationCorridorWidth01: 0.7
+    obstacleDensity01: 0.175
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.45
+    hazardSpawnWeight01: 0.15
+    recommendedLargePropCount: 1
+    recommendedSmallPropCount: 3
+    requiresMainRouteClearance: 1
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - shelf
+    - shallow
+    - wreck
+    - research
+    propTags:
+    - wreck
+    - research
+    - foreshadow
+    - cable
+    - structure
+    - copper
+    - battery
+    - fastener
+    hazardTags:
+    - visibility_block
+    - slope
+    debugSummary: "[A4] Surface=ShallowShelf Seabed=GentleSlope Route=WideMainPath
+      Boundary=None Collider=SeafloorOnly | Depth=-235\xB1230 Floor=-350 Ceiling=-120
+      | Slope=0.30 Rough=0.25 CanyonW=0.10 CanyonD=0.00 Cliff=0.00 Flat=0.70 | Nav=0.70
+      Obs=0.18 LM=0.20 Res=0.45 Haz=0.15 | LargeProp=1 SmallProp=3 | ClearRoute=True
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: A5
+    baseSurfaceMode: 3
+    seabedShapeMode: 5
+    routeShapeMode: 3
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -350
+    depthRange: 340
+    floorHeight: -520
+    ceilingHeight: -180
+    slopeScale: 0.4
+    roughnessScale: 0.55
+    canyonWidth01: 0.58000004
+    canyonDepth01: 0.6
+    cliffHeight01: 0.2
+    flatAreaWeight01: 0.3
+    navigationCorridorWidth01: 0.7
+    obstacleDensity01: 0.385
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.45
+    hazardSpawnWeight01: 0.4
+    recommendedLargePropCount: 2
+    recommendedSmallPropCount: 5
+    requiresMainRouteClearance: 1
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - canyon
+    - entry
+    propTags:
+    - warning
+    - foreshadow
+    - console
+    - structure
+    - copper
+    - sensor
+    - research
+    hazardTags:
+    - visibility_block
+    - rock
+    debugSummary: "[A5] Surface=DeepSea Seabed=CanyonCut Route=BranchingPath Boundary=None
+      Collider=SeafloorAndLargeProps | Depth=-350\xB1340 Floor=-520 Ceiling=-180
+      | Slope=0.40 Rough=0.55 CanyonW=0.58 CanyonD=0.60 Cliff=0.20 Flat=0.30 | Nav=0.70
+      Obs=0.39 LM=0.20 Res=0.45 Haz=0.40 | LargeProp=2 SmallProp=5 | ClearRoute=True
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: A6
+    baseSurfaceMode: 3
+    seabedShapeMode: 5
+    routeShapeMode: 2
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -420
+    depthRange: 400
+    floorHeight: -620
+    ceilingHeight: -220
+    slopeScale: 0.45
+    roughnessScale: 0.6
+    canyonWidth01: 0.66
+    canyonDepth01: 0.7
+    cliffHeight01: 0.25
+    flatAreaWeight01: 0.25
+    navigationCorridorWidth01: 0.7
+    obstacleDensity01: 0.42000002
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.45
+    hazardSpawnWeight01: 0.4
+    recommendedLargePropCount: 2
+    recommendedSmallPropCount: 5
+    requiresMainRouteClearance: 1
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - canyon
+    - entry
+    - wreck
+    - communication
+    propTags:
+    - wreck
+    - communication
+    - warning
+    - foreshadow
+    - cable
+    - sensor
+    - communication
+    - relay
+    hazardTags:
+    - crack
+    debugSummary: "[A6] Surface=DeepSea Seabed=CanyonCut Route=NarrowPassage Boundary=None
+      Collider=SeafloorAndLargeProps | Depth=-420\xB1400 Floor=-620 Ceiling=-220
+      | Slope=0.45 Rough=0.60 CanyonW=0.66 CanyonD=0.70 Cliff=0.25 Flat=0.25 | Nav=0.70
+      Obs=0.42 LM=0.20 Res=0.45 Haz=0.40 | LargeProp=2 SmallProp=5 | ClearRoute=True
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: A7
+    baseSurfaceMode: 3
+    seabedShapeMode: 9
+    routeShapeMode: 5
+    boundaryMode: 1
+    colliderMode: 4
+    targetCenterDepth: -475
+    depthRange: 450
+    floorHeight: -700
+    ceilingHeight: -250
+    slopeScale: 0.3
+    roughnessScale: 0.4
+    canyonWidth01: 0.26000002
+    canyonDepth01: 0.2
+    cliffHeight01: 0.15
+    flatAreaWeight01: 0.45
+    navigationCorridorWidth01: 0.3
+    obstacleDensity01: 0.15
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.15
+    hazardSpawnWeight01: 0.4
+    recommendedLargePropCount: 0
+    recommendedSmallPropCount: 1
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - sparse
+    - pressure
+    propTags:
+    - warning
+    - marker
+    - sensor
+    - rare
+    hazardTags:
+    - crack
+    debugSummary: "[A7] Surface=DeepSea Seabed=SparseVoid Route=BoundaryEdge Boundary=SoftVisualBoundary
+      Collider=HardBoundary | Depth=-475\xB1450 Floor=-700 Ceiling=-250 | Slope=0.30
+      Rough=0.40 CanyonW=0.26 CanyonD=0.20 Cliff=0.15 Flat=0.45 | Nav=0.30 Obs=0.15
+      LM=0.20 Res=0.15 Haz=0.40 | LargeProp=0 SmallProp=1 | ClearRoute=False Blocker=False
+      Collider=True DecoOnly=False"
+  - zoneId: A8
+    baseSurfaceMode: 3
+    seabedShapeMode: 6
+    routeShapeMode: 2
+    boundaryMode: 2
+    colliderMode: 3
+    targetCenterDepth: -600
+    depthRange: 600
+    floorHeight: -900
+    ceilingHeight: -300
+    slopeScale: 0.6
+    roughnessScale: 0.65
+    canyonWidth01: 0.5
+    canyonDepth01: 0.5
+    cliffHeight01: 0.3
+    flatAreaWeight01: 0.2
+    navigationCorridorWidth01: 0.25
+    obstacleDensity01: 0.7
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.45
+    hazardSpawnWeight01: 0.65
+    recommendedLargePropCount: 1
+    recommendedSmallPropCount: 3
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 1
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - canyon
+    - deep
+    - pressure
+    propTags:
+    - pressure
+    - data
+    - rare
+    hazardTags:
+    - visibility_block
+    - rock
+    - slope
+    debugSummary: "[A8] Surface=DeepSea Seabed=DeepCanyon Route=NarrowPassage Boundary=TerrainWall
+      Collider=NavigationCritical | Depth=-600\xB1600 Floor=-900 Ceiling=-300 | Slope=0.60
+      Rough=0.65 CanyonW=0.50 CanyonD=0.50 Cliff=0.30 Flat=0.20 | Nav=0.25 Obs=0.70
+      LM=0.20 Res=0.45 Haz=0.65 | LargeProp=1 SmallProp=3 | ClearRoute=False Blocker=True
+      Collider=True DecoOnly=False"
+  - zoneId: A9
+    baseSurfaceMode: 3
+    seabedShapeMode: 9
+    routeShapeMode: 5
+    boundaryMode: 3
+    colliderMode: 1
+    targetCenterDepth: -675
+    depthRange: 650
+    floorHeight: -1000
+    ceilingHeight: -350
+    slopeScale: 0.3
+    roughnessScale: 0.4
+    canyonWidth01: 0.26000002
+    canyonDepth01: 0.2
+    cliffHeight01: 0.15
+    flatAreaWeight01: 0.45
+    navigationCorridorWidth01: 0.3
+    obstacleDensity01: 0.15
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.15
+    hazardSpawnWeight01: 0.65
+    recommendedLargePropCount: 0
+    recommendedSmallPropCount: 1
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 1
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - sparse
+    - pressure
+    propTags:
+    - warning
+    - marker
+    - cable
+    - sensor
+    - rare
+    hazardTags:
+    - current
+    - visibility_block
+    debugSummary: "[A9] Surface=DeepSea Seabed=SparseVoid Route=BoundaryEdge Boundary=DeepPressureBoundary
+      Collider=SeafloorOnly | Depth=-675\xB1650 Floor=-1000 Ceiling=-350 | Slope=0.30
+      Rough=0.40 CanyonW=0.26 CanyonD=0.20 Cliff=0.15 Flat=0.45 | Nav=0.30 Obs=0.15
+      LM=0.20 Res=0.15 Haz=0.65 | LargeProp=0 SmallProp=1 | ClearRoute=False Blocker=True
+      Collider=True DecoOnly=False"
+  - zoneId: A10
+    baseSurfaceMode: 3
+    seabedShapeMode: 7
+    routeShapeMode: 5
+    boundaryMode: 3
+    colliderMode: 3
+    targetCenterDepth: -740
+    depthRange: 720
+    floorHeight: -1100
+    ceilingHeight: -380
+    slopeScale: 0.7
+    roughnessScale: 0.7
+    canyonWidth01: 0.34
+    canyonDepth01: 0.3
+    cliffHeight01: 0.7
+    flatAreaWeight01: 0.15
+    navigationCorridorWidth01: 0.3
+    obstacleDensity01: 0.65
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.15
+    hazardSpawnWeight01: 0.65
+    recommendedLargePropCount: 1
+    recommendedSmallPropCount: 2
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 1
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - cliff
+    - wall
+    - wreck
+    - research
+    - hub
+    propTags:
+    - wreck
+    - research
+    - hub
+    - fuel
+    - communication
+    hazardTags:
+    - slope
+    - cliff
+    - isolation
+    debugSummary: "[A10] Surface=DeepSea Seabed=CliffDrop Route=BoundaryEdge Boundary=DeepPressureBoundary
+      Collider=NavigationCritical | Depth=-740\xB1720 Floor=-1100 Ceiling=-380 |
+      Slope=0.70 Rough=0.70 CanyonW=0.34 CanyonD=0.30 Cliff=0.70 Flat=0.15 | Nav=0.30
+      Obs=0.65 LM=0.20 Res=0.15 Haz=0.65 | LargeProp=1 SmallProp=2 | ClearRoute=False
+      Blocker=True Collider=True DecoOnly=False"
+  - zoneId: B1
+    baseSurfaceMode: 3
+    seabedShapeMode: 2
+    routeShapeMode: 0
+    boundaryMode: 0
+    colliderMode: 1
+    targetCenterDepth: -155
+    depthRange: 170
+    floorHeight: -240
+    ceilingHeight: -70
+    slopeScale: 0.25
+    roughnessScale: 0.3
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0
+    flatAreaWeight01: 0.65
+    navigationCorridorWidth01: 0.55
+    obstacleDensity01: 0.21000001
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.15
+    hazardSpawnWeight01: 0.15
+    recommendedLargePropCount: 0
+    recommendedSmallPropCount: 1
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - slope
+    - gentle
+    - wreck
+    propTags:
+    - wreck
+    - basic
+    hazardTags:
+    - rock
+    debugSummary: "[B1] Surface=DeepSea Seabed=RollingSeabed Route=FreeRoam Boundary=None
+      Collider=SeafloorOnly | Depth=-155\xB1170 Floor=-240 Ceiling=-70 | Slope=0.25
+      Rough=0.30 CanyonW=0.10 CanyonD=0.00 Cliff=0.00 Flat=0.65 | Nav=0.55 Obs=0.21
+      LM=0.20 Res=0.15 Haz=0.15 | LargeProp=0 SmallProp=1 | ClearRoute=False Blocker=False
+      Collider=True DecoOnly=False"
+  - zoneId: B2
+    baseSurfaceMode: 3
+    seabedShapeMode: 3
+    routeShapeMode: 0
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -195
+    depthRange: 210
+    floorHeight: -300
+    ceilingHeight: -90
+    slopeScale: 0.2
+    roughnessScale: 0.5
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0
+    flatAreaWeight01: 0.5
+    navigationCorridorWidth01: 0.55
+    obstacleDensity01: 0.5
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.45
+    hazardSpawnWeight01: 0.15
+    recommendedLargePropCount: 1
+    recommendedSmallPropCount: 10
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - debris
+    - scattered
+    propTags:
+    - foreshadow
+    - structure
+    - iron
+    - valve
+    - fastener
+    hazardTags:
+    - obstacle
+    debugSummary: "[B2] Surface=DeepSea Seabed=DebrisScattered Route=FreeRoam Boundary=None
+      Collider=SeafloorAndLargeProps | Depth=-195\xB1210 Floor=-300 Ceiling=-90 |
+      Slope=0.20 Rough=0.50 CanyonW=0.10 CanyonD=0.00 Cliff=0.00 Flat=0.50 | Nav=0.55
+      Obs=0.50 LM=0.20 Res=0.45 Haz=0.15 | LargeProp=1 SmallProp=10 | ClearRoute=False
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: B3
+    baseSurfaceMode: 0
+    seabedShapeMode: 0
+    routeShapeMode: 0
+    boundaryMode: 0
+    colliderMode: 1
+    targetCenterDepth: -210
+    depthRange: 220
+    floorHeight: -320
+    ceilingHeight: -100
+    slopeScale: 0.1
+    roughnessScale: 0.15
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0
+    flatAreaWeight01: 0.9
+    navigationCorridorWidth01: 0.85
+    obstacleDensity01: 0.1
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.15
+    hazardSpawnWeight01: 0.15
+    recommendedLargePropCount: 0
+    recommendedSmallPropCount: 1
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - open
+    - flat
+    propTags:
+    - foreshadow
+    - marker
+    - copper
+    - battery
+    hazardTags:
+    - visibility_block
+    - dip
+    debugSummary: "[B3] Surface=OpenWater Seabed=Flat Route=FreeRoam Boundary=None
+      Collider=SeafloorOnly | Depth=-210\xB1220 Floor=-320 Ceiling=-100 | Slope=0.10
+      Rough=0.15 CanyonW=0.10 CanyonD=0.00 Cliff=0.00 Flat=0.90 | Nav=0.85 Obs=0.10
+      LM=0.20 Res=0.15 Haz=0.15 | LargeProp=0 SmallProp=1 | ClearRoute=False Blocker=False
+      Collider=True DecoOnly=False"
+  - zoneId: B4
+    baseSurfaceMode: 4
+    seabedShapeMode: 8
+    routeShapeMode: 0
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -250
+    depthRange: 260
+    floorHeight: -380
+    ceilingHeight: -120
+    slopeScale: 0.15
+    roughnessScale: 0.3
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0
+    flatAreaWeight01: 0.75
+    navigationCorridorWidth01: 0.55
+    obstacleDensity01: 0.21000001
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.45
+    hazardSpawnWeight01: 0.4
+    recommendedLargePropCount: 2
+    recommendedSmallPropCount: 6
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - facility
+    - approach
+    propTags:
+    - research
+    - structure
+    - sensor
+    - data
+    hazardTags:
+    - debris
+    debugSummary: "[B4] Surface=ArtificialArea Seabed=FacilityFloor Route=FreeRoam
+      Boundary=None Collider=SeafloorAndLargeProps | Depth=-250\xB1260 Floor=-380
+      Ceiling=-120 | Slope=0.15 Rough=0.30 CanyonW=0.10 CanyonD=0.00 Cliff=0.00 Flat=0.75
+      | Nav=0.55 Obs=0.21 LM=0.20 Res=0.45 Haz=0.40 | LargeProp=2 SmallProp=6 | ClearRoute=False
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: B5
+    baseSurfaceMode: 3
+    seabedShapeMode: 4
+    routeShapeMode: 1
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -260
+    depthRange: 320
+    floorHeight: -420
+    ceilingHeight: -100
+    slopeScale: 0.25
+    roughnessScale: 0.6
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0.1
+    flatAreaWeight01: 0.4
+    navigationCorridorWidth01: 0.7
+    obstacleDensity01: 0.6
+    landmarkPlacementWeight01: 0.7
+    resourceSpawnWeight01: 0.55
+    hazardSpawnWeight01: 0.4
+    recommendedLargePropCount: 3
+    recommendedSmallPropCount: 8
+    requiresMainRouteClearance: 1
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - wreck
+    - depression
+    - wreck
+    - log
+    propTags:
+    - wreck_part
+    - wreck
+    - log
+    - console
+    - iron
+    - basic
+    hazardTags:
+    - debris
+    debugSummary: "[B5] Surface=DeepSea Seabed=WreckDepression Route=WideMainPath
+      Boundary=None Collider=SeafloorAndLargeProps | Depth=-260\xB1320 Floor=-420
+      Ceiling=-100 | Slope=0.25 Rough=0.60 CanyonW=0.10 CanyonD=0.00 Cliff=0.10 Flat=0.40
+      | Nav=0.70 Obs=0.60 LM=0.70 Res=0.55 Haz=0.40 | LargeProp=3 SmallProp=8 | ClearRoute=True
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: B6
+    baseSurfaceMode: 3
+    seabedShapeMode: 5
+    routeShapeMode: 2
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -370
+    depthRange: 380
+    floorHeight: -560
+    ceilingHeight: -180
+    slopeScale: 0.45
+    roughnessScale: 0.6
+    canyonWidth01: 0.66
+    canyonDepth01: 0.7
+    cliffHeight01: 0.25
+    flatAreaWeight01: 0.25
+    navigationCorridorWidth01: 0.7
+    obstacleDensity01: 0.42000002
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.45
+    hazardSpawnWeight01: 0.4
+    recommendedLargePropCount: 2
+    recommendedSmallPropCount: 5
+    requiresMainRouteClearance: 1
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - canyon
+    - entry
+    - communication
+    propTags:
+    - communication
+    - structure
+    - sensor
+    - communication
+    - relay
+    hazardTags:
+    - crack
+    - obstacle
+    debugSummary: "[B6] Surface=DeepSea Seabed=CanyonCut Route=NarrowPassage Boundary=None
+      Collider=SeafloorAndLargeProps | Depth=-370\xB1380 Floor=-560 Ceiling=-180
+      | Slope=0.45 Rough=0.60 CanyonW=0.66 CanyonD=0.70 Cliff=0.25 Flat=0.25 | Nav=0.70
+      Obs=0.42 LM=0.20 Res=0.45 Haz=0.40 | LargeProp=2 SmallProp=5 | ClearRoute=True
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: B7
+    baseSurfaceMode: 4
+    seabedShapeMode: 8
+    routeShapeMode: 1
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -410
+    depthRange: 420
+    floorHeight: -620
+    ceilingHeight: -200
+    slopeScale: 0.15
+    roughnessScale: 0.3
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0
+    flatAreaWeight01: 0.75
+    navigationCorridorWidth01: 0.7
+    obstacleDensity01: 0.21000001
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.45
+    hazardSpawnWeight01: 0.4
+    recommendedLargePropCount: 2
+    recommendedSmallPropCount: 6
+    requiresMainRouteClearance: 1
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - facility
+    - approach
+    - communication
+    propTags:
+    - research
+    - structure
+    - communication
+    - cable
+    - structure
+    - data
+    - aluminum
+    hazardTags:
+    - visibility_block
+    - debris
+    debugSummary: "[B7] Surface=ArtificialArea Seabed=FacilityFloor Route=WideMainPath
+      Boundary=None Collider=SeafloorAndLargeProps | Depth=-410\xB1420 Floor=-620
+      Ceiling=-200 | Slope=0.15 Rough=0.30 CanyonW=0.10 CanyonD=0.00 Cliff=0.00 Flat=0.75
+      | Nav=0.70 Obs=0.21 LM=0.20 Res=0.45 Haz=0.40 | LargeProp=2 SmallProp=6 | ClearRoute=True
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: B8
+    baseSurfaceMode: 3
+    seabedShapeMode: 9
+    routeShapeMode: 5
+    boundaryMode: 3
+    colliderMode: 1
+    targetCenterDepth: -625
+    depthRange: 650
+    floorHeight: -950
+    ceilingHeight: -300
+    slopeScale: 0.3
+    roughnessScale: 0.4
+    canyonWidth01: 0.26000002
+    canyonDepth01: 0.2
+    cliffHeight01: 0.15
+    flatAreaWeight01: 0.45
+    navigationCorridorWidth01: 0.3
+    obstacleDensity01: 0.15
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.15
+    hazardSpawnWeight01: 0.65
+    recommendedLargePropCount: 0
+    recommendedSmallPropCount: 1
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 1
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - sparse
+    - pressure
+    propTags:
+    - warning
+    - marker
+    - rare
+    hazardTags:
+    - visibility_block
+    debugSummary: "[B8] Surface=DeepSea Seabed=SparseVoid Route=BoundaryEdge Boundary=DeepPressureBoundary
+      Collider=SeafloorOnly | Depth=-625\xB1650 Floor=-950 Ceiling=-300 | Slope=0.30
+      Rough=0.40 CanyonW=0.26 CanyonD=0.20 Cliff=0.15 Flat=0.45 | Nav=0.30 Obs=0.15
+      LM=0.20 Res=0.15 Haz=0.65 | LargeProp=0 SmallProp=1 | ClearRoute=False Blocker=True
+      Collider=True DecoOnly=False"
+  - zoneId: B9
+    baseSurfaceMode: 3
+    seabedShapeMode: 9
+    routeShapeMode: 1
+    boundaryMode: 3
+    colliderMode: 1
+    targetCenterDepth: -660
+    depthRange: 680
+    floorHeight: -1000
+    ceilingHeight: -320
+    slopeScale: 0.3
+    roughnessScale: 0.4
+    canyonWidth01: 0.26000002
+    canyonDepth01: 0.2
+    cliffHeight01: 0.15
+    flatAreaWeight01: 0.45
+    navigationCorridorWidth01: 0.7
+    obstacleDensity01: 0.15
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.45
+    hazardSpawnWeight01: 0.65
+    recommendedLargePropCount: 0
+    recommendedSmallPropCount: 1
+    requiresMainRouteClearance: 1
+    requiresBoundaryBlocker: 1
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - sparse
+    - pressure
+    - wreck
+    - communication
+    propTags:
+    - wreck
+    - communication
+    - foreshadow
+    - sensor
+    - data
+    hazardTags:
+    - current
+    debugSummary: "[B9] Surface=DeepSea Seabed=SparseVoid Route=WideMainPath Boundary=DeepPressureBoundary
+      Collider=SeafloorOnly | Depth=-660\xB1680 Floor=-1000 Ceiling=-320 | Slope=0.30
+      Rough=0.40 CanyonW=0.26 CanyonD=0.20 Cliff=0.15 Flat=0.45 | Nav=0.70 Obs=0.15
+      LM=0.20 Res=0.45 Haz=0.65 | LargeProp=0 SmallProp=1 | ClearRoute=True Blocker=True
+      Collider=True DecoOnly=False"
+  - zoneId: B10
+    baseSurfaceMode: 3
+    seabedShapeMode: 7
+    routeShapeMode: 5
+    boundaryMode: 3
+    colliderMode: 3
+    targetCenterDepth: -725
+    depthRange: 750
+    floorHeight: -1100
+    ceilingHeight: -350
+    slopeScale: 0.7
+    roughnessScale: 0.7
+    canyonWidth01: 0.34
+    canyonDepth01: 0.3
+    cliffHeight01: 0.7
+    flatAreaWeight01: 0.15
+    navigationCorridorWidth01: 0.3
+    obstacleDensity01: 0.65
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.15
+    hazardSpawnWeight01: 0.65
+    recommendedLargePropCount: 1
+    recommendedSmallPropCount: 2
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 1
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - cliff
+    - wall
+    - canyon
+    propTags:
+    - canyon
+    - warning
+    hazardTags:
+    - cliff
+    - isolation
+    debugSummary: "[B10] Surface=DeepSea Seabed=CliffDrop Route=BoundaryEdge Boundary=DeepPressureBoundary
+      Collider=NavigationCritical | Depth=-725\xB1750 Floor=-1100 Ceiling=-350 |
+      Slope=0.70 Rough=0.70 CanyonW=0.34 CanyonD=0.30 Cliff=0.70 Flat=0.15 | Nav=0.30
+      Obs=0.65 LM=0.20 Res=0.15 Haz=0.65 | LargeProp=1 SmallProp=2 | ClearRoute=False
+      Blocker=True Collider=True DecoOnly=False"
+  - zoneId: C1
+    baseSurfaceMode: 0
+    seabedShapeMode: 0
+    routeShapeMode: 0
+    boundaryMode: 0
+    colliderMode: 1
+    targetCenterDepth: -140
+    depthRange: 160
+    floorHeight: -220
+    ceilingHeight: -60
+    slopeScale: 0.1
+    roughnessScale: 0.15
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0
+    flatAreaWeight01: 0.9
+    navigationCorridorWidth01: 0.85
+    obstacleDensity01: 0.1
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.15
+    hazardSpawnWeight01: 0.15
+    recommendedLargePropCount: 0
+    recommendedSmallPropCount: 1
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - open
+    - flat
+    - wreck
+    propTags:
+    - wreck
+    - basic
+    hazardTags: []
+    debugSummary: "[C1] Surface=OpenWater Seabed=Flat Route=FreeRoam Boundary=None
+      Collider=SeafloorOnly | Depth=-140\xB1160 Floor=-220 Ceiling=-60 | Slope=0.10
+      Rough=0.15 CanyonW=0.10 CanyonD=0.00 Cliff=0.00 Flat=0.90 | Nav=0.85 Obs=0.10
+      LM=0.20 Res=0.15 Haz=0.15 | LargeProp=0 SmallProp=1 | ClearRoute=False Blocker=False
+      Collider=True DecoOnly=False"
+  - zoneId: C2
+    baseSurfaceMode: 4
+    seabedShapeMode: 8
+    routeShapeMode: 0
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -170
+    depthRange: 180
+    floorHeight: -260
+    ceilingHeight: -80
+    slopeScale: 0.15
+    roughnessScale: 0.3
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0
+    flatAreaWeight01: 0.75
+    navigationCorridorWidth01: 0.55
+    obstacleDensity01: 0.21000001
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.45
+    hazardSpawnWeight01: 0.15
+    recommendedLargePropCount: 2
+    recommendedSmallPropCount: 6
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - facility
+    - approach
+    propTags:
+    - research
+    - structure
+    - foreshadow
+    - marker
+    - battery
+    - fuel
+    hazardTags:
+    - dip
+    debugSummary: "[C2] Surface=ArtificialArea Seabed=FacilityFloor Route=FreeRoam
+      Boundary=None Collider=SeafloorAndLargeProps | Depth=-170\xB1180 Floor=-260
+      Ceiling=-80 | Slope=0.15 Rough=0.30 CanyonW=0.10 CanyonD=0.00 Cliff=0.00 Flat=0.75
+      | Nav=0.55 Obs=0.21 LM=0.20 Res=0.45 Haz=0.15 | LargeProp=2 SmallProp=6 | ClearRoute=False
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: C3
+    baseSurfaceMode: 3
+    seabedShapeMode: 3
+    routeShapeMode: 0
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -210
+    depthRange: 220
+    floorHeight: -320
+    ceilingHeight: -100
+    slopeScale: 0.2
+    roughnessScale: 0.5
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0
+    flatAreaWeight01: 0.5
+    navigationCorridorWidth01: 0.55
+    obstacleDensity01: 0.5
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.45
+    hazardSpawnWeight01: 0.15
+    recommendedLargePropCount: 1
+    recommendedSmallPropCount: 10
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - debris
+    - scattered
+    - wreck
+    propTags:
+    - wreck
+    - structure
+    - iron
+    - battery
+    - valve
+    hazardTags: []
+    debugSummary: "[C3] Surface=DeepSea Seabed=DebrisScattered Route=FreeRoam Boundary=None
+      Collider=SeafloorAndLargeProps | Depth=-210\xB1220 Floor=-320 Ceiling=-100
+      | Slope=0.20 Rough=0.50 CanyonW=0.10 CanyonD=0.00 Cliff=0.00 Flat=0.50 | Nav=0.55
+      Obs=0.50 LM=0.20 Res=0.45 Haz=0.15 | LargeProp=1 SmallProp=10 | ClearRoute=False
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: C4
+    baseSurfaceMode: 4
+    seabedShapeMode: 8
+    routeShapeMode: 1
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -270
+    depthRange: 300
+    floorHeight: -420
+    ceilingHeight: -120
+    slopeScale: 0.15
+    roughnessScale: 0.3
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0
+    flatAreaWeight01: 0.75
+    navigationCorridorWidth01: 0.7
+    obstacleDensity01: 0.21000001
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.45
+    hazardSpawnWeight01: 0.4
+    recommendedLargePropCount: 2
+    recommendedSmallPropCount: 6
+    requiresMainRouteClearance: 1
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - facility
+    - approach
+    - research
+    propTags:
+    - research
+    - structure
+    - research
+    - copper
+    - battery
+    - sensor
+    hazardTags:
+    - debris
+    - dip
+    debugSummary: "[C4] Surface=ArtificialArea Seabed=FacilityFloor Route=WideMainPath
+      Boundary=None Collider=SeafloorAndLargeProps | Depth=-270\xB1300 Floor=-420
+      Ceiling=-120 | Slope=0.15 Rough=0.30 CanyonW=0.10 CanyonD=0.00 Cliff=0.00 Flat=0.75
+      | Nav=0.70 Obs=0.21 LM=0.20 Res=0.45 Haz=0.40 | LargeProp=2 SmallProp=6 | ClearRoute=True
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: C5
+    baseSurfaceMode: 3
+    seabedShapeMode: 4
+    routeShapeMode: 1
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -290
+    depthRange: 320
+    floorHeight: -450
+    ceilingHeight: -130
+    slopeScale: 0.25
+    roughnessScale: 0.6
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0.1
+    flatAreaWeight01: 0.4
+    navigationCorridorWidth01: 0.7
+    obstacleDensity01: 0.6
+    landmarkPlacementWeight01: 0.7
+    resourceSpawnWeight01: 0.7
+    hazardSpawnWeight01: 0.4
+    recommendedLargePropCount: 3
+    recommendedSmallPropCount: 8
+    requiresMainRouteClearance: 1
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - wreck
+    - depression
+    - wreck
+    propTags:
+    - wreck_part
+    - wreck
+    - structure
+    - steel
+    - valve
+    hazardTags:
+    - debris
+    - obstacle
+    debugSummary: "[C5] Surface=DeepSea Seabed=WreckDepression Route=WideMainPath
+      Boundary=None Collider=SeafloorAndLargeProps | Depth=-290\xB1320 Floor=-450
+      Ceiling=-130 | Slope=0.25 Rough=0.60 CanyonW=0.10 CanyonD=0.00 Cliff=0.10 Flat=0.40
+      | Nav=0.70 Obs=0.60 LM=0.70 Res=0.70 Haz=0.40 | LargeProp=3 SmallProp=8 | ClearRoute=True
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: C6
+    baseSurfaceMode: 3
+    seabedShapeMode: 5
+    routeShapeMode: 3
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -380
+    depthRange: 400
+    floorHeight: -580
+    ceilingHeight: -180
+    slopeScale: 0.4
+    roughnessScale: 0.55
+    canyonWidth01: 0.58000004
+    canyonDepth01: 0.6
+    cliffHeight01: 0.2
+    flatAreaWeight01: 0.3
+    navigationCorridorWidth01: 0.7
+    obstacleDensity01: 0.385
+    landmarkPlacementWeight01: 0.7
+    resourceSpawnWeight01: 0.7
+    hazardSpawnWeight01: 0.4
+    recommendedLargePropCount: 2
+    recommendedSmallPropCount: 5
+    requiresMainRouteClearance: 1
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - canyon
+    - entry
+    - wreck
+    - communication
+    - research
+    propTags:
+    - wreck
+    - communication
+    - research
+    - sensor
+    - communication
+    hazardTags:
+    - debris
+    - obstacle
+    debugSummary: "[C6] Surface=DeepSea Seabed=CanyonCut Route=BranchingPath Boundary=None
+      Collider=SeafloorAndLargeProps | Depth=-380\xB1400 Floor=-580 Ceiling=-180
+      | Slope=0.40 Rough=0.55 CanyonW=0.58 CanyonD=0.60 Cliff=0.20 Flat=0.30 | Nav=0.70
+      Obs=0.39 LM=0.70 Res=0.70 Haz=0.40 | LargeProp=2 SmallProp=5 | ClearRoute=True
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: C7
+    baseSurfaceMode: 3
+    seabedShapeMode: 3
+    routeShapeMode: 1
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -435
+    depthRange: 430
+    floorHeight: -650
+    ceilingHeight: -220
+    slopeScale: 0.2
+    roughnessScale: 0.5
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0
+    flatAreaWeight01: 0.5
+    navigationCorridorWidth01: 0.7
+    obstacleDensity01: 0.5
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.45
+    hazardSpawnWeight01: 0.4
+    recommendedLargePropCount: 1
+    recommendedSmallPropCount: 10
+    requiresMainRouteClearance: 1
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - debris
+    - scattered
+    - wreck
+    propTags:
+    - wreck
+    - aluminum
+    - relay
+    hazardTags:
+    - visibility_block
+    - rock
+    debugSummary: "[C7] Surface=DeepSea Seabed=DebrisScattered Route=WideMainPath
+      Boundary=None Collider=SeafloorAndLargeProps | Depth=-435\xB1430 Floor=-650
+      Ceiling=-220 | Slope=0.20 Rough=0.50 CanyonW=0.10 CanyonD=0.00 Cliff=0.00 Flat=0.50
+      | Nav=0.70 Obs=0.50 LM=0.20 Res=0.45 Haz=0.40 | LargeProp=1 SmallProp=10 |
+      ClearRoute=True Blocker=False Collider=True DecoOnly=False"
+  - zoneId: C8
+    baseSurfaceMode: 4
+    seabedShapeMode: 8
+    routeShapeMode: 1
+    boundaryMode: 0
+    colliderMode: 2
+    targetCenterDepth: -350
+    depthRange: 340
+    floorHeight: -520
+    ceilingHeight: -180
+    slopeScale: 0.15
+    roughnessScale: 0.2
+    canyonWidth01: 0.1
+    canyonDepth01: 0
+    cliffHeight01: 0
+    flatAreaWeight01: 0.8
+    navigationCorridorWidth01: 0.55
+    obstacleDensity01: 0.14
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.15
+    hazardSpawnWeight01: 0.4
+    recommendedLargePropCount: 2
+    recommendedSmallPropCount: 6
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - artificial
+    - passage
+    propTags:
+    - structure
+    - battery
+    - data
+    hazardTags:
+    - dip
+    debugSummary: "[C8] Surface=ArtificialArea Seabed=FacilityFloor Route=WideMainPath
+      Boundary=None Collider=SeafloorAndLargeProps | Depth=-350\xB1340 Floor=-520
+      Ceiling=-180 | Slope=0.15 Rough=0.20 CanyonW=0.10 CanyonD=0.00 Cliff=0.00 Flat=0.80
+      | Nav=0.55 Obs=0.14 LM=0.20 Res=0.15 Haz=0.40 | LargeProp=2 SmallProp=6 | ClearRoute=False
+      Blocker=False Collider=True DecoOnly=False"
+  - zoneId: C9
+    baseSurfaceMode: 3
+    seabedShapeMode: 9
+    routeShapeMode: 5
+    boundaryMode: 1
+    colliderMode: 1
+    targetCenterDepth: -470
+    depthRange: 460
+    floorHeight: -700
+    ceilingHeight: -240
+    slopeScale: 0.3
+    roughnessScale: 0.4
+    canyonWidth01: 0.26000002
+    canyonDepth01: 0.2
+    cliffHeight01: 0.15
+    flatAreaWeight01: 0.45
+    navigationCorridorWidth01: 0.3
+    obstacleDensity01: 0.15
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.15
+    hazardSpawnWeight01: 0.4
+    recommendedLargePropCount: 0
+    recommendedSmallPropCount: 1
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 0
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - sparse
+    - pressure
+    propTags: []
+    hazardTags:
+    - visibility_block
+    - debris
+    - warning_light
+    debugSummary: "[C9] Surface=DeepSea Seabed=SparseVoid Route=BoundaryEdge Boundary=SoftVisualBoundary
+      Collider=SeafloorOnly | Depth=-470\xB1460 Floor=-700 Ceiling=-240 | Slope=0.30
+      Rough=0.40 CanyonW=0.26 CanyonD=0.20 Cliff=0.15 Flat=0.45 | Nav=0.30 Obs=0.15
+      LM=0.20 Res=0.15 Haz=0.40 | LargeProp=0 SmallProp=1 | ClearRoute=False Blocker=False
+      Collider=True DecoOnly=False"
+  - zoneId: C10
+    baseSurfaceMode: 3
+    seabedShapeMode: 7
+    routeShapeMode: 5
+    boundaryMode: 3
+    colliderMode: 3
+    targetCenterDepth: -660
+    depthRange: 680
+    floorHeight: -1000
+    ceilingHeight: -320
+    slopeScale: 0.7
+    roughnessScale: 0.7
+    canyonWidth01: 0.34
+    canyonDepth01: 0.3
+    cliffHeight01: 0.7
+    flatAreaWeight01: 0.15
+    navigationCorridorWidth01: 0.3
+    obstacleDensity01: 0.65
+    landmarkPlacementWeight01: 0.2
+    resourceSpawnWeight01: 0.15
+    hazardSpawnWeight01: 0.65
+    recommendedLargePropCount: 1
+    recommendedSmallPropCount: 2
+    requiresMainRouteClearance: 0
+    requiresBoundaryBlocker: 1
+    requiresSeafloorCollider: 1
+    allowsDecorativeOnlySurface: 0
+    terrainTags:
+    - cliff
+    - wall
+    - wreck
+    propTags:
+    - wreck
+    - rare
+    hazardTags:
+    - isolation
+    debugSummary: "[C10] Surface=DeepSea Seabed=CliffDrop Route=BoundaryEdge Boundary=DeepPressureBoundary
+      Collider=NavigationCritical | Depth=-660\xB1680 Floor=-1000 Ceiling=-320 |
+      Slope=0.70 Rough=0.70 CanyonW=0.34 CanyonD=0.30 Cliff=0.70 Flat=0.15 | Nav=0.30
+      Obs=0.65 LM=0.20 Res=0.15 Haz=0.65 | LargeProp=1 SmallProp=2 | ClearRoute=False
+      Blocker=True Collider=True DecoOnly=False"

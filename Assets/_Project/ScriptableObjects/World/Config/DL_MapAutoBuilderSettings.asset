@@ -50,4 +50,55 @@ MonoBehaviour:
   visualControllerEnabledByDefault: 1
   visualBlendSpeed: 2
   logVisualProfileChanges: 1
+  createVisualAdapterBinding: 1
+  runtimeVolumeIsGlobal: 1
+  runtimeVolumePriority: 0
+  createSafeRuntimeRendering: 1
+  safeRuntimeRenderingEnabledByDefault: 1
+  visualControllerApplyToAdaptersByDefault: 0
+  safeRuntimeBlendSpeed: 2
+  restoreNeutralRuntimeVisualProfileOnGenerate: 1
+  validateRuntimeRenderingAfterGenerate: 1
+  createTerrainSourceBinding: 1
+  cloneTerrainSourceFromScene: 1
+  cloneTerrainSourceFromProjectAsset: 1
+  hideSeafloorPlaceholdersWhenTerrainSourceExists: 1
+  terrainSourceRootName: TerrainSource
+  generatedTerrainRootName: Terrain
+  terrainFallbackMaterial: {fileID: 0}
+  logTerrainSourceVerbose: 1
+  createTerrainSourceLayout: 1
+  terrainLayoutRootName: Terrain
+  terrainSourceStagingRootName: TerrainSource
+  decorativeCandidateRootName: TerrainDecorativeCandidates
+  disabledCandidateRootName: TerrainDisabledCandidates
+  preferSceneTerrainSource: 1
+  useProjectAssetAsFallbackOnly: 1
+  maxBaseTerrainCloneCount: 1
+  autoFitBaseTerrainToMapBounds: 1
+  preserveTerrainSourceWorldTransform: 1
+  disableUnusedTerrainSourceRenderers: 1
+  logTerrainLayoutVerbose: 0
+  createZoneDesignDatabase: 1
+  validateZoneDesignDatabaseAfterGenerate: 1
+  logZoneDesignVerbose: 0
+  zoneDesignDatabase: {fileID: 11400000, guid: f0d8f1c6be693c84190f2b52ac580989, type: 2}
+  createZoneDesignRules: 1
+  validateZoneDesignRulesAfterGenerate: 1
+  logZoneDesignRuleVerbose: 0
+  zoneDesignRuleDatabase: {fileID: 11400000, guid: 8e83b208158667e458e59bd5d90e2cc8, type: 2}
+  createZoneTerrainPlans: 1
+  validateZoneTerrainPlansAfterGenerate: 1
+  logZoneTerrainPlanVerbose: 0
+  zoneTerrainPlanDatabase: {fileID: 11400000, guid: 780b31a1fb1ea60498e248df1a54a9c2, type: 2}
+  createZoneTerrainPatches: 1
+  validateZoneTerrainPatchesAfterGenerate: 1
+  logZoneTerrainPatchVerbose: 0
+  terrainPatchResolution: 32
+  terrainPatchMaterial: {fileID: 0}
+  createTerrainPatchMeshCollider: 1
+  hideLegacySeafloorPlaceholdersWhenPatchExists: 1
+  terrainPatchSeamBlendWidth: 20
+  terrainPatchNoiseScale: 0.015
+  terrainPatchNoiseStrength: 8
   logVerbose: 1

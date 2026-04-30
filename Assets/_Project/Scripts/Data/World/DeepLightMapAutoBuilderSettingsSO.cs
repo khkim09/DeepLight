@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using Project.Data.World.Design;
+using UnityEngine;
 
 namespace Project.Data.World
+
 {
     /// <summary>
     /// DeepLight Map Auto Builder의 설정을 저장하는 ScriptableObject.
@@ -146,8 +148,63 @@ namespace Project.Data.World
         [SerializeField, Tooltip("Terrain Layout 상세 로그 출력 여부")]
         private bool logTerrainLayoutVerbose = false;
 
+        [Header("Phase 14: Zone Design Database")]
+        [SerializeField, Tooltip("Zone Design Database 생성 여부 (Phase 14.1)")]
+        private bool createZoneDesignDatabase = true;
+        [SerializeField, Tooltip("Zone Design Database 생성 후 검증 실행 여부")]
+        private bool validateZoneDesignDatabaseAfterGenerate = true;
+        [SerializeField, Tooltip("Zone Design Database 상세 로그 출력 여부")]
+        private bool logZoneDesignVerbose = false;
+        [SerializeField, Tooltip("Zone Design Database (Project Asset)")]
+        private WorldMapZoneDesignDatabaseSO zoneDesignDatabase;
+
+        [Header("Phase 14.2: Zone Design Rule Interpreter")]
+        [SerializeField, Tooltip("Zone Design Rule 생성 여부 (Phase 14.2)")]
+        private bool createZoneDesignRules = true;
+        [SerializeField, Tooltip("Zone Design Rule 생성 후 검증 실행 여부")]
+        private bool validateZoneDesignRulesAfterGenerate = true;
+        [SerializeField, Tooltip("Zone Design Rule 상세 로그 출력 여부")]
+        private bool logZoneDesignRuleVerbose = false;
+        [SerializeField, Tooltip("Zone Design Rule Database (Project Asset)")]
+        private WorldMapZoneDesignRuleDatabaseSO zoneDesignRuleDatabase;
+
+        [Header("Phase 14.3: Zone Terrain Plan Foundation")]
+        [SerializeField, Tooltip("Zone Terrain Plan 생성 여부 (Phase 14.3)")]
+        private bool createZoneTerrainPlans = true;
+        [SerializeField, Tooltip("Zone Terrain Plan 생성 후 검증 실행 여부")]
+        private bool validateZoneTerrainPlansAfterGenerate = true;
+        [SerializeField, Tooltip("Zone Terrain Plan 상세 로그 출력 여부")]
+        private bool logZoneTerrainPlanVerbose = false;
+        [SerializeField, Tooltip("Zone Terrain Plan Database (Project Asset)")]
+        private WorldMapZoneTerrainPlanDatabaseSO zoneTerrainPlanDatabase;
+
+        [Header("Phase 14.4: Zone Terrain Plan Mesh Patch Generation")]
+        [SerializeField, Tooltip("Zone Terrain Patch 생성 여부 (Phase 14.4)")]
+        private bool createZoneTerrainPatches = true;
+        [SerializeField, Tooltip("Zone Terrain Patch 생성 후 검증 실행 여부")]
+        private bool validateZoneTerrainPatchesAfterGenerate = true;
+        [SerializeField, Tooltip("Zone Terrain Patch 상세 로그 출력 여부")]
+        private bool logZoneTerrainPatchVerbose = false;
+        [SerializeField, Tooltip("Terrain Patch 해상도 (기본 32 = 33x33 vertices)")]
+        private int terrainPatchResolution = 32;
+        [SerializeField, Tooltip("Terrain Patch Material (없으면 fallback 검색)")]
+        private Material terrainPatchMaterial;
+        [SerializeField, Tooltip("Terrain Patch MeshCollider 생성 여부")]
+        private bool createTerrainPatchMeshCollider = true;
+        [SerializeField, Tooltip("Terrain Patch 생성 시 기존 Seafloor placeholder 숨김 여부")]
+        private bool hideLegacySeafloorPlaceholdersWhenPatchExists = true;
+        [SerializeField, Tooltip("인접 Zone 경계 seam 블렌드 폭 (unit)")]
+        private float terrainPatchSeamBlendWidth = 20f;
+        [SerializeField, Tooltip("Terrain Patch 노이즈 스케일")]
+        private float terrainPatchNoiseScale = 0.015f;
+        [SerializeField, Tooltip("Terrain Patch 노이즈 강도")]
+        private float terrainPatchNoiseStrength = 8f;
+
         [Header("Logging")]
+
+
         [SerializeField] private bool logVerbose = true; // 상세 로그 출력 여부
+
 
         // ===== Public Getters =====
 
@@ -352,11 +409,79 @@ namespace Project.Data.World
         /// <summary>Terrain Layout 상세 로그 출력 여부</summary>
         public bool LogTerrainLayoutVerbose => logTerrainLayoutVerbose;
 
+        /// <summary>Zone Design Database 생성 여부 (Phase 14.1)</summary>
+        public bool CreateZoneDesignDatabase => createZoneDesignDatabase;
+
+        /// <summary>Zone Design Database 생성 후 검증 실행 여부</summary>
+        public bool ValidateZoneDesignDatabaseAfterGenerate => validateZoneDesignDatabaseAfterGenerate;
+
+        /// <summary>Zone Design Database 상세 로그 출력 여부</summary>
+        public bool LogZoneDesignVerbose => logZoneDesignVerbose;
+
+        /// <summary>Zone Design Database (Project Asset)</summary>
+        public WorldMapZoneDesignDatabaseSO ZoneDesignDatabase => zoneDesignDatabase;
+
+        /// <summary>Zone Design Rule 생성 여부 (Phase 14.2)</summary>
+        public bool CreateZoneDesignRules => createZoneDesignRules;
+
+        /// <summary>Zone Design Rule 생성 후 검증 실행 여부</summary>
+        public bool ValidateZoneDesignRulesAfterGenerate => validateZoneDesignRulesAfterGenerate;
+
+        /// <summary>Zone Design Rule 상세 로그 출력 여부</summary>
+        public bool LogZoneDesignRuleVerbose => logZoneDesignRuleVerbose;
+
+        /// <summary>Zone Design Rule Database (Project Asset)</summary>
+        public WorldMapZoneDesignRuleDatabaseSO ZoneDesignRuleDatabase => zoneDesignRuleDatabase;
+
+        /// <summary>Zone Terrain Plan 생성 여부 (Phase 14.3)</summary>
+        public bool CreateZoneTerrainPlans => createZoneTerrainPlans;
+
+        /// <summary>Zone Terrain Plan 생성 후 검증 실행 여부</summary>
+        public bool ValidateZoneTerrainPlansAfterGenerate => validateZoneTerrainPlansAfterGenerate;
+
+        /// <summary>Zone Terrain Plan 상세 로그 출력 여부</summary>
+        public bool LogZoneTerrainPlanVerbose => logZoneTerrainPlanVerbose;
+
+        /// <summary>Zone Terrain Plan Database (Project Asset)</summary>
+        public WorldMapZoneTerrainPlanDatabaseSO ZoneTerrainPlanDatabase => zoneTerrainPlanDatabase;
+
+        /// <summary>Zone Terrain Patch 생성 여부 (Phase 14.4)</summary>
+        public bool CreateZoneTerrainPatches => createZoneTerrainPatches;
+
+        /// <summary>Zone Terrain Patch 생성 후 검증 실행 여부</summary>
+        public bool ValidateZoneTerrainPatchesAfterGenerate => validateZoneTerrainPatchesAfterGenerate;
+
+        /// <summary>Zone Terrain Patch 상세 로그 출력 여부</summary>
+        public bool LogZoneTerrainPatchVerbose => logZoneTerrainPatchVerbose;
+
+        /// <summary>Terrain Patch 해상도 (기본 32 = 33x33 vertices)</summary>
+        public int TerrainPatchResolution => terrainPatchResolution;
+
+        /// <summary>Terrain Patch Material (없으면 fallback 검색)</summary>
+        public Material TerrainPatchMaterial => terrainPatchMaterial;
+
+        /// <summary>Terrain Patch MeshCollider 생성 여부</summary>
+        public bool CreateTerrainPatchMeshCollider => createTerrainPatchMeshCollider;
+
+        /// <summary>Terrain Patch 생성 시 기존 Seafloor placeholder 숨김 여부</summary>
+        public bool HideLegacySeafloorPlaceholdersWhenPatchExists => hideLegacySeafloorPlaceholdersWhenPatchExists;
+
+        /// <summary>인접 Zone 경계 seam 블렌드 폭 (unit)</summary>
+        public float TerrainPatchSeamBlendWidth => terrainPatchSeamBlendWidth;
+
+        /// <summary>Terrain Patch 노이즈 스케일</summary>
+        public float TerrainPatchNoiseScale => terrainPatchNoiseScale;
+
+        /// <summary>Terrain Patch 노이즈 강도</summary>
+        public float TerrainPatchNoiseStrength => terrainPatchNoiseStrength;
+
         /// <summary>상세 로그 출력 여부</summary>
+
         public bool LogVerbose => logVerbose;
 
 
         // ===== Public Setters (Editor Auto-Fill 용, Runtime에서는 사용 금지) =====
+
 
         /// <summary>월드맵 설정 설정 (Editor Auto-Fill 전용)</summary>
         public void SetWorldMapConfig(WorldMapConfigSO value) { worldMapConfig = value; }

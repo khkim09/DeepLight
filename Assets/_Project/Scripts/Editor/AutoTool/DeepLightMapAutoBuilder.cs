@@ -3,7 +3,9 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 using Project.Data.World;
+using Project.Data.World.Design;
 using Project.Gameplay.World;
+
 
 namespace Project.Editor.AutoTool
 {
@@ -479,11 +481,79 @@ namespace Project.Editor.AutoTool
                 LogIfVerbose(settings, "[SKIP] createTerrainSourceLayout is false. Skipping Phase 13.");
             }
 
-            // 16. 생성 완료 후 Selection 설정
+            // 16. Phase 14.1: Zone Design Database 생성 (settings.CreateZoneDesignDatabase이 true일 때만)
+            if (settings.CreateZoneDesignDatabase)
+            {
+                Debug.Log("[MapAutoBuilder] === Phase 14.1: Rebuilding Zone Design Database ===");
+                RebuildZoneDesignDatabase(settings, context);
+
+                if (settings.ValidateZoneDesignDatabaseAfterGenerate)
+                {
+                    Debug.Log("[MapAutoBuilder] === Phase 14.1: Validating Zone Design Database ===");
+                    ValidateZoneDesignDatabase(settings, context);
+                }
+            }
+            else
+            {
+                LogIfVerbose(settings, "[SKIP] createZoneDesignDatabase is false. Skipping Phase 14.1.");
+            }
+
+            // 17. Phase 14.2: Zone Design Rule Interpreter (settings.CreateZoneDesignRules이 true일 때만)
+            if (settings.CreateZoneDesignRules)
+            {
+                Debug.Log("[MapAutoBuilder] === Phase 14.2: Rebuilding Zone Design Rules ===");
+                RebuildZoneDesignRules(settings, context);
+
+                if (settings.ValidateZoneDesignRulesAfterGenerate)
+                {
+                    Debug.Log("[MapAutoBuilder] === Phase 14.2: Validating Zone Design Rules ===");
+                    ValidateZoneDesignRules(settings, context);
+                }
+            }
+            else
+            {
+                LogIfVerbose(settings, "[SKIP] createZoneDesignRules is false. Skipping Phase 14.2.");
+            }
+
+            // 18. Phase 14.3: Zone Terrain Plan Foundation (settings.CreateZoneTerrainPlans이 true일 때만)
+            if (settings.CreateZoneTerrainPlans)
+            {
+                Debug.Log("[MapAutoBuilder] === Phase 14.3: Rebuilding Zone Terrain Plans ===");
+                RebuildZoneTerrainPlans(settings, context);
+
+                if (settings.ValidateZoneTerrainPlansAfterGenerate)
+                {
+                    Debug.Log("[MapAutoBuilder] === Phase 14.3: Validating Zone Terrain Plans ===");
+                    ValidateZoneTerrainPlans(settings, context);
+                }
+            }
+            else
+            {
+                LogIfVerbose(settings, "[SKIP] createZoneTerrainPlans is false. Skipping Phase 14.3.");
+            }
+
+            // 19. Phase 14.4: Zone Terrain Plan Mesh Patch Generation (settings.CreateZoneTerrainPatches이 true일 때만)
+            if (settings.CreateZoneTerrainPatches)
+            {
+                Debug.Log("[MapAutoBuilder] === Phase 14.4: Rebuilding Zone Terrain Patches ===");
+                RebuildZoneTerrainPatches(settings, context);
+
+                if (settings.ValidateZoneTerrainPatchesAfterGenerate)
+                {
+                    Debug.Log("[MapAutoBuilder] === Phase 14.4: Validating Zone Terrain Patches ===");
+                    ValidateZoneTerrainPatches(settings, context);
+                }
+            }
+            else
+            {
+                LogIfVerbose(settings, "[SKIP] createZoneTerrainPatches is false. Skipping Phase 14.4.");
+            }
+
+            // 20. 생성 완료 후 Selection 설정
             Selection.activeGameObject = generatedRoot;
             EditorGUIUtility.PingObject(generatedRoot);
 
-            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~13) COMPLETE =====");
+            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.4) COMPLETE =====");
 
         }
 
@@ -1093,10 +1163,175 @@ namespace Project.Editor.AutoTool
             DeepLightMapTerrainSourceLayoutUtility.ValidateTerrainSourceLayout(settings, context);
         }
 
+        // ======================================================================
+        //  Phase 14.1: Zone Design Database
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.1: Zone Design Database를 재구축한다.
+        /// DeepLightMapZoneDesignDatabaseUtility에 위임한다.
+        /// </summary>
+        public static void RebuildZoneDesignDatabase(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild zone design database.");
+                return;
+            }
+
+            // 1. Database asset 찾기 또는 생성
+            WorldMapZoneDesignDatabaseSO database = DeepLightMapZoneDesignDatabaseUtility.FindOrCreateDatabaseAsset();
+            if (database == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Failed to find or create ZoneDesignDatabase asset.");
+                return;
+            }
+
+            // 2. A1~C10 entries 채우기
+            DeepLightMapZoneDesignDatabaseUtility.PopulateA1ToC10Entries(database);
+
+            // 3. SettingsSO에 참조 연결
+            if (settings.ZoneDesignDatabase != database)
+            {
+                SerializedObject serializedSettings = new SerializedObject(settings);
+                SerializedProperty dbProp = serializedSettings.FindProperty("zoneDesignDatabase");
+                if (dbProp != null)
+                {
+                    dbProp.objectReferenceValue = database;
+                    serializedSettings.ApplyModifiedProperties();
+                    EditorUtility.SetDirty(settings);
+                    Debug.Log("[MapAutoBuilder] ZoneDesignDatabase reference linked to SettingsSO.");
+                }
+            }
+
+            Debug.Log("[MapAutoBuilder] Phase 14.1: Zone Design Database rebuild complete.");
+        }
+
+        /// <summary>
+        /// Phase 14.1: Zone Design Database의 유효성을 검사한다.
+        /// 20개 항목을 검사하고 Console에 결과를 출력한다.
+        /// </summary>
+        public static void ValidateZoneDesignDatabase(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate zone design database.");
+                return;
+            }
+
+            DeepLightMapZoneDesignDatabaseUtility.ValidateZoneDesignDatabase(settings);
+        }
+
+        // ======================================================================
+        //  Phase 14.2: Zone Design Rule Interpreter
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.2: Zone Design Rule Database를 재구축한다.
+        /// DeepLightMapZoneDesignRuleUtility에 위임한다.
+        /// </summary>
+        public static void RebuildZoneDesignRules(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild zone design rules.");
+                return;
+            }
+
+            DeepLightMapZoneDesignRuleUtility.RebuildZoneDesignRules(settings, context);
+        }
+
+        /// <summary>
+        /// Phase 14.2: Zone Design Rule Database의 유효성을 검사한다.
+        /// 17개 항목을 검사하고 Console에 결과를 출력한다.
+        /// </summary>
+        public static void ValidateZoneDesignRules(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate zone design rules.");
+                return;
+            }
+
+            DeepLightMapZoneDesignRuleUtility.ValidateZoneDesignRules(settings, context);
+        }
+
+        // ======================================================================
+        //  Phase 14.3: Zone Terrain Plan Foundation
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.3: Zone Terrain Plan Database를 재구축한다.
+        /// DeepLightMapZoneTerrainPlanUtility에 위임한다.
+        /// </summary>
+        public static void RebuildZoneTerrainPlans(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild zone terrain plans.");
+                return;
+            }
+
+            DeepLightMapZoneTerrainPlanUtility.RebuildZoneTerrainPlans(settings, context);
+        }
+
+        /// <summary>
+        /// Phase 14.3: Zone Terrain Plan Database의 유효성을 검사한다.
+        /// 21개 항목을 검사하고 Console에 결과를 출력한다.
+        /// </summary>
+        public static void ValidateZoneTerrainPlans(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate zone terrain plans.");
+                return;
+            }
+
+            DeepLightMapZoneTerrainPlanUtility.ValidateZoneTerrainPlans(settings, context);
+        }
+
+        // ======================================================================
+        //  Phase 14.4: Zone Terrain Plan Mesh Patch Generation
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.4: Zone Terrain Patches를 재구축한다.
+        /// A1~C10 각 ZoneRoot 하위에 seafloor mesh patch와 collision mesh를 생성한다.
+        /// DeepLightMapZoneTerrainPatchUtility에 위임한다.
+        /// </summary>
+        public static void RebuildZoneTerrainPatches(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild zone terrain patches.");
+                return;
+            }
+
+            DeepLightMapZoneTerrainPatchUtility.RebuildZoneTerrainPatches(settings, context);
+        }
+
+        /// <summary>
+        /// Phase 14.4: Zone Terrain Patches의 유효성을 검사한다.
+        /// 23개 항목을 검사하고 Console에 결과를 출력한다.
+        /// </summary>
+        public static void ValidateZoneTerrainPatches(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate zone terrain patches.");
+                return;
+            }
+
+            DeepLightMapZoneTerrainPatchUtility.ValidateZoneTerrainPatches(settings, context);
+        }
+
         /// <summary>
         /// logVerbose가 true일 때만 로그를 출력한다
         /// </summary>
+
         private static void LogIfVerbose(DeepLightMapAutoBuilderSettingsSO settings, string message)
+
+
         {
             if (settings != null && settings.LogVerbose)
             {
