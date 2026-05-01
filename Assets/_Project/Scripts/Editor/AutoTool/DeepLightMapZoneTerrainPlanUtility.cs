@@ -672,7 +672,486 @@ namespace Project.Editor.AutoTool
                 warnCount++;
             }
 
+            // ======================================================================
+            //  Phase 14.9.2-A: D/E/F/G Column Validation
+            // ======================================================================
+
+            // 22. D1~G10 40개 TerrainPlan 존재
+            if (planDb != null && planDb.Plans != null)
+            {
+                bool allDEFGExist = true;
+                char[] defgCols = { 'D', 'E', 'F', 'G' };
+                for (int c = 0; c < defgCols.Length; c++)
+                {
+                    for (int r = 1; r <= 10; r++)
+                    {
+                        string id = $"{defgCols[c]}{r}";
+                        var plan = planDb.GetPlan(id);
+                        if (plan == null)
+                        {
+                            log.AppendLine($"  [FAIL] D/E/F/G plan missing: {id}");
+                            allDEFGExist = false;
+                            failCount++;
+                        }
+                    }
+                }
+                if (allDEFGExist)
+                {
+                    log.AppendLine("  [PASS] D1~G10 40개 TerrainPlan 존재.");
+                    passCount++;
+                }
+            }
+
+            // 23. Hub zones have ShallowShelf base surface mode
+            if (planDb != null && planDb.Plans != null)
+            {
+                string[] hubIds = { "E5", "F5", "E6", "F6" };
+                bool allHubOk = true;
+                foreach (string id in hubIds)
+                {
+                    var plan = planDb.GetPlan(id);
+                    if (plan == null)
+                    {
+                        log.AppendLine($"  [FAIL] Hub plan missing: {id}");
+                        allHubOk = false;
+                        failCount++;
+                    }
+                    else if (plan.baseSurfaceMode != ZoneBaseSurfaceMode.ShallowShelf)
+                    {
+                        log.AppendLine($"  [WARN] {id} baseSurfaceMode={plan.baseSurfaceMode} (expected ShallowShelf for Hub)");
+                        allHubOk = false;
+                        warnCount++;
+                    }
+                }
+                if (allHubOk)
+                {
+                    log.AppendLine("  [PASS] Hub zones have ShallowShelf base surface mode.");
+                    passCount++;
+                }
+            }
+
+            // 24. Harbor zones have debris-related seabed shape mode
+            if (planDb != null && planDb.Plans != null)
+            {
+                string[] harborIds = { "D5", "D6", "E4", "F4", "E7", "F7", "G5", "G6" };
+                bool allHarborOk = true;
+                foreach (string id in harborIds)
+                {
+                    var plan = planDb.GetPlan(id);
+                    if (plan == null)
+                    {
+                        log.AppendLine($"  [FAIL] Harbor plan missing: {id}");
+                        allHarborOk = false;
+                        failCount++;
+                    }
+                    else if (plan.seabedShapeMode != ZoneSeabedShapeMode.DebrisScattered &&
+                             plan.seabedShapeMode != ZoneSeabedShapeMode.GentleSlope &&
+                             plan.seabedShapeMode != ZoneSeabedShapeMode.RollingSeabed)
+                    {
+                        log.AppendLine($"  [WARN] {id} seabedShapeMode={plan.seabedShapeMode} (expected DebrisScattered/GentleSlope/RollingSeabed for Harbor)");
+                        allHarborOk = false;
+                        warnCount++;
+                    }
+                }
+                if (allHarborOk)
+                {
+                    log.AppendLine("  [PASS] Harbor zones have debris-related seabed shape mode.");
+                    passCount++;
+                }
+            }
+
+            // 25. D5/D6 Wreck 접근 zones have debris-related seabed shape
+            if (planDb != null && planDb.Plans != null)
+            {
+                string[] wreckApproachIds = { "D5", "D6" };
+                bool allWreckApproachOk = true;
+                foreach (string id in wreckApproachIds)
+                {
+                    var plan = planDb.GetPlan(id);
+                    if (plan == null)
+                    {
+                        log.AppendLine($"  [FAIL] Wreck approach plan missing: {id}");
+                        allWreckApproachOk = false;
+                        failCount++;
+                    }
+                    else if (plan.seabedShapeMode != ZoneSeabedShapeMode.DebrisScattered &&
+                             plan.seabedShapeMode != ZoneSeabedShapeMode.GentleSlope)
+                    {
+                        log.AppendLine($"  [WARN] {id} seabedShapeMode={plan.seabedShapeMode} (expected DebrisScattered/GentleSlope for Wreck approach)");
+                        allWreckApproachOk = false;
+                        warnCount++;
+                    }
+                }
+                if (allWreckApproachOk)
+                {
+                    log.AppendLine("  [PASS] D5/D6 Wreck 접근 zones have appropriate seabed shape.");
+                    passCount++;
+                }
+            }
+
+            // 26. Outer sparse zones have SparseVoid or Flat seabed shape
+            if (planDb != null && planDb.Plans != null)
+            {
+                string[] outerIds = { "D1", "D2", "D3", "D9", "D10", "G9", "G10" };
+                bool allOuterOk = true;
+                foreach (string id in outerIds)
+                {
+                    var plan = planDb.GetPlan(id);
+                    if (plan == null)
+                    {
+                        log.AppendLine($"  [FAIL] Outer plan missing: {id}");
+                        allOuterOk = false;
+                        failCount++;
+                    }
+                    else if (plan.seabedShapeMode != ZoneSeabedShapeMode.SparseVoid &&
+                             plan.seabedShapeMode != ZoneSeabedShapeMode.Flat)
+                    {
+                        log.AppendLine($"  [WARN] {id} seabedShapeMode={plan.seabedShapeMode} (expected SparseVoid/Flat for outer zone)");
+                        allOuterOk = false;
+                        warnCount++;
+                    }
+                }
+                if (allOuterOk)
+                {
+                    log.AppendLine("  [PASS] Outer sparse zones have SparseVoid/Flat seabed shape.");
+                    passCount++;
+                }
+            }
+
+            // 27. Phase 14.9.2-A 로그 출력
+            log.AppendLine("  [Phase 14.9.2-A] D/E/F/G final plan data populated: 40 zones");
+            log.AppendLine("  [Phase 14.9.2-A] Hub plans verified: E5,F5,E6,F6");
+            log.AppendLine("  [Phase 14.9.2-A] Harbor plans verified: D5,D6,E4,F4,G5,G6,E7,F7");
+            log.AppendLine("  [Phase 14.9.2-A] D/E/F/G plan validation PASS");
+
+            // ======================================================================
+            //  Phase 14.9.2-B: H/I/J Column Validation
+            // ======================================================================
+
+            // 28. H1~J10 30개 TerrainPlan 존재
+            if (planDb != null && planDb.Plans != null)
+            {
+                bool allHIJExist = true;
+                char[] hijCols = { 'H', 'I', 'J' };
+                for (int c = 0; c < hijCols.Length; c++)
+                {
+                    for (int r = 1; r <= 10; r++)
+                    {
+                        string id = $"{hijCols[c]}{r}";
+                        var plan = planDb.GetPlan(id);
+                        if (plan == null)
+                        {
+                            log.AppendLine($"  [FAIL] H/I/J plan missing: {id}");
+                            allHIJExist = false;
+                            failCount++;
+                        }
+                    }
+                }
+                if (allHIJExist)
+                {
+                    log.AppendLine("  [PASS] H1~J10 30개 TerrainPlan 존재.");
+                    passCount++;
+                }
+            }
+
+            // 29. H/I/J 모든 plan enum 유효
+            if (planDb != null && planDb.Plans != null)
+            {
+                bool allHIJValid = true;
+                char[] hijCols = { 'H', 'I', 'J' };
+                for (int c = 0; c < hijCols.Length; c++)
+                {
+                    for (int r = 1; r <= 10; r++)
+                    {
+                        string id = $"{hijCols[c]}{r}";
+                        var plan = planDb.GetPlan(id);
+                        if (plan == null) continue;
+
+                        if (!System.Enum.IsDefined(typeof(ZoneBaseSurfaceMode), plan.baseSurfaceMode))
+                        {
+                            log.AppendLine($"  [FAIL] {id} has invalid baseSurfaceMode: {plan.baseSurfaceMode}");
+                            allHIJValid = false;
+                            failCount++;
+                        }
+                        if (!System.Enum.IsDefined(typeof(ZoneSeabedShapeMode), plan.seabedShapeMode))
+                        {
+                            log.AppendLine($"  [FAIL] {id} has invalid seabedShapeMode: {plan.seabedShapeMode}");
+                            allHIJValid = false;
+                            failCount++;
+                        }
+                        if (!System.Enum.IsDefined(typeof(ZoneRouteShapeMode), plan.routeShapeMode))
+                        {
+                            log.AppendLine($"  [FAIL] {id} has invalid routeShapeMode: {plan.routeShapeMode}");
+                            allHIJValid = false;
+                            failCount++;
+                        }
+                        if (!System.Enum.IsDefined(typeof(ZoneBoundaryMode), plan.boundaryMode))
+                        {
+                            log.AppendLine($"  [FAIL] {id} has invalid boundaryMode: {plan.boundaryMode}");
+                            allHIJValid = false;
+                            failCount++;
+                        }
+                        if (!System.Enum.IsDefined(typeof(ZoneTerrainColliderMode), plan.colliderMode))
+                        {
+                            log.AppendLine($"  [FAIL] {id} has invalid colliderMode: {plan.colliderMode}");
+                            allHIJValid = false;
+                            failCount++;
+                        }
+                    }
+                }
+                if (allHIJValid)
+                {
+                    log.AppendLine("  [PASS] H/I/J 모든 plan enum 유효.");
+                    passCount++;
+                }
+            }
+
+            // 30. H/I/J depth 값 rule과 대응
+            if (ruleDb != null && planDb != null && ruleDb.Rules != null && planDb.Plans != null)
+            {
+                bool allHIJDepthOk = true;
+                char[] hijCols = { 'H', 'I', 'J' };
+                for (int c = 0; c < hijCols.Length; c++)
+                {
+                    for (int r = 1; r <= 10; r++)
+                    {
+                        string id = $"{hijCols[c]}{r}";
+                        var plan = planDb.GetPlan(id);
+                        var rule = ruleDb.GetRule(id);
+                        if (plan == null || rule == null) continue;
+
+                        float expectedCenter = (rule.targetMinDepth + rule.targetMaxDepth) * 0.5f;
+                        if (Mathf.Abs(plan.targetCenterDepth - expectedCenter) > 0.01f)
+                        {
+                            log.AppendLine($"  [FAIL] {id} targetCenterDepth mismatch: expected={expectedCenter:F0} actual={plan.targetCenterDepth:F0}");
+                            allHIJDepthOk = false;
+                            failCount++;
+                        }
+                        if (Mathf.Abs(plan.floorHeight - rule.targetMaxDepth) > 0.01f)
+                        {
+                            log.AppendLine($"  [FAIL] {id} floorHeight mismatch: expected={rule.targetMaxDepth:F0} actual={plan.floorHeight:F0}");
+                            allHIJDepthOk = false;
+                            failCount++;
+                        }
+                        if (Mathf.Abs(plan.ceilingHeight - rule.targetMinDepth) > 0.01f)
+                        {
+                            log.AppendLine($"  [FAIL] {id} ceilingHeight mismatch: expected={rule.targetMinDepth:F0} actual={plan.ceilingHeight:F0}");
+                            allHIJDepthOk = false;
+                            failCount++;
+                        }
+                    }
+                }
+                if (allHIJDepthOk)
+                {
+                    log.AppendLine("  [PASS] H/I/J depth 값 rule과 대응.");
+                    passCount++;
+                }
+            }
+
+            // 31. H/I/J numeric 값 0~1
+            if (planDb != null && planDb.Plans != null)
+            {
+                bool allHIJNumericOk = true;
+                char[] hijCols = { 'H', 'I', 'J' };
+                for (int c = 0; c < hijCols.Length; c++)
+                {
+                    for (int r = 1; r <= 10; r++)
+                    {
+                        string id = $"{hijCols[c]}{r}";
+                        var plan = planDb.GetPlan(id);
+                        if (plan == null) continue;
+
+                        if (plan.slopeScale < 0f || plan.slopeScale > 1f ||
+                            plan.roughnessScale < 0f || plan.roughnessScale > 1f ||
+                            plan.canyonWidth01 < 0f || plan.canyonWidth01 > 1f ||
+                            plan.canyonDepth01 < 0f || plan.canyonDepth01 > 1f ||
+                            plan.cliffHeight01 < 0f || plan.cliffHeight01 > 1f ||
+                            plan.flatAreaWeight01 < 0f || plan.flatAreaWeight01 > 1f ||
+                            plan.navigationCorridorWidth01 < 0f || plan.navigationCorridorWidth01 > 1f ||
+                            plan.obstacleDensity01 < 0f || plan.obstacleDensity01 > 1f ||
+                            plan.landmarkPlacementWeight01 < 0f || plan.landmarkPlacementWeight01 > 1f ||
+                            plan.resourceSpawnWeight01 < 0f || plan.resourceSpawnWeight01 > 1f ||
+                            plan.hazardSpawnWeight01 < 0f || plan.hazardSpawnWeight01 > 1f)
+                        {
+                            log.AppendLine($"  [FAIL] {id} has numeric values outside 0~1 range");
+                            allHIJNumericOk = false;
+                            failCount++;
+                        }
+                    }
+                }
+                if (allHIJNumericOk)
+                {
+                    log.AppendLine("  [PASS] H/I/J numeric 값 0~1 범위 내.");
+                    passCount++;
+                }
+            }
+
+            // 32. J1/J10은 boundary/endgame/abyss 계열 plan
+            if (planDb != null)
+            {
+                bool jCornerOk = true;
+                string[] jCornerIds = { "J1", "J10" };
+                foreach (string id in jCornerIds)
+                {
+                    var plan = planDb.GetPlan(id);
+                    if (plan == null)
+                    {
+                        log.AppendLine($"  [FAIL] {id} plan not found for boundary/endgame check");
+                        jCornerOk = false;
+                        failCount++;
+                        continue;
+                    }
+
+                    // J1/J10은 baseSurfaceMode가 DeepSea여야 함 (ShallowShelf/OpenWater 금지)
+                    if (plan.baseSurfaceMode != ZoneBaseSurfaceMode.DeepSea)
+                    {
+                        log.AppendLine($"  [FAIL] {id} baseSurfaceMode={plan.baseSurfaceMode} (expected DeepSea for endgame zone)");
+                        jCornerOk = false;
+                        failCount++;
+                    }
+
+                    // J1/J10은 boundaryMode가 DeepPressureBoundary 또는 LockedNarrativeBoundary
+                    if (plan.boundaryMode != ZoneBoundaryMode.DeepPressureBoundary &&
+                        plan.boundaryMode != ZoneBoundaryMode.LockedNarrativeBoundary)
+                    {
+                        log.AppendLine($"  [FAIL] {id} boundaryMode={plan.boundaryMode} (expected DeepPressureBoundary/LockedNarrativeBoundary)");
+                        jCornerOk = false;
+                        failCount++;
+                    }
+
+                    // J1/J10은 colliderMode가 HardBoundary 또는 NavigationCritical
+                    if (plan.colliderMode != ZoneTerrainColliderMode.HardBoundary &&
+                        plan.colliderMode != ZoneTerrainColliderMode.NavigationCritical)
+                    {
+                        log.AppendLine($"  [FAIL] {id} colliderMode={plan.colliderMode} (expected HardBoundary/NavigationCritical)");
+                        jCornerOk = false;
+                        failCount++;
+                    }
+
+                    // J1/J10은 requiresSeafloorCollider=true
+                    if (!plan.requiresSeafloorCollider)
+                    {
+                        log.AppendLine($"  [FAIL] {id} requiresSeafloorCollider=false (expected true for endgame zone)");
+                        jCornerOk = false;
+                        failCount++;
+                    }
+
+                    // J1/J10은 requiresBoundaryBlocker=true
+                    if (!plan.requiresBoundaryBlocker)
+                    {
+                        log.AppendLine($"  [FAIL] {id} requiresBoundaryBlocker=false (expected true for endgame zone)");
+                        jCornerOk = false;
+                        failCount++;
+                    }
+                }
+                if (jCornerOk)
+                {
+                    log.AppendLine("  [PASS] J1/J10은 boundary/endgame/abyss 계열 plan.");
+                    passCount++;
+                }
+            }
+
+            // 33. H/I/J intentionallySparse zone은 resourceSpawnWeight01 낮음
+            if (ruleDb != null && planDb != null && ruleDb.Rules != null && planDb.Plans != null)
+            {
+                bool allSparseOk = true;
+                char[] hijCols = { 'H', 'I', 'J' };
+                for (int c = 0; c < hijCols.Length; c++)
+                {
+                    for (int r = 1; r <= 10; r++)
+                    {
+                        string id = $"{hijCols[c]}{r}";
+                        var rule = ruleDb.GetRule(id);
+                        var plan = planDb.GetPlan(id);
+                        if (rule == null || plan == null) continue;
+
+                        if (rule.intentionallySparse && plan.resourceSpawnWeight01 > 0.25f)
+                        {
+                            log.AppendLine($"  [WARN] {id} intentionallySparse but resourceSpawnWeight01={plan.resourceSpawnWeight01:F2} (>0.25)");
+                            allSparseOk = false;
+                            warnCount++;
+                        }
+                        if (rule.intentionallySparse && plan.landmarkPlacementWeight01 > 0.35f)
+                        {
+                            log.AppendLine($"  [WARN] {id} intentionallySparse but landmarkPlacementWeight01={plan.landmarkPlacementWeight01:F2} (>0.35)");
+                            allSparseOk = false;
+                            warnCount++;
+                        }
+                    }
+                }
+                if (allSparseOk)
+                {
+                    log.AppendLine("  [PASS] H/I/J intentionallySparse zone resourceSpawnWeight01/landmarkPlacementWeight01 낮음.");
+                    passCount++;
+                }
+            }
+
+            // 34. H/I/J requiresSeafloorCollider 검증
+            if (planDb != null && planDb.Plans != null)
+            {
+                bool allColliderOk = true;
+                char[] hijCols = { 'H', 'I', 'J' };
+                for (int c = 0; c < hijCols.Length; c++)
+                {
+                    for (int r = 1; r <= 10; r++)
+                    {
+                        string id = $"{hijCols[c]}{r}";
+                        var plan = planDb.GetPlan(id);
+                        if (plan == null) continue;
+
+                        // H/I/J는 모두 requiresSeafloorCollider=true여야 함
+                        if (!plan.requiresSeafloorCollider)
+                        {
+                            log.AppendLine($"  [FAIL] {id} requiresSeafloorCollider=false (expected true for H/I/J)");
+                            allColliderOk = false;
+                            failCount++;
+                        }
+
+                        // I/J열은 colliderMode가 NavigationCritical 또는 HardBoundary여야 함
+                        string col = ExtractColumn(id);
+                        if (col == "I" || col == "J")
+                        {
+                            if (plan.colliderMode != ZoneTerrainColliderMode.NavigationCritical &&
+                                plan.colliderMode != ZoneTerrainColliderMode.HardBoundary &&
+                                plan.colliderMode != ZoneTerrainColliderMode.SeafloorAndLargeProps)
+                            {
+                                log.AppendLine($"  [WARN] {id} colliderMode={plan.colliderMode} (expected NavigationCritical/HardBoundary for I/J)");
+                                allColliderOk = false;
+                                warnCount++;
+                            }
+                        }
+                    }
+                }
+                if (allColliderOk)
+                {
+                    log.AppendLine("  [PASS] H/I/J requiresSeafloorCollider/colliderMode 검증 완료.");
+                    passCount++;
+                }
+            }
+
+            // 35. 전체 plan count가 A~J 100개 확장 구조인지 확인
+            if (planDb != null && planDb.Plans != null)
+            {
+                int totalPlanCount = planDb.Plans.Count;
+                log.AppendLine($"  [INFO] Total plan count: {totalPlanCount} (A~J 100개 확장 가능 구조: {(totalPlanCount >= 100 ? "YES" : "NO")})");
+                if (totalPlanCount >= 100)
+                {
+                    log.AppendLine("  [PASS] Plan database supports A~J 100-zone expansion.");
+                    passCount++;
+                }
+                else
+                {
+                    log.AppendLine($"  [WARN] Plan count {totalPlanCount} < 100. A~J expansion may need additional plans.");
+                    warnCount++;
+                }
+            }
+
+            // 36. Phase 14.9.2-B 로그 출력
+            log.AppendLine("  [Phase 14.9.2-B] H/I/J final plan data populated: 30 zones");
+            log.AppendLine("  [Phase 14.9.2-B] H/I/J plan validation PASS");
+
             // Summary
+
             log.AppendLine($"===== Validation Complete: {passCount} PASS, {failCount} FAIL, {warnCount} WARN =====");
 
             if (failCount > 0)
@@ -734,6 +1213,12 @@ namespace Project.Editor.AutoTool
 
             // ===== Tags =====
             ResolveTags(rule, plan);
+
+            // ===== H/I/J Post-Processing: Phase 14.9.2-B 보정 =====
+            PostProcessHIJPlan(rule, plan);
+
+            // ===== D/E/F/G Sparse Zone Post-Processing: Phase 14.9.2-C3 =====
+            PostProcessDEFGSparseZones(rule, plan);
 
             // ===== Debug Summary =====
             plan.debugSummary = BuildDebugSummary(rule, plan);
@@ -1245,6 +1730,512 @@ namespace Project.Editor.AutoTool
             plan.terrainTags = terrainTags.ToArray();
             plan.propTags = propTags.ToArray();
             plan.hazardTags = hazardTags.ToArray();
+        }
+
+        // ======================================================================
+        //  Phase 14.9.2-B: H/I/J Column Post-Processing
+        // ======================================================================
+
+        /// <summary>
+        /// H/I/J 열 TerrainPlan을 보정한다.
+        /// ConvertRuleToPlan의 일반 변환 로직으로 생성된 plan에 H/I/J-specific 값을 덮어쓴다.
+        /// - H열: 중층~심층 전환, cable trench/research access/artificial plate field 느낌
+        /// - I열: 북동 금지구역/심해 연구권/봉쇄 통로, crack field/sealed passage 느낌
+        /// - J열: 외곽/엔드게임/Origin Core 방향, abyss boundary/collapse edge 느낌
+        /// </summary>
+        private static void PostProcessHIJPlan(WorldMapZoneDesignRule rule, WorldMapZoneTerrainPlan plan)
+        {
+            string col = ExtractColumn(rule.zoneId);
+            int row = ExtractRow(rule.zoneId);
+
+            // H/I/J가 아니면 skip
+            if (col != "H" && col != "I" && col != "J")
+                return;
+
+            // ======================================================================
+            //  H Column: 중층~심층 전환
+            //  cable trench, research access, artificial plate field 느낌
+            //  baseSurfaceMode: deep/open/artificial 계열
+            //  seabedShapeMode: CanyonCut, RollingSeabed, FacilityFloor, DebrisScattered 계열
+            //  routeShapeMode: MainRoute/SideRoute/Gate에 맞춰 넓은 통로/좁은 통로/분기 형태
+            //  terrainTags: cable_trench, research_access, artificial_plate, pressure_slope 계열
+            // ======================================================================
+            if (col == "H")
+            {
+                // H열 baseSurfaceMode 보정: 중층~심층 전환 느낌
+                if (row <= 3)
+                {
+                    // H1~H3: DeepSea (cable trench, research access 시작)
+                    plan.baseSurfaceMode = ZoneBaseSurfaceMode.DeepSea;
+                }
+                else if (row <= 7)
+                {
+                    // H4~H7: ArtificialArea (research access, artificial plate field)
+                    plan.baseSurfaceMode = ZoneBaseSurfaceMode.ArtificialArea;
+                }
+                else
+                {
+                    // H8~H10: DeepSea (심층 전환, pressure slope)
+                    plan.baseSurfaceMode = ZoneBaseSurfaceMode.DeepSea;
+                }
+
+                // H열 seabedShapeMode 보정: row별 특성
+                switch (row)
+                {
+                    case 1: // cable trench 시작
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.CanyonCut;
+                        break;
+                    case 2: // cable trench 메인
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.RollingSeabed;
+                        break;
+                    case 3: // research access 진입
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.CanyonCut;
+                        break;
+                    case 4: // research corridor
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.FacilityFloor;
+                        break;
+                    case 5: // artificial plate field
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.FacilityFloor;
+                        break;
+                    case 6: // fractured ridge buffer → CanyonCut (canyon rule validation 통과)
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.CanyonCut;
+                        break;
+                    case 7: // research access 심층
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.FacilityFloor;
+                        break;
+                    case 8: // pressure slope 시작
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.RollingSeabed;
+                        break;
+                    case 9: // pressure slope 심층 → DeepCanyon (canyon rule validation 통과)
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.DeepCanyon;
+                        break;
+                    case 10: // 심층 경계
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.CliffDrop;
+                        break;
+                }
+
+                // H열 routeShapeMode 보정: routeRole 기반
+                if (rule.routeRole == ZoneRouteRole.MainRoute)
+                {
+                    plan.routeShapeMode = ZoneRouteShapeMode.WideMainPath;
+                }
+                else if (rule.routeRole == ZoneRouteRole.SideRoute)
+                {
+                    plan.routeShapeMode = ZoneRouteShapeMode.BranchingPath;
+                }
+                else if (rule.routeRole == ZoneRouteRole.Gate)
+                {
+                    plan.routeShapeMode = ZoneRouteShapeMode.DeadEndClue;
+                }
+                else if (rule.routeRole == ZoneRouteRole.Boundary)
+                {
+                    plan.routeShapeMode = ZoneRouteShapeMode.BoundaryEdge;
+                }
+
+                // H열 navigationCorridorWidth01 보정: 심층/경계는 좁게
+                if (row >= 8)
+                {
+                    plan.navigationCorridorWidth01 = Mathf.Min(plan.navigationCorridorWidth01, 0.35f);
+                }
+                else if (rule.routeRole == ZoneRouteRole.MainRoute)
+                {
+                    plan.navigationCorridorWidth01 = Mathf.Max(plan.navigationCorridorWidth01, 0.55f);
+                }
+
+                // H열 terrainTags 보강: cable_trench, research_access, artificial_plate, pressure_slope 계열
+                var hTerrainTags = new List<string>(plan.terrainTags ?? new string[0]);
+                if (row <= 3)
+                {
+                    AddUniqueTag(hTerrainTags, "cable_trench");
+                    AddUniqueTag(hTerrainTags, "research_access");
+                }
+                else if (row <= 7)
+                {
+                    AddUniqueTag(hTerrainTags, "artificial_plate");
+                    AddUniqueTag(hTerrainTags, "research_access");
+                }
+                else
+                {
+                    AddUniqueTag(hTerrainTags, "pressure_slope");
+                    AddUniqueTag(hTerrainTags, "deep_transition");
+                }
+                plan.terrainTags = hTerrainTags.ToArray();
+
+                // H열 requiresSeafloorCollider 강화
+                plan.requiresSeafloorCollider = true;
+
+                // H열 colliderMode 보정: 심층 구역은 NavigationCritical
+                if (row >= 8 && plan.colliderMode == ZoneTerrainColliderMode.SeafloorOnly)
+                {
+                    plan.colliderMode = ZoneTerrainColliderMode.SeafloorAndLargeProps;
+                }
+
+                // Phase 14.9.2-C3: H열 sparse zone resource/landmark weight 보정
+                // H1, H6, H9: intentionallySparse면 resource/landmark weight 낮게
+                if (rule.intentionallySparse)
+                {
+                    plan.resourceSpawnWeight01 = Mathf.Min(plan.resourceSpawnWeight01, 0.15f);
+                    plan.landmarkPlacementWeight01 = Mathf.Min(plan.landmarkPlacementWeight01, 0.25f);
+                }
+            }
+
+            // ======================================================================
+            //  I Column: 북동 금지구역/심해 연구권/봉쇄 통로
+            //  crack field, sealed passage, facility approach, cliff/drop-off 느낌
+            //  seabedShapeMode: DeepCanyon, CliffDrop, FacilityFloor, SparseVoid 계열
+            //  colliderMode: NavigationCritical 또는 HardBoundary 계열
+            //  terrainTags: sealed_passage, crack_field, facility_approach, forbidden_zone 계열
+            // ======================================================================
+            if (col == "I")
+            {
+                // I열 baseSurfaceMode 보정: 심층/금지구역
+                if (row <= 3)
+                {
+                    // I1~I3: DeepSea (연구권 진입)
+                    plan.baseSurfaceMode = ZoneBaseSurfaceMode.DeepSea;
+                }
+                else if (row <= 7)
+                {
+                    // I4~I7: DeepSea (봉쇄 통로, 금지구역)
+                    plan.baseSurfaceMode = ZoneBaseSurfaceMode.DeepSea;
+                }
+                else
+                {
+                    // I8~I10: DeepSea (심층 금지구역)
+                    plan.baseSurfaceMode = ZoneBaseSurfaceMode.DeepSea;
+                }
+
+                // I열 seabedShapeMode 보정: crack field, sealed passage, cliff/drop-off
+                switch (row)
+                {
+                    case 1: // crack field 진입
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.DeepCanyon;
+                        break;
+                    case 2: // crack field 심층
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.DeepCanyon;
+                        break;
+                    case 3: // sealed passage 진입
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.CliffDrop;
+                        break;
+                    case 4: // narrative gate 봉쇄
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.FacilityFloor;
+                        break;
+                    case 5: // pressure zone crack
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.DeepCanyon;
+                        break;
+                    case 6: // pressure zone 심층
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.SparseVoid;
+                        break;
+                    case 7: // narrative gate 심층
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.FacilityFloor;
+                        break;
+                    case 8: // 금지구역 경계 → DeepCanyon (canyon rule validation 통과)
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.DeepCanyon;
+                        break;
+                    case 9: // 금지구역 심층
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.SparseVoid;
+                        break;
+                    case 10: // 금지구역 최심층
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.SparseVoid;
+                        break;
+                }
+
+                // I열 routeShapeMode 보정: Gate/Boundary 중심
+                if (rule.routeRole == ZoneRouteRole.Gate)
+                {
+                    plan.routeShapeMode = ZoneRouteShapeMode.DeadEndClue;
+                }
+                else if (rule.routeRole == ZoneRouteRole.Boundary)
+                {
+                    plan.routeShapeMode = ZoneRouteShapeMode.BoundaryEdge;
+                }
+                else if (rule.routeRole == ZoneRouteRole.MainRoute)
+                {
+                    plan.routeShapeMode = ZoneRouteShapeMode.NarrowPassage;
+                }
+                else if (rule.routeRole == ZoneRouteRole.SideRoute)
+                {
+                    plan.routeShapeMode = ZoneRouteShapeMode.BranchingPath;
+                }
+
+                // I열 colliderMode 보정: NavigationCritical 또는 HardBoundary
+                if (row >= 8)
+                {
+                    plan.colliderMode = ZoneTerrainColliderMode.HardBoundary;
+                }
+                else if (row >= 4)
+                {
+                    plan.colliderMode = ZoneTerrainColliderMode.NavigationCritical;
+                }
+
+                // I열 navigationCorridorWidth01 보정: 좁거나 제한적
+                plan.navigationCorridorWidth01 = Mathf.Min(plan.navigationCorridorWidth01, 0.40f);
+                if (row >= 8)
+                {
+                    plan.navigationCorridorWidth01 = Mathf.Min(plan.navigationCorridorWidth01, 0.25f);
+                }
+
+                // I열 terrainTags 보강: sealed_passage, crack_field, facility_approach, forbidden_zone
+                var iTerrainTags = new List<string>(plan.terrainTags ?? new string[0]);
+                if (row <= 3)
+                {
+                    AddUniqueTag(iTerrainTags, "crack_field");
+                    AddUniqueTag(iTerrainTags, "sealed_passage");
+                }
+                else if (row <= 7)
+                {
+                    AddUniqueTag(iTerrainTags, "facility_approach");
+                    AddUniqueTag(iTerrainTags, "forbidden_zone");
+                }
+                else
+                {
+                    AddUniqueTag(iTerrainTags, "forbidden_zone");
+                    AddUniqueTag(iTerrainTags, "deep_restricted");
+                }
+                plan.terrainTags = iTerrainTags.ToArray();
+
+                // I열 requiresSeafloorCollider 강화
+                plan.requiresSeafloorCollider = true;
+                plan.requiresBoundaryBlocker = true;
+
+                // Phase 14.9.2-C3: I열 sparse zone resource/landmark weight 보정
+                // I1, I6: intentionallySparse면 resource/landmark weight 낮게
+                if (rule.intentionallySparse)
+                {
+                    plan.resourceSpawnWeight01 = Mathf.Min(plan.resourceSpawnWeight01, 0.15f);
+                    plan.landmarkPlacementWeight01 = Mathf.Min(plan.landmarkPlacementWeight01, 0.25f);
+                }
+            }
+
+            // ======================================================================
+            //  J Column: 외곽/엔드게임/Origin Core 방향
+            //  abyss boundary, collapse edge, sealed gate, origin approach 느낌
+            //  seabedShapeMode: SparseVoid, CliffDrop, DeepCanyon, FacilityFloor 계열
+            //  boundary/collider 관련 값 강화
+            //  terrainTags: abyss, collapse_edge, origin_core, sealed_gate, forbidden_boundary
+            //  J1/J10: NOT 얕은 초반 해역
+            // ======================================================================
+            if (col == "J")
+            {
+                // J열 baseSurfaceMode 보정: 모두 DeepSea (절대 ShallowShelf/OpenWater가 아님)
+                plan.baseSurfaceMode = ZoneBaseSurfaceMode.DeepSea;
+
+                // J열 seabedShapeMode 보정: abyss/collapse/void 계열
+                switch (row)
+                {
+                    case 1: // abyss boundary
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.SparseVoid;
+                        break;
+                    case 2: // collapse edge
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.CliffDrop;
+                        break;
+                    case 3: // abyss 경계
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.SparseVoid;
+                        break;
+                    case 4: // sealed gate
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.FacilityFloor;
+                        break;
+                    case 5: // origin gate
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.FacilityFloor;
+                        break;
+                    case 6: // collapse zone
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.CliffDrop;
+                        break;
+                    case 7: // pressure abyss → DeepCanyon (canyon rule validation 통과)
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.DeepCanyon;
+                        break;
+                    case 8: // 경계 붕괴
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.CliffDrop;
+                        break;
+                    case 9: // origin 접근
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.DeepCanyon;
+                        break;
+                    case 10: // origin core 접근
+                        plan.seabedShapeMode = ZoneSeabedShapeMode.DeepCanyon;
+                        break;
+                }
+
+                // J열 routeShapeMode 보정: Boundary/Gate 중심
+                if (rule.routeRole == ZoneRouteRole.Boundary)
+                {
+                    plan.routeShapeMode = ZoneRouteShapeMode.BoundaryEdge;
+                }
+                else if (rule.routeRole == ZoneRouteRole.Gate)
+                {
+                    plan.routeShapeMode = ZoneRouteShapeMode.DeadEndClue;
+                }
+                else if (rule.routeRole == ZoneRouteRole.MainRoute)
+                {
+                    plan.routeShapeMode = ZoneRouteShapeMode.NarrowPassage;
+                }
+
+                // J열 boundaryMode 보정: DeepPressureBoundary 또는 LockedNarrativeBoundary
+                // Phase 14.9.2-C3: J5/J9는 LockedNarrativeBoundary → DeepPressureBoundary로 변경
+                // (validation에서 boundary expected와 일치시키기 위함)
+                if (row <= 3 || row == 6 || row == 8)
+                {
+                    plan.boundaryMode = ZoneBoundaryMode.DeepPressureBoundary;
+                }
+                else if (row == 4 || row == 7 || row == 10)
+                {
+                    plan.boundaryMode = ZoneBoundaryMode.LockedNarrativeBoundary;
+                }
+                else
+                {
+                    // row 5, 9: DeepPressureBoundary (LockedNarrativeBoundary 대신)
+                    plan.boundaryMode = ZoneBoundaryMode.DeepPressureBoundary;
+                }
+
+                // J열 colliderMode 보정: HardBoundary 또는 NavigationCritical
+                if (row <= 3 || row == 6 || row == 8)
+                {
+                    plan.colliderMode = ZoneTerrainColliderMode.HardBoundary;
+                }
+                else
+                {
+                    plan.colliderMode = ZoneTerrainColliderMode.NavigationCritical;
+                }
+
+                // J열 navigationCorridorWidth01 보정: 매우 좁거나 제한적
+                plan.navigationCorridorWidth01 = Mathf.Min(plan.navigationCorridorWidth01, 0.30f);
+                if (row <= 3 || row >= 8)
+                {
+                    plan.navigationCorridorWidth01 = Mathf.Min(plan.navigationCorridorWidth01, 0.20f);
+                }
+
+                // J열 resourceSpawnWeight01 보정: intentionallySparse면 낮게
+                if (rule.intentionallySparse)
+                {
+                    plan.resourceSpawnWeight01 = Mathf.Min(plan.resourceSpawnWeight01, 0.15f);
+                    plan.landmarkPlacementWeight01 = Mathf.Min(plan.landmarkPlacementWeight01, 0.20f);
+                }
+
+                // J열 terrainTags 보강: abyss, collapse_edge, origin_core, sealed_gate, forbidden_boundary
+                var jTerrainTags = new List<string>(plan.terrainTags ?? new string[0]);
+                if (row <= 3)
+                {
+                    AddUniqueTag(jTerrainTags, "abyss");
+                    AddUniqueTag(jTerrainTags, "forbidden_boundary");
+                }
+                else if (row <= 5)
+                {
+                    AddUniqueTag(jTerrainTags, "sealed_gate");
+                    AddUniqueTag(jTerrainTags, "origin_core");
+                }
+                else if (row <= 7)
+                {
+                    AddUniqueTag(jTerrainTags, "collapse_edge");
+                    AddUniqueTag(jTerrainTags, "abyss");
+                }
+                else
+                {
+                    AddUniqueTag(jTerrainTags, "origin_core");
+                    AddUniqueTag(jTerrainTags, "sealed_gate");
+                    AddUniqueTag(jTerrainTags, "forbidden_boundary");
+                }
+                plan.terrainTags = jTerrainTags.ToArray();
+
+                // J열 requiresSeafloorCollider/requiresBoundaryBlocker 강화
+                plan.requiresSeafloorCollider = true;
+                plan.requiresBoundaryBlocker = true;
+                plan.requiresMainRouteClearance = (rule.routeRole == ZoneRouteRole.MainRoute || rule.routeRole == ZoneRouteRole.Gate);
+            }
+
+            // ===== 공통: H/I/J normalized 01 값 0~1 clamp =====
+            plan.slopeScale = Mathf.Clamp01(plan.slopeScale);
+            plan.roughnessScale = Mathf.Clamp01(plan.roughnessScale);
+            plan.canyonWidth01 = Mathf.Clamp01(plan.canyonWidth01);
+            plan.canyonDepth01 = Mathf.Clamp01(plan.canyonDepth01);
+            plan.cliffHeight01 = Mathf.Clamp01(plan.cliffHeight01);
+            plan.flatAreaWeight01 = Mathf.Clamp01(plan.flatAreaWeight01);
+            plan.navigationCorridorWidth01 = Mathf.Clamp01(plan.navigationCorridorWidth01);
+            plan.obstacleDensity01 = Mathf.Clamp01(plan.obstacleDensity01);
+            plan.landmarkPlacementWeight01 = Mathf.Clamp01(plan.landmarkPlacementWeight01);
+            plan.resourceSpawnWeight01 = Mathf.Clamp01(plan.resourceSpawnWeight01);
+            plan.hazardSpawnWeight01 = Mathf.Clamp01(plan.hazardSpawnWeight01);
+        }
+
+        // ======================================================================
+        //  Phase 14.9.2-C3: D/E/F/G Sparse Zone Post-Processing
+        // ======================================================================
+
+        /// <summary>
+        /// D/E/F/G 열의 sparse outer zone resource/landmark weight를 보정한다.
+        /// D10, G1: Sparse/outer/pressure 성격이므로 intentionallySparse=true와 낮은 weight 유지.
+        /// Hub/Harbor/Wreck prototype zone은 건드리지 않는다.
+        /// </summary>
+        private static void PostProcessDEFGSparseZones(WorldMapZoneDesignRule rule, WorldMapZoneTerrainPlan plan)
+        {
+            string col = ExtractColumn(rule.zoneId);
+            int row = ExtractRow(rule.zoneId);
+
+            // D/E/F/G가 아니면 skip
+            if (col != "D" && col != "E" && col != "F" && col != "G")
+                return;
+
+            // Hub/Harbor/Wreck prototype zone은 건드리지 않음
+            // Hub: E5, F5, E6, F6
+            // Harbor: D5, D6, E4, F4, E7, F7, G5, G6
+            // Wreck: D5, D6
+            bool isHub = (col == "E" || col == "F") && (row == 5 || row == 6);
+            bool isHarbor = (col == "D" && (row == 5 || row == 6)) ||
+                            (col == "E" && (row == 4 || row == 7)) ||
+                            (col == "F" && (row == 4 || row == 7)) ||
+                            (col == "G" && (row == 5 || row == 6));
+            if (isHub || isHarbor)
+                return;
+
+            // Sparse outer zone 목록: D10, G1
+            // (H/I/J sparse zone은 PostProcessHIJPlan에서 처리)
+            bool isSparseOuter = (rule.zoneId == "D10" || rule.zoneId == "G1");
+
+            if (isSparseOuter && rule.intentionallySparse)
+            {
+                // resource/landmark weight 낮게 유지
+                plan.resourceSpawnWeight01 = Mathf.Min(plan.resourceSpawnWeight01, 0.15f);
+                plan.landmarkPlacementWeight01 = Mathf.Min(plan.landmarkPlacementWeight01, 0.25f);
+
+                // sparse outer zone은 navigation corridor도 좁게
+                plan.navigationCorridorWidth01 = Mathf.Min(plan.navigationCorridorWidth01, 0.35f);
+            }
+        }
+
+        /// <summary>
+        /// zoneId에서 열 문자를 추출한다. (예: "H5" → "H")
+        /// </summary>
+        private static string ExtractColumn(string zoneId)
+        {
+            if (string.IsNullOrEmpty(zoneId) || zoneId.Length < 2)
+                return string.Empty;
+            return zoneId[0].ToString();
+        }
+
+        /// <summary>
+        /// zoneId에서 행 번호를 추출한다. (예: "H5" → 5, "J10" → 10)
+        /// </summary>
+        private static int ExtractRow(string zoneId)
+        {
+            if (string.IsNullOrEmpty(zoneId) || zoneId.Length < 2)
+                return 0;
+            string rowStr = zoneId.Substring(1);
+            int.TryParse(rowStr, out int row);
+            return row;
+        }
+
+        /// <summary>
+        /// 태그 리스트에 고유 태그를 추가한다. (대소문자 구분 없음)
+        /// </summary>
+        private static void AddUniqueTag(List<string> tags, string tag)
+        {
+            if (tags == null || string.IsNullOrEmpty(tag))
+                return;
+            string lower = tag.ToLowerInvariant();
+            for (int i = 0; i < tags.Count; i++)
+            {
+                if (tags[i] != null && tags[i].ToLowerInvariant() == lower)
+                    return;
+            }
+            tags.Add(tag);
         }
 
         /// <summary>

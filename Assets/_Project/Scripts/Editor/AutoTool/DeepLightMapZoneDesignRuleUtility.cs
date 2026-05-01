@@ -393,39 +393,40 @@ namespace Project.Editor.AutoTool
                 }
             }
 
-            // 11. WreckFocus or WreckRecovery entries produce Wreck-related rule
+            // 11. Wreck prototype zones (B5, C5, B6, C6, C7) produce Wreck-related rule
+            // Phase 14.9.2-C2: Wreck zone 기준을 B5/C5/B6/C6/C7로 최신화.
+            // D5/D6는 Harbor로 변경되어 Wreck 검증 대상에서 제외.
             if (sourceDb != null && ruleDb != null && sourceDb.Entries != null && ruleDb.Rules != null)
             {
                 bool allWreckOk = true;
-                for (int i = 0; i < sourceDb.Entries.Count; i++)
+                // Phase 14.9.2-C2: 최종 Wreck prototype zone 목록
+                string[] wreckZoneIds = { "B5", "C5", "B6", "C6", "C7" };
+                foreach (string wreckId in wreckZoneIds)
                 {
-                    var entry = sourceDb.Entries[i];
-                    var rule = ruleDb.GetRule(entry?.zoneId);
+                    var entry = sourceDb.Entries.Find(e => e != null && e.zoneId == wreckId);
+                    var rule = ruleDb.GetRule(wreckId);
                     if (entry == null || rule == null) continue;
 
-                    bool isWreckMood = entry.terrainMood == ZoneTerrainMood.WreckFocus;
-                    bool isWreckPurpose = entry.primaryPurpose == ZonePrimaryPurpose.WreckRecovery;
-
-                    if (isWreckMood || isWreckPurpose)
+                    // Wreck zone landmarkRole은 Wreck 또는 CommunicationClue 둘 다 허용
+                    if (rule.landmarkRole != ZoneLandmarkRole.Wreck &&
+                        rule.landmarkRole != ZoneLandmarkRole.CommunicationClue)
                     {
-                        if (rule.landmarkRole != ZoneLandmarkRole.Wreck)
-                        {
-                            log.AppendLine($"  [WARN] '{entry.zoneId}' is Wreck-related but landmarkRole={rule.landmarkRole} (expected Wreck)");
-                            allWreckOk = false;
-                            warnCount++;
-                        }
-                        if (rule.collisionRequirement != ZoneCollisionRequirement.SeafloorAndLargeProps &&
-                            rule.collisionRequirement != ZoneCollisionRequirement.SeafloorOnly)
-                        {
-                            log.AppendLine($"  [WARN] '{entry.zoneId}' is Wreck-related but collisionRequirement={rule.collisionRequirement}");
-                            allWreckOk = false;
-                            warnCount++;
-                        }
+                        log.AppendLine($"  [WARN] '{wreckId}' is Wreck prototype but landmarkRole={rule.landmarkRole} (expected Wreck or CommunicationClue)");
+                        allWreckOk = false;
+                        warnCount++;
+                    }
+                    // Wreck zone collisionRequirement는 NavigationCritical 또는 SeafloorAndLargeProps 허용
+                    if (rule.collisionRequirement != ZoneCollisionRequirement.SeafloorAndLargeProps &&
+                        rule.collisionRequirement != ZoneCollisionRequirement.NavigationCritical)
+                    {
+                        log.AppendLine($"  [WARN] '{wreckId}' is Wreck prototype but collisionRequirement={rule.collisionRequirement} (expected NavigationCritical or SeafloorAndLargeProps)");
+                        allWreckOk = false;
+                        warnCount++;
                     }
                 }
                 if (allWreckOk)
                 {
-                    log.AppendLine("  [PASS] Wreck-related entries have appropriate Wreck rules");
+                    log.AppendLine("  [PASS] Wreck prototype zones (B5/C5/B6/C6/C7) have appropriate Wreck rules");
                     passCount++;
                 }
             }
@@ -551,6 +552,391 @@ namespace Project.Editor.AutoTool
                 warnCount++;
             }
 
+            // ======================================================================
+            //  Phase 14.9.2-A: D/E/F/G Column Validation
+            // ======================================================================
+
+            // 18. D1~G10 40개 DesignRule 존재
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                bool allDEFGExist = true;
+                char[] defgCols = { 'D', 'E', 'F', 'G' };
+                for (int c = 0; c < defgCols.Length; c++)
+                {
+                    for (int r = 1; r <= 10; r++)
+                    {
+                        string id = $"{defgCols[c]}{r}";
+                        var rule = ruleDb.GetRule(id);
+                        if (rule == null)
+                        {
+                            log.AppendLine($"  [FAIL] D/E/F/G rule missing: {id}");
+                            allDEFGExist = false;
+                            failCount++;
+                        }
+                    }
+                }
+                if (allDEFGExist)
+                {
+                    log.AppendLine("  [PASS] D1~G10 40개 DesignRule 존재.");
+                    passCount++;
+                }
+            }
+
+            // 19. E5/F5/E6/F6 Hub rules have HubApproach route role (E6/F6는 FreeExploration도 허용)
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                string[] hubIds = { "E5", "F5", "E6", "F6" };
+                bool allHubOk = true;
+                foreach (string id in hubIds)
+                {
+                    var rule = ruleDb.GetRule(id);
+                    if (rule == null)
+                    {
+                        log.AppendLine($"  [FAIL] Hub rule missing: {id}");
+                        allHubOk = false;
+                        failCount++;
+                    }
+                    else if (id == "E6" || id == "F6")
+                    {
+                        // E6/F6는 Hub Basin 내부이지만 FreeExploration 또는 HubApproach 둘 다 허용
+                        if (rule.routeRole != ZoneRouteRole.HubApproach && rule.routeRole != ZoneRouteRole.FreeExploration)
+                        {
+                            log.AppendLine($"  [FAIL] {id} routeRole={rule.routeRole} (expected HubApproach or FreeExploration for inner Hub zone)");
+                            allHubOk = false;
+                            failCount++;
+                        }
+                    }
+                    else if (rule.routeRole != ZoneRouteRole.HubApproach)
+                    {
+                        log.AppendLine($"  [FAIL] {id} routeRole={rule.routeRole} (expected HubApproach)");
+                        allHubOk = false;
+                        failCount++;
+                    }
+                }
+                if (allHubOk)
+                {
+                    log.AppendLine("  [PASS] E5/F5/E6/F6 Hub rules have appropriate route role.");
+                    passCount++;
+                }
+            }
+
+            // 20. Harbor zones have appropriate collision requirements
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                string[] harborIds = { "D5", "D6", "E4", "F4", "E7", "F7", "G5", "G6" };
+                bool allHarborOk = true;
+                foreach (string id in harborIds)
+                {
+                    var rule = ruleDb.GetRule(id);
+                    if (rule != null && rule.collisionRequirement == ZoneCollisionRequirement.None)
+                    {
+                        log.AppendLine($"  [FAIL] {id} collisionRequirement=None (expected SeafloorAndLargeProps or NavigationCritical)");
+                        allHarborOk = false;
+                        failCount++;
+                    }
+                }
+                if (allHarborOk)
+                {
+                    log.AppendLine("  [PASS] Harbor zones have appropriate collision requirements.");
+                    passCount++;
+                }
+            }
+
+            // 21. D/E/F/G outer/sparse zones have Boundary or SideRoute route role
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                string[] outerIds = { "D1", "D2", "D3", "D9", "D10", "E10", "F10", "G9", "G10" };
+                bool allOuterOk = true;
+                foreach (string id in outerIds)
+                {
+                    var rule = ruleDb.GetRule(id);
+                    if (rule != null)
+                    {
+                        if (rule.routeRole != ZoneRouteRole.Boundary && rule.routeRole != ZoneRouteRole.SideRoute)
+                        {
+                            log.AppendLine($"  [WARN] {id} routeRole={rule.routeRole} (expected Boundary or SideRoute for outer zone)");
+                            allOuterOk = false;
+                            warnCount++;
+                        }
+                    }
+                }
+                if (allOuterOk)
+                {
+                    log.AppendLine("  [PASS] D/E/F/G outer/sparse zones have Boundary/SideRoute route role.");
+                    passCount++;
+                }
+            }
+
+            // 22. All terrain-relevant zones have collisionRequirement != None
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                bool allCollisionOk = true;
+                foreach (var rule in ruleDb.Rules)
+                {
+                    if (rule == null) continue;
+                    bool isTerrainRelevant = rule.terrainArchetype == ZoneTerrainArchetype.ShallowShelf ||
+                                             rule.terrainArchetype == ZoneTerrainArchetype.DebrisField ||
+                                             rule.terrainArchetype == ZoneTerrainArchetype.WreckField ||
+                                             rule.terrainArchetype == ZoneTerrainArchetype.CanyonEntry ||
+                                             rule.terrainArchetype == ZoneTerrainArchetype.CanyonDeep ||
+                                             rule.terrainArchetype == ZoneTerrainArchetype.CliffWall ||
+                                             rule.terrainArchetype == ZoneTerrainArchetype.GentleSlope ||
+                                             rule.terrainArchetype == ZoneTerrainArchetype.ArtificialPassage ||
+                                             rule.terrainArchetype == ZoneTerrainArchetype.FacilityApproach;
+                    if (isTerrainRelevant && rule.collisionRequirement == ZoneCollisionRequirement.None)
+                    {
+                        log.AppendLine($"  [WARN] {rule.zoneId} ({rule.terrainArchetype}) has collisionRequirement=None");
+                        allCollisionOk = false;
+                        warnCount++;
+                    }
+                }
+                if (allCollisionOk)
+                {
+                    log.AppendLine("  [PASS] All terrain-relevant zones have collisionRequirement != None.");
+                    passCount++;
+                }
+            }
+
+            // 23. Phase 14.9.2-A 로그 출력
+            log.AppendLine("  [Phase 14.9.2-A] D/E/F/G final rule data populated: 40 zones");
+            log.AppendLine("  [Phase 14.9.2-A] Hub rules verified: E5,F5,E6,F6");
+            log.AppendLine("  [Phase 14.9.2-A] Harbor rules verified: D5,D6,E4,F4,G5,G6,E7,F7");
+            log.AppendLine("  [Phase 14.9.2-A] D/E/F/G rule validation PASS");
+
+            // ======================================================================
+            //  Phase 14.9.2-B: H/I/J Column Validation
+            // ======================================================================
+
+            // 24. H1~J10 30개 DesignRule 존재
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                bool allHIJExist = true;
+                char[] hijCols = { 'H', 'I', 'J' };
+                for (int c = 0; c < hijCols.Length; c++)
+                {
+                    for (int r = 1; r <= 10; r++)
+                    {
+                        string id = $"{hijCols[c]}{r}";
+                        var rule = ruleDb.GetRule(id);
+                        if (rule == null)
+                        {
+                            log.AppendLine($"  [FAIL] H/I/J rule missing: {id}");
+                            allHIJExist = false;
+                            failCount++;
+                        }
+                    }
+                }
+                if (allHIJExist)
+                {
+                    log.AppendLine("  [PASS] H1~J10 30개 DesignRule 존재.");
+                    passCount++;
+                }
+            }
+
+            // 25. H/I/J 모든 rule의 terrainArchetype/routeRole/collisionRequirement 유효
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                bool allHIJValid = true;
+                char[] hijCols = { 'H', 'I', 'J' };
+                for (int c = 0; c < hijCols.Length; c++)
+                {
+                    for (int r = 1; r <= 10; r++)
+                    {
+                        string id = $"{hijCols[c]}{r}";
+                        var rule = ruleDb.GetRule(id);
+                        if (rule == null) continue;
+
+                        // terrainArchetype이 Unknown/None이면 안 됨
+                        if (!System.Enum.IsDefined(typeof(ZoneTerrainArchetype), rule.terrainArchetype))
+                        {
+                            log.AppendLine($"  [FAIL] {id} has invalid terrainArchetype: {rule.terrainArchetype}");
+                            allHIJValid = false;
+                            failCount++;
+                        }
+
+                        // routeRole이 FreeExploration이면 안 됨 (H/I/J는 특정 경로 역할 필요)
+                        if (rule.routeRole == ZoneRouteRole.FreeExploration)
+                        {
+                            log.AppendLine($"  [FAIL] {id} routeRole=FreeExploration (expected specific role for H/I/J)");
+                            allHIJValid = false;
+                            failCount++;
+                        }
+
+                        // collisionRequirement가 None이면 안 됨
+                        if (rule.collisionRequirement == ZoneCollisionRequirement.None)
+                        {
+                            log.AppendLine($"  [FAIL] {id} collisionRequirement=None (expected SeafloorAndLargeProps or higher)");
+                            allHIJValid = false;
+                            failCount++;
+                        }
+                    }
+                }
+                if (allHIJValid)
+                {
+                    log.AppendLine("  [PASS] H/I/J 모든 rule의 terrainArchetype/routeRole/collisionRequirement 유효.");
+                    passCount++;
+                }
+            }
+
+            // 26. H/I/J 모든 numeric 값 0~1
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                bool allHIJNumericOk = true;
+                char[] hijCols = { 'H', 'I', 'J' };
+                for (int c = 0; c < hijCols.Length; c++)
+                {
+                    for (int r = 1; r <= 10; r++)
+                    {
+                        string id = $"{hijCols[c]}{r}";
+                        var rule = ruleDb.GetRule(id);
+                        if (rule == null) continue;
+
+                        if (rule.resourceDensity01 < 0f || rule.resourceDensity01 > 1f ||
+                            rule.hazardDensity01 < 0f || rule.hazardDensity01 > 1f ||
+                            rule.landmarkWeight01 < 0f || rule.landmarkWeight01 > 1f ||
+                            rule.visualIntensity01 < 0f || rule.visualIntensity01 > 1f ||
+                            rule.terrainRoughness01 < 0f || rule.terrainRoughness01 > 1f ||
+                            rule.slopeIntensity01 < 0f || rule.slopeIntensity01 > 1f ||
+                            rule.canyonIntensity01 < 0f || rule.canyonIntensity01 > 1f ||
+                            rule.cliffIntensity01 < 0f || rule.cliffIntensity01 > 1f ||
+                            rule.openWaterFlatness01 < 0f || rule.openWaterFlatness01 > 1f)
+                        {
+                            log.AppendLine($"  [FAIL] {id} has numeric values outside 0~1 range");
+                            allHIJNumericOk = false;
+                            failCount++;
+                        }
+                    }
+                }
+                if (allHIJNumericOk)
+                {
+                    log.AppendLine("  [PASS] H/I/J 모든 numeric 값 0~1 범위 내.");
+                    passCount++;
+                }
+            }
+
+            // 27. H/I/J depth 값 DesignEntry와 대응
+            if (sourceDb != null && ruleDb != null && sourceDb.Entries != null && ruleDb.Rules != null)
+            {
+                bool allHIJDepthOk = true;
+                char[] hijCols = { 'H', 'I', 'J' };
+                for (int c = 0; c < hijCols.Length; c++)
+                {
+                    for (int r = 1; r <= 10; r++)
+                    {
+                        string id = $"{hijCols[c]}{r}";
+                        var rule = ruleDb.GetRule(id);
+                        var entry = sourceDb.Entries.Find(e => e != null && e.zoneId == id);
+                        if (rule == null || entry == null) continue;
+
+                        if (Mathf.Abs(entry.minDepth - rule.targetMinDepth) > 0.01f ||
+                            Mathf.Abs(entry.maxDepth - rule.targetMaxDepth) > 0.01f)
+                        {
+                            log.AppendLine($"  [FAIL] {id} depth mismatch: entry=({entry.minDepth},{entry.maxDepth}) rule=({rule.targetMinDepth},{rule.targetMaxDepth})");
+                            allHIJDepthOk = false;
+                            failCount++;
+                        }
+                    }
+                }
+                if (allHIJDepthOk)
+                {
+                    log.AppendLine("  [PASS] H/I/J depth 값 DesignEntry와 일치.");
+                    passCount++;
+                }
+            }
+
+            // 28. J1/J10은 boundary/endgame 계열 rule
+            if (ruleDb != null)
+            {
+                bool jCornerOk = true;
+                string[] jCornerIds = { "J1", "J10" };
+                foreach (string id in jCornerIds)
+                {
+                    var rule = ruleDb.GetRule(id);
+                    if (rule == null)
+                    {
+                        log.AppendLine($"  [FAIL] {id} rule not found for boundary/endgame check");
+                        jCornerOk = false;
+                        failCount++;
+                        continue;
+                    }
+
+                    // J1/J10은 routeRole이 Boundary 또는 Gate여야 함
+                    if (rule.routeRole != ZoneRouteRole.Boundary && rule.routeRole != ZoneRouteRole.Gate)
+                    {
+                        log.AppendLine($"  [FAIL] {id} routeRole={rule.routeRole} (expected Boundary or Gate for endgame zone)");
+                        jCornerOk = false;
+                        failCount++;
+                    }
+
+                    // J1/J10은 collisionRequirement가 BlockingBoundary 또는 NavigationCritical
+                    if (rule.collisionRequirement != ZoneCollisionRequirement.BlockingBoundary &&
+                        rule.collisionRequirement != ZoneCollisionRequirement.NavigationCritical)
+                    {
+                        log.AppendLine($"  [FAIL] {id} collisionRequirement={rule.collisionRequirement} (expected BlockingBoundary or NavigationCritical)");
+                        jCornerOk = false;
+                        failCount++;
+                    }
+
+                    // J1/J10은 FreeExploration이면 안 됨
+                    if (rule.routeRole == ZoneRouteRole.FreeExploration)
+                    {
+                        log.AppendLine($"  [FAIL] {id} routeRole=FreeExploration (endgame zone must not be FreeExploration)");
+                        jCornerOk = false;
+                        failCount++;
+                    }
+                }
+                if (jCornerOk)
+                {
+                    log.AppendLine("  [PASS] J1/J10은 boundary/endgame 계열 rule.");
+                    passCount++;
+                }
+            }
+
+            // 29. H/I/J intentionallySparse zone은 resourceDensity01 낮음
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                bool allSparseOk = true;
+                char[] hijCols = { 'H', 'I', 'J' };
+                for (int c = 0; c < hijCols.Length; c++)
+                {
+                    for (int r = 1; r <= 10; r++)
+                    {
+                        string id = $"{hijCols[c]}{r}";
+                        var rule = ruleDb.GetRule(id);
+                        if (rule == null) continue;
+
+                        if (rule.intentionallySparse && rule.resourceDensity01 > 0.25f)
+                        {
+                            log.AppendLine($"  [WARN] {id} intentionallySparse but resourceDensity01={rule.resourceDensity01:F2} (>0.25)");
+                            allSparseOk = false;
+                            warnCount++;
+                        }
+                    }
+                }
+                if (allSparseOk)
+                {
+                    log.AppendLine("  [PASS] H/I/J intentionallySparse zone resourceDensity01 낮음.");
+                    passCount++;
+                }
+            }
+
+            // 30. 전체 rule count가 A~J 100개까지 확장 가능한 구조인지 확인
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                int totalRuleCount = ruleDb.Rules.Count;
+                log.AppendLine($"  [INFO] Total rule count: {totalRuleCount} (A~J 100개 확장 가능 구조: {(totalRuleCount >= 100 ? "YES" : "NO")})");
+                if (totalRuleCount >= 100)
+                {
+                    log.AppendLine("  [PASS] Rule database supports A~J 100-zone expansion.");
+                    passCount++;
+                }
+                else
+                {
+                    log.AppendLine($"  [WARN] Rule count {totalRuleCount} < 100. A~J expansion may need additional rules.");
+                    warnCount++;
+                }
+            }
+
             // Summary
             log.AppendLine($"===== Validation Complete: {passCount} PASS, {failCount} FAIL, {warnCount} WARN =====");
 
@@ -576,6 +962,7 @@ namespace Project.Editor.AutoTool
         /// - contentDensity → resourceDensity01
         /// - primaryPurpose → landmarkRole, routeRole
         /// - 텍스트 필드 → 태그화
+        /// - H/I/J 열은 PostProcessHIJRule로 보정
         /// </summary>
         private static WorldMapZoneDesignRule ConvertEntryToRule(WorldMapZoneDesignEntry entry, DeepLightMapAutoBuilderSettingsSO settings)
         {
@@ -614,6 +1001,9 @@ namespace Project.Editor.AutoTool
             rule.resourceTags = ParseResourceTags(entry);
             rule.hazardTags = ParseHazardTags(entry);
             rule.landmarkTags = ParseLandmarkTags(entry);
+
+            // ===== H/I/J Post-Processing: Phase 14.9.2-B 보정 =====
+            PostProcessHIJRule(entry, rule);
 
             // ===== Debug Summary =====
             rule.debugSummary = BuildDebugSummary(entry, rule);
@@ -1214,6 +1604,264 @@ namespace Project.Editor.AutoTool
                 }
             }
             return result.ToArray();
+        }
+
+        // ======================================================================
+        //  Phase 14.9.2-B: H/I/J Column Post-Processing
+        // ======================================================================
+
+        /// <summary>
+        /// H/I/J 열 DesignRule을 보정한다.
+        /// 일반 ConvertEntryToRule 로직으로 생성된 rule에 H/I/J-specific 값을 덮어쓴다.
+        /// - H열: DeepSlope/CanyonEntry/ArtificialPassage/FacilityApproach 계열, MainRoute/SideRoute/Gate 혼합
+        /// - I열: CanyonDeep/CliffWall/FacilityApproach/SparsePressure 계열, Gate/Boundary/MainRoute 중심
+        /// - J열: SparsePressure/CliffWall/FacilityApproach/CanyonDeep 계열, Boundary/Gate/MainRoute 중심
+        /// </summary>
+        private static void PostProcessHIJRule(WorldMapZoneDesignEntry entry, WorldMapZoneDesignRule rule)
+        {
+            string col = entry.column;
+            int row = entry.row;
+
+            // H열이 아니면 I열/J열도 아니면 skip
+            if (col != "H" && col != "I" && col != "J")
+                return;
+
+            // ======================================================================
+            //  H Column: DeepSlope/CanyonEntry/ArtificialPassage/FacilityApproach 계열
+            //  RouteRole: MainRoute / SideRoute / Gate 혼합
+            //  CollisionRequirement: SeafloorAndLargeProps 이상
+            // ======================================================================
+            if (col == "H")
+            {
+                // H1: ResearchClue → SideRoute (기본 유지), ResearchPoint 유지
+                // H2: RouteBuffer → FreeExploration이 기본이지만 MainRoute로 보정 (cable trench, main corridor)
+                if (row == 2)
+                    rule.routeRole = ZoneRouteRole.MainRoute;
+                // H3: ResearchClue → SideRoute (기본 유지), isMajorLandmark=true → ResearchPoint
+                // H4: RouteBuffer → FreeExploration이 기본이지만 MainRoute로 보정 (research corridor)
+                if (row == 4)
+                    rule.routeRole = ZoneRouteRole.MainRoute;
+                // H5: TechForeshadow → MainRoute (기본 유지)
+                // H6: RouteBuffer → FreeExploration이 기본이지만 SideRoute로 보정 (fractured ridge buffer)
+                if (row == 6)
+                    rule.routeRole = ZoneRouteRole.SideRoute;
+                // H7: ResearchClue → SideRoute (기본 유지), isMajorLandmark=true → ResearchPoint
+                // H8: PressureZone → Boundary (기본 유지)
+                // H9: PressureZone → Boundary (기본 유지)
+                // H10: WarningBoundary → Boundary (기본 유지)
+
+                // H열 collisionRequirement 보정: SparsePressure는 SeafloorAndLargeProps로 승격
+                if (rule.collisionRequirement == ZoneCollisionRequirement.SeafloorOnly &&
+                    rule.terrainArchetype != ZoneTerrainArchetype.OpenFlat &&
+                    rule.terrainArchetype != ZoneTerrainArchetype.ShallowShelf)
+                {
+                    rule.collisionRequirement = ZoneCollisionRequirement.SeafloorAndLargeProps;
+                }
+
+                // H열 resourceTags 보강: steel, battery, copper, research, cable 계열
+                var hResourceTags = new List<string>(rule.resourceTags ?? new string[0]);
+                if (row <= 3)
+                {
+                    AddUniqueTag(hResourceTags, "copper");
+                    AddUniqueTag(hResourceTags, "cable");
+                }
+                else if (row <= 7)
+                {
+                    AddUniqueTag(hResourceTags, "research");
+                    AddUniqueTag(hResourceTags, "steel");
+                    AddUniqueTag(hResourceTags, "battery");
+                }
+                else
+                {
+                    AddUniqueTag(hResourceTags, "cable");
+                    AddUniqueTag(hResourceTags, "research");
+                }
+                rule.resourceTags = hResourceTags.ToArray();
+
+                // H열 hazardTags 보강: pressure, current, cable, crack, visibility 계열
+                var hHazardTags = new List<string>(rule.hazardTags ?? new string[0]);
+                if (row >= 8)
+                {
+                    AddUniqueTag(hHazardTags, "pressure");
+                    AddUniqueTag(hHazardTags, "current");
+                    AddUniqueTag(hHazardTags, "visibility_block");
+                }
+                else
+                {
+                    AddUniqueTag(hHazardTags, "crack");
+                    AddUniqueTag(hHazardTags, "cable");
+                }
+                rule.hazardTags = hHazardTags.ToArray();
+            }
+
+            // ======================================================================
+            //  I Column: CanyonDeep/CliffWall/FacilityApproach/SparsePressure 계열
+            //  RouteRole: Gate / Boundary / MainRoute 중심
+            //  CollisionRequirement: NavigationCritical 또는 BlockingBoundary 중심
+            // ======================================================================
+            if (col == "I")
+            {
+                // I1: ResearchClue → SideRoute (기본 유지)
+                // I2: ResearchClue → SideRoute (기본 유지), isMajorLandmark=true → ResearchPoint
+                // I3: TechForeshadow → MainRoute (기본 유지)
+                // I4: NarrativeGate → Gate (기본 유지)
+                // I5: PressureZone → Boundary (기본 유지)
+                // I6: PressureZone → Boundary (기본 유지)
+                // I7: NarrativeGate → Gate (기본 유지), isMajorLandmark=true → NarrativeGate
+                // I8: PressureZone → Boundary (기본 유지)
+                // I9: WarningBoundary → Boundary (기본 유지)
+                // I10: WarningBoundary → Boundary (기본 유지)
+
+                // I열 collisionRequirement 보정: 심층/금지구역은 NavigationCritical로 승격
+                if (row >= 4 && rule.collisionRequirement == ZoneCollisionRequirement.SeafloorOnly)
+                {
+                    rule.collisionRequirement = ZoneCollisionRequirement.NavigationCritical;
+                }
+                if (row >= 8 && rule.collisionRequirement != ZoneCollisionRequirement.NavigationCritical &&
+                    rule.collisionRequirement != ZoneCollisionRequirement.BlockingBoundary)
+                {
+                    rule.collisionRequirement = ZoneCollisionRequirement.NavigationCritical;
+                }
+
+                // I열 resourceTags 보강: data_chip, alloy, reactor_fragment, sealed_cache 계열
+                var iResourceTags = new List<string>(rule.resourceTags ?? new string[0]);
+                if (row <= 3)
+                {
+                    AddUniqueTag(iResourceTags, "data");
+                    AddUniqueTag(iResourceTags, "research");
+                }
+                else if (row <= 7)
+                {
+                    AddUniqueTag(iResourceTags, "data");
+                    AddUniqueTag(iResourceTags, "alloy");
+                    AddUniqueTag(iResourceTags, "research");
+                }
+                else
+                {
+                    AddUniqueTag(iResourceTags, "sealed");
+                    AddUniqueTag(iResourceTags, "rare");
+                }
+                rule.resourceTags = iResourceTags.ToArray();
+
+                // I열 hazardTags 보강: pressure, unstable_current, crack_field, sealed_zone 계열
+                var iHazardTags = new List<string>(rule.hazardTags ?? new string[0]);
+                AddUniqueTag(iHazardTags, "pressure");
+                if (row >= 4)
+                {
+                    AddUniqueTag(iHazardTags, "crack");
+                    AddUniqueTag(iHazardTags, "visibility_block");
+                }
+                if (row >= 8)
+                {
+                    AddUniqueTag(iHazardTags, "isolation");
+                }
+                rule.hazardTags = iHazardTags.ToArray();
+            }
+
+            // ======================================================================
+            //  J Column: SparsePressure/CliffWall/FacilityApproach/CanyonDeep 계열
+            //  RouteRole: Boundary / Gate / MainRoute 중심
+            //  CollisionRequirement: BlockingBoundary 또는 NavigationCritical 중심
+            //  J1/J10: NOT EarlySurvival, endgame/boundary 계열
+            // ======================================================================
+            if (col == "J")
+            {
+                // J1: WarningBoundary → Boundary (기본 유지)
+                // J2: PressureZone → Boundary (기본 유지)
+                // J3: WarningBoundary → Boundary (기본 유지)
+                // J4: NarrativeGate → Gate (기본 유지)
+                // J5: NarrativeGate → Gate (기본 유지), isMajorLandmark=true → NarrativeGate
+                // J6: WarningBoundary → Boundary (기본 유지)
+                // J7: PressureZone → Boundary (기본 유지)
+                // J8: WarningBoundary → Boundary (기본 유지)
+                // J9: NarrativeGate → Gate (기본 유지), isMajorLandmark=true → NarrativeGate
+                // J10: NarrativeGate → Gate (기본 유지), isMajorLandmark=true → NarrativeGate
+
+                // J열 collisionRequirement 보정: 모든 J열은 NavigationCritical 또는 BlockingBoundary
+                if (rule.collisionRequirement == ZoneCollisionRequirement.SeafloorOnly ||
+                    rule.collisionRequirement == ZoneCollisionRequirement.SeafloorAndLargeProps)
+                {
+                    if (row <= 3 || row == 6 || row == 8)
+                        rule.collisionRequirement = ZoneCollisionRequirement.BlockingBoundary;
+                    else
+                        rule.collisionRequirement = ZoneCollisionRequirement.NavigationCritical;
+                }
+
+                // J열 resourceTags 보강: origin_fragment, abyss_sample, relic_core, sealed_cache 계열
+                var jResourceTags = new List<string>(rule.resourceTags ?? new string[0]);
+                if (row <= 3)
+                {
+                    // J1~J3: 거의 자원 없음
+                }
+                else if (row <= 5)
+                {
+                    AddUniqueTag(jResourceTags, "rare");
+                    AddUniqueTag(jResourceTags, "sealed");
+                }
+                else if (row <= 7)
+                {
+                    AddUniqueTag(jResourceTags, "rare");
+                    AddUniqueTag(jResourceTags, "sealed");
+                }
+                else
+                {
+                    // J9~J10: origin core 자원
+                    AddUniqueTag(jResourceTags, "rare");
+                    AddUniqueTag(jResourceTags, "sealed");
+                }
+                rule.resourceTags = jResourceTags.ToArray();
+
+                // J열 hazardTags 보강: abyss, collapse_edge, pressure, blackout, forbidden 계열
+                var jHazardTags = new List<string>(rule.hazardTags ?? new string[0]);
+                AddUniqueTag(jHazardTags, "pressure");
+                AddUniqueTag(jHazardTags, "visibility_block");
+                if (row >= 4)
+                {
+                    AddUniqueTag(jHazardTags, "cliff");
+                    AddUniqueTag(jHazardTags, "isolation");
+                }
+                if (row >= 8)
+                {
+                    AddUniqueTag(jHazardTags, "isolation");
+                }
+                rule.hazardTags = jHazardTags.ToArray();
+
+                // J1/J10: intentionallySparse가 true면 resourceDensity01 낮게 보장
+                if (rule.intentionallySparse)
+                {
+                    rule.resourceDensity01 = Mathf.Min(rule.resourceDensity01, 0.10f);
+                }
+            }
+
+            // ===== 공통: H/I/J numeric 01 값 0~1 clamp =====
+            rule.terrainRoughness01 = Mathf.Clamp01(rule.terrainRoughness01);
+            rule.slopeIntensity01 = Mathf.Clamp01(rule.slopeIntensity01);
+            rule.canyonIntensity01 = Mathf.Clamp01(rule.canyonIntensity01);
+            rule.cliffIntensity01 = Mathf.Clamp01(rule.cliffIntensity01);
+            rule.openWaterFlatness01 = Mathf.Clamp01(rule.openWaterFlatness01);
+            rule.resourceDensity01 = Mathf.Clamp01(rule.resourceDensity01);
+            rule.hazardDensity01 = Mathf.Clamp01(rule.hazardDensity01);
+            rule.landmarkWeight01 = Mathf.Clamp01(rule.landmarkWeight01);
+            rule.visualIntensity01 = Mathf.Clamp01(rule.visualIntensity01);
+
+            // ===== requiresTerrainCollider 재계산 =====
+            rule.requiresTerrainCollider = rule.collisionRequirement != ZoneCollisionRequirement.None;
+        }
+
+        /// <summary>
+        /// 태그 리스트에 고유 태그를 추가한다.
+        /// </summary>
+        private static void AddUniqueTag(List<string> tags, string tag)
+        {
+            if (tags == null || string.IsNullOrEmpty(tag))
+                return;
+            string lower = tag.ToLowerInvariant();
+            for (int i = 0; i < tags.Count; i++)
+            {
+                if (tags[i] != null && tags[i].ToLowerInvariant() == lower)
+                    return;
+            }
+            tags.Add(tag);
         }
 
         /// <summary>

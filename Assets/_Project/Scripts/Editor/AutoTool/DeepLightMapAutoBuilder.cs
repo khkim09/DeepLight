@@ -532,26 +532,6 @@ namespace Project.Editor.AutoTool
                 LogIfVerbose(settings, "[SKIP] createZoneTerrainPlans is false. Skipping Phase 14.3.");
             }
 
-            // 18.5. Phase 14.9: Final A~J Zone Data Migration (settings.CreateFinalZoneDataMigration이 true일 때만)
-            // Phase 14.9는 Phase 14.1~14.3 유틸리티 내부가 100개 데이터를 만들도록 확장하고,
-            // AutoBuilder 로그에 "Phase 14.9: Final A~J Zone Data Migration"을 추가한다.
-            // Phase 14.9는 Phase 14.3 이후, Phase 14.4 TerrainPatch generation 이전에 실행된다.
-            if (settings.CreateFinalZoneDataMigration)
-            {
-                Debug.Log("[MapAutoBuilder] === Phase 14.9: Final A~J Zone Data Migration ===");
-                ExecuteFinalZoneDataMigration(settings, context);
-
-                if (settings.ValidateFinalZoneDataMigrationAfterGenerate)
-                {
-                    Debug.Log("[MapAutoBuilder] === Phase 14.9: Validating Final A~J Zone Data Migration ===");
-                    ValidateFinalZoneDataMigration(settings, context);
-                }
-            }
-            else
-            {
-                LogIfVerbose(settings, "[SKIP] createFinalZoneDataMigration is false. Skipping Phase 14.9.");
-            }
-
             // 19. Phase 14.4 + 14.5: Zone Terrain Plan Mesh Patch Generation + Interior Detail
             // (settings.CreateZoneTerrainPatches이 true일 때만)
             // Phase 14.5 interior detail deformation은 RebuildZoneTerrainPatches 내부에서
@@ -609,6 +589,9 @@ namespace Project.Editor.AutoTool
             // 22. 생성 완료 후 Selection 설정
             Selection.activeGameObject = generatedRoot;
             EditorGUIUtility.PingObject(generatedRoot);
+
+            // 23. 최종 데이터 카운트 검증 로그
+            LogFinalDataCount(settings);
 
             Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.8) COMPLETE =====");
 
@@ -1264,6 +1247,7 @@ namespace Project.Editor.AutoTool
 
         /// <summary>
         /// Phase 14.1: Zone Design Database를 재구축한다.
+        /// A1~J10 전체 100개 entry를 생성한다 (Phase 14.9 통합).
         /// DeepLightMapZoneDesignDatabaseUtility에 위임한다.
         /// </summary>
         public static void RebuildZoneDesignDatabase(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
@@ -1282,8 +1266,8 @@ namespace Project.Editor.AutoTool
                 return;
             }
 
-            // 2. A1~C10 entries 채우기
-            DeepLightMapZoneDesignDatabaseUtility.PopulateA1ToC10Entries(database);
+            // 2. A1~J10 전체 100개 entries 채우기 (Phase 14.9 통합: 구버전 PopulateA1ToC10Entries 30개 대신 100개 생성)
+            DeepLightMapZoneDesignDatabaseUtility.RebuildFullZoneDesignDatabase(settings, context);
 
             // 3. SettingsSO에 참조 연결
             if (settings.ZoneDesignDatabase != database)
@@ -1299,7 +1283,7 @@ namespace Project.Editor.AutoTool
                 }
             }
 
-            Debug.Log("[MapAutoBuilder] Phase 14.1: Zone Design Database rebuild complete.");
+            Debug.Log("[MapAutoBuilder] Phase 14.1: Zone Design Database rebuild complete (A1~J10, 100 entries).");
         }
 
         /// <summary>
@@ -1458,52 +1442,44 @@ namespace Project.Editor.AutoTool
             DeepLightMapZoneContentPlaceholderUtility.ValidateZoneContentPlaceholders(settings, context);
         }
 
-        // ======================================================================
-        //  Phase 14.9: Final A~J Zone Data Migration
-        // ======================================================================
-
         /// <summary>
-        /// Phase 14.9: A1~J10 전체 Zone Design Data Migration을 실행한다.
-        /// Phase 14.1~14.3 유틸리티를 순차 호출하여 100개 데이터를 생성한다.
+        /// Generate Full Scenario Map 완료 후 최종 데이터 카운트를 검증하고 로그를 출력한다.
+        /// DesignEntry / DesignRule / TerrainPlan 각각 100개인지 확인한다.
         /// </summary>
-        public static void ExecuteFinalZoneDataMigration(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        private static void LogFinalDataCount(DeepLightMapAutoBuilderSettingsSO settings)
         {
-            if (settings == null)
+            if (settings == null) return;
+
+            int entries = settings.ZoneDesignDatabase?.Entries?.Count ?? 0;
+            int rules = settings.ZoneDesignRuleDatabase?.Rules?.Count ?? 0;
+            int plans = settings.ZoneTerrainPlanDatabase?.Plans?.Count ?? 0;
+
+            Debug.Log($"[MapAutoBuilder] Final data count check: entries={entries}, rules={rules}, plans={plans}");
+
+            bool allPass = true;
+
+            if (entries != 100)
             {
-                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot execute final zone data migration.");
-                return;
+                Debug.LogError($"[MapAutoBuilder] [FAIL] Final ZoneDesignDatabase entries={entries} (expected 100)");
+                allPass = false;
             }
 
-            Debug.Log("===== Phase 14.9: Final A~J Zone Data Migration =====");
-            Debug.Log("[Phase 14.9] Step 1/3: Rebuilding Zone Design Database (A1~J10, 100 entries)...");
-            RebuildZoneDesignDatabase(settings, context);
-
-            Debug.Log("[Phase 14.9] Step 2/3: Rebuilding Zone Design Rules (100 rules)...");
-            RebuildZoneDesignRules(settings, context);
-
-            Debug.Log("[Phase 14.9] Step 3/3: Rebuilding Zone Terrain Plans (100 plans)...");
-            RebuildZoneTerrainPlans(settings, context);
-
-            Debug.Log("[Phase 14.9] Final A~J Zone Data Migration complete. 100 entries / 100 rules / 100 plans created.");
-        }
-
-        /// <summary>
-        /// Phase 14.9: A1~J10 전체 Zone Design Data Migration 결과를 검증한다.
-        /// Phase 14.1~14.3 검증을 순차 호출한다.
-        /// </summary>
-        public static void ValidateFinalZoneDataMigration(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
-        {
-            if (settings == null)
+            if (rules != 100)
             {
-                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate final zone data migration.");
-                return;
+                Debug.LogError($"[MapAutoBuilder] [FAIL] Final ZoneDesignRuleDatabase rules={rules} (expected 100)");
+                allPass = false;
             }
 
-            Debug.Log("===== Phase 14.9: Validate Final A~J Zone Data Migration =====");
-            ValidateZoneDesignDatabase(settings, context);
-            ValidateZoneDesignRules(settings, context);
-            ValidateZoneTerrainPlans(settings, context);
-            Debug.Log("===== Phase 14.9 Validation complete =====");
+            if (plans != 100)
+            {
+                Debug.LogError($"[MapAutoBuilder] [FAIL] Final ZoneTerrainPlanDatabase plans={plans} (expected 100)");
+                allPass = false;
+            }
+
+            if (allPass)
+            {
+                Debug.Log("[MapAutoBuilder] [PASS] Final A~J data count preserved after GenerateFullScenarioMap.");
+            }
         }
 
         /// <summary>

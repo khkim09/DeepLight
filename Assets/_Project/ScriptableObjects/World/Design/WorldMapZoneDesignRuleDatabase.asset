@@ -470,70 +470,88 @@ MonoBehaviour:
       Lm:0.20 Vis:0.70 | Sparse:False Collider:True Narrative:False'
   - zoneId: B5
     terrainArchetype: 4
-    routeRole: 1
-    landmarkRole: 2
-    collisionRequirement: 2
-    targetMinDepth: -100
-    targetMaxDepth: -420
-    terrainRoughness01: 0.6
+    routeRole: 3
+    landmarkRole: 4
+    collisionRequirement: 4
+    targetMinDepth: -60
+    targetMaxDepth: -260
+    terrainRoughness01: 0.5
     slopeIntensity01: 0.25
-    canyonIntensity01: 0
-    cliffIntensity01: 0.1
+    canyonIntensity01: 0.15
+    cliffIntensity01: 0
     openWaterFlatness01: 0.4
-    resourceDensity01: 0.55
-    hazardDensity01: 0.4
-    landmarkWeight01: 0.7
-    visualIntensity01: 0.90999997
+    resourceDensity01: 0.5
+    hazardDensity01: 0.35
+    landmarkWeight01: 0.8
+    visualIntensity01: 0.6
     requiresTerrainCollider: 1
     allowsSurfaceIslandVisual: 0
-    requiresNarrativeObject: 0
+    requiresNarrativeObject: 1
     intentionallySparse: 0
     resourceTags:
-    - iron
-    - basic
+    - Iron Scrap
+    - Steel Plate
+    - Fuel Canister
+    - Data Chip
+    - Corroded Relay
     hazardTags:
-    - debris
+    - twisted_metal
+    - cable_snare
+    - wreck_interior
+    - mild_current
+    - pressure
     landmarkTags:
     - wreck
-    - log
+    - cargo_hold
     - console
-    debugSummary: '[B5] WreckField | Route:MainRoute Landmark:Wreck Collision:SeafloorAndLargeProps
-      | Depth:(-100,-420) | R:0.60 S:0.25 C:0.00 Cl:0.10 F:0.40 | Res:0.55 Haz:0.40
-      Lm:0.70 Vis:0.91 | Sparse:False Collider:True Narrative:False'
+    - cable_reel
+    - DL-07
+    - antenna
+    - support_boat
+    debugSummary: '[Phase 14.9.1] B5: Western Wreck Field - Wreck shelf, low rock
+      ridge, sand-buried wreck, cargo hold, Gate2. B5/C5/B6/C6/C7 primary.'
   - zoneId: B6
-    terrainArchetype: 5
+    terrainArchetype: 4
     routeRole: 1
-    landmarkRole: 4
-    collisionRequirement: 2
-    targetMinDepth: -180
-    targetMaxDepth: -560
-    terrainRoughness01: 0.6
-    slopeIntensity01: 0.45
-    canyonIntensity01: 0.7
-    cliffIntensity01: 0.25
-    openWaterFlatness01: 0.25
-    resourceDensity01: 0.45
-    hazardDensity01: 0.4
-    landmarkWeight01: 0.2
-    visualIntensity01: 0.7
+    landmarkRole: 2
+    collisionRequirement: 4
+    targetMinDepth: -60
+    targetMaxDepth: -260
+    terrainRoughness01: 0.5
+    slopeIntensity01: 0.25
+    canyonIntensity01: 0.15
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.4
+    resourceDensity01: 0.5
+    hazardDensity01: 0.35
+    landmarkWeight01: 0.8
+    visualIntensity01: 0.6
     requiresTerrainCollider: 1
     allowsSurfaceIslandVisual: 0
-    requiresNarrativeObject: 0
+    requiresNarrativeObject: 1
     intentionallySparse: 0
     resourceTags:
-    - sensor
-    - communication
-    - relay
+    - Iron Scrap
+    - Steel Plate
+    - Fuel Canister
+    - Data Chip
+    - Corroded Relay
     hazardTags:
-    - crack
-    - obstacle
+    - twisted_metal
+    - cable_snare
+    - wreck_interior
+    - mild_current
+    - pressure
     landmarkTags:
-    - communication
-    - structure
-    debugSummary: '[B6] CanyonEntry | Route:MainRoute Landmark:CommunicationClue
-      Collision:SeafloorAndLargeProps | Depth:(-180,-560) | R:0.60 S:0.45 C:0.70
-      Cl:0.25 F:0.25 | Res:0.45 Haz:0.40 Lm:0.20 Vis:0.70 | Sparse:False Collider:True
-      Narrative:False'
+    - wreck
+    - cargo_hold
+    - console
+    - cable_reel
+    - DL-07
+    - antenna
+    - support_boat
+    debugSummary: '[Phase 14.9.1] B6: Western Wreck Field - Wreck shelf, low rock
+      ridge, sand-buried wreck, cargo hold, Gate2. B5/C5/B6/C6/C7 primary.'
   - zoneId: B7
     terrainArchetype: 9
     routeRole: 1
@@ -785,101 +803,130 @@ MonoBehaviour:
       Narrative:False'
   - zoneId: C5
     terrainArchetype: 4
+    routeRole: 3
+    landmarkRole: 4
+    collisionRequirement: 4
+    targetMinDepth: -60
+    targetMaxDepth: -260
+    terrainRoughness01: 0.5
+    slopeIntensity01: 0.25
+    canyonIntensity01: 0.15
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.4
+    resourceDensity01: 0.5
+    hazardDensity01: 0.35
+    landmarkWeight01: 0.8
+    visualIntensity01: 0.6
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 1
+    intentionallySparse: 0
+    resourceTags:
+    - Iron Scrap
+    - Steel Plate
+    - Fuel Canister
+    - Data Chip
+    - Corroded Relay
+    hazardTags:
+    - twisted_metal
+    - cable_snare
+    - wreck_interior
+    - mild_current
+    - pressure
+    landmarkTags:
+    - wreck
+    - cargo_hold
+    - console
+    - cable_reel
+    - DL-07
+    - antenna
+    - support_boat
+    debugSummary: '[Phase 14.9.1] C5: Western Wreck Field - Wreck shelf, low rock
+      ridge, sand-buried wreck, cargo hold, Gate2. B5/C5/B6/C6/C7 primary.'
+  - zoneId: C6
+    terrainArchetype: 4
     routeRole: 1
     landmarkRole: 2
-    collisionRequirement: 2
-    targetMinDepth: -130
-    targetMaxDepth: -450
-    terrainRoughness01: 0.6
-    slopeIntensity01: 0.25
-    canyonIntensity01: 0
-    cliffIntensity01: 0.1
-    openWaterFlatness01: 0.4
-    resourceDensity01: 0.7
-    hazardDensity01: 0.4
-    landmarkWeight01: 0.7
-    visualIntensity01: 0.84
-    requiresTerrainCollider: 1
-    allowsSurfaceIslandVisual: 0
-    requiresNarrativeObject: 0
-    intentionallySparse: 0
-    resourceTags:
-    - steel
-    - valve
-    hazardTags:
-    - debris
-    - obstacle
-    landmarkTags:
-    - wreck
-    - structure
-    debugSummary: '[C5] WreckField | Route:MainRoute Landmark:Wreck Collision:SeafloorAndLargeProps
-      | Depth:(-130,-450) | R:0.60 S:0.25 C:0.00 Cl:0.10 F:0.40 | Res:0.70 Haz:0.40
-      Lm:0.70 Vis:0.84 | Sparse:False Collider:True Narrative:False'
-  - zoneId: C6
-    terrainArchetype: 5
-    routeRole: 1
-    landmarkRole: 4
-    collisionRequirement: 2
-    targetMinDepth: -180
-    targetMaxDepth: -580
-    terrainRoughness01: 0.55
-    slopeIntensity01: 0.4
-    canyonIntensity01: 0.6
-    cliffIntensity01: 0.2
-    openWaterFlatness01: 0.3
-    resourceDensity01: 0.7
-    hazardDensity01: 0.4
-    landmarkWeight01: 0.7
-    visualIntensity01: 0.84
-    requiresTerrainCollider: 1
-    allowsSurfaceIslandVisual: 0
-    requiresNarrativeObject: 0
-    intentionallySparse: 0
-    resourceTags:
-    - sensor
-    - communication
-    hazardTags:
-    - debris
-    - obstacle
-    landmarkTags:
-    - wreck
-    - communication
-    - research
-    debugSummary: '[C6] CanyonEntry | Route:MainRoute Landmark:CommunicationClue
-      Collision:SeafloorAndLargeProps | Depth:(-180,-580) | R:0.55 S:0.40 C:0.60
-      Cl:0.20 F:0.30 | Res:0.70 Haz:0.40 Lm:0.70 Vis:0.84 | Sparse:False Collider:True
-      Narrative:False'
-  - zoneId: C7
-    terrainArchetype: 3
-    routeRole: 1
-    landmarkRole: 0
-    collisionRequirement: 2
-    targetMinDepth: -220
-    targetMaxDepth: -650
+    collisionRequirement: 4
+    targetMinDepth: -60
+    targetMaxDepth: -260
     terrainRoughness01: 0.5
-    slopeIntensity01: 0.2
-    canyonIntensity01: 0
+    slopeIntensity01: 0.25
+    canyonIntensity01: 0.15
     cliffIntensity01: 0
-    openWaterFlatness01: 0.5
-    resourceDensity01: 0.45
-    hazardDensity01: 0.4
-    landmarkWeight01: 0.2
-    visualIntensity01: 0.7
+    openWaterFlatness01: 0.4
+    resourceDensity01: 0.5
+    hazardDensity01: 0.35
+    landmarkWeight01: 0.8
+    visualIntensity01: 0.6
     requiresTerrainCollider: 1
     allowsSurfaceIslandVisual: 0
-    requiresNarrativeObject: 0
+    requiresNarrativeObject: 1
     intentionallySparse: 0
     resourceTags:
-    - aluminum
-    - relay
+    - Iron Scrap
+    - Steel Plate
+    - Fuel Canister
+    - Data Chip
+    - Corroded Relay
     hazardTags:
-    - visibility_block
-    - rock
+    - twisted_metal
+    - cable_snare
+    - wreck_interior
+    - mild_current
+    - pressure
     landmarkTags:
     - wreck
-    debugSummary: '[C7] DebrisField | Route:MainRoute Landmark:None Collision:SeafloorAndLargeProps
-      | Depth:(-220,-650) | R:0.50 S:0.20 C:0.00 Cl:0.00 F:0.50 | Res:0.45 Haz:0.40
-      Lm:0.20 Vis:0.70 | Sparse:False Collider:True Narrative:False'
+    - cargo_hold
+    - console
+    - cable_reel
+    - DL-07
+    - antenna
+    - support_boat
+    debugSummary: '[Phase 14.9.1] C6: Western Wreck Field - Wreck shelf, low rock
+      ridge, sand-buried wreck, cargo hold, Gate2. B5/C5/B6/C6/C7 primary.'
+  - zoneId: C7
+    terrainArchetype: 4
+    routeRole: 1
+    landmarkRole: 2
+    collisionRequirement: 4
+    targetMinDepth: -60
+    targetMaxDepth: -260
+    terrainRoughness01: 0.5
+    slopeIntensity01: 0.25
+    canyonIntensity01: 0.15
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.4
+    resourceDensity01: 0.5
+    hazardDensity01: 0.35
+    landmarkWeight01: 0.8
+    visualIntensity01: 0.6
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 1
+    intentionallySparse: 0
+    resourceTags:
+    - Iron Scrap
+    - Steel Plate
+    - Fuel Canister
+    - Data Chip
+    - Corroded Relay
+    hazardTags:
+    - twisted_metal
+    - cable_snare
+    - wreck_interior
+    - mild_current
+    - pressure
+    landmarkTags:
+    - wreck
+    - cargo_hold
+    - console
+    - cable_reel
+    - DL-07
+    - antenna
+    - support_boat
+    debugSummary: '[Phase 14.9.1] C7: Western Wreck Field - Wreck shelf, low rock
+      ridge, sand-buried wreck, cargo hold, Gate2. B5/C5/B6/C6/C7 primary.'
   - zoneId: C8
     terrainArchetype: 8
     routeRole: 0
@@ -967,3 +1014,2444 @@ MonoBehaviour:
     debugSummary: '[C10] CliffWall | Route:Boundary Landmark:HazardWarning Collision:NavigationCritical
       | Depth:(-320,-1000) | R:0.70 S:0.70 C:0.30 Cl:0.70 F:0.15 | Res:0.15 Haz:0.65
       Lm:0.20 Vis:0.63 | Sparse:True Collider:True Narrative:False'
+  - zoneId: D1
+    terrainArchetype: 10
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 1
+    targetMinDepth: -200
+    targetMaxDepth: -600
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.15
+    hazardDensity01: 0.15
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.28
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - iron
+    hazardTags:
+    - current
+    landmarkTags:
+    - wreck
+    - hub
+    - pressure
+    debugSummary: '[D1] SparsePressure | Route:Boundary Landmark:HazardWarning Collision:SeafloorOnly
+      | Depth:(-200,-600) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.15 Haz:0.15
+      Lm:0.20 Vis:0.28 | Sparse:True Collider:True Narrative:False'
+  - zoneId: D2
+    terrainArchetype: 0
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 1
+    targetMinDepth: -180
+    targetMaxDepth: -550
+    terrainRoughness01: 0.15
+    slopeIntensity01: 0.1
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.9
+    resourceDensity01: 0.15
+    hazardDensity01: 0.15
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.28
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - iron
+    hazardTags:
+    - current
+    - visibility_block
+    landmarkTags:
+    - hub
+    - warning
+    debugSummary: '[D2] OpenFlat | Route:Boundary Landmark:HazardWarning Collision:SeafloorOnly
+      | Depth:(-180,-550) | R:0.15 S:0.10 C:0.00 Cl:0.00 F:0.90 | Res:0.15 Haz:0.15
+      Lm:0.20 Vis:0.28 | Sparse:True Collider:True Narrative:False'
+  - zoneId: D3
+    terrainArchetype: 0
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 1
+    targetMinDepth: -160
+    targetMaxDepth: -500
+    terrainRoughness01: 0.15
+    slopeIntensity01: 0.1
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.9
+    resourceDensity01: 0.15
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.48999998
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - copper
+    hazardTags: []
+    landmarkTags:
+    - warning
+    - cable
+    debugSummary: '[D3] OpenFlat | Route:Boundary Landmark:HazardWarning Collision:SeafloorOnly
+      | Depth:(-160,-500) | R:0.15 S:0.10 C:0.00 Cl:0.00 F:0.90 | Res:0.15 Haz:0.40
+      Lm:0.20 Vis:0.49 | Sparse:True Collider:True Narrative:False'
+  - zoneId: D4
+    terrainArchetype: 3
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 2
+    targetMinDepth: -100
+    targetMaxDepth: -350
+    terrainRoughness01: 0.5
+    slopeIntensity01: 0.2
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.5
+    resourceDensity01: 0.45
+    hazardDensity01: 0.15
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.48999998
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 0
+    resourceTags:
+    - iron
+    - copper
+    - fastener
+    hazardTags:
+    - debris
+    landmarkTags:
+    - wreck
+    - cable
+    debugSummary: '[D4] DebrisField | Route:FreeExploration Landmark:None Collision:SeafloorAndLargeProps
+      | Depth:(-100,-350) | R:0.50 S:0.20 C:0.00 Cl:0.00 F:0.50 | Res:0.45 Haz:0.15
+      Lm:0.20 Vis:0.49 | Sparse:False Collider:True Narrative:False'
+  - zoneId: D5
+    terrainArchetype: 3
+    routeRole: 1
+    landmarkRole: 3
+    collisionRequirement: 2
+    targetMinDepth: -20
+    targetMaxDepth: -180
+    terrainRoughness01: 0.3
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0.1
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.6
+    resourceDensity01: 0.7
+    hazardDensity01: 0.25
+    landmarkWeight01: 0.3
+    visualIntensity01: 0.4
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 0
+    intentionallySparse: 0
+    resourceTags:
+    - Iron Scrap
+    - Wet Lumber
+    - Fuel Canister
+    - Copper Wire
+    - Fastener Pack
+    - Old Rope
+    - Small Battery
+    hazardTags:
+    - current
+    - fishing_net
+    - debris
+    - shallow_rocks
+    landmarkTags:
+    - harbor
+    - buoy
+    - cable
+    - container
+    - broken_pier
+    - warning_light
+    debugSummary: "[Phase 14.8.2] D5: Harbor Debris Belt - Shallow shelf, debris
+      fan, safe salvage, \uCD08\uBC18 \uC5C5\uADF8\uB808\uC774\uB4DC/\uD310\uB9E4\uC6A9
+      \uC790\uC6D0."
+  - zoneId: D6
+    terrainArchetype: 3
+    routeRole: 1
+    landmarkRole: 3
+    collisionRequirement: 2
+    targetMinDepth: -20
+    targetMaxDepth: -180
+    terrainRoughness01: 0.3
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0.1
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.6
+    resourceDensity01: 0.7
+    hazardDensity01: 0.25
+    landmarkWeight01: 0.3
+    visualIntensity01: 0.4
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 0
+    intentionallySparse: 0
+    resourceTags:
+    - Iron Scrap
+    - Wet Lumber
+    - Fuel Canister
+    - Copper Wire
+    - Fastener Pack
+    - Old Rope
+    - Small Battery
+    hazardTags:
+    - current
+    - fishing_net
+    - debris
+    - shallow_rocks
+    landmarkTags:
+    - harbor
+    - buoy
+    - cable
+    - container
+    - broken_pier
+    - warning_light
+    debugSummary: "[Phase 14.8.2] D6: Harbor Debris Belt - Shallow shelf, debris
+      fan, safe salvage, \uCD08\uBC18 \uC5C5\uADF8\uB808\uC774\uB4DC/\uD310\uB9E4\uC6A9
+      \uC790\uC6D0."
+  - zoneId: D7
+    terrainArchetype: 1
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 1
+    targetMinDepth: -120
+    targetMaxDepth: -380
+    terrainRoughness01: 0.25
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.7
+    resourceDensity01: 0.15
+    hazardDensity01: 0.15
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.28
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 0
+    resourceTags:
+    - iron
+    hazardTags:
+    - current
+    - slope
+    landmarkTags:
+    - wreck
+    debugSummary: '[D7] ShallowShelf | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-120,-380) | R:0.25 S:0.30 C:0.00 Cl:0.00 F:0.70 | Res:0.15 Haz:0.15
+      Lm:0.20 Vis:0.28 | Sparse:False Collider:True Narrative:False'
+  - zoneId: D8
+    terrainArchetype: 0
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 1
+    targetMinDepth: -130
+    targetMaxDepth: -400
+    terrainRoughness01: 0.15
+    slopeIntensity01: 0.1
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.9
+    resourceDensity01: 0.15
+    hazardDensity01: 0.15
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.28
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - battery
+    - fuel
+    hazardTags:
+    - visibility_block
+    landmarkTags:
+    - wreck
+    - marker
+    debugSummary: '[D8] OpenFlat | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-130,-400) | R:0.15 S:0.10 C:0.00 Cl:0.00 F:0.90 | Res:0.15 Haz:0.15
+      Lm:0.20 Vis:0.28 | Sparse:True Collider:True Narrative:False'
+  - zoneId: D9
+    terrainArchetype: 10
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 3
+    targetMinDepth: -250
+    targetMaxDepth: -700
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.15
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.48999998
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - sensor
+    - rare
+    hazardTags:
+    - current
+    - visibility_block
+    - isolation
+    landmarkTags:
+    - wreck
+    - warning
+    - marker
+    debugSummary: '[D9] SparsePressure | Route:Boundary Landmark:HazardWarning Collision:BlockingBoundary
+      | Depth:(-250,-700) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.15 Haz:0.40
+      Lm:0.20 Vis:0.49 | Sparse:True Collider:True Narrative:False'
+  - zoneId: D10
+    terrainArchetype: 7
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 4
+    targetMinDepth: -280
+    targetMaxDepth: -800
+    terrainRoughness01: 0.7
+    slopeIntensity01: 0.7
+    canyonIntensity01: 0.3
+    cliffIntensity01: 0.7
+    openWaterFlatness01: 0.15
+    resourceDensity01: 0.15
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.48999998
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags: []
+    hazardTags:
+    - current
+    - visibility_block
+    - cliff
+    landmarkTags:
+    - canyon
+    - warning
+    - marker
+    debugSummary: '[D10] CliffWall | Route:Boundary Landmark:HazardWarning Collision:NavigationCritical
+      | Depth:(-280,-800) | R:0.70 S:0.70 C:0.30 Cl:0.70 F:0.15 | Res:0.15 Haz:0.40
+      Lm:0.20 Vis:0.49 | Sparse:True Collider:True Narrative:False'
+  - zoneId: E1
+    terrainArchetype: 1
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 1
+    targetMinDepth: -100
+    targetMaxDepth: -350
+    terrainRoughness01: 0.25
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.7
+    resourceDensity01: 0.15
+    hazardDensity01: 0.15
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.28
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - iron
+    - battery
+    hazardTags:
+    - current
+    - slope
+    landmarkTags: []
+    debugSummary: '[E1] ShallowShelf | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-100,-350) | R:0.25 S:0.30 C:0.00 Cl:0.00 F:0.70 | Res:0.15 Haz:0.15
+      Lm:0.20 Vis:0.28 | Sparse:True Collider:True Narrative:False'
+  - zoneId: E2
+    terrainArchetype: 0
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 1
+    targetMinDepth: -90
+    targetMaxDepth: -320
+    terrainRoughness01: 0.15
+    slopeIntensity01: 0.1
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.9
+    resourceDensity01: 0.15
+    hazardDensity01: 0.15
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.28
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - copper
+    - fastener
+    hazardTags:
+    - current
+    landmarkTags: []
+    debugSummary: '[E2] OpenFlat | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-90,-320) | R:0.15 S:0.10 C:0.00 Cl:0.00 F:0.90 | Res:0.15 Haz:0.15
+      Lm:0.20 Vis:0.28 | Sparse:True Collider:True Narrative:False'
+  - zoneId: E3
+    terrainArchetype: 2
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 1
+    targetMinDepth: -80
+    targetMaxDepth: -300
+    terrainRoughness01: 0.3
+    slopeIntensity01: 0.25
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.65
+    resourceDensity01: 0.15
+    hazardDensity01: 0.15
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.28
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - iron
+    hazardTags:
+    - current
+    - rock
+    landmarkTags:
+    - wreck
+    debugSummary: '[E3] GentleSlope | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-80,-300) | R:0.30 S:0.25 C:0.00 Cl:0.00 F:0.65 | Res:0.15 Haz:0.15
+      Lm:0.20 Vis:0.28 | Sparse:True Collider:True Narrative:False'
+  - zoneId: E4
+    terrainArchetype: 3
+    routeRole: 1
+    landmarkRole: 3
+    collisionRequirement: 2
+    targetMinDepth: -20
+    targetMaxDepth: -180
+    terrainRoughness01: 0.3
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0.1
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.6
+    resourceDensity01: 0.7
+    hazardDensity01: 0.25
+    landmarkWeight01: 0.3
+    visualIntensity01: 0.4
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 0
+    intentionallySparse: 0
+    resourceTags:
+    - Iron Scrap
+    - Wet Lumber
+    - Fuel Canister
+    - Copper Wire
+    - Fastener Pack
+    - Old Rope
+    - Small Battery
+    hazardTags:
+    - current
+    - fishing_net
+    - debris
+    - shallow_rocks
+    landmarkTags:
+    - harbor
+    - buoy
+    - cable
+    - container
+    - broken_pier
+    - warning_light
+    debugSummary: "[Phase 14.8.2] E4: Harbor Debris Belt - Shallow shelf, debris
+      fan, safe salvage, \uCD08\uBC18 \uC5C5\uADF8\uB808\uC774\uB4DC/\uD310\uB9E4\uC6A9
+      \uC790\uC6D0."
+  - zoneId: E5
+    terrainArchetype: 1
+    routeRole: 5
+    landmarkRole: 1
+    collisionRequirement: 2
+    targetMinDepth: 0
+    targetMaxDepth: -120
+    terrainRoughness01: 0.1
+    slopeIntensity01: 0.05
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.9
+    resourceDensity01: 0.25
+    hazardDensity01: 0
+    landmarkWeight01: 0.9
+    visualIntensity01: 0.3
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 1
+    intentionallySparse: 0
+    resourceTags:
+    - Iron Scrap
+    - Wet Lumber
+    - Fuel Canister
+    - Copper Wire
+    - Fastener Pack
+    hazardTags:
+    - shallow_obstacle
+    landmarkTags:
+    - hub
+    - pier
+    - shipyard
+    - submarine bay
+    - lighthouse
+    debugSummary: "[Phase 14.8.2] E5: Hub Basin - Safe shallow basin, \uCD08\uBC18
+      \uD68C\uC218 \uB8E8\uD504 \uC790\uC6D0, \uD5C8\uBE0C \uB79C\uB4DC\uB9C8\uD06C."
+  - zoneId: E6
+    terrainArchetype: 1
+    routeRole: 0
+    landmarkRole: 1
+    collisionRequirement: 2
+    targetMinDepth: 0
+    targetMaxDepth: -120
+    terrainRoughness01: 0.1
+    slopeIntensity01: 0.05
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.9
+    resourceDensity01: 0.25
+    hazardDensity01: 0
+    landmarkWeight01: 0.9
+    visualIntensity01: 0.3
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 1
+    intentionallySparse: 0
+    resourceTags:
+    - Iron Scrap
+    - Wet Lumber
+    - Fuel Canister
+    - Copper Wire
+    - Fastener Pack
+    hazardTags:
+    - shallow_obstacle
+    landmarkTags:
+    - hub
+    - pier
+    - shipyard
+    - submarine bay
+    - lighthouse
+    debugSummary: "[Phase 14.8.2] E6: Hub Basin - Safe shallow basin, \uCD08\uBC18
+      \uD68C\uC218 \uB8E8\uD504 \uC790\uC6D0, \uD5C8\uBE0C \uB79C\uB4DC\uB9C8\uD06C."
+  - zoneId: E7
+    terrainArchetype: 3
+    routeRole: 5
+    landmarkRole: 5
+    collisionRequirement: 2
+    targetMinDepth: -20
+    targetMaxDepth: -180
+    terrainRoughness01: 0.3
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0.1
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.6
+    resourceDensity01: 0.7
+    hazardDensity01: 0.25
+    landmarkWeight01: 0.3
+    visualIntensity01: 0.4
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 0
+    intentionallySparse: 0
+    resourceTags:
+    - Iron Scrap
+    - Wet Lumber
+    - Fuel Canister
+    - Copper Wire
+    - Fastener Pack
+    - Old Rope
+    - Small Battery
+    hazardTags:
+    - current
+    - fishing_net
+    - debris
+    - shallow_rocks
+    landmarkTags:
+    - harbor
+    - buoy
+    - cable
+    - container
+    - broken_pier
+    - warning_light
+    debugSummary: "[Phase 14.8.2] E7: Harbor Debris Belt - Shallow shelf, debris
+      fan, safe salvage, \uCD08\uBC18 \uC5C5\uADF8\uB808\uC774\uB4DC/\uD310\uB9E4\uC6A9
+      \uC790\uC6D0."
+  - zoneId: E8
+    terrainArchetype: 1
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 1
+    targetMinDepth: -120
+    targetMaxDepth: -380
+    terrainRoughness01: 0.25
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.7
+    resourceDensity01: 0.15
+    hazardDensity01: 0.15
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.28
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - battery
+    - fuel
+    hazardTags:
+    - current
+    - slope
+    landmarkTags:
+    - wreck
+    debugSummary: '[E8] ShallowShelf | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-120,-380) | R:0.25 S:0.30 C:0.00 Cl:0.00 F:0.70 | Res:0.15 Haz:0.15
+      Lm:0.20 Vis:0.28 | Sparse:True Collider:True Narrative:False'
+  - zoneId: E9
+    terrainArchetype: 0
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 1
+    targetMinDepth: -150
+    targetMaxDepth: -450
+    terrainRoughness01: 0.15
+    slopeIntensity01: 0.1
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.9
+    resourceDensity01: 0.15
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.48999998
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - iron
+    hazardTags:
+    - current
+    - visibility_block
+    landmarkTags: []
+    debugSummary: '[E9] OpenFlat | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-150,-450) | R:0.15 S:0.10 C:0.00 Cl:0.00 F:0.90 | Res:0.15 Haz:0.40
+      Lm:0.20 Vis:0.49 | Sparse:True Collider:True Narrative:False'
+  - zoneId: E10
+    terrainArchetype: 10
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 1
+    targetMinDepth: -200
+    targetMaxDepth: -550
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.15
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.48999998
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags: []
+    hazardTags:
+    - current
+    - visibility_block
+    - isolation
+    landmarkTags:
+    - wreck
+    - warning
+    - marker
+    debugSummary: '[E10] SparsePressure | Route:Boundary Landmark:HazardWarning Collision:SeafloorOnly
+      | Depth:(-200,-550) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.15 Haz:0.40
+      Lm:0.20 Vis:0.49 | Sparse:True Collider:True Narrative:False'
+  - zoneId: F1
+    terrainArchetype: 9
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 2
+    targetMinDepth: -120
+    targetMaxDepth: -380
+    terrainRoughness01: 0.3
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.75
+    resourceDensity01: 0.15
+    hazardDensity01: 0.15
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.28
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - copper
+    - sensor
+    hazardTags: []
+    landmarkTags:
+    - research
+    - marker
+    - cable
+    debugSummary: '[F1] FacilityApproach | Route:FreeExploration Landmark:None Collision:SeafloorAndLargeProps
+      | Depth:(-120,-380) | R:0.30 S:0.15 C:0.00 Cl:0.00 F:0.75 | Res:0.15 Haz:0.15
+      Lm:0.20 Vis:0.28 | Sparse:True Collider:True Narrative:False'
+  - zoneId: F2
+    terrainArchetype: 2
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 1
+    targetMinDepth: -110
+    targetMaxDepth: -350
+    terrainRoughness01: 0.3
+    slopeIntensity01: 0.25
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.65
+    resourceDensity01: 0.15
+    hazardDensity01: 0.15
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.28
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - copper
+    - battery
+    hazardTags:
+    - rock
+    landmarkTags:
+    - research
+    - marker
+    - cable
+    debugSummary: '[F2] GentleSlope | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-110,-350) | R:0.30 S:0.25 C:0.00 Cl:0.00 F:0.65 | Res:0.15 Haz:0.15
+      Lm:0.20 Vis:0.28 | Sparse:True Collider:True Narrative:False'
+  - zoneId: F3
+    terrainArchetype: 0
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 1
+    targetMinDepth: -100
+    targetMaxDepth: -320
+    terrainRoughness01: 0.15
+    slopeIntensity01: 0.1
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.9
+    resourceDensity01: 0.15
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.48999998
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - sensor
+    hazardTags:
+    - visibility_block
+    landmarkTags:
+    - research
+    debugSummary: '[F3] OpenFlat | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-100,-320) | R:0.15 S:0.10 C:0.00 Cl:0.00 F:0.90 | Res:0.15 Haz:0.40
+      Lm:0.20 Vis:0.49 | Sparse:True Collider:True Narrative:False'
+  - zoneId: F4
+    terrainArchetype: 3
+    routeRole: 1
+    landmarkRole: 3
+    collisionRequirement: 2
+    targetMinDepth: -20
+    targetMaxDepth: -180
+    terrainRoughness01: 0.3
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0.1
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.6
+    resourceDensity01: 0.7
+    hazardDensity01: 0.25
+    landmarkWeight01: 0.3
+    visualIntensity01: 0.4
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 0
+    intentionallySparse: 0
+    resourceTags:
+    - Iron Scrap
+    - Wet Lumber
+    - Fuel Canister
+    - Copper Wire
+    - Fastener Pack
+    - Old Rope
+    - Small Battery
+    hazardTags:
+    - current
+    - fishing_net
+    - debris
+    - shallow_rocks
+    landmarkTags:
+    - harbor
+    - buoy
+    - cable
+    - container
+    - broken_pier
+    - warning_light
+    debugSummary: "[Phase 14.8.2] F4: Harbor Debris Belt - Shallow shelf, debris
+      fan, safe salvage, \uCD08\uBC18 \uC5C5\uADF8\uB808\uC774\uB4DC/\uD310\uB9E4\uC6A9
+      \uC790\uC6D0."
+  - zoneId: F5
+    terrainArchetype: 1
+    routeRole: 5
+    landmarkRole: 1
+    collisionRequirement: 2
+    targetMinDepth: 0
+    targetMaxDepth: -120
+    terrainRoughness01: 0.1
+    slopeIntensity01: 0.05
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.9
+    resourceDensity01: 0.25
+    hazardDensity01: 0
+    landmarkWeight01: 0.9
+    visualIntensity01: 0.3
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 1
+    intentionallySparse: 0
+    resourceTags:
+    - Iron Scrap
+    - Wet Lumber
+    - Fuel Canister
+    - Copper Wire
+    - Fastener Pack
+    hazardTags:
+    - shallow_obstacle
+    landmarkTags:
+    - hub
+    - pier
+    - shipyard
+    - submarine bay
+    - lighthouse
+    debugSummary: "[Phase 14.8.2] F5: Hub Basin - Safe shallow basin, \uCD08\uBC18
+      \uD68C\uC218 \uB8E8\uD504 \uC790\uC6D0, \uD5C8\uBE0C \uB79C\uB4DC\uB9C8\uD06C."
+  - zoneId: F6
+    terrainArchetype: 1
+    routeRole: 0
+    landmarkRole: 1
+    collisionRequirement: 2
+    targetMinDepth: 0
+    targetMaxDepth: -120
+    terrainRoughness01: 0.1
+    slopeIntensity01: 0.05
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.9
+    resourceDensity01: 0.25
+    hazardDensity01: 0
+    landmarkWeight01: 0.9
+    visualIntensity01: 0.3
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 1
+    intentionallySparse: 0
+    resourceTags:
+    - Iron Scrap
+    - Wet Lumber
+    - Fuel Canister
+    - Copper Wire
+    - Fastener Pack
+    hazardTags:
+    - shallow_obstacle
+    landmarkTags:
+    - hub
+    - pier
+    - shipyard
+    - submarine bay
+    - lighthouse
+    debugSummary: "[Phase 14.8.2] F6: Hub Basin - Safe shallow basin, \uCD08\uBC18
+      \uD68C\uC218 \uB8E8\uD504 \uC790\uC6D0, \uD5C8\uBE0C \uB79C\uB4DC\uB9C8\uD06C."
+  - zoneId: F7
+    terrainArchetype: 3
+    routeRole: 5
+    landmarkRole: 5
+    collisionRequirement: 2
+    targetMinDepth: -20
+    targetMaxDepth: -180
+    terrainRoughness01: 0.3
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0.1
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.6
+    resourceDensity01: 0.7
+    hazardDensity01: 0.25
+    landmarkWeight01: 0.3
+    visualIntensity01: 0.4
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 0
+    intentionallySparse: 0
+    resourceTags:
+    - Iron Scrap
+    - Wet Lumber
+    - Fuel Canister
+    - Copper Wire
+    - Fastener Pack
+    - Old Rope
+    - Small Battery
+    hazardTags:
+    - current
+    - fishing_net
+    - debris
+    - shallow_rocks
+    landmarkTags:
+    - harbor
+    - buoy
+    - cable
+    - container
+    - broken_pier
+    - warning_light
+    debugSummary: "[Phase 14.8.2] F7: Harbor Debris Belt - Shallow shelf, debris
+      fan, safe salvage, \uCD08\uBC18 \uC5C5\uADF8\uB808\uC774\uB4DC/\uD310\uB9E4\uC6A9
+      \uC790\uC6D0."
+  - zoneId: F8
+    terrainArchetype: 0
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 1
+    targetMinDepth: -120
+    targetMaxDepth: -380
+    terrainRoughness01: 0.15
+    slopeIntensity01: 0.1
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.9
+    resourceDensity01: 0.15
+    hazardDensity01: 0.15
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.28
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - battery
+    - fuel
+    hazardTags:
+    - current
+    - visibility_block
+    landmarkTags:
+    - wreck
+    debugSummary: '[F8] OpenFlat | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-120,-380) | R:0.15 S:0.10 C:0.00 Cl:0.00 F:0.90 | Res:0.15 Haz:0.15
+      Lm:0.20 Vis:0.28 | Sparse:True Collider:True Narrative:False'
+  - zoneId: F9
+    terrainArchetype: 0
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 1
+    targetMinDepth: -150
+    targetMaxDepth: -450
+    terrainRoughness01: 0.15
+    slopeIntensity01: 0.1
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.9
+    resourceDensity01: 0.15
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.48999998
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - iron
+    hazardTags:
+    - current
+    - visibility_block
+    landmarkTags: []
+    debugSummary: '[F9] OpenFlat | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-150,-450) | R:0.15 S:0.10 C:0.00 Cl:0.00 F:0.90 | Res:0.15 Haz:0.40
+      Lm:0.20 Vis:0.49 | Sparse:True Collider:True Narrative:False'
+  - zoneId: F10
+    terrainArchetype: 10
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 1
+    targetMinDepth: -200
+    targetMaxDepth: -550
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.15
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.48999998
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags: []
+    hazardTags:
+    - current
+    - visibility_block
+    - isolation
+    landmarkTags:
+    - wreck
+    - canyon
+    - warning
+    - marker
+    debugSummary: '[F10] SparsePressure | Route:Boundary Landmark:HazardWarning Collision:SeafloorOnly
+      | Depth:(-200,-550) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.15 Haz:0.40
+      Lm:0.20 Vis:0.49 | Sparse:True Collider:True Narrative:False'
+  - zoneId: G1
+    terrainArchetype: 9
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 2
+    targetMinDepth: -150
+    targetMaxDepth: -450
+    terrainRoughness01: 0.3
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.75
+    resourceDensity01: 0.15
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.48999998
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - copper
+    - sensor
+    - data
+    hazardTags: []
+    landmarkTags:
+    - research
+    - cable
+    debugSummary: '[G1] FacilityApproach | Route:FreeExploration Landmark:None Collision:SeafloorAndLargeProps
+      | Depth:(-150,-450) | R:0.30 S:0.15 C:0.00 Cl:0.00 F:0.75 | Res:0.15 Haz:0.40
+      Lm:0.20 Vis:0.49 | Sparse:True Collider:True Narrative:False'
+  - zoneId: G2
+    terrainArchetype: 8
+    routeRole: 1
+    landmarkRole: 3
+    collisionRequirement: 2
+    targetMinDepth: -160
+    targetMaxDepth: -480
+    terrainRoughness01: 0.2
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.8
+    resourceDensity01: 0.45
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.7
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 0
+    resourceTags:
+    - sensor
+    - communication
+    - data
+    hazardTags: []
+    landmarkTags:
+    - research
+    - foreshadow
+    - cable
+    debugSummary: '[G2] ArtificialPassage | Route:MainRoute Landmark:ResearchPoint
+      Collision:SeafloorAndLargeProps | Depth:(-160,-480) | R:0.20 S:0.15 C:0.00
+      Cl:0.00 F:0.80 | Res:0.45 Haz:0.40 Lm:0.20 Vis:0.70 | Sparse:False Collider:True
+      Narrative:False'
+  - zoneId: G3
+    terrainArchetype: 9
+    routeRole: 2
+    landmarkRole: 3
+    collisionRequirement: 2
+    targetMinDepth: -170
+    targetMaxDepth: -500
+    terrainRoughness01: 0.35
+    slopeIntensity01: 0.2
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.6
+    resourceDensity01: 0.45
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.7
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 1
+    intentionallySparse: 0
+    resourceTags:
+    - sensor
+    - data
+    - research
+    hazardTags: []
+    landmarkTags:
+    - research
+    debugSummary: '[G3] FacilityApproach | Route:SideRoute Landmark:ResearchPoint
+      Collision:SeafloorAndLargeProps | Depth:(-170,-500) | R:0.35 S:0.20 C:0.00
+      Cl:0.00 F:0.60 | Res:0.45 Haz:0.40 Lm:0.20 Vis:0.70 | Sparse:False Collider:True
+      Narrative:True'
+  - zoneId: G4
+    terrainArchetype: 1
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 1
+    targetMinDepth: -80
+    targetMaxDepth: -280
+    terrainRoughness01: 0.25
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.7
+    resourceDensity01: 0.15
+    hazardDensity01: 0.15
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.28
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - iron
+    - copper
+    hazardTags:
+    - slope
+    landmarkTags:
+    - wreck
+    - hub
+    - cable
+    debugSummary: '[G4] ShallowShelf | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-80,-280) | R:0.25 S:0.30 C:0.00 Cl:0.00 F:0.70 | Res:0.15 Haz:0.15
+      Lm:0.20 Vis:0.28 | Sparse:True Collider:True Narrative:False'
+  - zoneId: G5
+    terrainArchetype: 3
+    routeRole: 2
+    landmarkRole: 0
+    collisionRequirement: 2
+    targetMinDepth: -20
+    targetMaxDepth: -180
+    terrainRoughness01: 0.3
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0.1
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.6
+    resourceDensity01: 0.7
+    hazardDensity01: 0.25
+    landmarkWeight01: 0.3
+    visualIntensity01: 0.4
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 0
+    intentionallySparse: 0
+    resourceTags:
+    - Iron Scrap
+    - Wet Lumber
+    - Fuel Canister
+    - Copper Wire
+    - Fastener Pack
+    - Old Rope
+    - Small Battery
+    hazardTags:
+    - current
+    - fishing_net
+    - debris
+    - shallow_rocks
+    landmarkTags:
+    - harbor
+    - buoy
+    - cable
+    - container
+    - broken_pier
+    - warning_light
+    debugSummary: "[Phase 14.8.2] G5: Harbor Debris Belt - Shallow shelf, debris
+      fan, safe salvage, \uCD08\uBC18 \uC5C5\uADF8\uB808\uC774\uB4DC/\uD310\uB9E4\uC6A9
+      \uC790\uC6D0."
+  - zoneId: G6
+    terrainArchetype: 3
+    routeRole: 2
+    landmarkRole: 0
+    collisionRequirement: 2
+    targetMinDepth: -20
+    targetMaxDepth: -180
+    terrainRoughness01: 0.3
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0.1
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.6
+    resourceDensity01: 0.7
+    hazardDensity01: 0.25
+    landmarkWeight01: 0.3
+    visualIntensity01: 0.4
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 0
+    intentionallySparse: 0
+    resourceTags:
+    - Iron Scrap
+    - Wet Lumber
+    - Fuel Canister
+    - Copper Wire
+    - Fastener Pack
+    - Old Rope
+    - Small Battery
+    hazardTags:
+    - current
+    - fishing_net
+    - debris
+    - shallow_rocks
+    landmarkTags:
+    - harbor
+    - buoy
+    - cable
+    - container
+    - broken_pier
+    - warning_light
+    debugSummary: "[Phase 14.8.2] G6: Harbor Debris Belt - Shallow shelf, debris
+      fan, safe salvage, \uCD08\uBC18 \uC5C5\uADF8\uB808\uC774\uB4DC/\uD310\uB9E4\uC6A9
+      \uC790\uC6D0."
+  - zoneId: G7
+    terrainArchetype: 10
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 1
+    targetMinDepth: -120
+    targetMaxDepth: -350
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.15
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.48999998
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - iron
+    - copper
+    hazardTags:
+    - current
+    - pressure
+    - visibility_block
+    - warning_light
+    landmarkTags:
+    - research
+    - hub
+    - warning
+    - pressure
+    - marker
+    - cable
+    debugSummary: '[G7] SparsePressure | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-120,-350) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.15 Haz:0.40
+      Lm:0.20 Vis:0.49 | Sparse:True Collider:True Narrative:False'
+  - zoneId: G8
+    terrainArchetype: 10
+    routeRole: 0
+    landmarkRole: 0
+    collisionRequirement: 1
+    targetMinDepth: -150
+    targetMaxDepth: -400
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.15
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.48999998
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - iron
+    - relay
+    hazardTags:
+    - current
+    - pressure
+    - visibility_block
+    landmarkTags:
+    - wreck
+    - research
+    - pressure
+    - marker
+    - cable
+    debugSummary: '[G8] SparsePressure | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-150,-400) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.15 Haz:0.40
+      Lm:0.20 Vis:0.49 | Sparse:True Collider:True Narrative:False'
+  - zoneId: G9
+    terrainArchetype: 10
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 1
+    targetMinDepth: -250
+    targetMaxDepth: -800
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.15
+    hazardDensity01: 0.65
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.63
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags: []
+    hazardTags:
+    - current
+    - visibility_block
+    landmarkTags:
+    - research
+    - warning
+    - pressure
+    - marker
+    debugSummary: '[G9] SparsePressure | Route:Boundary Landmark:HazardWarning Collision:SeafloorOnly
+      | Depth:(-250,-800) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.15 Haz:0.65
+      Lm:0.20 Vis:0.63 | Sparse:True Collider:True Narrative:False'
+  - zoneId: G10
+    terrainArchetype: 10
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 3
+    targetMinDepth: -350
+    targetMaxDepth: -1100
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.15
+    hazardDensity01: 0.65
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.63
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags: []
+    hazardTags:
+    - current
+    - visibility_block
+    - warning_light
+    landmarkTags:
+    - warning
+    - pressure
+    - marker
+    debugSummary: '[G10] SparsePressure | Route:Boundary Landmark:HazardWarning Collision:BlockingBoundary
+      | Depth:(-350,-1100) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.15 Haz:0.65
+      Lm:0.20 Vis:0.63 | Sparse:True Collider:True Narrative:False'
+  - zoneId: H1
+    terrainArchetype: 1
+    routeRole: 2
+    landmarkRole: 3
+    collisionRequirement: 1
+    targetMinDepth: -180
+    targetMaxDepth: -500
+    terrainRoughness01: 0.25
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.7
+    resourceDensity01: 0.15
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.48999998
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 1
+    intentionallySparse: 1
+    resourceTags:
+    - copper
+    - sensor
+    - data
+    - cable
+    hazardTags:
+    - crack
+    - cable
+    landmarkTags:
+    - research
+    - marker
+    - cable
+    debugSummary: '[H1] ShallowShelf | Route:SideRoute Landmark:ResearchPoint Collision:SeafloorOnly
+      | Depth:(-180,-500) | R:0.25 S:0.30 C:0.00 Cl:0.00 F:0.70 | Res:0.15 Haz:0.40
+      Lm:0.20 Vis:0.49 | Sparse:True Collider:True Narrative:True'
+  - zoneId: H2
+    terrainArchetype: 8
+    routeRole: 1
+    landmarkRole: 0
+    collisionRequirement: 2
+    targetMinDepth: -190
+    targetMaxDepth: -520
+    terrainRoughness01: 0.2
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.8
+    resourceDensity01: 0.45
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.7
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 0
+    resourceTags:
+    - copper
+    - sensor
+    - communication
+    - cable
+    hazardTags:
+    - crack
+    - cable
+    landmarkTags:
+    - research
+    - cable
+    debugSummary: '[H2] ArtificialPassage | Route:MainRoute Landmark:None Collision:SeafloorAndLargeProps
+      | Depth:(-190,-520) | R:0.20 S:0.15 C:0.00 Cl:0.00 F:0.80 | Res:0.45 Haz:0.40
+      Lm:0.20 Vis:0.70 | Sparse:False Collider:True Narrative:False'
+  - zoneId: H3
+    terrainArchetype: 9
+    routeRole: 2
+    landmarkRole: 3
+    collisionRequirement: 2
+    targetMinDepth: -200
+    targetMaxDepth: -550
+    terrainRoughness01: 0.35
+    slopeIntensity01: 0.2
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.6
+    resourceDensity01: 0.45
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.7
+    visualIntensity01: 0.7
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 1
+    intentionallySparse: 0
+    resourceTags:
+    - sensor
+    - data
+    - research
+    - copper
+    - cable
+    hazardTags:
+    - crack
+    - cable
+    landmarkTags:
+    - research
+    debugSummary: '[H3] FacilityApproach | Route:SideRoute Landmark:ResearchPoint
+      Collision:SeafloorAndLargeProps | Depth:(-200,-550) | R:0.35 S:0.20 C:0.00
+      Cl:0.00 F:0.60 | Res:0.45 Haz:0.40 Lm:0.70 Vis:0.70 | Sparse:False Collider:True
+      Narrative:True'
+  - zoneId: H4
+    terrainArchetype: 9
+    routeRole: 1
+    landmarkRole: 0
+    collisionRequirement: 2
+    targetMinDepth: -220
+    targetMaxDepth: -600
+    terrainRoughness01: 0.3
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.75
+    resourceDensity01: 0.45
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.7
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 0
+    resourceTags:
+    - sensor
+    - data
+    - research
+    - steel
+    - battery
+    hazardTags:
+    - crack
+    - debris
+    - cable
+    landmarkTags:
+    - canyon
+    - research
+    - cable
+    debugSummary: '[H4] FacilityApproach | Route:MainRoute Landmark:None Collision:SeafloorAndLargeProps
+      | Depth:(-220,-600) | R:0.30 S:0.15 C:0.00 Cl:0.00 F:0.75 | Res:0.45 Haz:0.40
+      Lm:0.20 Vis:0.70 | Sparse:False Collider:True Narrative:False'
+  - zoneId: H5
+    terrainArchetype: 8
+    routeRole: 1
+    landmarkRole: 3
+    collisionRequirement: 2
+    targetMinDepth: -240
+    targetMaxDepth: -650
+    terrainRoughness01: 0.2
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.8
+    resourceDensity01: 0.45
+    hazardDensity01: 0.65
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.84
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 0
+    resourceTags:
+    - communication
+    - research
+    - steel
+    - battery
+    hazardTags:
+    - pressure
+    - cliff
+    - crack
+    - cable
+    landmarkTags:
+    - research
+    - foreshadow
+    - cable
+    - structure
+    debugSummary: '[H5] ArtificialPassage | Route:MainRoute Landmark:ResearchPoint
+      Collision:SeafloorAndLargeProps | Depth:(-240,-650) | R:0.20 S:0.15 C:0.00
+      Cl:0.00 F:0.80 | Res:0.45 Haz:0.65 Lm:0.20 Vis:0.84 | Sparse:False Collider:True
+      Narrative:False'
+  - zoneId: H6
+    terrainArchetype: 5
+    routeRole: 2
+    landmarkRole: 0
+    collisionRequirement: 2
+    targetMinDepth: -260
+    targetMaxDepth: -700
+    terrainRoughness01: 0.6
+    slopeIntensity01: 0.45
+    canyonIntensity01: 0.7
+    cliffIntensity01: 0.25
+    openWaterFlatness01: 0.25
+    resourceDensity01: 0.15
+    hazardDensity01: 0.65
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.63
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - sensor
+    - research
+    - steel
+    - battery
+    hazardTags:
+    - pressure
+    - crack
+    - rock
+    - cliff
+    - cable
+    landmarkTags:
+    - canyon
+    - research
+    - cable
+    debugSummary: '[H6] CanyonEntry | Route:SideRoute Landmark:None Collision:SeafloorAndLargeProps
+      | Depth:(-260,-700) | R:0.60 S:0.45 C:0.70 Cl:0.25 F:0.25 | Res:0.15 Haz:0.65
+      Lm:0.20 Vis:0.63 | Sparse:True Collider:True Narrative:False'
+  - zoneId: H7
+    terrainArchetype: 9
+    routeRole: 2
+    landmarkRole: 3
+    collisionRequirement: 2
+    targetMinDepth: -280
+    targetMaxDepth: -750
+    terrainRoughness01: 0.35
+    slopeIntensity01: 0.2
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.6
+    resourceDensity01: 0.45
+    hazardDensity01: 0.65
+    landmarkWeight01: 0.7
+    visualIntensity01: 0.84
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 1
+    intentionallySparse: 0
+    resourceTags:
+    - data
+    - research
+    - steel
+    - battery
+    hazardTags:
+    - pressure
+    - cliff
+    - crack
+    - cable
+    landmarkTags:
+    - research
+    debugSummary: '[H7] FacilityApproach | Route:SideRoute Landmark:ResearchPoint
+      Collision:SeafloorAndLargeProps | Depth:(-280,-750) | R:0.35 S:0.20 C:0.00
+      Cl:0.00 F:0.60 | Res:0.45 Haz:0.65 Lm:0.70 Vis:0.84 | Sparse:False Collider:True
+      Narrative:True'
+  - zoneId: H8
+    terrainArchetype: 10
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 2
+    targetMinDepth: -300
+    targetMaxDepth: -800
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.15
+    hazardDensity01: 0.65
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.63
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - cable
+    - research
+    hazardTags:
+    - current
+    - visibility_block
+    - warning_light
+    - pressure
+    landmarkTags:
+    - warning
+    - pressure
+    - marker
+    debugSummary: '[H8] SparsePressure | Route:Boundary Landmark:HazardWarning Collision:SeafloorAndLargeProps
+      | Depth:(-300,-800) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.15 Haz:0.65
+      Lm:0.20 Vis:0.63 | Sparse:True Collider:True Narrative:False'
+  - zoneId: H9
+    terrainArchetype: 6
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 4
+    targetMinDepth: -350
+    targetMaxDepth: -900
+    terrainRoughness01: 0.65
+    slopeIntensity01: 0.6
+    canyonIntensity01: 0.5
+    cliffIntensity01: 0.3
+    openWaterFlatness01: 0.2
+    resourceDensity01: 0.15
+    hazardDensity01: 0.65
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.63
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - cable
+    - research
+    hazardTags:
+    - visibility_block
+    - slope
+    - pressure
+    - current
+    landmarkTags:
+    - research
+    - warning
+    - pressure
+    - marker
+    debugSummary: '[H9] CanyonDeep | Route:Boundary Landmark:HazardWarning Collision:NavigationCritical
+      | Depth:(-350,-900) | R:0.65 S:0.60 C:0.50 Cl:0.30 F:0.20 | Res:0.15 Haz:0.65
+      Lm:0.20 Vis:0.63 | Sparse:True Collider:True Narrative:False'
+  - zoneId: H10
+    terrainArchetype: 10
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 3
+    targetMinDepth: -400
+    targetMaxDepth: -1000
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.15
+    hazardDensity01: 0.65
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.63
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - cable
+    - research
+    hazardTags:
+    - current
+    - visibility_block
+    - warning_light
+    - pressure
+    landmarkTags:
+    - warning
+    - pressure
+    - marker
+    debugSummary: '[H10] SparsePressure | Route:Boundary Landmark:HazardWarning Collision:BlockingBoundary
+      | Depth:(-400,-1000) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.15 Haz:0.65
+      Lm:0.20 Vis:0.63 | Sparse:True Collider:True Narrative:False'
+  - zoneId: I1
+    terrainArchetype: 9
+    routeRole: 2
+    landmarkRole: 4
+    collisionRequirement: 2
+    targetMinDepth: -350
+    targetMaxDepth: -850
+    terrainRoughness01: 0.3
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.75
+    resourceDensity01: 0.15
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.48999998
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 1
+    intentionallySparse: 1
+    resourceTags:
+    - sensor
+    - communication
+    - data
+    - research
+    hazardTags:
+    - pressure
+    - debris
+    landmarkTags:
+    - wreck
+    - communication
+    - research
+    - marker
+    debugSummary: '[I1] FacilityApproach | Route:SideRoute Landmark:CommunicationClue
+      Collision:SeafloorAndLargeProps | Depth:(-350,-850) | R:0.30 S:0.15 C:0.00
+      Cl:0.00 F:0.75 | Res:0.15 Haz:0.40 Lm:0.20 Vis:0.49 | Sparse:True Collider:True
+      Narrative:True'
+  - zoneId: I2
+    terrainArchetype: 3
+    routeRole: 2
+    landmarkRole: 4
+    collisionRequirement: 2
+    targetMinDepth: -370
+    targetMaxDepth: -880
+    terrainRoughness01: 0.5
+    slopeIntensity01: 0.2
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.5
+    resourceDensity01: 0.45
+    hazardDensity01: 0.4
+    landmarkWeight01: 0.7
+    visualIntensity01: 0.7
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 1
+    intentionallySparse: 0
+    resourceTags:
+    - communication
+    - data
+    - research
+    hazardTags:
+    - current
+    - debris
+    - pressure
+    landmarkTags:
+    - communication
+    - log
+    - research
+    debugSummary: '[I2] DebrisField | Route:SideRoute Landmark:CommunicationClue
+      Collision:SeafloorAndLargeProps | Depth:(-370,-880) | R:0.50 S:0.20 C:0.00
+      Cl:0.00 F:0.50 | Res:0.45 Haz:0.40 Lm:0.70 Vis:0.70 | Sparse:False Collider:True
+      Narrative:True'
+  - zoneId: I3
+    terrainArchetype: 9
+    routeRole: 1
+    landmarkRole: 3
+    collisionRequirement: 2
+    targetMinDepth: -390
+    targetMaxDepth: -920
+    terrainRoughness01: 0.35
+    slopeIntensity01: 0.2
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.6
+    resourceDensity01: 0.45
+    hazardDensity01: 0.65
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.84
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 0
+    resourceTags:
+    - research
+    - data
+    hazardTags:
+    - pressure
+    - cliff
+    landmarkTags:
+    - wreck
+    - research
+    - foreshadow
+    debugSummary: '[I3] FacilityApproach | Route:MainRoute Landmark:ResearchPoint
+      Collision:SeafloorAndLargeProps | Depth:(-390,-920) | R:0.35 S:0.20 C:0.00
+      Cl:0.00 F:0.60 | Res:0.45 Haz:0.65 Lm:0.20 Vis:0.84 | Sparse:False Collider:True
+      Narrative:False'
+  - zoneId: I4
+    terrainArchetype: 8
+    routeRole: 3
+    landmarkRole: 6
+    collisionRequirement: 2
+    targetMinDepth: -420
+    targetMaxDepth: -1000
+    terrainRoughness01: 0.2
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.8
+    resourceDensity01: 0.15
+    hazardDensity01: 0.65
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.63
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 1
+    intentionallySparse: 0
+    resourceTags:
+    - data
+    - alloy
+    - research
+    hazardTags:
+    - crack
+    - warning_light
+    - pressure
+    - visibility_block
+    landmarkTags:
+    - canyon
+    - research
+    - warning
+    - narrative_gate
+    - marker
+    - structure
+    debugSummary: '[I4] ArtificialPassage | Route:Gate Landmark:NarrativeGate Collision:SeafloorAndLargeProps
+      | Depth:(-420,-1000) | R:0.20 S:0.15 C:0.00 Cl:0.00 F:0.80 | Res:0.15 Haz:0.65
+      Lm:0.20 Vis:0.63 | Sparse:False Collider:True Narrative:True'
+  - zoneId: I5
+    terrainArchetype: 5
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 2
+    targetMinDepth: -450
+    targetMaxDepth: -1050
+    terrainRoughness01: 0.55
+    slopeIntensity01: 0.4
+    canyonIntensity01: 0.6
+    cliffIntensity01: 0.2
+    openWaterFlatness01: 0.3
+    resourceDensity01: 0.15
+    hazardDensity01: 0.65
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.63
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - research
+    - data
+    - alloy
+    hazardTags:
+    - crack
+    - visibility_block
+    - cliff
+    - pressure
+    landmarkTags:
+    - canyon
+    - research
+    - pressure
+    - marker
+    debugSummary: '[I5] CanyonEntry | Route:Boundary Landmark:HazardWarning Collision:SeafloorAndLargeProps
+      | Depth:(-450,-1050) | R:0.55 S:0.40 C:0.60 Cl:0.20 F:0.30 | Res:0.15 Haz:0.65
+      Lm:0.20 Vis:0.63 | Sparse:True Collider:True Narrative:False'
+  - zoneId: I6
+    terrainArchetype: 10
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 4
+    targetMinDepth: -480
+    targetMaxDepth: -1100
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.15
+    hazardDensity01: 0.65
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.63
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - data
+    - alloy
+    - research
+    hazardTags:
+    - current
+    - crack
+    - visibility_block
+    - pressure
+    landmarkTags:
+    - wreck
+    - canyon
+    - research
+    - warning
+    - pressure
+    debugSummary: '[I6] SparsePressure | Route:Boundary Landmark:HazardWarning Collision:NavigationCritical
+      | Depth:(-480,-1100) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.15 Haz:0.65
+      Lm:0.20 Vis:0.63 | Sparse:True Collider:True Narrative:False'
+  - zoneId: I7
+    terrainArchetype: 9
+    routeRole: 3
+    landmarkRole: 6
+    collisionRequirement: 2
+    targetMinDepth: -500
+    targetMaxDepth: -1150
+    terrainRoughness01: 0.35
+    slopeIntensity01: 0.2
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.6
+    resourceDensity01: 0.45
+    hazardDensity01: 0.65
+    landmarkWeight01: 0.7
+    visualIntensity01: 0.84
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 1
+    intentionallySparse: 0
+    resourceTags:
+    - data
+    - research
+    - alloy
+    hazardTags:
+    - warning_light
+    - pressure
+    - crack
+    - visibility_block
+    landmarkTags:
+    - research
+    - warning
+    - narrative_gate
+    - marker
+    debugSummary: '[I7] FacilityApproach | Route:Gate Landmark:NarrativeGate Collision:SeafloorAndLargeProps
+      | Depth:(-500,-1150) | R:0.35 S:0.20 C:0.00 Cl:0.00 F:0.60 | Res:0.45 Haz:0.65
+      Lm:0.70 Vis:0.84 | Sparse:False Collider:True Narrative:True'
+  - zoneId: I8
+    terrainArchetype: 6
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 4
+    targetMinDepth: -550
+    targetMaxDepth: -1300
+    terrainRoughness01: 0.65
+    slopeIntensity01: 0.6
+    canyonIntensity01: 0.5
+    cliffIntensity01: 0.3
+    openWaterFlatness01: 0.2
+    resourceDensity01: 0.15
+    hazardDensity01: 0.65
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.63
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - sealed
+    - rare
+    hazardTags:
+    - visibility_block
+    - cliff
+    - pressure
+    - crack
+    - isolation
+    landmarkTags:
+    - warning
+    - pressure
+    - marker
+    debugSummary: '[I8] CanyonDeep | Route:Boundary Landmark:HazardWarning Collision:NavigationCritical
+      | Depth:(-550,-1300) | R:0.65 S:0.60 C:0.50 Cl:0.30 F:0.20 | Res:0.15 Haz:0.65
+      Lm:0.20 Vis:0.63 | Sparse:True Collider:True Narrative:False'
+  - zoneId: I9
+    terrainArchetype: 7
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 4
+    targetMinDepth: -600
+    targetMaxDepth: -1400
+    terrainRoughness01: 0.7
+    slopeIntensity01: 0.7
+    canyonIntensity01: 0.3
+    cliffIntensity01: 0.7
+    openWaterFlatness01: 0.15
+    resourceDensity01: 0.15
+    hazardDensity01: 0.9
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.77
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - sealed
+    - rare
+    hazardTags:
+    - visibility_block
+    - cliff
+    - pressure
+    - crack
+    - isolation
+    landmarkTags:
+    - warning
+    debugSummary: '[I9] CliffWall | Route:Boundary Landmark:HazardWarning Collision:NavigationCritical
+      | Depth:(-600,-1400) | R:0.70 S:0.70 C:0.30 Cl:0.70 F:0.15 | Res:0.15 Haz:0.90
+      Lm:0.20 Vis:0.77 | Sparse:True Collider:True Narrative:False'
+  - zoneId: I10
+    terrainArchetype: 10
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 3
+    targetMinDepth: -700
+    targetMaxDepth: -1600
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.05
+    hazardDensity01: 0.9
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.7
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - sealed
+    - rare
+    hazardTags:
+    - visibility_block
+    - cliff
+    - pressure
+    - crack
+    - isolation
+    landmarkTags:
+    - warning
+    - pressure
+    - marker
+    debugSummary: '[I10] SparsePressure | Route:Boundary Landmark:HazardWarning Collision:BlockingBoundary
+      | Depth:(-700,-1600) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.05 Haz:0.90
+      Lm:0.20 Vis:0.70 | Sparse:True Collider:True Narrative:False'
+  - zoneId: J1
+    terrainArchetype: 10
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 3
+    targetMinDepth: -600
+    targetMaxDepth: -1500
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.05
+    hazardDensity01: 0.9
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.7
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags: []
+    hazardTags:
+    - current
+    - visibility_block
+    - warning_light
+    - pressure
+    landmarkTags:
+    - warning
+    - pressure
+    - marker
+    debugSummary: '[J1] SparsePressure | Route:Boundary Landmark:HazardWarning Collision:BlockingBoundary
+      | Depth:(-600,-1500) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.05 Haz:0.90
+      Lm:0.20 Vis:0.70 | Sparse:True Collider:True Narrative:False'
+  - zoneId: J2
+    terrainArchetype: 10
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 3
+    targetMinDepth: -650
+    targetMaxDepth: -1550
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.05
+    hazardDensity01: 0.9
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.7
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags: []
+    hazardTags:
+    - current
+    - visibility_block
+    - pressure
+    landmarkTags:
+    - warning
+    - pressure
+    - marker
+    debugSummary: '[J2] SparsePressure | Route:Boundary Landmark:HazardWarning Collision:BlockingBoundary
+      | Depth:(-650,-1550) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.05 Haz:0.90
+      Lm:0.20 Vis:0.70 | Sparse:True Collider:True Narrative:False'
+  - zoneId: J3
+    terrainArchetype: 10
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 3
+    targetMinDepth: -700
+    targetMaxDepth: -1600
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.05
+    hazardDensity01: 0.9
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.7
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags: []
+    hazardTags:
+    - current
+    - visibility_block
+    - warning_light
+    - pressure
+    landmarkTags:
+    - warning
+    - pressure
+    - marker
+    debugSummary: '[J3] SparsePressure | Route:Boundary Landmark:HazardWarning Collision:BlockingBoundary
+      | Depth:(-700,-1600) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.05 Haz:0.90
+      Lm:0.20 Vis:0.70 | Sparse:True Collider:True Narrative:False'
+  - zoneId: J4
+    terrainArchetype: 8
+    routeRole: 3
+    landmarkRole: 6
+    collisionRequirement: 4
+    targetMinDepth: -750
+    targetMaxDepth: -1700
+    terrainRoughness01: 0.2
+    slopeIntensity01: 0.15
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.8
+    resourceDensity01: 0.1
+    hazardDensity01: 0.9
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.77
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 1
+    requiresNarrativeObject: 1
+    intentionallySparse: 1
+    resourceTags:
+    - rare
+    - sealed
+    hazardTags:
+    - visibility_block
+    - warning_light
+    - pressure
+    - cliff
+    - isolation
+    landmarkTags:
+    - narrative_gate
+    - marker
+    debugSummary: '[J4] ArtificialPassage | Route:Gate Landmark:NarrativeGate Collision:NavigationCritical
+      | Depth:(-750,-1700) | R:0.20 S:0.15 C:0.00 Cl:0.00 F:0.80 | Res:0.10 Haz:0.90
+      Lm:0.20 Vis:0.77 | Sparse:True Collider:True Narrative:True'
+  - zoneId: J5
+    terrainArchetype: 7
+    routeRole: 3
+    landmarkRole: 6
+    collisionRequirement: 4
+    targetMinDepth: -800
+    targetMaxDepth: -2000
+    terrainRoughness01: 0.7
+    slopeIntensity01: 0.7
+    canyonIntensity01: 0.3
+    cliffIntensity01: 0.7
+    openWaterFlatness01: 0.15
+    resourceDensity01: 0.1
+    hazardDensity01: 0.9
+    landmarkWeight01: 0.7
+    visualIntensity01: 0.77
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 1
+    intentionallySparse: 1
+    resourceTags:
+    - rare
+    - sealed
+    hazardTags:
+    - cliff
+    - pressure
+    - visibility_block
+    - isolation
+    landmarkTags:
+    - log
+    - warning
+    - narrative_gate
+    - cable
+    - structure
+    debugSummary: '[J5] CliffWall | Route:Gate Landmark:NarrativeGate Collision:NavigationCritical
+      | Depth:(-800,-2000) | R:0.70 S:0.70 C:0.30 Cl:0.70 F:0.15 | Res:0.10 Haz:0.90
+      Lm:0.70 Vis:0.77 | Sparse:True Collider:True Narrative:True'
+  - zoneId: J6
+    terrainArchetype: 7
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 4
+    targetMinDepth: -900
+    targetMaxDepth: -2200
+    terrainRoughness01: 0.7
+    slopeIntensity01: 0.7
+    canyonIntensity01: 0.3
+    cliffIntensity01: 0.7
+    openWaterFlatness01: 0.15
+    resourceDensity01: 0.1
+    hazardDensity01: 0.9
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.77
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - rare
+    - sealed
+    hazardTags:
+    - pressure
+    - visibility_block
+    - cliff
+    - isolation
+    landmarkTags:
+    - log
+    - warning
+    - pressure
+    - marker
+    debugSummary: '[J6] CliffWall | Route:Boundary Landmark:HazardWarning Collision:NavigationCritical
+      | Depth:(-900,-2200) | R:0.70 S:0.70 C:0.30 Cl:0.70 F:0.15 | Res:0.10 Haz:0.90
+      Lm:0.20 Vis:0.77 | Sparse:True Collider:True Narrative:False'
+  - zoneId: J7
+    terrainArchetype: 6
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 4
+    targetMinDepth: -1000
+    targetMaxDepth: -2500
+    terrainRoughness01: 0.65
+    slopeIntensity01: 0.6
+    canyonIntensity01: 0.5
+    cliffIntensity01: 0.3
+    openWaterFlatness01: 0.2
+    resourceDensity01: 0.05
+    hazardDensity01: 0.9
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.7
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - rare
+    - sealed
+    hazardTags:
+    - pressure
+    - visibility_block
+    - cliff
+    - isolation
+    landmarkTags:
+    - log
+    - warning
+    - pressure
+    - narrative_gate
+    debugSummary: '[J7] CanyonDeep | Route:Boundary Landmark:HazardWarning Collision:NavigationCritical
+      | Depth:(-1000,-2500) | R:0.65 S:0.60 C:0.50 Cl:0.30 F:0.20 | Res:0.05 Haz:0.90
+      Lm:0.20 Vis:0.70 | Sparse:True Collider:True Narrative:False'
+  - zoneId: J8
+    terrainArchetype: 10
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 3
+    targetMinDepth: -1100
+    targetMaxDepth: -2800
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
+    resourceDensity01: 0.05
+    hazardDensity01: 0.9
+    landmarkWeight01: 0.2
+    visualIntensity01: 0.7
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 0
+    intentionallySparse: 1
+    resourceTags:
+    - rare
+    - sealed
+    hazardTags:
+    - pressure
+    - visibility_block
+    - cliff
+    - isolation
+    landmarkTags:
+    - log
+    - warning
+    - pressure
+    debugSummary: '[J8] SparsePressure | Route:Boundary Landmark:HazardWarning Collision:BlockingBoundary
+      | Depth:(-1100,-2800) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.05 Haz:0.90
+      Lm:0.20 Vis:0.70 | Sparse:True Collider:True Narrative:False'
+  - zoneId: J9
+    terrainArchetype: 7
+    routeRole: 3
+    landmarkRole: 6
+    collisionRequirement: 4
+    targetMinDepth: -1200
+    targetMaxDepth: -3000
+    terrainRoughness01: 0.7
+    slopeIntensity01: 0.7
+    canyonIntensity01: 0.3
+    cliffIntensity01: 0.7
+    openWaterFlatness01: 0.15
+    resourceDensity01: 0.1
+    hazardDensity01: 0.9
+    landmarkWeight01: 0.7
+    visualIntensity01: 0.77
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 1
+    intentionallySparse: 1
+    resourceTags:
+    - rare
+    - sealed
+    hazardTags:
+    - pressure
+    - visibility_block
+    - cliff
+    - isolation
+    landmarkTags:
+    - log
+    - narrative_gate
+    - structure
+    debugSummary: '[J9] CliffWall | Route:Gate Landmark:NarrativeGate Collision:NavigationCritical
+      | Depth:(-1200,-3000) | R:0.70 S:0.70 C:0.30 Cl:0.70 F:0.15 | Res:0.10 Haz:0.90
+      Lm:0.70 Vis:0.77 | Sparse:True Collider:True Narrative:True'
+  - zoneId: J10
+    terrainArchetype: 9
+    routeRole: 3
+    landmarkRole: 6
+    collisionRequirement: 4
+    targetMinDepth: -1500
+    targetMaxDepth: -3500
+    terrainRoughness01: 0.35
+    slopeIntensity01: 0.2
+    canyonIntensity01: 0
+    cliffIntensity01: 0
+    openWaterFlatness01: 0.6
+    resourceDensity01: 0.55
+    hazardDensity01: 0.9
+    landmarkWeight01: 0.7
+    visualIntensity01: 1
+    requiresTerrainCollider: 1
+    allowsSurfaceIslandVisual: 0
+    requiresNarrativeObject: 1
+    intentionallySparse: 0
+    resourceTags:
+    - data
+    - research
+    - rare
+    - sealed
+    hazardTags:
+    - pressure
+    - visibility_block
+    - cliff
+    - isolation
+    landmarkTags:
+    - log
+    - narrative_gate
+    debugSummary: '[J10] FacilityApproach | Route:Gate Landmark:NarrativeGate Collision:NavigationCritical
+      | Depth:(-1500,-3500) | R:0.35 S:0.20 C:0.00 Cl:0.00 F:0.60 | Res:0.55 Haz:0.90
+      Lm:0.70 Vis:1.00 | Sparse:False Collider:True Narrative:True'

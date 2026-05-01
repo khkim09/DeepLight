@@ -389,53 +389,73 @@ MonoBehaviour:
     row: 5
     regionKey: WestWreck
     biomeKey: ShallowWreck
-    narrativePhase: 0
+    narrativePhase: 1
     terrainMood: 1
-    riskTier: 2
+    riskTier: 1
     contentDensity: 4
     primaryPurpose: 2
-    minDepth: -100
-    maxDepth: -420
-    baseRiskLevel: 0.35
-    terrainDescription: "\uC11C\uBD80 \uD3D0\uC120\uAD8C\uC758 \uC2DC\uC791. \uBC18\uCBE4
-      \uB4DC\uB7EC\uB09C \uD3D0\uC120 1\uCC99\uC774 \uC911\uC2EC."
-    keyObjects: "\uD3D0\uC120 \uCF58\uC194, \uC801\uC7AC\uD568, \uC808\uB2E8\uB41C
-      \uC120\uCCB4 \uC678\uD53C"
-    resourceGroups: Iron Scrap, basic resources
-    logOrHint: Log #001 extension hint
-    hazards: "\uD3D0\uC120 \uC794\uD574, \uBCF5\uC7A1\uD55C \uD68C\uC218 \uB3D9\uC120"
-    narrativeFunction: "\uCD08\uBC18 \uD575\uC2EC \uD30C\uBC0D\uC758 \uB300\uD45C
-      \uC5BC\uAD74."
+    minDepth: -60
+    maxDepth: -260
+    baseRiskLevel: 0.25
+    terrainDescription: "\uC11C\uCABD\uC73C\uB85C \uC644\uB9CC\uD788 \uB0AE\uC544\uC9C0\uB294
+      Wreck Shelf. \uB0AE\uC740 \uC554\uBC18 \uB454\uB355. \uB300\uD615 \uD3D0\uC120
+      1\uCC99 + \uC18C\uD615 \uBCF4\uC870\uC120 \uC794\uD574 2~3\uAC1C. \uC120\uCCB4
+      \uC77C\uBD80 \uBAA8\uB798\uC5D0 \uBB3B\uD798. \uB0B4\uBD80 \uC811\uADFC \uAC00\uB2A5\uD55C
+      \uC5F4\uB9B0 \uAD6C\uBA4D 2\uACF3. \uD3D0\uC120 \uD558\uBD80 \uAD00\uCE21 \uC7A5\uBE44
+      \uD654\uBB3C\uCE78."
+    keyObjects: partially buried wreck, cargo hold, console, cable reel, DL-07 OBSERVE
+      LINE marker, antenna debris, small support boat wrecks
+    resourceGroups: Iron Scrap, Steel Plate, Fuel Canister, Data Chip, Corroded Relay
+    logOrHint: "Log 001: \uD3D0\uC120 \uCF58\uC194 / Pulse Cut. Log 002: \uC120\uBBF8
+      \uC548\uD14C\uB098 \uC794\uD574 / communication module. Log 003: \uD654\uBB3C\uCE78
+      / DeepLight mark device."
+    hazards: "\uB0AE\uC74C~\uC911\uAC04. \uD3D0\uC120 \uB0B4\uBD80 \uD611\uC18C \uACF5\uAC04.
+      \uC2DC\uC57C \uAC00\uB9BC. \uCDA9\uB3CC \uC704\uD5D8."
+    narrativeFunction: "'\uD3D0\uC120\uC758 \uD45C\uC2DD'. Data Chip. DeepLight \uD45C\uC2DD.
+      Log 001~003. \uC0DD\uACC4\uD615 \uD68C\uC218\uC5D0\uC11C \uCCAB \uC758\uC2EC\uC73C\uB85C
+      \uC804\uD658."
     isHub: 0
     isMajorLandmark: 1
     intentionallySparse: 0
-    notes: 
+    notes: 'Phase 14.9.1: Western Wreck Field prototype. B5/C5/B6/C6/C7 primary.
+      Wreck-01 (fishing vessel appearance, thick hull plating, cable reels, DL-07
+      mark). Wreck-02 (small support boat). Sand-Buried Cargo Hold (Log 003).'
   - zoneId: B6
     column: B
     row: 6
-    regionKey: WestCanyonApproach
-    biomeKey: Canyon
+    regionKey: WestWreck
+    biomeKey: ShallowWreck
     narrativePhase: 1
-    terrainMood: 5
-    riskTier: 2
-    contentDensity: 2
-    primaryPurpose: 3
-    minDepth: -180
-    maxDepth: -560
-    baseRiskLevel: 0.46
-    terrainDescription: "\uC11C\uB0A8 \uD611\uACE1 \uC804\uCD08. \uBC14\uB2E5 \uADE0\uC5F4\uACFC
-      \uAE30\uC220 \uD754\uC801\uC774 \uB354 \uB69C\uB837\uD558\uB2E4."
-    keyObjects: "\uD30C\uC190 \uB4DC\uB860 \uBD80\uD488, \uC720\uC2E4\uB41C \uD1B5\uC2E0
-      \uC548\uD14C\uB098, \uB179\uC2A8 \uAD00\uCE21 \uD504\uB808\uC784"
-    resourceGroups: Sensor Fragment, Comm Module, Corroded Relay
-    logOrHint: None
-    hazards: "\uADE0\uC5F4, \uAD00\uCE21 \uD504\uB808\uC784 \uC7A5\uC560"
-    narrativeFunction: "\uAE30\uC220\uC801 \uD68C\uC218 \uBE44\uC911\uC774 \uC62C\uB77C\uAC00\uB294
-      \uAD6C\uC5ED."
+    terrainMood: 1
+    riskTier: 1
+    contentDensity: 4
+    primaryPurpose: 2
+    minDepth: -60
+    maxDepth: -260
+    baseRiskLevel: 0.25
+    terrainDescription: "\uC11C\uCABD\uC73C\uB85C \uC644\uB9CC\uD788 \uB0AE\uC544\uC9C0\uB294
+      Wreck Shelf. \uB0AE\uC740 \uC554\uBC18 \uB454\uB355. \uB300\uD615 \uD3D0\uC120
+      1\uCC99 + \uC18C\uD615 \uBCF4\uC870\uC120 \uC794\uD574 2~3\uAC1C. \uC120\uCCB4
+      \uC77C\uBD80 \uBAA8\uB798\uC5D0 \uBB3B\uD798. \uB0B4\uBD80 \uC811\uADFC \uAC00\uB2A5\uD55C
+      \uC5F4\uB9B0 \uAD6C\uBA4D 2\uACF3. \uD3D0\uC120 \uD558\uBD80 \uAD00\uCE21 \uC7A5\uBE44
+      \uD654\uBB3C\uCE78."
+    keyObjects: partially buried wreck, cargo hold, console, cable reel, DL-07 OBSERVE
+      LINE marker, antenna debris, small support boat wrecks
+    resourceGroups: Iron Scrap, Steel Plate, Fuel Canister, Data Chip, Corroded Relay
+    logOrHint: "Log 001: \uD3D0\uC120 \uCF58\uC194 / Pulse Cut. Log 002: \uC120\uBBF8
+      \uC548\uD14C\uB098 \uC794\uD574 / communication module. Log 003: \uD654\uBB3C\uCE78
+      / DeepLight mark device."
+    hazards: "\uB0AE\uC74C~\uC911\uAC04. \uD3D0\uC120 \uB0B4\uBD80 \uD611\uC18C \uACF5\uAC04.
+      \uC2DC\uC57C \uAC00\uB9BC. \uCDA9\uB3CC \uC704\uD5D8."
+    narrativeFunction: "'\uD3D0\uC120\uC758 \uD45C\uC2DD'. Data Chip. DeepLight \uD45C\uC2DD.
+      Log 001~003. \uC0DD\uACC4\uD615 \uD68C\uC218\uC5D0\uC11C \uCCAB \uC758\uC2EC\uC73C\uB85C
+      \uC804\uD658."
     isHub: 0
-    isMajorLandmark: 0
+    isMajorLandmark: 1
     intentionallySparse: 0
-    notes: 
+    notes: 'Phase 14.9.1: Western Wreck Field prototype. B5/C5/B6/C6/C7 primary.
+      Wreck-01 (fishing vessel appearance, thick hull plating, cable reels, DL-07
+      mark). Wreck-02 (small support boat). Sand-Buried Cargo Hold (Log 003).'
   - zoneId: B7
     column: B
     row: 7
@@ -650,79 +670,107 @@ MonoBehaviour:
     biomeKey: ShallowWreck
     narrativePhase: 1
     terrainMood: 1
-    riskTier: 2
-    contentDensity: 3
+    riskTier: 1
+    contentDensity: 4
     primaryPurpose: 2
-    minDepth: -130
-    maxDepth: -450
-    baseRiskLevel: 0.4
-    terrainDescription: "\uC11C\uBD80 \uD3D0\uD5C8 \uC811\uADFC\uBD80. \uD3D0\uC120\uACFC
-      \uC794\uD574\uAC00 \uBC00\uC9D1\uB418\uACE0 \uAD6C\uC870\uBB3C \uADDC\uBAA8\uAC00
-      \uCEE4\uC9C4\uB2E4."
-    keyObjects: "\uBD95\uAD34\uD55C \uC120\uCCB4 \uC678\uD53C, \uC801\uC7AC\uC6A9
-      \uD504\uB808\uC784, \uD718\uC5B4\uC9C4 \uCCA0\uACE8"
-    resourceGroups: Steel Plate, Valve Core
-    logOrHint: None
-    hazards: "\uBC00\uC9D1 \uC794\uD574, \uAD6C\uC870\uBB3C \uC7A5\uC560"
-    narrativeFunction: "\uC0DD\uD65C \uAC10\uAC01\uC5D0\uC11C \uC0B0\uC5C5 \uAC10\uAC01\uC73C\uB85C
-      \uB118\uC5B4\uAC04\uB2E4."
+    minDepth: -60
+    maxDepth: -260
+    baseRiskLevel: 0.25
+    terrainDescription: "\uC11C\uCABD\uC73C\uB85C \uC644\uB9CC\uD788 \uB0AE\uC544\uC9C0\uB294
+      Wreck Shelf. \uB0AE\uC740 \uC554\uBC18 \uB454\uB355. \uB300\uD615 \uD3D0\uC120
+      1\uCC99 + \uC18C\uD615 \uBCF4\uC870\uC120 \uC794\uD574 2~3\uAC1C. \uC120\uCCB4
+      \uC77C\uBD80 \uBAA8\uB798\uC5D0 \uBB3B\uD798. \uB0B4\uBD80 \uC811\uADFC \uAC00\uB2A5\uD55C
+      \uC5F4\uB9B0 \uAD6C\uBA4D 2\uACF3. \uD3D0\uC120 \uD558\uBD80 \uAD00\uCE21 \uC7A5\uBE44
+      \uD654\uBB3C\uCE78."
+    keyObjects: partially buried wreck, cargo hold, console, cable reel, DL-07 OBSERVE
+      LINE marker, antenna debris, small support boat wrecks
+    resourceGroups: Iron Scrap, Steel Plate, Fuel Canister, Data Chip, Corroded Relay
+    logOrHint: "Log 001: \uD3D0\uC120 \uCF58\uC194 / Pulse Cut. Log 002: \uC120\uBBF8
+      \uC548\uD14C\uB098 \uC794\uD574 / communication module. Log 003: \uD654\uBB3C\uCE78
+      / DeepLight mark device."
+    hazards: "\uB0AE\uC74C~\uC911\uAC04. \uD3D0\uC120 \uB0B4\uBD80 \uD611\uC18C \uACF5\uAC04.
+      \uC2DC\uC57C \uAC00\uB9BC. \uCDA9\uB3CC \uC704\uD5D8."
+    narrativeFunction: "'\uD3D0\uC120\uC758 \uD45C\uC2DD'. Data Chip. DeepLight \uD45C\uC2DD.
+      Log 001~003. \uC0DD\uACC4\uD615 \uD68C\uC218\uC5D0\uC11C \uCCAB \uC758\uC2EC\uC73C\uB85C
+      \uC804\uD658."
     isHub: 0
     isMajorLandmark: 1
     intentionallySparse: 0
-    notes: 
+    notes: 'Phase 14.9.1: Western Wreck Field prototype. B5/C5/B6/C6/C7 primary.
+      Wreck-01 (fishing vessel appearance, thick hull plating, cable reels, DL-07
+      mark). Wreck-02 (small support boat). Sand-Buried Cargo Hold (Log 003).'
   - zoneId: C6
     column: C
     row: 6
-    regionKey: WestCanyonApproach
-    biomeKey: Canyon
+    regionKey: WestWreck
+    biomeKey: ShallowWreck
     narrativePhase: 1
-    terrainMood: 4
-    riskTier: 2
-    contentDensity: 3
-    primaryPurpose: 3
-    minDepth: -180
-    maxDepth: -580
-    baseRiskLevel: 0.48
-    terrainDescription: "\uC11C\uBD80 \uD611\uACE1 \uC785\uAD6C. \uBC14\uB2E5\uC774
-      \uAC08\uB77C\uC9C0\uACE0 \uB4DC\uB860 \uD30C\uD3B8\uC774 \uCC98\uC74C \uB208\uC5D0
-      \uB748\uB2E4."
-    keyObjects: "\uAC08\uB77C\uC9C4 \uBC14\uB2E5, \uB4DC\uB860 \uC794\uD574 \uC77C\uBD80,
-      \uB04A\uC5B4\uC9C4 \uC548\uD14C\uB098"
-    resourceGroups: Sensor Fragment, Comm Module
-    logOrHint: Research trace begins
-    hazards: "\uAC08\uB77C\uC9C4 \uBC14\uB2E5, \uB4DC\uB860 \uC794\uD574 \uC7A5\uC560"
-    narrativeFunction: "\uC5F0\uAD6C \uD754\uC801\uC774 \uC804\uBA74\uC5D0 \uB098\uC624\uAE30
-      \uC2DC\uC791\uD55C\uB2E4."
+    terrainMood: 1
+    riskTier: 1
+    contentDensity: 4
+    primaryPurpose: 2
+    minDepth: -60
+    maxDepth: -260
+    baseRiskLevel: 0.25
+    terrainDescription: "\uC11C\uCABD\uC73C\uB85C \uC644\uB9CC\uD788 \uB0AE\uC544\uC9C0\uB294
+      Wreck Shelf. \uB0AE\uC740 \uC554\uBC18 \uB454\uB355. \uB300\uD615 \uD3D0\uC120
+      1\uCC99 + \uC18C\uD615 \uBCF4\uC870\uC120 \uC794\uD574 2~3\uAC1C. \uC120\uCCB4
+      \uC77C\uBD80 \uBAA8\uB798\uC5D0 \uBB3B\uD798. \uB0B4\uBD80 \uC811\uADFC \uAC00\uB2A5\uD55C
+      \uC5F4\uB9B0 \uAD6C\uBA4D 2\uACF3. \uD3D0\uC120 \uD558\uBD80 \uAD00\uCE21 \uC7A5\uBE44
+      \uD654\uBB3C\uCE78."
+    keyObjects: partially buried wreck, cargo hold, console, cable reel, DL-07 OBSERVE
+      LINE marker, antenna debris, small support boat wrecks
+    resourceGroups: Iron Scrap, Steel Plate, Fuel Canister, Data Chip, Corroded Relay
+    logOrHint: "Log 001: \uD3D0\uC120 \uCF58\uC194 / Pulse Cut. Log 002: \uC120\uBBF8
+      \uC548\uD14C\uB098 \uC794\uD574 / communication module. Log 003: \uD654\uBB3C\uCE78
+      / DeepLight mark device."
+    hazards: "\uB0AE\uC74C~\uC911\uAC04. \uD3D0\uC120 \uB0B4\uBD80 \uD611\uC18C \uACF5\uAC04.
+      \uC2DC\uC57C \uAC00\uB9BC. \uCDA9\uB3CC \uC704\uD5D8."
+    narrativeFunction: "'\uD3D0\uC120\uC758 \uD45C\uC2DD'. Data Chip. DeepLight \uD45C\uC2DD.
+      Log 001~003. \uC0DD\uACC4\uD615 \uD68C\uC218\uC5D0\uC11C \uCCAB \uC758\uC2EC\uC73C\uB85C
+      \uC804\uD658."
     isHub: 0
     isMajorLandmark: 1
     intentionallySparse: 0
-    notes: 
+    notes: 'Phase 14.9.1: Western Wreck Field prototype. B5/C5/B6/C6/C7 primary.
+      Wreck-01 (fishing vessel appearance, thick hull plating, cable reels, DL-07
+      mark). Wreck-02 (small support boat). Sand-Buried Cargo Hold (Log 003).'
   - zoneId: C7
     column: C
     row: 7
-    regionKey: WestOuter
-    biomeKey: Canyon
+    regionKey: WestWreck
+    biomeKey: ShallowWreck
     narrativePhase: 1
-    terrainMood: 2
-    riskTier: 2
-    contentDensity: 2
-    primaryPurpose: 3
-    minDepth: -220
-    maxDepth: -650
-    baseRiskLevel: 0.5
-    terrainDescription: "\uC11C\uBD80 \uC911\uC2EC \uC678\uACFD. \uB0AE\uC740 \uC554\uBC18\uACFC
-      \uC794\uD574 \uB354\uBBF8\uAC00 \uC2DC\uC120\uC744 \uBD84\uC0B0\uD55C\uB2E4."
-    keyObjects: "\uB0AE\uC740 \uC554\uBC18, \uC794\uD574 \uB354\uBBF8, \uC791\uC740
-      \uAD00\uCE21 \uCF00\uC774\uC2A4"
-    resourceGroups: Aluminum Pipe, Corroded Relay
-    logOrHint: None
-    hazards: "\uC2DC\uC57C \uBD84\uC0B0, \uB0AE\uC740 \uC554\uBC18"
-    narrativeFunction: "\uAE30\uC220 \uD754\uC801\uC774 \uC790\uC5F0 \uD48D\uACBD\uCC98\uB7FC
-      \uC11E\uC778\uB2E4."
+    terrainMood: 1
+    riskTier: 1
+    contentDensity: 4
+    primaryPurpose: 2
+    minDepth: -60
+    maxDepth: -260
+    baseRiskLevel: 0.25
+    terrainDescription: "\uC11C\uCABD\uC73C\uB85C \uC644\uB9CC\uD788 \uB0AE\uC544\uC9C0\uB294
+      Wreck Shelf. \uB0AE\uC740 \uC554\uBC18 \uB454\uB355. \uB300\uD615 \uD3D0\uC120
+      1\uCC99 + \uC18C\uD615 \uBCF4\uC870\uC120 \uC794\uD574 2~3\uAC1C. \uC120\uCCB4
+      \uC77C\uBD80 \uBAA8\uB798\uC5D0 \uBB3B\uD798. \uB0B4\uBD80 \uC811\uADFC \uAC00\uB2A5\uD55C
+      \uC5F4\uB9B0 \uAD6C\uBA4D 2\uACF3. \uD3D0\uC120 \uD558\uBD80 \uAD00\uCE21 \uC7A5\uBE44
+      \uD654\uBB3C\uCE78."
+    keyObjects: partially buried wreck, cargo hold, console, cable reel, DL-07 OBSERVE
+      LINE marker, antenna debris, small support boat wrecks
+    resourceGroups: Iron Scrap, Steel Plate, Fuel Canister, Data Chip, Corroded Relay
+    logOrHint: "Log 001: \uD3D0\uC120 \uCF58\uC194 / Pulse Cut. Log 002: \uC120\uBBF8
+      \uC548\uD14C\uB098 \uC794\uD574 / communication module. Log 003: \uD654\uBB3C\uCE78
+      / DeepLight mark device."
+    hazards: "\uB0AE\uC74C~\uC911\uAC04. \uD3D0\uC120 \uB0B4\uBD80 \uD611\uC18C \uACF5\uAC04.
+      \uC2DC\uC57C \uAC00\uB9BC. \uCDA9\uB3CC \uC704\uD5D8."
+    narrativeFunction: "'\uD3D0\uC120\uC758 \uD45C\uC2DD'. Data Chip. DeepLight \uD45C\uC2DD.
+      Log 001~003. \uC0DD\uACC4\uD615 \uD68C\uC218\uC5D0\uC11C \uCCAB \uC758\uC2EC\uC73C\uB85C
+      \uC804\uD658."
     isHub: 0
-    isMajorLandmark: 0
+    isMajorLandmark: 1
     intentionallySparse: 0
-    notes: 
+    notes: 'Phase 14.9.1: Western Wreck Field prototype. B5/C5/B6/C6/C7 primary.
+      Wreck-01 (fishing vessel appearance, thick hull plating, cable reels, DL-07
+      mark). Wreck-02 (small support boat). Sand-Buried Cargo Hold (Log 003).'
   - zoneId: C8
     column: C
     row: 8
@@ -800,3 +848,1956 @@ MonoBehaviour:
     isMajorLandmark: 0
     intentionallySparse: 1
     notes: 
+  - zoneId: D1
+    column: D
+    row: 1
+    regionKey: WestPressureBuffer
+    biomeKey: OpenWater
+    narrativePhase: 5
+    terrainMood: 6
+    riskTier: 1
+    contentDensity: 1
+    primaryPurpose: 7
+    minDepth: -200
+    maxDepth: -600
+    baseRiskLevel: 0.35
+    terrainDescription: "\uC11C\uCABD \uC678\uACFD \uC555\uB825 \uC644\uCDA9 \uAD6C\uC5ED.
+      \uD76C\uBC15\uD55C \uC555\uB825\uACFC \uC5F4\uB9B0 \uC218\uC5ED. \uCD08\uBC18
+      \uD0D0\uC0AC \uAD6C\uC5ED \uC544\uB2D8."
+    keyObjects: "\uB4DC\uBB38\uB4DC\uBB38 \uB5A0 \uC788\uB294 \uBD80\uC720 \uC794\uD574,
+      \uD574\uB958\uC5D0 \uBC00\uB9B0 \uC791\uC740 \uD30C\uD3B8"
+    resourceGroups: Iron Scrap (sparse)
+    logOrHint: None
+    hazards: "\uC57D\uD55C \uD574\uB958, \uB113\uC740 \uBE48 \uACF5\uAC04"
+    narrativeFunction: "\uC11C\uBD80 \uC678\uACFD\uC5D0\uC11C Hub \uBC29\uD5A5\uC73C\uB85C\uC758
+      \uC555\uB825 \uC644\uCDA9. \uCD08\uBC18 \uC9C4\uC785\uC744 \uC790\uC5F0\uC2A4\uB7FD\uAC8C
+      \uC720\uB3C4."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] D1: West pressure buffer. Boundary/SideRoute \uC131\uACA9."
+  - zoneId: D2
+    column: D
+    row: 2
+    regionKey: WestPressureBuffer
+    biomeKey: OpenWater
+    narrativePhase: 5
+    terrainMood: 0
+    riskTier: 1
+    contentDensity: 1
+    primaryPurpose: 7
+    minDepth: -180
+    maxDepth: -550
+    baseRiskLevel: 0.32
+    terrainDescription: "\uC11C\uCABD \uC678\uACFD \uC644\uCDA9 \uD574\uC5ED. \uD574\uB958\uAC00
+      \uBC14\uB2E5\uC744 \uD6D1\uB294 \uBE48 \uBC14\uB2E4. \uC800\uC790\uC6D0."
+    keyObjects: "\uD574\uB958\uC5D0 \uD769\uC5B4\uC9C4 \uC791\uC740 \uD30C\uD3B8,
+      \uD574\uC870\uB958 \uC870\uAC01"
+    resourceGroups: Iron Scrap (sparse)
+    logOrHint: None
+    hazards: "\uC57D\uD55C \uD574\uB958, \uC2DC\uC57C \uBD84\uC0B0"
+    narrativeFunction: "\uC11C\uBD80 \uC678\uACFD\uC5D0\uC11C Hub \uBC29\uD5A5 \uC804\uC774.
+      Boundary \uC131\uACA9."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-A] D2: West pressure buffer. Boundary.'
+  - zoneId: D3
+    column: D
+    row: 3
+    regionKey: WestPressureBuffer
+    biomeKey: OpenWater
+    narrativePhase: 5
+    terrainMood: 11
+    riskTier: 2
+    contentDensity: 1
+    primaryPurpose: 7
+    minDepth: -160
+    maxDepth: -500
+    baseRiskLevel: 0.3
+    terrainDescription: "\uC11C\uCABD \uC678\uACFD \uC644\uCDA9. \uC5F4\uB9B0 \uD3C9\uC6D0
+      \uD615\uD0DC. \uC800\uC704\uD5D8~\uC911\uC704\uD5D8 \uACBD\uACC4."
+    keyObjects: "\uB4DC\uBB38\uB4DC\uBB38 \uC788\uB294 \uC791\uC740 \uC554\uBC18,
+      \uD574\uC800 \uCF00\uC774\uBE14 \uC870\uAC01"
+    resourceGroups: Copper Wire (sparse)
+    logOrHint: None
+    hazards: "\uB113\uC740 \uD3C9\uC6D0, \uBC29\uD5A5 \uAC10\uAC01 \uC0C1\uC2E4 \uC704\uD5D8"
+    narrativeFunction: "\uC11C\uBD80 \uC678\uACFD \uACBD\uACC4. SideRoute \uC131\uACA9."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-A] D3: West pressure buffer. SideRoute.'
+  - zoneId: D4
+    column: D
+    row: 4
+    regionKey: WreckApproachBuffer
+    biomeKey: OpenWater
+    narrativePhase: 1
+    terrainMood: 2
+    riskTier: 1
+    contentDensity: 2
+    primaryPurpose: 1
+    minDepth: -100
+    maxDepth: -350
+    baseRiskLevel: 0.25
+    terrainDescription: "Wreck \uC811\uADFC \uC804 \uC644\uCDA9 \uD574\uC5ED. debris_fan,
+      cable_line, sand_shelf \uD63C\uD569."
+    keyObjects: "\uBD80\uCC44\uAF34 \uC794\uD574 \uB354\uBBF8, \uD574\uC800 \uCF00\uC774\uBE14
+      \uC120, \uBAA8\uB798 \uC120\uBC18"
+    resourceGroups: Iron Scrap, Copper Wire, Fastener Pack
+    logOrHint: None
+    hazards: "\uC794\uD574 \uB354\uBBF8, \uCF00\uC774\uBE14 \uAC78\uB9BC \uC704\uD5D8"
+    narrativeFunction: "Harbor\uC640 Wreck \uC0AC\uC774\uC758 \uC790\uC5F0\uC2A4\uB7EC\uC6B4
+      \uC804\uC774 \uAD6C\uC5ED."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: "[Phase 14.9.2-A] D4: Wreck \uC811\uADFC \uC644\uCDA9. debris_fan/cable_line/sand_shelf."
+  - zoneId: D5
+    column: D
+    row: 5
+    regionKey: HarborDebrisBelt
+    biomeKey: Harbor
+    narrativePhase: 0
+    terrainMood: 2
+    riskTier: 1
+    contentDensity: 2
+    primaryPurpose: 0
+    minDepth: -20
+    maxDepth: -180
+    baseRiskLevel: 0.15
+    terrainDescription: "\uC644\uB9CC\uD55C Harbor Shelf. \uBD80\uB450/\uC870\uC120\uC18C\uC5D0\uC11C
+      \uD758\uB7EC\uB098\uC628 Debris Fan. \uCD08\uBCF4\uC790 \uC774\uB3D9 \uD3ED
+      \uB113\uAC8C \uD655\uBCF4. steep cliff \uAE08\uC9C0."
+    keyObjects: pier columns, broken fishing nets, small crates, rusty barrels, shipyard
+      frame, shallow cables, broken buoy
+    resourceGroups: "Iron Scrap \uB192\uC74C, Wet Lumber Crate \uC911\uAC04, Fuel
+      Canister \uB0AE\uC74C~\uC911\uAC04, Fastener Pack \uC911\uAC04, Copper Wire
+      \uC911\uAC04"
+    logOrHint: "Log 002 \uC120\uD0DD/\uB300\uCCB4 \uB8E8\uD2B8 \uAC00\uB2A5. \uD3D0\uC120\uC73C\uB85C
+      \uAC00\uC9C0 \uC54A\uC544\uB3C4 \uD1B5\uC2E0 \uCC28\uB2E8 \uB2E8\uC11C \uC77C\uBD80
+      \uD68D\uB4DD \uAC00\uB2A5."
+    hazards: "\uB0AE\uC74C. pier column / net collision \uC815\uB3C4."
+    narrativeFunction: "\uCCAB \uD68C\uC218. \uC548\uC804 \uD30C\uBC0D. \uC138\uB77C\uC758
+      '\uBD80\uB450 \uC544\uB798 \uACE0\uCCA0' \uB8E8\uD504. \uAE30\uBCF8 \uD68C\uC218/\uD310\uB9E4/\uC5C5\uADF8\uB808\uC774\uB4DC
+      \uC9C4\uC785."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: "Phase 14.9.1: Harbor Debris Belt / Inner Harbor Shallows prototype. D5/D6/E4/F4/G5/G6/E7/F7.
+      Gate1 ResourceLearning. \uBD80\uB450 \uC544\uB798 \uD3D0\uAE30\uBB3C \uC9C0\uB300.
+      Log 002 alternate route WARN allowed."
+  - zoneId: D6
+    column: D
+    row: 6
+    regionKey: HarborDebrisBelt
+    biomeKey: Harbor
+    narrativePhase: 0
+    terrainMood: 2
+    riskTier: 1
+    contentDensity: 2
+    primaryPurpose: 0
+    minDepth: -20
+    maxDepth: -180
+    baseRiskLevel: 0.15
+    terrainDescription: "\uC644\uB9CC\uD55C Harbor Shelf. \uBD80\uB450/\uC870\uC120\uC18C\uC5D0\uC11C
+      \uD758\uB7EC\uB098\uC628 Debris Fan. \uCD08\uBCF4\uC790 \uC774\uB3D9 \uD3ED
+      \uB113\uAC8C \uD655\uBCF4. steep cliff \uAE08\uC9C0."
+    keyObjects: pier columns, broken fishing nets, small crates, rusty barrels, shipyard
+      frame, shallow cables, broken buoy
+    resourceGroups: "Iron Scrap \uB192\uC74C, Wet Lumber Crate \uC911\uAC04, Fuel
+      Canister \uB0AE\uC74C~\uC911\uAC04, Fastener Pack \uC911\uAC04, Copper Wire
+      \uC911\uAC04"
+    logOrHint: "Log 002 \uC120\uD0DD/\uB300\uCCB4 \uB8E8\uD2B8 \uAC00\uB2A5. \uD3D0\uC120\uC73C\uB85C
+      \uAC00\uC9C0 \uC54A\uC544\uB3C4 \uD1B5\uC2E0 \uCC28\uB2E8 \uB2E8\uC11C \uC77C\uBD80
+      \uD68D\uB4DD \uAC00\uB2A5."
+    hazards: "\uB0AE\uC74C. pier column / net collision \uC815\uB3C4."
+    narrativeFunction: "\uCCAB \uD68C\uC218. \uC548\uC804 \uD30C\uBC0D. \uC138\uB77C\uC758
+      '\uBD80\uB450 \uC544\uB798 \uACE0\uCCA0' \uB8E8\uD504. \uAE30\uBCF8 \uD68C\uC218/\uD310\uB9E4/\uC5C5\uADF8\uB808\uC774\uB4DC
+      \uC9C4\uC785."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: "Phase 14.9.1: Harbor Debris Belt / Inner Harbor Shallows prototype. D5/D6/E4/F4/G5/G6/E7/F7.
+      Gate1 ResourceLearning. \uBD80\uB450 \uC544\uB798 \uD3D0\uAE30\uBB3C \uC9C0\uB300.
+      Log 002 alternate route WARN allowed."
+  - zoneId: D7
+    column: D
+    row: 7
+    regionKey: SouthWestBuffer
+    biomeKey: OpenWater
+    narrativePhase: 0
+    terrainMood: 3
+    riskTier: 1
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -120
+    maxDepth: -380
+    baseRiskLevel: 0.22
+    terrainDescription: "\uB0A8\uC11C \uC644\uCDA9 \uD574\uC5ED. \uD45C\uB958 \uC794\uD574,
+      \uC57D\uD55C \uD574\uB958, \uC595\uC740 \uACBD\uC0AC\uBA74."
+    keyObjects: "\uD45C\uB958 \uC794\uD574, \uD574\uC870\uB958, \uC791\uC740 \uC554\uBC18"
+    resourceGroups: Iron Scrap, Wet Lumber
+    logOrHint: None
+    hazards: "\uC57D\uD55C \uD574\uB958, \uC595\uC740 \uACBD\uC0AC"
+    narrativeFunction: "ResourceLearning/RouteBuffer. \uCD08\uBC18 \uC774\uB3D9 \uC644\uCDA9."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: "[Phase 14.9.2-A] D7: \uB0A8\uC11C \uC644\uCDA9. drift debris/weak current/shallow
+      slope."
+  - zoneId: D8
+    column: D
+    row: 8
+    regionKey: SouthWestBuffer
+    biomeKey: OpenWater
+    narrativePhase: 0
+    terrainMood: 11
+    riskTier: 1
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -130
+    maxDepth: -400
+    baseRiskLevel: 0.24
+    terrainDescription: "\uB0A8\uC11C \uC644\uCDA9 \uD574\uC5ED. \uC5F4\uB9B0 \uD3C9\uC6D0,
+      \uC57D\uD55C \uD574\uB958."
+    keyObjects: "\uB4DC\uBB38\uB4DC\uBB38 \uC788\uB294 \uC794\uD574, \uD574\uC800
+      \uD45C\uC2DD \uBD80\uD45C"
+    resourceGroups: Battery Cell, Fuel Canister (sparse)
+    logOrHint: None
+    hazards: "\uB113\uC740 \uC2DC\uC57C, \uBC29\uD5A5\uAC10 \uD750\uB824\uC9D0"
+    narrativeFunction: "ResourceLearning/RouteBuffer. \uCD08\uBC18 \uC774\uB3D9 \uC644\uCDA9."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] D8: \uB0A8\uC11C \uC644\uCDA9. RouteBuffer."
+  - zoneId: D9
+    column: D
+    row: 9
+    regionKey: SouthWestPressureBoundary
+    biomeKey: OuterSea
+    narrativePhase: 5
+    terrainMood: 8
+    riskTier: 2
+    contentDensity: 1
+    primaryPurpose: 6
+    minDepth: -250
+    maxDepth: -700
+    baseRiskLevel: 0.5
+    terrainDescription: "\uC678\uACFD \uB0A8\uC11C \uC555\uB825 \uACBD\uACC4. \uD76C\uBC15\uD55C
+      \uC790\uC6D0, \uD574\uB958, \uB0AE\uC740 \uC2DC\uC57C."
+    keyObjects: "\uACBD\uACE0 \uBD80\uD45C, \uD574\uB958\uC5D0 \uBC00\uB9B0 \uC794\uD574,
+      \uD76C\uBBF8\uD55C \uD45C\uC2DD"
+    resourceGroups: Sensor Fragment (rare)
+    logOrHint: None
+    hazards: "\uD574\uB958 \uC555\uBC15, \uB0AE\uC740 \uC2DC\uC57C, \uACE0\uB9BD\uAC10"
+    narrativeFunction: "\uB0A8\uC11C \uC678\uACFD \uACBD\uACC4. \uCD08\uBC18 \uAD6C\uC5ED
+      \uC544\uB2D8. Boundary \uACBD\uACE0."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] D9: \uB0A8\uC11C \uC555\uB825 \uACBD\uACC4. sparse/current/low
+      visibility."
+  - zoneId: D10
+    column: D
+    row: 10
+    regionKey: SouthWestPressureBoundary
+    biomeKey: OuterSea
+    narrativePhase: 5
+    terrainMood: 9
+    riskTier: 2
+    contentDensity: 1
+    primaryPurpose: 6
+    minDepth: -280
+    maxDepth: -800
+    baseRiskLevel: 0.55
+    terrainDescription: "\uC678\uACFD \uB0A8\uC11C \uC555\uB825 \uACBD\uACC4 \uB05D\uB2E8.
+      \uD76C\uBC15, \uD574\uB958, \uB0AE\uC740 \uC2DC\uC57C, \uBD95\uAD34 \uAC00\uC7A5\uC790\uB9AC."
+    keyObjects: "\uBB34\uB108\uC9C4 \uC554\uBC18, \uC720\uC2E4\uB41C \uBD80\uD45C,
+      \uD574\uC800 \uADE0\uC5F4"
+    resourceGroups: None
+    logOrHint: None
+    hazards: "\uBD95\uAD34 \uAC00\uC7A5\uC790\uB9AC, \uAC15\uD55C \uD574\uB958, \uC800\uC2DC\uC57C"
+    narrativeFunction: "\uB0A8\uC11C \uC678\uACFD \uCD5C\uC885 \uACBD\uACC4. Boundary
+      \uACBD\uACE0."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] D10: \uB0A8\uC11C \uC555\uB825 \uACBD\uACC4 \uB05D\uB2E8.
+      Boundary."
+  - zoneId: E1
+    column: E
+    row: 1
+    regionKey: NorthWestTransition
+    biomeKey: OpenWater
+    narrativePhase: 1
+    terrainMood: 3
+    riskTier: 1
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -100
+    maxDepth: -350
+    baseRiskLevel: 0.25
+    terrainDescription: "\uBD81\uC11C/\uBD81\uC911 \uC804\uC774 \uAD6C\uC5ED. \uC595\uC740
+      \uACBD\uC0AC\uC5D0\uC11C \uC911\uAC04 \uC218\uC2EC\uC73C\uB85C \uC774\uC5B4\uC9C0\uB294
+      \uC644\uCDA9."
+    keyObjects: "\uD574\uB958 \uB2A5\uC120, \uC5F4\uB9B0 \uD3C9\uC6D0, \uB4DC\uBB38\uB4DC\uBB38
+      \uC788\uB294 \uC554\uBC18"
+    resourceGroups: Iron Scrap, Battery Cell
+    logOrHint: None
+    hazards: "\uC57D\uD55C \uD574\uB958, \uC644\uB9CC\uD55C \uACBD\uC0AC"
+    narrativeFunction: "\uBD81\uC11C \uC804\uC774 \uC644\uCDA9. \uC544\uC9C1 \uCD08\uBC18
+      \uD575\uC2EC \uC544\uB2D8."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] E1: \uBD81\uC11C \uC804\uC774. shallow slope to mid
+      depth buffer."
+  - zoneId: E2
+    column: E
+    row: 2
+    regionKey: NorthWestTransition
+    biomeKey: OpenWater
+    narrativePhase: 1
+    terrainMood: 11
+    riskTier: 1
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -90
+    maxDepth: -320
+    baseRiskLevel: 0.22
+    terrainDescription: "\uBD81\uC11C \uC804\uC774 \uAD6C\uC5ED. \uD574\uB958, \uB2A5\uC120,
+      \uC5F4\uB9B0 \uD3C9\uC6D0."
+    keyObjects: "\uD574\uC800 \uB2A5\uC120, \uD574\uC870\uB958, \uC791\uC740 \uC554\uBC18"
+    resourceGroups: Copper Wire, Fastener Pack
+    logOrHint: None
+    hazards: "\uD574\uB958, \uB113\uC740 \uD3C9\uC6D0"
+    narrativeFunction: "\uBD81\uC11C \uC804\uC774 \uC644\uCDA9. \uCD08\uBC18 \uC774\uD6C4
+      \uC774\uB3D9 \uACBD\uB85C."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] E2: \uBD81\uC11C \uC804\uC774. current/ridge/open plain."
+  - zoneId: E3
+    column: E
+    row: 3
+    regionKey: NorthWestTransition
+    biomeKey: OpenWater
+    narrativePhase: 1
+    terrainMood: 10
+    riskTier: 1
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -80
+    maxDepth: -300
+    baseRiskLevel: 0.2
+    terrainDescription: "\uBD81\uC11C \uC804\uC774 \uAD6C\uC5ED. \uB0AE\uC740 \uC5B8\uB355\uD615
+      \uC554\uBC18, \uD574\uB958."
+    keyObjects: "\uB0AE\uC740 \uC5B8\uB355 \uC554\uBC18, \uD574\uC800 \uC2DD\uC0DD,
+      \uC791\uC740 \uC794\uD574"
+    resourceGroups: Iron Scrap, Wet Lumber
+    logOrHint: None
+    hazards: "\uB0AE\uC740 \uC554\uBC18, \uC57D\uD55C \uD574\uB958"
+    narrativeFunction: "\uBD81\uC11C \uC804\uC774 \uC644\uCDA9. \uCD08\uBC18 \uC774\uD6C4
+      \uC774\uB3D9 \uACBD\uB85C."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] E3: \uBD81\uC11C \uC804\uC774. low hill/current."
+  - zoneId: E4
+    column: E
+    row: 4
+    regionKey: HarborDebrisBelt
+    biomeKey: Harbor
+    narrativePhase: 0
+    terrainMood: 2
+    riskTier: 1
+    contentDensity: 2
+    primaryPurpose: 0
+    minDepth: -20
+    maxDepth: -180
+    baseRiskLevel: 0.15
+    terrainDescription: "\uC644\uB9CC\uD55C Harbor Shelf. \uBD80\uB450/\uC870\uC120\uC18C\uC5D0\uC11C
+      \uD758\uB7EC\uB098\uC628 Debris Fan. \uCD08\uBCF4\uC790 \uC774\uB3D9 \uD3ED
+      \uB113\uAC8C \uD655\uBCF4. steep cliff \uAE08\uC9C0."
+    keyObjects: pier columns, broken fishing nets, small crates, rusty barrels, shipyard
+      frame, shallow cables, broken buoy
+    resourceGroups: "Iron Scrap \uB192\uC74C, Wet Lumber Crate \uC911\uAC04, Fuel
+      Canister \uB0AE\uC74C~\uC911\uAC04, Fastener Pack \uC911\uAC04, Copper Wire
+      \uC911\uAC04"
+    logOrHint: "Log 002 \uC120\uD0DD/\uB300\uCCB4 \uB8E8\uD2B8 \uAC00\uB2A5. \uD3D0\uC120\uC73C\uB85C
+      \uAC00\uC9C0 \uC54A\uC544\uB3C4 \uD1B5\uC2E0 \uCC28\uB2E8 \uB2E8\uC11C \uC77C\uBD80
+      \uD68D\uB4DD \uAC00\uB2A5."
+    hazards: "\uB0AE\uC74C. pier column / net collision \uC815\uB3C4."
+    narrativeFunction: "\uCCAB \uD68C\uC218. \uC548\uC804 \uD30C\uBC0D. \uC138\uB77C\uC758
+      '\uBD80\uB450 \uC544\uB798 \uACE0\uCCA0' \uB8E8\uD504. \uAE30\uBCF8 \uD68C\uC218/\uD310\uB9E4/\uC5C5\uADF8\uB808\uC774\uB4DC
+      \uC9C4\uC785."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: "Phase 14.9.1: Harbor Debris Belt / Inner Harbor Shallows prototype. D5/D6/E4/F4/G5/G6/E7/F7.
+      Gate1 ResourceLearning. \uBD80\uB450 \uC544\uB798 \uD3D0\uAE30\uBB3C \uC9C0\uB300.
+      Log 002 alternate route WARN allowed."
+  - zoneId: E5
+    column: E
+    row: 5
+    regionKey: HubBasin
+    biomeKey: ShallowHarbor
+    narrativePhase: 0
+    terrainMood: 0
+    riskTier: 0
+    contentDensity: 4
+    primaryPurpose: 4
+    minDepth: 0
+    maxDepth: -120
+    baseRiskLevel: 0
+    terrainDescription: "\uD5C8\uBE0C \uC8FC\uBCC0 \uC595\uC740 Basin. \uBD80\uB450
+      \uAE30\uCD08 Shelf. \uC791\uC740 \uBAA8\uB798 Mound Field. \uBD80\uB450 \uC544\uB798
+      \uC595\uC740 Gully. \uC808\uBCBD/\uAE09\uACBD\uC0AC \uAE08\uC9C0."
+    keyObjects: pier, shipyard, submarine bay, lighthouse, dock, small boat mooring
+    resourceGroups: Iron Scrap, Wet Lumber, Fuel Canister, Copper Wire, Fastener
+      Pack
+    logOrHint: "Log 000: \uD5C8\uBE0C \uC548\uB0B4. \uCD08\uBC18 \uD68C\uC218 \uB8E8\uD504."
+    hazards: "\uCD5C\uC18C. \uC595\uC740 \uC7A5\uC560\uBB3C\uB9CC."
+    narrativeFunction: "\uD5C8\uBE0C \uC9C4\uC785 \uBC0F \uCD08\uBC18 \uC0DD\uC874
+      \uC548\uB0B4. \uC548\uC804\uD55C \uD68C\uC218 \uB8E8\uD504."
+    isHub: 1
+    isMajorLandmark: 1
+    intentionallySparse: 0
+    notes: 'Phase 14.8.2: Hub Basin prototype. E5/F5=HubApproach, E6/F6=FreeExploration.
+      Safe shallow basin with hub landmark tags.'
+  - zoneId: E6
+    column: E
+    row: 6
+    regionKey: HubBasin
+    biomeKey: ShallowHarbor
+    narrativePhase: 0
+    terrainMood: 0
+    riskTier: 0
+    contentDensity: 4
+    primaryPurpose: 4
+    minDepth: 0
+    maxDepth: -120
+    baseRiskLevel: 0
+    terrainDescription: "\uD5C8\uBE0C \uC8FC\uBCC0 \uC595\uC740 Basin. \uBD80\uB450
+      \uAE30\uCD08 Shelf. \uC791\uC740 \uBAA8\uB798 Mound Field. \uBD80\uB450 \uC544\uB798
+      \uC595\uC740 Gully. \uC808\uBCBD/\uAE09\uACBD\uC0AC \uAE08\uC9C0."
+    keyObjects: pier, shipyard, submarine bay, lighthouse, dock, small boat mooring
+    resourceGroups: Iron Scrap, Wet Lumber, Fuel Canister, Copper Wire, Fastener
+      Pack
+    logOrHint: "Log 000: \uD5C8\uBE0C \uC548\uB0B4. \uCD08\uBC18 \uD68C\uC218 \uB8E8\uD504."
+    hazards: "\uCD5C\uC18C. \uC595\uC740 \uC7A5\uC560\uBB3C\uB9CC."
+    narrativeFunction: "\uD5C8\uBE0C \uC9C4\uC785 \uBC0F \uCD08\uBC18 \uC0DD\uC874
+      \uC548\uB0B4. \uC548\uC804\uD55C \uD68C\uC218 \uB8E8\uD504."
+    isHub: 1
+    isMajorLandmark: 1
+    intentionallySparse: 0
+    notes: 'Phase 14.8.2: Hub Basin prototype. E5/F5=HubApproach, E6/F6=FreeExploration.
+      Safe shallow basin with hub landmark tags.'
+  - zoneId: E7
+    column: E
+    row: 7
+    regionKey: HarborDebrisBelt
+    biomeKey: Harbor
+    narrativePhase: 0
+    terrainMood: 2
+    riskTier: 1
+    contentDensity: 2
+    primaryPurpose: 0
+    minDepth: -20
+    maxDepth: -180
+    baseRiskLevel: 0.15
+    terrainDescription: "\uC644\uB9CC\uD55C Harbor Shelf. \uBD80\uB450/\uC870\uC120\uC18C\uC5D0\uC11C
+      \uD758\uB7EC\uB098\uC628 Debris Fan. \uCD08\uBCF4\uC790 \uC774\uB3D9 \uD3ED
+      \uB113\uAC8C \uD655\uBCF4. steep cliff \uAE08\uC9C0."
+    keyObjects: pier columns, broken fishing nets, small crates, rusty barrels, shipyard
+      frame, shallow cables, broken buoy
+    resourceGroups: "Iron Scrap \uB192\uC74C, Wet Lumber Crate \uC911\uAC04, Fuel
+      Canister \uB0AE\uC74C~\uC911\uAC04, Fastener Pack \uC911\uAC04, Copper Wire
+      \uC911\uAC04"
+    logOrHint: "Log 002 \uC120\uD0DD/\uB300\uCCB4 \uB8E8\uD2B8 \uAC00\uB2A5. \uD3D0\uC120\uC73C\uB85C
+      \uAC00\uC9C0 \uC54A\uC544\uB3C4 \uD1B5\uC2E0 \uCC28\uB2E8 \uB2E8\uC11C \uC77C\uBD80
+      \uD68D\uB4DD \uAC00\uB2A5."
+    hazards: "\uB0AE\uC74C. pier column / net collision \uC815\uB3C4."
+    narrativeFunction: "\uCCAB \uD68C\uC218. \uC548\uC804 \uD30C\uBC0D. \uC138\uB77C\uC758
+      '\uBD80\uB450 \uC544\uB798 \uACE0\uCCA0' \uB8E8\uD504. \uAE30\uBCF8 \uD68C\uC218/\uD310\uB9E4/\uC5C5\uADF8\uB808\uC774\uB4DC
+      \uC9C4\uC785."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: "Phase 14.9.1: Harbor Debris Belt / Inner Harbor Shallows prototype. D5/D6/E4/F4/G5/G6/E7/F7.
+      Gate1 ResourceLearning. \uBD80\uB450 \uC544\uB798 \uD3D0\uAE30\uBB3C \uC9C0\uB300.
+      Log 002 alternate route WARN allowed."
+  - zoneId: E8
+    column: E
+    row: 8
+    regionKey: SouthTransition
+    biomeKey: OpenWater
+    narrativePhase: 0
+    terrainMood: 3
+    riskTier: 1
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -120
+    maxDepth: -380
+    baseRiskLevel: 0.25
+    terrainDescription: "\uB0A8\uCABD \uC678\uACFD\uC73C\uB85C \uB0B4\uB824\uAC00\uB294
+      shallow-to-mid \uC804\uC774. \uCD08\uBC18 \uD6C4\uBC18\uBD80 \uB610\uB294 \uC911\uCE35
+      \uC804\uD658."
+    keyObjects: "\uD574\uB958\uC5D0 \uC4F8\uB9B0 \uBC14\uB2E5, \uB4DC\uBB38\uB4DC\uBB38
+      \uC788\uB294 \uC794\uD574"
+    resourceGroups: Battery Cell, Fuel Canister (sparse)
+    logOrHint: None
+    hazards: "\uD574\uB958, \uC644\uB9CC\uD55C \uACBD\uC0AC"
+    narrativeFunction: "\uCD08\uBC18 \uD6C4\uBC18\uBD80 \uC774\uB3D9 \uC644\uCDA9.
+      route buffer/current sweep."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] E8: \uB0A8\uCABD shallow-to-mid transition."
+  - zoneId: E9
+    column: E
+    row: 9
+    regionKey: SouthTransition
+    biomeKey: OpenWater
+    narrativePhase: 0
+    terrainMood: 0
+    riskTier: 2
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -150
+    maxDepth: -450
+    baseRiskLevel: 0.3
+    terrainDescription: "\uB0A8\uCABD \uC678\uACFD shallow-to-mid \uC804\uC774. \uD574\uB958
+      \uD6D1\uAE30, \uD76C\uBC15\uD55C \uC704\uD5D8."
+    keyObjects: "\uD574\uB958\uC5D0 \uC4F8\uB9B0 \uD3C9\uD0C4 \uBC14\uB2E5, \uB4DC\uBB38
+      \uD30C\uD3B8"
+    resourceGroups: Iron Scrap (sparse)
+    logOrHint: None
+    hazards: "\uD574\uB958, \uB0AE\uC740 \uC2DC\uC57C"
+    narrativeFunction: "\uCD08\uBC18 \uC774\uD6C4 \uC774\uB3D9 \uC644\uCDA9. route
+      buffer/current sweep."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] E9: \uB0A8\uCABD shallow-to-mid transition."
+  - zoneId: E10
+    column: E
+    row: 10
+    regionKey: SouthTransition
+    biomeKey: OpenWater
+    narrativePhase: 5
+    terrainMood: 6
+    riskTier: 2
+    contentDensity: 1
+    primaryPurpose: 7
+    minDepth: -200
+    maxDepth: -550
+    baseRiskLevel: 0.35
+    terrainDescription: "\uB0A8\uCABD \uC678\uACFD \uACBD\uACC4. \uD76C\uBC15\uD55C
+      \uC704\uD5D8, \uD574\uB958, \uB0AE\uC740 \uC2DC\uC57C."
+    keyObjects: "\uACBD\uACC4 \uD45C\uC2DD, \uD574\uB958\uC5D0 \uBC00\uB9B0 \uC794\uD574"
+    resourceGroups: None
+    logOrHint: None
+    hazards: "\uD574\uB958, \uB0AE\uC740 \uC2DC\uC57C, \uACE0\uB9BD\uAC10"
+    narrativeFunction: "\uB0A8\uCABD \uC678\uACFD \uACBD\uACC4. \uCD08\uBC18 \uC774\uD6C4
+      \uC774\uB3D9 \uC644\uCDA9."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] E10: \uB0A8\uCABD \uC678\uACFD \uACBD\uACC4. sparse
+      hazard."
+  - zoneId: F1
+    column: F
+    row: 1
+    regionKey: NorthEastTransition
+    biomeKey: OpenWater
+    narrativePhase: 1
+    terrainMood: 12
+    riskTier: 1
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -120
+    maxDepth: -380
+    baseRiskLevel: 0.28
+    terrainDescription: "\uBD81\uC911/\uBD81\uB3D9 \uC5F0\uAD6C\uAD8C\uC73C\uB85C
+      \uAC00\uB294 \uC804\uC774 \uC804 \uD574\uC5ED. \uB2A5\uC120, \uC815\uB3C8\uB41C
+      \uD574\uC800, \uC2E0\uD638 \uC7A1\uC74C."
+    keyObjects: "\uC815\uB3C8\uB41C \uD574\uC800 \uB2A5\uC120, \uC2E0\uD638 \uD45C\uC2DD,
+      \uB4DC\uBB38\uB4DC\uBB38 \uC788\uB294 \uCF00\uC774\uBE14"
+    resourceGroups: Copper Wire, Sensor Fragment (sparse)
+    logOrHint: None
+    hazards: "\uC2E0\uD638 \uC7A1\uC74C, \uC815\uB3C8\uB41C \uC9C0\uD615\uC758 \uC704\uD654\uAC10"
+    narrativeFunction: "\uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774. \uCD08\uBC18
+      \uC9C1\uC811 \uAD6C\uC5ED \uC544\uB2D8."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] F1: \uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774. ridge/managed
+      seabed/signal noise."
+  - zoneId: F2
+    column: F
+    row: 2
+    regionKey: NorthEastTransition
+    biomeKey: OpenWater
+    narrativePhase: 1
+    terrainMood: 10
+    riskTier: 1
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -110
+    maxDepth: -350
+    baseRiskLevel: 0.26
+    terrainDescription: "\uBD81\uC911/\uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774.
+      \uB0AE\uC740 \uC5B8\uB355, \uC815\uB3C8\uB41C \uD574\uC800."
+    keyObjects: "\uB0AE\uC740 \uC554\uBC18, \uD574\uC800 \uD45C\uC2DD, \uC791\uC740
+      \uCF00\uC774\uBE14 \uBB49\uCE58"
+    resourceGroups: Copper Wire, Battery Cell
+    logOrHint: None
+    hazards: "\uB0AE\uC740 \uC554\uBC18, \uC2E0\uD638 \uAC04\uC12D"
+    narrativeFunction: "\uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774. \uCD08\uBC18
+      \uC9C1\uC811 \uAD6C\uC5ED \uC544\uB2D8."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] F2: \uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774."
+  - zoneId: F3
+    column: F
+    row: 3
+    regionKey: NorthEastTransition
+    biomeKey: OpenWater
+    narrativePhase: 1
+    terrainMood: 11
+    riskTier: 2
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -100
+    maxDepth: -320
+    baseRiskLevel: 0.24
+    terrainDescription: "\uBD81\uC911/\uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774.
+      \uC5F4\uB9B0 \uD3C9\uC6D0, \uC2E0\uD638 \uC7A1\uC74C."
+    keyObjects: "\uC5F4\uB9B0 \uD3C9\uC6D0, \uB4DC\uBB38\uB4DC\uBB38 \uC788\uB294
+      \uAD00\uCE21 \uC7A5\uBE44 \uD30C\uD3B8"
+    resourceGroups: Sensor Fragment (sparse)
+    logOrHint: None
+    hazards: "\uC2E0\uD638 \uC7A1\uC74C, \uB113\uC740 \uC2DC\uC57C"
+    narrativeFunction: "\uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774. \uCD08\uBC18
+      \uC9C1\uC811 \uAD6C\uC5ED \uC544\uB2D8."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] F3: \uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774."
+  - zoneId: F4
+    column: F
+    row: 4
+    regionKey: HarborDebrisBelt
+    biomeKey: Harbor
+    narrativePhase: 0
+    terrainMood: 2
+    riskTier: 1
+    contentDensity: 2
+    primaryPurpose: 0
+    minDepth: -20
+    maxDepth: -180
+    baseRiskLevel: 0.15
+    terrainDescription: "\uC644\uB9CC\uD55C Harbor Shelf. \uBD80\uB450/\uC870\uC120\uC18C\uC5D0\uC11C
+      \uD758\uB7EC\uB098\uC628 Debris Fan. \uCD08\uBCF4\uC790 \uC774\uB3D9 \uD3ED
+      \uB113\uAC8C \uD655\uBCF4. steep cliff \uAE08\uC9C0."
+    keyObjects: pier columns, broken fishing nets, small crates, rusty barrels, shipyard
+      frame, shallow cables, broken buoy
+    resourceGroups: "Iron Scrap \uB192\uC74C, Wet Lumber Crate \uC911\uAC04, Fuel
+      Canister \uB0AE\uC74C~\uC911\uAC04, Fastener Pack \uC911\uAC04, Copper Wire
+      \uC911\uAC04"
+    logOrHint: "Log 002 \uC120\uD0DD/\uB300\uCCB4 \uB8E8\uD2B8 \uAC00\uB2A5. \uD3D0\uC120\uC73C\uB85C
+      \uAC00\uC9C0 \uC54A\uC544\uB3C4 \uD1B5\uC2E0 \uCC28\uB2E8 \uB2E8\uC11C \uC77C\uBD80
+      \uD68D\uB4DD \uAC00\uB2A5."
+    hazards: "\uB0AE\uC74C. pier column / net collision \uC815\uB3C4."
+    narrativeFunction: "\uCCAB \uD68C\uC218. \uC548\uC804 \uD30C\uBC0D. \uC138\uB77C\uC758
+      '\uBD80\uB450 \uC544\uB798 \uACE0\uCCA0' \uB8E8\uD504. \uAE30\uBCF8 \uD68C\uC218/\uD310\uB9E4/\uC5C5\uADF8\uB808\uC774\uB4DC
+      \uC9C4\uC785."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: "Phase 14.9.1: Harbor Debris Belt / Inner Harbor Shallows prototype. D5/D6/E4/F4/G5/G6/E7/F7.
+      Gate1 ResourceLearning. \uBD80\uB450 \uC544\uB798 \uD3D0\uAE30\uBB3C \uC9C0\uB300.
+      Log 002 alternate route WARN allowed."
+  - zoneId: F5
+    column: F
+    row: 5
+    regionKey: HubBasin
+    biomeKey: ShallowHarbor
+    narrativePhase: 0
+    terrainMood: 0
+    riskTier: 0
+    contentDensity: 4
+    primaryPurpose: 4
+    minDepth: 0
+    maxDepth: -120
+    baseRiskLevel: 0
+    terrainDescription: "\uD5C8\uBE0C \uC8FC\uBCC0 \uC595\uC740 Basin. \uBD80\uB450
+      \uAE30\uCD08 Shelf. \uC791\uC740 \uBAA8\uB798 Mound Field. \uBD80\uB450 \uC544\uB798
+      \uC595\uC740 Gully. \uC808\uBCBD/\uAE09\uACBD\uC0AC \uAE08\uC9C0."
+    keyObjects: pier, shipyard, submarine bay, lighthouse, dock, small boat mooring
+    resourceGroups: Iron Scrap, Wet Lumber, Fuel Canister, Copper Wire, Fastener
+      Pack
+    logOrHint: "Log 000: \uD5C8\uBE0C \uC548\uB0B4. \uCD08\uBC18 \uD68C\uC218 \uB8E8\uD504."
+    hazards: "\uCD5C\uC18C. \uC595\uC740 \uC7A5\uC560\uBB3C\uB9CC."
+    narrativeFunction: "\uD5C8\uBE0C \uC9C4\uC785 \uBC0F \uCD08\uBC18 \uC0DD\uC874
+      \uC548\uB0B4. \uC548\uC804\uD55C \uD68C\uC218 \uB8E8\uD504."
+    isHub: 1
+    isMajorLandmark: 1
+    intentionallySparse: 0
+    notes: 'Phase 14.8.2: Hub Basin prototype. E5/F5=HubApproach, E6/F6=FreeExploration.
+      Safe shallow basin with hub landmark tags.'
+  - zoneId: F6
+    column: F
+    row: 6
+    regionKey: HubBasin
+    biomeKey: ShallowHarbor
+    narrativePhase: 0
+    terrainMood: 0
+    riskTier: 0
+    contentDensity: 4
+    primaryPurpose: 4
+    minDepth: 0
+    maxDepth: -120
+    baseRiskLevel: 0
+    terrainDescription: "\uD5C8\uBE0C \uC8FC\uBCC0 \uC595\uC740 Basin. \uBD80\uB450
+      \uAE30\uCD08 Shelf. \uC791\uC740 \uBAA8\uB798 Mound Field. \uBD80\uB450 \uC544\uB798
+      \uC595\uC740 Gully. \uC808\uBCBD/\uAE09\uACBD\uC0AC \uAE08\uC9C0."
+    keyObjects: pier, shipyard, submarine bay, lighthouse, dock, small boat mooring
+    resourceGroups: Iron Scrap, Wet Lumber, Fuel Canister, Copper Wire, Fastener
+      Pack
+    logOrHint: "Log 000: \uD5C8\uBE0C \uC548\uB0B4. \uCD08\uBC18 \uD68C\uC218 \uB8E8\uD504."
+    hazards: "\uCD5C\uC18C. \uC595\uC740 \uC7A5\uC560\uBB3C\uB9CC."
+    narrativeFunction: "\uD5C8\uBE0C \uC9C4\uC785 \uBC0F \uCD08\uBC18 \uC0DD\uC874
+      \uC548\uB0B4. \uC548\uC804\uD55C \uD68C\uC218 \uB8E8\uD504."
+    isHub: 1
+    isMajorLandmark: 1
+    intentionallySparse: 0
+    notes: 'Phase 14.8.2: Hub Basin prototype. E5/F5=HubApproach, E6/F6=FreeExploration.
+      Safe shallow basin with hub landmark tags.'
+  - zoneId: F7
+    column: F
+    row: 7
+    regionKey: HarborDebrisBelt
+    biomeKey: Harbor
+    narrativePhase: 0
+    terrainMood: 2
+    riskTier: 1
+    contentDensity: 2
+    primaryPurpose: 0
+    minDepth: -20
+    maxDepth: -180
+    baseRiskLevel: 0.15
+    terrainDescription: "\uC644\uB9CC\uD55C Harbor Shelf. \uBD80\uB450/\uC870\uC120\uC18C\uC5D0\uC11C
+      \uD758\uB7EC\uB098\uC628 Debris Fan. \uCD08\uBCF4\uC790 \uC774\uB3D9 \uD3ED
+      \uB113\uAC8C \uD655\uBCF4. steep cliff \uAE08\uC9C0."
+    keyObjects: pier columns, broken fishing nets, small crates, rusty barrels, shipyard
+      frame, shallow cables, broken buoy
+    resourceGroups: "Iron Scrap \uB192\uC74C, Wet Lumber Crate \uC911\uAC04, Fuel
+      Canister \uB0AE\uC74C~\uC911\uAC04, Fastener Pack \uC911\uAC04, Copper Wire
+      \uC911\uAC04"
+    logOrHint: "Log 002 \uC120\uD0DD/\uB300\uCCB4 \uB8E8\uD2B8 \uAC00\uB2A5. \uD3D0\uC120\uC73C\uB85C
+      \uAC00\uC9C0 \uC54A\uC544\uB3C4 \uD1B5\uC2E0 \uCC28\uB2E8 \uB2E8\uC11C \uC77C\uBD80
+      \uD68D\uB4DD \uAC00\uB2A5."
+    hazards: "\uB0AE\uC74C. pier column / net collision \uC815\uB3C4."
+    narrativeFunction: "\uCCAB \uD68C\uC218. \uC548\uC804 \uD30C\uBC0D. \uC138\uB77C\uC758
+      '\uBD80\uB450 \uC544\uB798 \uACE0\uCCA0' \uB8E8\uD504. \uAE30\uBCF8 \uD68C\uC218/\uD310\uB9E4/\uC5C5\uADF8\uB808\uC774\uB4DC
+      \uC9C4\uC785."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: "Phase 14.9.1: Harbor Debris Belt / Inner Harbor Shallows prototype. D5/D6/E4/F4/G5/G6/E7/F7.
+      Gate1 ResourceLearning. \uBD80\uB450 \uC544\uB798 \uD3D0\uAE30\uBB3C \uC9C0\uB300.
+      Log 002 alternate route WARN allowed."
+  - zoneId: F8
+    column: F
+    row: 8
+    regionKey: SouthEastTransition
+    biomeKey: OpenWater
+    narrativePhase: 0
+    terrainMood: 11
+    riskTier: 1
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -120
+    maxDepth: -380
+    baseRiskLevel: 0.25
+    terrainDescription: "\uB0A8\uB3D9 shallow-to-mid \uC804\uC774. \uC5F4\uB9B0 \uD3C9\uC6D0,
+      \uD574\uB958 \uD6D1\uAE30, \uB0AE\uC740 \uC2DC\uC57C."
+    keyObjects: "\uD574\uB958\uC5D0 \uC4F8\uB9B0 \uD3C9\uD0C4 \uBC14\uB2E5, \uB4DC\uBB38
+      \uC794\uD574"
+    resourceGroups: Battery Cell, Fuel Canister (sparse)
+    logOrHint: None
+    hazards: "\uD574\uB958, \uB0AE\uC740 \uC2DC\uC57C"
+    narrativeFunction: "\uCD08\uBC18 \uC774\uD6C4 \uC774\uB3D9 \uC644\uCDA9. open
+      plain/current sweep."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] F8: \uB0A8\uB3D9 shallow-to-mid transition."
+  - zoneId: F9
+    column: F
+    row: 9
+    regionKey: SouthEastTransition
+    biomeKey: OpenWater
+    narrativePhase: 0
+    terrainMood: 0
+    riskTier: 2
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -150
+    maxDepth: -450
+    baseRiskLevel: 0.3
+    terrainDescription: "\uB0A8\uB3D9 shallow-to-mid \uC804\uC774. \uD574\uB958 \uD6D1\uAE30,
+      \uB0AE\uC740 \uC2DC\uC57C."
+    keyObjects: "\uD574\uB958\uC5D0 \uC4F8\uB9B0 \uBC14\uB2E5, \uB4DC\uBB38 \uD30C\uD3B8"
+    resourceGroups: Iron Scrap (sparse)
+    logOrHint: None
+    hazards: "\uD574\uB958, \uB0AE\uC740 \uC2DC\uC57C"
+    narrativeFunction: "\uCD08\uBC18 \uC774\uD6C4 \uC774\uB3D9 \uC644\uCDA9."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] F9: \uB0A8\uB3D9 shallow-to-mid transition."
+  - zoneId: F10
+    column: F
+    row: 10
+    regionKey: SouthEastTransition
+    biomeKey: OpenWater
+    narrativePhase: 5
+    terrainMood: 6
+    riskTier: 2
+    contentDensity: 1
+    primaryPurpose: 7
+    minDepth: -200
+    maxDepth: -550
+    baseRiskLevel: 0.35
+    terrainDescription: "\uB0A8\uB3D9 \uC678\uACFD \uACBD\uACC4. \uB0AE\uC740 \uC2DC\uC57C,
+      \uD574\uB958, \uD76C\uBC15\uD55C \uC704\uD5D8."
+    keyObjects: "\uACBD\uACC4 \uD45C\uC2DD, \uD574\uC800 \uADE0\uC5F4, \uB4DC\uBB38
+      \uC794\uD574"
+    resourceGroups: None
+    logOrHint: None
+    hazards: "\uD574\uB958, \uB0AE\uC740 \uC2DC\uC57C, \uACE0\uB9BD\uAC10"
+    narrativeFunction: "\uB0A8\uB3D9 \uC678\uACFD \uACBD\uACC4. \uCD08\uBC18 \uC774\uD6C4
+      \uC774\uB3D9 \uC644\uCDA9."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] F10: \uB0A8\uB3D9 \uC678\uACFD \uACBD\uACC4."
+  - zoneId: G1
+    column: G
+    row: 1
+    regionKey: NorthEastResearchTransition
+    biomeKey: OpenWater
+    narrativePhase: 2
+    terrainMood: 12
+    riskTier: 2
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -150
+    maxDepth: -450
+    baseRiskLevel: 0.35
+    terrainDescription: "\uBD81\uB3D9 \uC5F0\uAD6C\uAD8C/\uAD00\uCE21 \uD0C0\uC6CC
+      \uBC29\uD5A5 \uC804\uC774. MidResearch \uC804 \uB2E8\uACC4. \uC815\uB3C8\uB41C
+      \uD574\uC800/\uB2A5\uC120/\uCF00\uC774\uBE14 \uD2B8\uB80C\uCE58."
+    keyObjects: "\uC815\uB3C8\uB41C \uD574\uC800 \uB2A5\uC120, \uD574\uC800 \uCF00\uC774\uBE14
+      \uD2B8\uB80C\uCE58, \uAD00\uCE21 \uC7A5\uBE44 \uD754\uC801"
+    resourceGroups: Sensor Fragment, Data Chip, Copper Wire
+    logOrHint: None
+    hazards: "\uC815\uB3C8\uB41C \uC9C0\uD615\uC758 \uC704\uD654\uAC10, \uC2E0\uD638
+      \uAC04\uC12D"
+    narrativeFunction: "\uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774. SideRoute/MainRoute
+      \uC131\uACA9."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] G1: \uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774. managed
+      seabed/ridge/cable trench."
+  - zoneId: G2
+    column: G
+    row: 2
+    regionKey: NorthEastResearchTransition
+    biomeKey: OpenWater
+    narrativePhase: 2
+    terrainMood: 13
+    riskTier: 2
+    contentDensity: 2
+    primaryPurpose: 3
+    minDepth: -160
+    maxDepth: -480
+    baseRiskLevel: 0.38
+    terrainDescription: "\uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774. \uC778\uACF5
+      \uD1B5\uB85C \uB290\uB08C\uC758 \uD574\uC800, \uCF00\uC774\uBE14 \uD2B8\uB80C\uCE58."
+    keyObjects: "\uC778\uACF5\uC801\uC778 \uD574\uC800 \uD1B5\uB85C, \uCF00\uC774\uBE14
+      \uB2E4\uBC1C, \uAD00\uCE21 \uC7A5\uBE44 \uD30C\uD3B8"
+    resourceGroups: Sensor Fragment, Comm Module, Data Chip
+    logOrHint: None
+    hazards: "\uC778\uACF5 \uC9C0\uD615\uC758 \uC704\uD654\uAC10, \uC2E0\uD638 \uAC04\uC12D"
+    narrativeFunction: "\uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774. \uAE30\uC220
+      \uC804\uC870."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: "[Phase 14.9.2-A] G2: \uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774. artificial
+      passage/cable trench."
+  - zoneId: G3
+    column: G
+    row: 3
+    regionKey: NorthEastResearchTransition
+    biomeKey: OpenWater
+    narrativePhase: 2
+    terrainMood: 14
+    riskTier: 2
+    contentDensity: 2
+    primaryPurpose: 5
+    minDepth: -170
+    maxDepth: -500
+    baseRiskLevel: 0.4
+    terrainDescription: "\uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774. \uC2DC\uC124
+      \uC811\uADFC \uB290\uB08C. \uC5F0\uAD6C \uC7A5\uCE58 \uD754\uC801\uC774 \uBCF4\uC774\uAE30
+      \uC2DC\uC791."
+    keyObjects: "\uC5F0\uAD6C \uC7A5\uCE58 \uD30C\uD3B8, \uAD00\uCE21 \uD0C0\uC6CC
+      \uAE30\uCD08, \uB370\uC774\uD130 \uC800\uC7A5\uC18C"
+    resourceGroups: Research-grade Parts, Data Chip, Sensor Fragment
+    logOrHint: Research facility approach
+    hazards: "\uC2DC\uC124 \uC811\uADFC \uACBD\uACC4, \uC2E0\uD638 \uAC04\uC12D"
+    narrativeFunction: "\uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774. \uC5F0\uAD6C
+      \uB2E8\uC11C \uC2DC\uC791."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: "[Phase 14.9.2-A] G3: \uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774. facility
+      approach."
+  - zoneId: G4
+    column: G
+    row: 4
+    regionKey: HubEastBuffer
+    biomeKey: OpenWater
+    narrativePhase: 0
+    terrainMood: 3
+    riskTier: 1
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -80
+    maxDepth: -280
+    baseRiskLevel: 0.18
+    terrainDescription: "Hub \uB3D9\uCABD \uACBD\uACC4 \uC644\uCDA9. \uC595\uC740
+      \uACBD\uC0AC, \uCF00\uC774\uBE14 \uC120, \uC794\uD574 \uC644\uCDA9."
+    keyObjects: "\uD574\uC800 \uCF00\uC774\uBE14 \uC120, \uC595\uC740 \uACBD\uC0AC\uBA74,
+      \uC791\uC740 \uC794\uD574 \uB354\uBBF8"
+    resourceGroups: Copper Wire, Iron Scrap
+    logOrHint: None
+    hazards: "\uC595\uC740 \uACBD\uC0AC, \uCF00\uC774\uBE14 \uAC78\uB9BC"
+    narrativeFunction: "Hub \uB3D9\uCABD \uC644\uCDA9. \uCD08\uBC18 \uC774\uB3D9
+      \uACBD\uB85C."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] G4: Hub \uB3D9\uCABD \uACBD\uACC4 \uC644\uCDA9. shallow
+      slope/cable line/debris buffer."
+  - zoneId: G5
+    column: G
+    row: 5
+    regionKey: HarborDebrisBelt
+    biomeKey: Harbor
+    narrativePhase: 0
+    terrainMood: 2
+    riskTier: 1
+    contentDensity: 2
+    primaryPurpose: 0
+    minDepth: -20
+    maxDepth: -180
+    baseRiskLevel: 0.15
+    terrainDescription: "\uC644\uB9CC\uD55C Harbor Shelf. \uBD80\uB450/\uC870\uC120\uC18C\uC5D0\uC11C
+      \uD758\uB7EC\uB098\uC628 Debris Fan. \uCD08\uBCF4\uC790 \uC774\uB3D9 \uD3ED
+      \uB113\uAC8C \uD655\uBCF4. steep cliff \uAE08\uC9C0."
+    keyObjects: pier columns, broken fishing nets, small crates, rusty barrels, shipyard
+      frame, shallow cables, broken buoy
+    resourceGroups: "Iron Scrap \uB192\uC74C, Wet Lumber Crate \uC911\uAC04, Fuel
+      Canister \uB0AE\uC74C~\uC911\uAC04, Fastener Pack \uC911\uAC04, Copper Wire
+      \uC911\uAC04"
+    logOrHint: "Log 002 \uC120\uD0DD/\uB300\uCCB4 \uB8E8\uD2B8 \uAC00\uB2A5. \uD3D0\uC120\uC73C\uB85C
+      \uAC00\uC9C0 \uC54A\uC544\uB3C4 \uD1B5\uC2E0 \uCC28\uB2E8 \uB2E8\uC11C \uC77C\uBD80
+      \uD68D\uB4DD \uAC00\uB2A5."
+    hazards: "\uB0AE\uC74C. pier column / net collision \uC815\uB3C4."
+    narrativeFunction: "\uCCAB \uD68C\uC218. \uC548\uC804 \uD30C\uBC0D. \uC138\uB77C\uC758
+      '\uBD80\uB450 \uC544\uB798 \uACE0\uCCA0' \uB8E8\uD504. \uAE30\uBCF8 \uD68C\uC218/\uD310\uB9E4/\uC5C5\uADF8\uB808\uC774\uB4DC
+      \uC9C4\uC785."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: "Phase 14.9.1: Harbor Debris Belt / Inner Harbor Shallows prototype. D5/D6/E4/F4/G5/G6/E7/F7.
+      Gate1 ResourceLearning. \uBD80\uB450 \uC544\uB798 \uD3D0\uAE30\uBB3C \uC9C0\uB300.
+      Log 002 alternate route WARN allowed."
+  - zoneId: G6
+    column: G
+    row: 6
+    regionKey: HarborDebrisBelt
+    biomeKey: Harbor
+    narrativePhase: 0
+    terrainMood: 2
+    riskTier: 1
+    contentDensity: 2
+    primaryPurpose: 0
+    minDepth: -20
+    maxDepth: -180
+    baseRiskLevel: 0.15
+    terrainDescription: "\uC644\uB9CC\uD55C Harbor Shelf. \uBD80\uB450/\uC870\uC120\uC18C\uC5D0\uC11C
+      \uD758\uB7EC\uB098\uC628 Debris Fan. \uCD08\uBCF4\uC790 \uC774\uB3D9 \uD3ED
+      \uB113\uAC8C \uD655\uBCF4. steep cliff \uAE08\uC9C0."
+    keyObjects: pier columns, broken fishing nets, small crates, rusty barrels, shipyard
+      frame, shallow cables, broken buoy
+    resourceGroups: "Iron Scrap \uB192\uC74C, Wet Lumber Crate \uC911\uAC04, Fuel
+      Canister \uB0AE\uC74C~\uC911\uAC04, Fastener Pack \uC911\uAC04, Copper Wire
+      \uC911\uAC04"
+    logOrHint: "Log 002 \uC120\uD0DD/\uB300\uCCB4 \uB8E8\uD2B8 \uAC00\uB2A5. \uD3D0\uC120\uC73C\uB85C
+      \uAC00\uC9C0 \uC54A\uC544\uB3C4 \uD1B5\uC2E0 \uCC28\uB2E8 \uB2E8\uC11C \uC77C\uBD80
+      \uD68D\uB4DD \uAC00\uB2A5."
+    hazards: "\uB0AE\uC74C. pier column / net collision \uC815\uB3C4."
+    narrativeFunction: "\uCCAB \uD68C\uC218. \uC548\uC804 \uD30C\uBC0D. \uC138\uB77C\uC758
+      '\uBD80\uB450 \uC544\uB798 \uACE0\uCCA0' \uB8E8\uD504. \uAE30\uBCF8 \uD68C\uC218/\uD310\uB9E4/\uC5C5\uADF8\uB808\uC774\uB4DC
+      \uC9C4\uC785."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: "Phase 14.9.1: Harbor Debris Belt / Inner Harbor Shallows prototype. D5/D6/E4/F4/G5/G6/E7/F7.
+      Gate1 ResourceLearning. \uBD80\uB450 \uC544\uB798 \uD3D0\uAE30\uBB3C \uC9C0\uB300.
+      Log 002 alternate route WARN allowed."
+  - zoneId: G7
+    column: G
+    row: 7
+    regionKey: PostHarborTransition
+    biomeKey: OpenWater
+    narrativePhase: 1
+    terrainMood: 8
+    riskTier: 2
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -120
+    maxDepth: -350
+    baseRiskLevel: 0.35
+    terrainDescription: "Harbor \uC774\uD6C4 \uC804\uC774 \uAD6C\uC5ED. current pressure
+      \uC99D\uAC00, mid depth \uC9C4\uC785 \uC900\uBE44. RouteBuffer/PressureZone
+      \uC131\uACA9."
+    keyObjects: "\uBD80\uD45C, \uCF00\uC774\uBE14 \uB9C8\uCEE4, \uC555\uB825 \uACBD\uACE0
+      \uD45C\uC9C0"
+    resourceGroups: Iron Scrap, Copper Wire
+    logOrHint: None
+    hazards: "\uD574\uB958 \uC99D\uAC00, \uC2DC\uC57C \uC800\uD558, \uC555\uB825
+      \uACBD\uACE0"
+    narrativeFunction: "Harbor \uC774\uD6C4 \uC804\uC774. Hub\uC5D0\uC11C \uB3D9\uCABD/\uBD81\uB3D9
+      \uC5F0\uAD6C\uAD8C\uC73C\uB85C \uAC00\uB294 \uAE38\uBAA9. \uC555\uB825 \uC99D\uAC00\uC640
+      \uC2DC\uC57C \uC800\uD558\uB85C \uC911\uCE35 \uC9C4\uC785\uC744 \uC900\uBE44\uD558\uAC8C
+      \uD568."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] G7: Harbor \uC774\uD6C4 \uC804\uC774 \uAD6C\uC5ED. current
+      pressure \uC99D\uAC00, mid depth \uC9C4\uC785 \uC900\uBE44."
+  - zoneId: G8
+    column: G
+    row: 8
+    regionKey: PostHarborTransition
+    biomeKey: OpenWater
+    narrativePhase: 1
+    terrainMood: 8
+    riskTier: 2
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -150
+    maxDepth: -400
+    baseRiskLevel: 0.4
+    terrainDescription: "Harbor \uC774\uD6C4 \uC804\uC774 \uAD6C\uC5ED. current pressure
+      \uC99D\uAC00, mid depth \uC9C4\uC785 \uC900\uBE44. RouteBuffer/PressureZone."
+    keyObjects: "\uC555\uB825 \uC13C\uC11C \uBD80\uD45C, \uCF00\uC774\uBE14 \uC794\uD574"
+    resourceGroups: Iron Scrap, Corroded Relay
+    logOrHint: None
+    hazards: "\uD574\uB958, \uC555\uB825, \uC2DC\uC57C \uCC28\uB2E8"
+    narrativeFunction: "Harbor \uC774\uD6C4 \uC804\uC774. \uC810\uC9C4\uC801\uC73C\uB85C
+      \uAE4A\uC5B4\uC9C0\uB294 \uC9C0\uD615. \uC911\uCE35 \uD0D0\uC0AC \uC900\uBE44
+      \uAD6C\uC5ED."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] G8: Harbor \uC774\uD6C4 \uC804\uC774 \uAD6C\uC5ED. current
+      pressure \uC99D\uAC00."
+  - zoneId: G9
+    column: G
+    row: 9
+    regionKey: OuterEdge
+    biomeKey: OuterSea
+    narrativePhase: 5
+    terrainMood: 6
+    riskTier: 3
+    contentDensity: 1
+    primaryPurpose: 7
+    minDepth: -250
+    maxDepth: -800
+    baseRiskLevel: 0.55
+    terrainDescription: "\uB0A8\uB3D9 \uC678\uACFD \uC555\uB825/\uC2DC\uC57C \uC800\uD558
+      \uAD6C\uC5ED. \uCD08\uBC18 \uC544\uB2D8. sparse pressure, low visibility, boundary
+      warning."
+    keyObjects: "\uACBD\uACC4 \uBD80\uD45C, \uC555\uB825 \uACBD\uACE0 \uD45C\uC9C0"
+    resourceGroups: None
+    logOrHint: None
+    hazards: "\uACE0\uC555, \uADF9\uC800\uC2DC\uC57C, \uAC15\uD55C \uD574\uB958"
+    narrativeFunction: "\uB0A8\uB3D9 \uC678\uACFD \uACBD\uACC4. \uCD08\uBC18 \uC811\uADFC
+      \uAE08\uC9C0 \uAD6C\uC5ED. \uD6C4\uBC18 \uC2EC\uD574/\uC5F0\uAD6C\uAD8C \uC9C4\uC785
+      \uC804 \uC555\uB825 \uACBD\uACE0."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] G9: \uB0A8\uB3D9 \uC678\uACFD \uC555\uB825/\uC2DC\uC57C
+      \uC800\uD558 \uAD6C\uC5ED. \uCD08\uBC18 \uC544\uB2D8."
+  - zoneId: G10
+    column: G
+    row: 10
+    regionKey: OuterBoundary
+    biomeKey: OuterSea
+    narrativePhase: 5
+    terrainMood: 6
+    riskTier: 3
+    contentDensity: 1
+    primaryPurpose: 6
+    minDepth: -350
+    maxDepth: -1100
+    baseRiskLevel: 0.7
+    terrainDescription: "\uB0A8\uB3D9 \uC678\uACFD \uC555\uB825/\uC2DC\uC57C \uC800\uD558
+      \uAD6C\uC5ED. \uCD08\uBC18 \uC544\uB2D8. sparse pressure, low visibility, boundary
+      warning. \uCF54\uB108 \uACBD\uACC4."
+    keyObjects: "\uACBD\uACC4 \uBD80\uD45C, \uC555\uB825 \uACBD\uACE0 \uD45C\uC9C0,
+      \uC704\uD5D8 \uD45C\uC2DD"
+    resourceGroups: None
+    logOrHint: None
+    hazards: "\uACE0\uC555, \uADF9\uC800\uC2DC\uC57C, \uAC15\uD55C \uD574\uB958,
+      \uC704\uD5D8 \uACBD\uACE0"
+    narrativeFunction: "\uB0A8\uB3D9 \uC678\uACFD \uACBD\uACC4. \uCD08\uBC18 \uC811\uADFC
+      \uAE08\uC9C0. J10 \uCF54\uB108\uC640 \uC5F0\uACB0\uB418\uB294 \uC704\uD5D8
+      \uACBD\uACC4 \uAD6C\uC5ED."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-A] G10: \uB0A8\uB3D9 \uC678\uACFD \uC555\uB825/\uC2DC\uC57C
+      \uC800\uD558 \uAD6C\uC5ED. \uCD08\uBC18 \uC544\uB2D8."
+  - zoneId: H1
+    column: H
+    row: 1
+    regionKey: NorthEastTransitionShelf
+    biomeKey: OpenWater
+    narrativePhase: 1
+    terrainMood: 3
+    riskTier: 2
+    contentDensity: 1
+    primaryPurpose: 5
+    minDepth: -180
+    maxDepth: -500
+    baseRiskLevel: 0.4
+    terrainDescription: "\uBD81\uB3D9 \uC804\uC774 \uC120\uBC18. \uAD00\uCE21 \uC811\uADFC\uB85C.
+      \uC5F0\uAD6C \uB2E8\uC11C \uC2DC\uC791. cable trench, observation route."
+    keyObjects: "\uD574\uC800 \uCF00\uC774\uBE14 \uD2B8\uB80C\uCE58, \uAD00\uCE21
+      \uC7A5\uBE44 \uAE30\uCD08, \uC2E0\uD638 \uD45C\uC2DD"
+    resourceGroups: Sensor Fragment, Data Chip, Copper Wire
+    logOrHint: Observation route trace
+    hazards: "\uC2E0\uD638 \uAC04\uC12D, \uC815\uB3C8\uB41C \uC9C0\uD615\uC758 \uC704\uD654\uAC10"
+    narrativeFunction: "\uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC9C4\uC785 \uC804 \uAD00\uCE21
+      \uC811\uADFC\uB85C. \uC5F0\uAD6C \uB2E8\uC11C \uC2DC\uC791."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] H1: North/East transition shelf. observation approach.'
+  - zoneId: H2
+    column: H
+    row: 2
+    regionKey: NorthEastTransitionShelf
+    biomeKey: OpenWater
+    narrativePhase: 1
+    terrainMood: 13
+    riskTier: 2
+    contentDensity: 2
+    primaryPurpose: 1
+    minDepth: -190
+    maxDepth: -520
+    baseRiskLevel: 0.42
+    terrainDescription: "\uBD81\uB3D9 \uC804\uC774 \uC120\uBC18. cable trench, \uC778\uACF5
+      \uD1B5\uB85C \uB290\uB08C\uC758 \uD574\uC800."
+    keyObjects: "\uCF00\uC774\uBE14 \uB2E4\uBC1C, \uC778\uACF5\uC801\uC778 \uD574\uC800
+      \uD1B5\uB85C, \uAD00\uCE21 \uC7A5\uBE44 \uD30C\uD3B8"
+    resourceGroups: Copper Wire, Sensor Fragment, Comm Module
+    logOrHint: None
+    hazards: "\uCF00\uC774\uBE14 \uAC78\uB9BC, \uC2E0\uD638 \uAC04\uC12D"
+    narrativeFunction: "\uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC804\uC774. MainRoute \uC131\uACA9."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: '[Phase 14.9.2-B] H2: North/East transition shelf. cable trench.'
+  - zoneId: H3
+    column: H
+    row: 3
+    regionKey: NorthEastTransitionShelf
+    biomeKey: OpenWater
+    narrativePhase: 2
+    terrainMood: 14
+    riskTier: 2
+    contentDensity: 2
+    primaryPurpose: 5
+    minDepth: -200
+    maxDepth: -550
+    baseRiskLevel: 0.45
+    terrainDescription: "\uBD81\uB3D9 \uC804\uC774 \uC120\uBC18. \uC5F0\uAD6C \uB2E8\uC11C.
+      \uC2DC\uC124 \uC811\uADFC \uB290\uB08C."
+    keyObjects: "\uC5F0\uAD6C \uC7A5\uCE58 \uD30C\uD3B8, \uAD00\uCE21 \uD0C0\uC6CC
+      \uAE30\uCD08, \uB370\uC774\uD130 \uC800\uC7A5\uC18C"
+    resourceGroups: Research-grade Parts, Data Chip, Sensor Fragment
+    logOrHint: Research facility approach
+    hazards: "\uC2DC\uC124 \uC811\uADFC \uACBD\uACC4, \uC2E0\uD638 \uAC04\uC12D"
+    narrativeFunction: "\uBD81\uB3D9 \uC5F0\uAD6C\uAD8C \uC9C4\uC785. \uC5F0\uAD6C
+      \uB2E8\uC11C \uBCF8\uACA9\uD654."
+    isHub: 0
+    isMajorLandmark: 1
+    intentionallySparse: 0
+    notes: '[Phase 14.9.2-B] H3: North/East transition shelf. research clue.'
+  - zoneId: H4
+    column: H
+    row: 4
+    regionKey: ResearchCorridor
+    biomeKey: OpenWater
+    narrativePhase: 2
+    terrainMood: 12
+    riskTier: 2
+    contentDensity: 2
+    primaryPurpose: 1
+    minDepth: -220
+    maxDepth: -600
+    baseRiskLevel: 0.48
+    terrainDescription: "\uC5F0\uAD6C\uAD8C \uC911\uCE35 \uD1B5\uB85C. artificial
+      plate field, cable trench, fractured ridge."
+    keyObjects: "\uC778\uACF5 \uD310\uC7AC \uC9C0\uB300, \uCF00\uC774\uBE14 \uD2B8\uB80C\uCE58,
+      \uADE0\uC5F4 \uB2A5\uC120"
+    resourceGroups: Sensor Fragment, Data Chip, Titanium Alloy
+    logOrHint: None
+    hazards: "\uADE0\uC5F4 \uC9C0\uD615, \uC2E0\uD638 \uAC04\uC12D, \uC778\uACF5
+      \uAD6C\uC870\uBB3C \uC794\uD574"
+    narrativeFunction: "\uC5F0\uAD6C\uAD8C \uC911\uCE35 \uD1B5\uB85C. MainRoute \uC131\uACA9."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: "[Phase 14.9.2-B] H4: \uC5F0\uAD6C\uAD8C/\uC911\uCE35 \uD1B5\uB85C. artificial
+      plate field."
+  - zoneId: H5
+    column: H
+    row: 5
+    regionKey: ResearchCorridor
+    biomeKey: OpenWater
+    narrativePhase: 2
+    terrainMood: 13
+    riskTier: 3
+    contentDensity: 2
+    primaryPurpose: 3
+    minDepth: -240
+    maxDepth: -650
+    baseRiskLevel: 0.52
+    terrainDescription: "\uC5F0\uAD6C\uAD8C \uC911\uCE35 \uD1B5\uB85C. \uC778\uACF5
+      \uAD6C\uC870\uBB3C \uC811\uADFC. artificial passage, cable trench."
+    keyObjects: "\uC778\uACF5 \uD1B5\uB85C \uAD6C\uC870\uBB3C, \uCF00\uC774\uBE14
+      \uD2B8\uB80C\uCE58, \uC5F0\uAD6C \uC7A5\uCE58 \uD754\uC801"
+    resourceGroups: Research-grade Parts, Comm Module, Titanium Alloy
+    logOrHint: None
+    hazards: "\uC778\uACF5 \uAD6C\uC870\uBB3C \uBD95\uAD34 \uC704\uD5D8, \uC2E0\uD638
+      \uCC28\uB2E8, \uC555\uB825 \uC99D\uAC00"
+    narrativeFunction: "\uC5F0\uAD6C\uAD8C \uC911\uCE35 \uD1B5\uB85C. \uAE30\uC220
+      \uC804\uC870. MainRoute."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: "[Phase 14.9.2-B] H5: \uC5F0\uAD6C\uAD8C/\uC911\uCE35 \uD1B5\uB85C. \uC778\uACF5
+      \uAD6C\uC870\uBB3C \uC811\uADFC."
+  - zoneId: H6
+    column: H
+    row: 6
+    regionKey: ResearchCorridor
+    biomeKey: OpenWater
+    narrativePhase: 2
+    terrainMood: 5
+    riskTier: 3
+    contentDensity: 1
+    primaryPurpose: 1
+    minDepth: -260
+    maxDepth: -700
+    baseRiskLevel: 0.55
+    terrainDescription: "\uC5F0\uAD6C\uAD8C \uC911\uCE35 \uD1B5\uB85C. fractured
+      ridge, cable trench, \uADE0\uC5F4 \uC9C0\uB300."
+    keyObjects: "\uADE0\uC5F4 \uB2A5\uC120, \uCF00\uC774\uBE14 \uD2B8\uB80C\uCE58,
+      \uC554\uBC18 \uD30C\uD3B8"
+    resourceGroups: Titanium Alloy, Sensor Fragment (sparse)
+    logOrHint: None
+    hazards: "\uADE0\uC5F4 \uC9C0\uD615, \uC554\uBC18 \uBD95\uAD34, \uC555\uB825
+      \uC99D\uAC00"
+    narrativeFunction: "\uC5F0\uAD6C\uAD8C \uC911\uCE35 \uD1B5\uB85C. \uC2EC\uCE35
+      \uC804\uD658 \uC804 \uC644\uCDA9."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-B] H6: \uC5F0\uAD6C\uAD8C/\uC911\uCE35 \uD1B5\uB85C. fractured
+      ridge."
+  - zoneId: H7
+    column: H
+    row: 7
+    regionKey: ResearchCorridor
+    biomeKey: OpenWater
+    narrativePhase: 2
+    terrainMood: 14
+    riskTier: 3
+    contentDensity: 2
+    primaryPurpose: 5
+    minDepth: -280
+    maxDepth: -750
+    baseRiskLevel: 0.58
+    terrainDescription: "\uC5F0\uAD6C\uAD8C \uC911\uCE35 \uD1B5\uB85C. \uC2DC\uC124
+      \uC811\uADFC. \uC5F0\uAD6C \uC7A5\uCE58 \uD754\uC801 \uC9D1\uC911."
+    keyObjects: "\uC5F0\uAD6C \uC2DC\uC124 \uD30C\uD3B8, \uAD00\uCE21 \uC7A5\uBE44,
+      \uB370\uC774\uD130 \uC800\uC7A5\uC18C"
+    resourceGroups: Research-grade Parts, Data Chip, Advanced Circuit
+    logOrHint: Research facility fragments
+    hazards: "\uC2DC\uC124 \uBD95\uAD34 \uC704\uD5D8, \uBC29\uC0AC\uB2A5 \uD754\uC801,
+      \uC555\uB825"
+    narrativeFunction: "\uC5F0\uAD6C\uAD8C \uC911\uCE35 \uD1B5\uB85C. \uC5F0\uAD6C
+      \uB2E8\uC11C. I\uC5F4 \uC9C4\uC785 \uC804 \uB9C8\uC9C0\uB9C9 \uC5F0\uAD6C \uAD6C\uC5ED."
+    isHub: 0
+    isMajorLandmark: 1
+    intentionallySparse: 0
+    notes: "[Phase 14.9.2-B] H7: \uC5F0\uAD6C\uAD8C/\uC911\uCE35 \uD1B5\uB85C. \uC778\uACF5
+      \uAD6C\uC870\uBB3C \uC811\uADFC."
+  - zoneId: H8
+    column: H
+    row: 8
+    regionKey: DeepTransition
+    biomeKey: OuterSea
+    narrativePhase: 3
+    terrainMood: 8
+    riskTier: 3
+    contentDensity: 1
+    primaryPurpose: 7
+    minDepth: -300
+    maxDepth: -800
+    baseRiskLevel: 0.62
+    terrainDescription: "\uBD81\uB3D9/\uC2EC\uCE35 \uC804\uD658. pressure current,
+      drop-off, sealed warning."
+    keyObjects: "\uC555\uB825 \uACBD\uACE0 \uD45C\uC9C0, \uD574\uB958 \uD45C\uC2DD,
+      \uC2EC\uD574 \uACBD\uACC4 \uBD80\uD45C"
+    resourceGroups: None
+    logOrHint: None
+    hazards: "\uAC15\uD55C \uD574\uB958, \uACE0\uC555, \uADF9\uC800\uC2DC\uC57C,
+      \uC2EC\uD574 \uACBD\uACE0"
+    narrativeFunction: "\uBD81\uB3D9/\uC2EC\uCE35 \uC804\uD658. I\uC5F4 \uC9C4\uC785
+      \uC804 \uC555\uB825 \uACBD\uACE0 \uAD6C\uC5ED."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-B] H8: \uBD81\uB3D9/\uC2EC\uCE35 \uC804\uD658. pressure
+      current."
+  - zoneId: H9
+    column: H
+    row: 9
+    regionKey: DeepTransition
+    biomeKey: OuterSea
+    narrativePhase: 3
+    terrainMood: 7
+    riskTier: 3
+    contentDensity: 1
+    primaryPurpose: 7
+    minDepth: -350
+    maxDepth: -900
+    baseRiskLevel: 0.65
+    terrainDescription: "\uBD81\uB3D9/\uC2EC\uCE35 \uC804\uD658. drop-off, \uAE09\uACBD\uC0AC,
+      \uC2EC\uD574 \uC9C4\uC785 \uC9C1\uC804."
+    keyObjects: "\uAE09\uACBD\uC0AC\uBA74, \uC2EC\uD574 \uACBD\uACC4 \uD45C\uC2DD,
+      \uC555\uB825 \uC13C\uC11C"
+    resourceGroups: None
+    logOrHint: None
+    hazards: "\uAE09\uACBD\uC0AC, \uACE0\uC555, \uADF9\uC800\uC2DC\uC57C, \uBC29\uD5A5
+      \uAC10\uAC01 \uC0C1\uC2E4"
+    narrativeFunction: "\uBD81\uB3D9/\uC2EC\uCE35 \uC804\uD658. \uC2EC\uCE35 \uC9C4\uC785
+      \uC804 \uB9C8\uC9C0\uB9C9 \uACBD\uACE0."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-B] H9: \uBD81\uB3D9/\uC2EC\uCE35 \uC804\uD658. drop-off."
+  - zoneId: H10
+    column: H
+    row: 10
+    regionKey: DeepTransition
+    biomeKey: OuterSea
+    narrativePhase: 3
+    terrainMood: 6
+    riskTier: 3
+    contentDensity: 1
+    primaryPurpose: 6
+    minDepth: -400
+    maxDepth: -1000
+    baseRiskLevel: 0.7
+    terrainDescription: "\uBD81\uB3D9/\uC2EC\uCE35 \uC804\uD658. sealed warning.
+      I\uC5F4 \uC9C4\uC785 \uC804 \uBD09\uC778 \uACBD\uACE0."
+    keyObjects: "\uBD09\uC778 \uACBD\uACE0 \uD45C\uC9C0, \uC555\uB825 \uACBD\uACE0,
+      \uC704\uD5D8 \uD45C\uC2DD"
+    resourceGroups: None
+    logOrHint: None
+    hazards: "\uBD09\uC778 \uACBD\uACE0, \uACE0\uC555, \uADF9\uC800\uC2DC\uC57C,
+      \uAC15\uD55C \uD574\uB958"
+    narrativeFunction: "\uBD81\uB3D9/\uC2EC\uCE35 \uC804\uD658. I\uC5F4 \uC9C4\uC785
+      \uC804 \uBD09\uC778 \uACBD\uACE0. Boundary \uC131\uACA9."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: "[Phase 14.9.2-B] H10: \uBD81\uB3D9/\uC2EC\uCE35 \uC804\uD658. sealed
+      warning."
+  - zoneId: I1
+    column: I
+    row: 1
+    regionKey: OuterResearchField
+    biomeKey: OuterSea
+    narrativePhase: 2
+    terrainMood: 12
+    riskTier: 2
+    contentDensity: 1
+    primaryPurpose: 5
+    minDepth: -350
+    maxDepth: -850
+    baseRiskLevel: 0.55
+    terrainDescription: "\uC678\uBD80 \uC5F0\uAD6C \uD544\uB4DC. \uAD00\uCE21 \uD0C0\uC6CC
+      \uC811\uADFC. \uD1B5\uC2E0 \uB2E8\uC11C, \uD0C0\uC6CC \uD30C\uD3B8."
+    keyObjects: "\uAD00\uCE21 \uD0C0\uC6CC \uD30C\uD3B8, \uD1B5\uC2E0 \uC7A5\uBE44
+      \uC794\uD574, \uC5F0\uAD6C \uD45C\uC2DD"
+    resourceGroups: Comm Module, Data Chip, Sensor Fragment
+    logOrHint: Communication tower fragments
+    hazards: "\uC2E0\uD638 \uCC28\uB2E8, \uC794\uD574 \uCDA9\uB3CC, \uC555\uB825"
+    narrativeFunction: "\uC678\uBD80 \uC5F0\uAD6C \uD544\uB4DC \uC9C4\uC785. \uD1B5\uC2E0
+      \uB2E8\uC11C \uC2DC\uC791. SideRoute."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] I1: outer research field. observation tower approach.'
+  - zoneId: I2
+    column: I
+    row: 2
+    regionKey: OuterResearchField
+    biomeKey: OuterSea
+    narrativePhase: 2
+    terrainMood: 2
+    riskTier: 2
+    contentDensity: 2
+    primaryPurpose: 5
+    minDepth: -370
+    maxDepth: -880
+    baseRiskLevel: 0.58
+    terrainDescription: "\uC678\uBD80 \uC5F0\uAD6C \uD544\uB4DC. \uD1B5\uC2E0 \uB2E8\uC11C
+      \uC9D1\uC911. \uD0C0\uC6CC \uD30C\uD3B8, current hazard."
+    keyObjects: "\uD1B5\uC2E0 \uD0C0\uC6CC \uAE30\uCD08, \uC548\uD14C\uB098 \uD30C\uD3B8,
+      \uB370\uC774\uD130 \uC800\uC7A5\uC18C"
+    resourceGroups: Comm Module, Advanced Circuit, Data Chip
+    logOrHint: Communication log fragment
+    hazards: "\uD574\uB958 \uC704\uD5D8, \uC794\uD574 \uCDA9\uB3CC, \uC2E0\uD638
+      \uAC04\uC12D"
+    narrativeFunction: "\uC678\uBD80 \uC5F0\uAD6C \uD544\uB4DC. \uD1B5\uC2E0 \uB2E8\uC11C
+      \uBCF8\uACA9\uD654. SideRoute."
+    isHub: 0
+    isMajorLandmark: 1
+    intentionallySparse: 0
+    notes: '[Phase 14.9.2-B] I2: outer research field. communication clue.'
+  - zoneId: I3
+    column: I
+    row: 3
+    regionKey: OuterResearchField
+    biomeKey: OuterSea
+    narrativePhase: 2
+    terrainMood: 14
+    riskTier: 3
+    contentDensity: 2
+    primaryPurpose: 3
+    minDepth: -390
+    maxDepth: -920
+    baseRiskLevel: 0.6
+    terrainDescription: "\uC678\uBD80 \uC5F0\uAD6C \uD544\uB4DC. \uD0C0\uC6CC \uD30C\uD3B8
+      \uC9D1\uC911. \uC2DC\uC124 \uC811\uADFC \uB290\uB08C."
+    keyObjects: "\uC5F0\uAD6C \uD0C0\uC6CC \uC794\uD574, \uC7A5\uBE44 \uD30C\uD3B8,
+      \uB370\uC774\uD130 \uCF54\uC5B4"
+    resourceGroups: Research-grade Parts, Advanced Circuit, Titanium Alloy
+    logOrHint: None
+    hazards: "\uC2DC\uC124 \uBD95\uAD34 \uC704\uD5D8, \uBC29\uC0AC\uB2A5 \uD754\uC801,
+      \uC555\uB825"
+    narrativeFunction: "\uC678\uBD80 \uC5F0\uAD6C \uD544\uB4DC. \uAE30\uC220 \uC804\uC870.
+      I4~I7 \uBD09\uC1C4 \uAD6C\uC5ED \uC804 \uC644\uCDA9."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: '[Phase 14.9.2-B] I3: outer research field. tower fragments.'
+  - zoneId: I4
+    column: I
+    row: 4
+    regionKey: ForbiddenResearchBelt
+    biomeKey: OuterSea
+    narrativePhase: 3
+    terrainMood: 13
+    riskTier: 3
+    contentDensity: 1
+    primaryPurpose: 8
+    minDepth: -420
+    maxDepth: -1000
+    baseRiskLevel: 0.65
+    terrainDescription: "\uAE08\uC9C0 \uC5F0\uAD6C \uBCA8\uD2B8. \uBD09\uC778 \uD1B5\uB85C.
+      artificial passage, crack field."
+    keyObjects: "\uBD09\uC778 \uD1B5\uB85C \uAD6C\uC870\uBB3C, \uADE0\uC5F4 \uC9C0\uB300,
+      \uC5F0\uAD6C \uACBD\uACE0 \uD45C\uC2DD"
+    resourceGroups: Advanced Circuit, Titanium Alloy (sparse)
+    logOrHint: Forbidden research warning
+    hazards: "\uBD09\uC778 \uACBD\uACE0, \uADE0\uC5F4 \uC9C0\uD615, \uACE0\uC555,
+      \uC2E0\uD638 \uCC28\uB2E8"
+    narrativeFunction: "\uAE08\uC9C0 \uC5F0\uAD6C \uBCA8\uD2B8 \uC9C4\uC785. \uBD09\uC778
+      \uD1B5\uB85C. NarrativeGate."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 0
+    notes: '[Phase 14.9.2-B] I4: forbidden research belt. sealed passage.'
+  - zoneId: I5
+    column: I
+    row: 5
+    regionKey: ForbiddenResearchBelt
+    biomeKey: OuterSea
+    narrativePhase: 3
+    terrainMood: 4
+    riskTier: 3
+    contentDensity: 1
+    primaryPurpose: 7
+    minDepth: -450
+    maxDepth: -1050
+    baseRiskLevel: 0.68
+    terrainDescription: "\uAE08\uC9C0 \uC5F0\uAD6C \uBCA8\uD2B8. crack field, pressure
+      zone, facility approach."
+    keyObjects: "\uADE0\uC5F4 \uC9C0\uB300, \uC555\uB825 \uD45C\uC2DD, \uC2DC\uC124
+      \uC811\uADFC \uD754\uC801"
+    resourceGroups: Titanium Alloy (sparse), Research-grade Parts (sparse)
+    logOrHint: None
+    hazards: "\uADE0\uC5F4 \uC9C0\uD615, \uACE0\uC555, \uC2DC\uC124 \uBD95\uAD34
+      \uC704\uD5D8, \uADF9\uC800\uC2DC\uC57C"
+    narrativeFunction: "\uAE08\uC9C0 \uC5F0\uAD6C \uBCA8\uD2B8. \uC555\uBC15 \uAD6C\uC5ED.
+      \uC2DC\uC124 \uC811\uADFC \uC804 \uC644\uCDA9."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] I5: forbidden research belt. crack field.'
+  - zoneId: I6
+    column: I
+    row: 6
+    regionKey: ForbiddenResearchBelt
+    biomeKey: OuterSea
+    narrativePhase: 3
+    terrainMood: 8
+    riskTier: 3
+    contentDensity: 1
+    primaryPurpose: 7
+    minDepth: -480
+    maxDepth: -1100
+    baseRiskLevel: 0.7
+    terrainDescription: "\uAE08\uC9C0 \uC5F0\uAD6C \uBCA8\uD2B8. pressure zone, crack
+      field, \uC2DC\uC124 \uC811\uADFC."
+    keyObjects: "\uC555\uB825 \uACBD\uACE0 \uD45C\uC9C0, \uADE0\uC5F4 \uC9C0\uB300,
+      \uC2DC\uC124 \uC794\uD574"
+    resourceGroups: None
+    logOrHint: None
+    hazards: "\uACE0\uC555, \uADE0\uC5F4, \uAC15\uD55C \uD574\uB958, \uADF9\uC800\uC2DC\uC57C"
+    narrativeFunction: "\uAE08\uC9C0 \uC5F0\uAD6C \uBCA8\uD2B8. \uC555\uBC15 \uAD6C\uC5ED.
+      I7 \uC2DC\uC124 \uC811\uADFC \uC804 \uACBD\uACE0."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] I6: forbidden research belt. pressure zone.'
+  - zoneId: I7
+    column: I
+    row: 7
+    regionKey: ForbiddenResearchBelt
+    biomeKey: OuterSea
+    narrativePhase: 3
+    terrainMood: 14
+    riskTier: 3
+    contentDensity: 2
+    primaryPurpose: 8
+    minDepth: -500
+    maxDepth: -1150
+    baseRiskLevel: 0.72
+    terrainDescription: "\uAE08\uC9C0 \uC5F0\uAD6C \uBCA8\uD2B8. \uC2DC\uC124 \uC811\uADFC.
+      \uBD09\uC778 \uC2DC\uC124 \uC785\uAD6C."
+    keyObjects: "\uBD09\uC778 \uC2DC\uC124 \uC785\uAD6C, \uC5F0\uAD6C \uC7A5\uCE58,
+      \uACBD\uACE0 \uD45C\uC2DD"
+    resourceGroups: Research-grade Parts, Advanced Circuit, Data Chip
+    logOrHint: Sealed facility approach
+    hazards: "\uC2DC\uC124 \uBD09\uC778 \uACBD\uACE0, \uACE0\uC555, \uBC29\uC0AC\uB2A5
+      \uD754\uC801, \uC2E0\uD638 \uCC28\uB2E8"
+    narrativeFunction: "\uAE08\uC9C0 \uC5F0\uAD6C \uBCA8\uD2B8. \uBD09\uC778 \uC2DC\uC124
+      \uC811\uADFC. NarrativeGate. I8~I10 \uC2EC\uD574 \uC804\uD658 \uC804 \uB9C8\uC9C0\uB9C9
+      \uC5F0\uAD6C \uAD6C\uC5ED."
+    isHub: 0
+    isMajorLandmark: 1
+    intentionallySparse: 0
+    notes: '[Phase 14.9.2-B] I7: forbidden research belt. facility approach.'
+  - zoneId: I8
+    column: I
+    row: 8
+    regionKey: AbyssTransition
+    biomeKey: OuterSea
+    narrativePhase: 3
+    terrainMood: 7
+    riskTier: 3
+    contentDensity: 1
+    primaryPurpose: 7
+    minDepth: -550
+    maxDepth: -1300
+    baseRiskLevel: 0.75
+    terrainDescription: "\uC2EC\uC5F0 \uC804\uD658. \uBD09\uC778 \uACBD\uACC4. deep
+      trench, collapse edge, low visibility."
+    keyObjects: "\uC2EC\uD574 \uD2B8\uB80C\uCE58, \uBD95\uAD34 \uAC00\uC7A5\uC790\uB9AC,
+      \uACBD\uACC4 \uD45C\uC2DD"
+    resourceGroups: None
+    logOrHint: None
+    hazards: "\uC2EC\uD574 \uD2B8\uB80C\uCE58, \uBD95\uAD34 \uC704\uD5D8, \uADF9\uC800\uC2DC\uC57C,
+      \uACE0\uC555"
+    narrativeFunction: "\uC2EC\uC5F0 \uC804\uD658. \uBD09\uC778 \uACBD\uACC4. J\uC5F4
+      \uC9C4\uC785 \uC804 \uC555\uBC15 \uAD6C\uC5ED."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] I8: abyss transition. sealed boundary.'
+  - zoneId: I9
+    column: I
+    row: 9
+    regionKey: AbyssTransition
+    biomeKey: OuterSea
+    narrativePhase: 3
+    terrainMood: 9
+    riskTier: 4
+    contentDensity: 1
+    primaryPurpose: 6
+    minDepth: -600
+    maxDepth: -1400
+    baseRiskLevel: 0.8
+    terrainDescription: "\uC2EC\uC5F0 \uC804\uD658. \uBD95\uAD34 \uAC00\uC7A5\uC790\uB9AC.
+      deep trench, collapse edge, few resources."
+    keyObjects: "\uBD95\uAD34 \uAC00\uC7A5\uC790\uB9AC, \uC2EC\uD574 \uD2B8\uB80C\uCE58,
+      \uC704\uD5D8 \uACBD\uACE0"
+    resourceGroups: None
+    logOrHint: None
+    hazards: "\uBD95\uAD34 \uC704\uD5D8, \uC2EC\uD574 \uD2B8\uB80C\uCE58, \uADF9\uC800\uC2DC\uC57C,
+      \uACE0\uC555, \uBC29\uD5A5 \uAC10\uAC01 \uC0C1\uC2E4"
+    narrativeFunction: "\uC2EC\uC5F0 \uC804\uD658. \uBD95\uAD34 \uAC00\uC7A5\uC790\uB9AC.
+      J\uC5F4 \uC9C4\uC785 \uC804 \uACBD\uACE0. Boundary."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] I9: abyss transition. collapse edge.'
+  - zoneId: I10
+    column: I
+    row: 10
+    regionKey: AbyssTransition
+    biomeKey: OuterSea
+    narrativePhase: 5
+    terrainMood: 6
+    riskTier: 4
+    contentDensity: 0
+    primaryPurpose: 6
+    minDepth: -700
+    maxDepth: -1600
+    baseRiskLevel: 0.85
+    terrainDescription: "\uC2EC\uC5F0 \uC804\uD658. \uBD09\uC778 \uACBD\uACC4 \uB05D\uB2E8.
+      deep trench, collapse edge, low visibility, minimal resources."
+    keyObjects: "\uC2EC\uD574 \uACBD\uACC4 \uD45C\uC2DD, \uC555\uB825 \uACBD\uACE0,
+      \uC704\uD5D8 \uD45C\uC2DD"
+    resourceGroups: None
+    logOrHint: None
+    hazards: "\uADF9\uACE0\uC555, \uADF9\uC800\uC2DC\uC57C, \uC2EC\uD574 \uD2B8\uB80C\uCE58,
+      \uBD95\uAD34 \uC704\uD5D8, \uBC29\uD5A5 \uAC10\uAC01 \uC0C1\uC2E4"
+    narrativeFunction: "\uC2EC\uC5F0 \uC804\uD658 \uB05D\uB2E8. J\uC5F4 \uC9C4\uC785
+      \uC804 \uCD5C\uC885 \uACBD\uACE0. Boundary."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] I10: abyss transition. sealed boundary.'
+  - zoneId: J1
+    column: J
+    row: 1
+    regionKey: OuterForbiddenBoundary
+    biomeKey: OuterSea
+    narrativePhase: 5
+    terrainMood: 6
+    riskTier: 4
+    contentDensity: 0
+    primaryPurpose: 6
+    minDepth: -600
+    maxDepth: -1500
+    baseRiskLevel: 0.8
+    terrainDescription: "\uC678\uACFD \uACBD\uACC4. \uCD08\uBC18 \uAD6C\uC5ED \uC544\uB2D8.
+      sparse pressure zone, boundary warning."
+    keyObjects: "\uACBD\uACC4 \uBD80\uD45C, \uC555\uB825 \uACBD\uACE0 \uD45C\uC9C0,
+      \uC704\uD5D8 \uD45C\uC2DD"
+    resourceGroups: None
+    logOrHint: None
+    hazards: "\uACE0\uC555, \uADF9\uC800\uC2DC\uC57C, \uAC15\uD55C \uD574\uB958,
+      \uC704\uD5D8 \uACBD\uACE0"
+    narrativeFunction: "\uBD81\uB3D9 \uC678\uACFD \uACBD\uACC4. \uCD08\uBC18 \uC811\uADFC
+      \uAE08\uC9C0. Boundary."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] J1: outer boundary. not early game.'
+  - zoneId: J2
+    column: J
+    row: 2
+    regionKey: OuterForbiddenBoundary
+    biomeKey: OuterSea
+    narrativePhase: 5
+    terrainMood: 8
+    riskTier: 4
+    contentDensity: 0
+    primaryPurpose: 7
+    minDepth: -650
+    maxDepth: -1550
+    baseRiskLevel: 0.82
+    terrainDescription: "\uC678\uACFD \uACBD\uACC4. sparse pressure zone, boundary
+      warning."
+    keyObjects: "\uC555\uB825 \uACBD\uACE0 \uD45C\uC9C0, \uD574\uB958 \uD45C\uC2DD"
+    resourceGroups: None
+    logOrHint: None
+    hazards: "\uACE0\uC555, \uADF9\uC800\uC2DC\uC57C, \uAC15\uD55C \uD574\uB958,
+      \uBC29\uD5A5 \uAC10\uAC01 \uC0C1\uC2E4"
+    narrativeFunction: "\uBD81\uB3D9 \uC678\uACFD \uACBD\uACC4. \uC555\uBC15 \uAD6C\uC5ED.
+      Boundary."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] J2: outer boundary. sparse pressure zone.'
+  - zoneId: J3
+    column: J
+    row: 3
+    regionKey: OuterForbiddenBoundary
+    biomeKey: OuterSea
+    narrativePhase: 5
+    terrainMood: 6
+    riskTier: 4
+    contentDensity: 0
+    primaryPurpose: 6
+    minDepth: -700
+    maxDepth: -1600
+    baseRiskLevel: 0.85
+    terrainDescription: "\uC678\uACFD \uACBD\uACC4. boundary warning. sparse pressure."
+    keyObjects: "\uACBD\uACC4 \uBD80\uD45C, \uC704\uD5D8 \uD45C\uC2DD, \uC555\uB825
+      \uACBD\uACE0"
+    resourceGroups: None
+    logOrHint: None
+    hazards: "\uACE0\uC555, \uADF9\uC800\uC2DC\uC57C, \uAC15\uD55C \uD574\uB958,
+      \uC704\uD5D8 \uACBD\uACE0, \uBC29\uD5A5 \uAC10\uAC01 \uC0C1\uC2E4"
+    narrativeFunction: "\uBD81\uB3D9 \uC678\uACFD \uACBD\uACC4. \uCD08\uBC18 \uC811\uADFC
+      \uAE08\uC9C0. Boundary."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] J3: outer boundary. boundary warning.'
+  - zoneId: J4
+    column: J
+    row: 4
+    regionKey: SealedFacilityApproach
+    biomeKey: OuterSea
+    narrativePhase: 3
+    terrainMood: 13
+    riskTier: 4
+    contentDensity: 1
+    primaryPurpose: 8
+    minDepth: -750
+    maxDepth: -1700
+    baseRiskLevel: 0.88
+    terrainDescription: "\uBD09\uC778 \uC2DC\uC124 \uC811\uADFC. origin approach
+      route. artificial wall, sealed gate."
+    keyObjects: "\uC778\uACF5 \uBCBD, \uBD09\uC778 \uAC8C\uC774\uD2B8, \uC2DC\uC124
+      \uC785\uAD6C \uD45C\uC2DD"
+    resourceGroups: Advanced Circuit, Titanium Alloy (sparse)
+    logOrHint: Sealed gate approach
+    hazards: "\uBD09\uC778 \uACBD\uACE0, \uC778\uACF5 \uBCBD \uCDA9\uB3CC, \uACE0\uC555,
+      \uADF9\uC800\uC2DC\uC57C"
+    narrativeFunction: "\uBD09\uC778 \uC2DC\uC124 \uC811\uADFC. NarrativeGate. J5~J7
+      origin \uBC29\uD5A5."
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] J4: sealed facility. origin approach route.'
+  - zoneId: J5
+    column: J
+    row: 5
+    regionKey: SealedFacilityApproach
+    biomeKey: DeepTrench
+    narrativePhase: 4
+    terrainMood: 9
+    riskTier: 4
+    contentDensity: 1
+    primaryPurpose: 8
+    minDepth: -800
+    maxDepth: -2000
+    baseRiskLevel: 0.95
+    terrainDescription: "J5: sealed facility. origin approach. \uBD09\uC1C4\uB41C
+      \uC2DC\uC124 \uC811\uADFC\uB85C. \uC2EC\uD574 \uC6D0\uC810 \uBC29\uD5A5. \uAE08\uC9C0\uAD6C\uC5ED
+      \uD575\uC2EC."
+    keyObjects: Sealed Facility Entrance, Origin Cable, Forbidden Gate, Ancient Structure
+    resourceGroups: AdvancedArtifacts, RareMinerals, OriginRelics
+    logOrHint: "\uC2DC\uC124 \uBD09\uC1C4 \uACBD\uACE0 \uB85C\uADF8, \uC6D0\uC810
+      \uC2E0\uD638 \uAE30\uB85D, \uAE08\uC9C0\uAD6C\uC5ED \uACBD\uACE0"
+    hazards: "\uADF9\uACE0\uC555, \uAD6C\uC870\uC801 \uBD95\uAD34 \uC704\uD5D8, \uBC00\uD3D0
+      \uC2DC\uC124 \uAC00\uC2A4 \uB204\uCD9C, \uC6D0\uC810 \uBC29\uC0AC\uB2A5"
+    narrativeFunction: 'J5: Endgame sealed facility approach. Origin core direction.
+      Forbidden zone narrative gate.'
+    isHub: 0
+    isMajorLandmark: 1
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] J5: sealed facility. origin approach.'
+  - zoneId: J6
+    column: J
+    row: 6
+    regionKey: OriginCollapseEdge
+    biomeKey: DeepTrench
+    narrativePhase: 4
+    terrainMood: 9
+    riskTier: 4
+    contentDensity: 1
+    primaryPurpose: 6
+    minDepth: -900
+    maxDepth: -2200
+    baseRiskLevel: 0.97
+    terrainDescription: "J6: origin collapse edge. endgame boundary. \uAD6C\uC870\uC801
+      \uBD95\uAD34 \uAC00\uC7A5\uC790\uB9AC. \uC6D0\uC810 \uBC29\uD5A5 \uCD5C\uC885
+      \uACBD\uACC4."
+    keyObjects: Collapse Edge, Origin Fissure, Forbidden Boundary Marker, Deep Pressure
+      Wall
+    resourceGroups: OriginCrystals, RareMinerals (sparse)
+    logOrHint: "\uBD95\uAD34 \uAC00\uC7A5\uC790\uB9AC \uACBD\uACE0 \uB85C\uADF8,
+      \uC6D0\uC810 \uC555\uB825 \uAE30\uB85D, \uAE08\uC9C0\uAD6C\uC5ED \uCD5C\uC885
+      \uACBD\uACE0"
+    hazards: "\uADF9\uACE0\uC555, \uAD6C\uC870\uC801 \uBD95\uAD34, \uC6D0\uC810 \uC555\uB825\uD30C,
+      \uC2DC\uC57C \uC644\uC804 \uCC28\uB2E8, \uBC29\uC0AC\uB2A5"
+    narrativeFunction: 'J6: Endgame collapse edge. Origin core boundary. Forbidden
+      zone final warning.'
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] J6: origin collapse edge. endgame boundary. intentionallySparse.'
+  - zoneId: J7
+    column: J
+    row: 7
+    regionKey: AbyssApproach
+    biomeKey: DeepTrench
+    narrativePhase: 4
+    terrainMood: 7
+    riskTier: 4
+    contentDensity: 0
+    primaryPurpose: 7
+    minDepth: -1000
+    maxDepth: -2500
+    baseRiskLevel: 0.98
+    terrainDescription: "J7: abyss approach. endgame deep path. \uC2EC\uC5F0 \uC811\uADFC\uB85C.
+      \uCD5C\uC2EC\uBD80 \uBC29\uD5A5. \uAC70\uC758 \uBE48 \uC555\uBC15 \uAD6C\uAC04."
+    keyObjects: Abyss Entrance, Deep Pressure Gate, Origin Signal Source
+    resourceGroups: OriginArtifacts (extremely rare)
+    logOrHint: "\uC2EC\uC5F0 \uC811\uADFC \uACBD\uACE0, \uC6D0\uC810 \uC2E0\uD638
+      \uCD5C\uC885 \uAE30\uB85D, \uC555\uB825 \uC784\uACC4\uCE58 \uACBD\uACE0"
+    hazards: "\uADF9\uACE0\uC555, \uC2EC\uC5F0 \uC555\uB825, \uC644\uC804 \uC2DC\uC57C
+      \uCC28\uB2E8, \uAD6C\uC870\uC801 \uBD88\uC548\uC815, \uBC29\uC0AC\uB2A5"
+    narrativeFunction: 'J7: Endgame abyss approach. Deepest pressure zone. Origin
+      core direction.'
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] J7: abyss approach. endgame deep path. intentionallySparse.'
+  - zoneId: J8
+    column: J
+    row: 8
+    regionKey: ForbiddenBoundary
+    biomeKey: DeepTrench
+    narrativePhase: 4
+    terrainMood: 6
+    riskTier: 4
+    contentDensity: 0
+    primaryPurpose: 6
+    minDepth: -1100
+    maxDepth: -2800
+    baseRiskLevel: 0.99
+    terrainDescription: "J8: forbidden boundary. endgame sealed zone. \uAE08\uC9C0
+      \uACBD\uACC4. \uCD5C\uC885 \uBD09\uC1C4 \uAD6C\uC5ED. \uB354 \uC774\uC0C1 \uC9C4\uD589
+      \uBD88\uAC00."
+    keyObjects: Forbidden Boundary Wall, Origin Seal, Deep Pressure Barrier, Ancient
+      Lock
+    resourceGroups: None (intentionally empty)
+    logOrHint: "\uAE08\uC9C0 \uACBD\uACC4 \uCD5C\uC885 \uACBD\uACE0, \uC6D0\uC810
+      \uBD09\uC778 \uAE30\uB85D, \uC9C4\uD589 \uBD88\uAC00 \uC120\uC5B8"
+    hazards: "\uADF9\uACE0\uC555, \uC808\uB300 \uC2DC\uC57C \uCC28\uB2E8, \uAD6C\uC870\uC801
+      \uBD95\uAD34, \uBC29\uC0AC\uB2A5, \uC6D0\uC810 \uC555\uB825"
+    narrativeFunction: 'J8: Endgame forbidden boundary. Sealed zone. No further progress
+      possible.'
+    isHub: 0
+    isMajorLandmark: 0
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] J8: forbidden boundary. endgame sealed zone. intentionallySparse.'
+  - zoneId: J9
+    column: J
+    row: 9
+    regionKey: OriginCoreApproach
+    biomeKey: DeepTrench
+    narrativePhase: 4
+    terrainMood: 9
+    riskTier: 4
+    contentDensity: 1
+    primaryPurpose: 8
+    minDepth: -1200
+    maxDepth: -3000
+    baseRiskLevel: 1
+    terrainDescription: "J9: origin core approach. endgame final. \uC6D0\uC810 \uD575\uC2EC
+      \uC811\uADFC. \uCD5C\uC885 \uC11C\uC0AC \uAD00\uBB38. \uAE08\uC9C0\uAD6C\uC5ED
+      \uD575\uC2EC\uBD80."
+    keyObjects: Origin Core Gate, Ancient Seal, Final Narrative Lock, Deep Origin
+      Structure
+    resourceGroups: OriginCoreArtifacts, AncientRelics
+    logOrHint: "\uC6D0\uC810 \uD575\uC2EC \uCD5C\uC885 \uAE30\uB85D, \uACE0\uB300
+      \uBD09\uC778 \uD574\uC81C \uB85C\uADF8, \uCD5C\uC885 \uC11C\uC0AC \uB2E8\uC11C"
+    hazards: "\uADF9\uACE0\uC555, \uAD6C\uC870\uC801 \uBD95\uAD34, \uC6D0\uC810 \uC555\uB825,
+      \uBC29\uC0AC\uB2A5, \uC2DC\uC57C \uC644\uC804 \uCC28\uB2E8, \uC808\uB300 \uAE08\uC9C0"
+    narrativeFunction: 'J9: Endgame origin core approach. Final narrative gate. Forbidden
+      zone core.'
+    isHub: 0
+    isMajorLandmark: 1
+    intentionallySparse: 1
+    notes: '[Phase 14.9.2-B] J9: origin core approach. endgame final.'
+  - zoneId: J10
+    column: J
+    row: 10
+    regionKey: OriginCore
+    biomeKey: DeepTrench
+    narrativePhase: 4
+    terrainMood: 14
+    riskTier: 4
+    contentDensity: 4
+    primaryPurpose: 8
+    minDepth: -1500
+    maxDepth: -3500
+    baseRiskLevel: 1
+    terrainDescription: "J10: origin core. endgame final. \uC6D0\uC810 \uD575\uC2EC.
+      \uCD5C\uC885 \uBAA9\uC801\uC9C0. \uBAA8\uB4E0 \uC11C\uC0AC\uC758 \uC885\uACB0.
+      NOT EarlySurvival."
+    keyObjects: Origin Core, Ancient Facility, Final Narrative Object, Deep Origin
+      Reactor
+    resourceGroups: OriginCoreArtifacts, AncientRelics, FinalResearchData
+    logOrHint: "\uC6D0\uC810 \uD575\uC2EC \uCD5C\uC885 \uAE30\uB85D, \uACE0\uB300
+      \uC2DC\uC124 \uC791\uB3D9 \uB85C\uADF8, \uBAA8\uB4E0 \uC11C\uC0AC\uC758 \uC885\uACB0"
+    hazards: "\uADF9\uACE0\uC555, \uC6D0\uC810 \uD575\uC2EC \uC555\uB825, \uBC29\uC0AC\uB2A5,
+      \uC2DC\uC57C \uC644\uC804 \uCC28\uB2E8, \uC808\uB300 \uAE08\uC9C0, \uAD6C\uC870\uC801
+      \uBD88\uC548\uC815"
+    narrativeFunction: 'J10: Endgame origin core. Final destination. Conclusion of
+      all narrative. NOT EarlySurvival.'
+    isHub: 0
+    isMajorLandmark: 1
+    intentionallySparse: 0
+    notes: '[Phase 14.9.2-B] J10: origin core. endgame final. NOT EarlySurvival.'
