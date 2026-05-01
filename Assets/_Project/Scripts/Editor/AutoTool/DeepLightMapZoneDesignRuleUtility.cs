@@ -234,11 +234,15 @@ namespace Project.Editor.AutoTool
                 }
             }
 
-            // 5. A1~C10 rule exists
+            // 5. A1~J10 rule exists (Phase 14.9 full) or A1~C10 (Phase 14.1 legacy)
             if (ruleDb != null)
             {
                 bool allPresent = true;
-                string[] columns = { "A", "B", "C" };
+                int ruleCount = ruleDb.Rules?.Count ?? 0;
+                char[] columns = (ruleCount >= 100)
+                    ? new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' }
+                    : new char[] { 'A', 'B', 'C' };
+
                 for (int c = 0; c < columns.Length; c++)
                 {
                     for (int r = 1; r <= 10; r++)
@@ -254,7 +258,7 @@ namespace Project.Editor.AutoTool
                 }
                 if (allPresent)
                 {
-                    log.AppendLine("  [PASS] All A1~C10 rules exist");
+                    log.AppendLine($"  [PASS] All {new string(columns)} rules exist");
                     passCount++;
                 }
             }

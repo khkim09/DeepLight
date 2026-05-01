@@ -239,6 +239,163 @@ namespace Project.Editor.AutoTool
         }
 
         /// <summary>
+        /// Phase 14.8.1: 지정된 zoneId 목록에 대해서만 Terrain Patch를 재구축한다.
+        /// 기존 A1~C10 전용 RebuildZoneTerrainPatches와 독립적으로 동작하며,
+        /// prototype target zone 등 특정 zone만 처리할 때 사용한다.
+        /// 중복 생성 방지를 위해 기존 TerrainPatch_XX를 DestroyImmediate 후 재생성한다.
+        /// </summary>
+        public static void RebuildZoneTerrainPatchesForZoneIds(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context,
+            string[] zoneIds,
+            string phaseLabel)
+        {
+            if (settings == null) { Debug.LogError("[ZoneTerrainPatch] Settings is null!"); return; }
+            if (settings.WorldMapConfig == null) { Debug.LogError("[ZoneTerrainPatch] WorldMapConfig is null!"); return; }
+            if (settings.ZoneTerrainPlanDatabase == null) { Debug.LogError("[ZoneTerrainPatch] ZoneTerrainPlanDatabase is null!"); return; }
+            if (zoneIds == null || zoneIds.Length == 0) { Debug.LogWarning("[ZoneTerrainPatch] zoneIds is empty. Nothing to rebuild."); return; }
+
+            var config = settings.WorldMapConfig;
+            var planDb = settings.ZoneTerrainPlanDatabase;
+            float zoneSize = config.ZoneSize;
+            int resolution = Mathf.Max(2, settings.TerrainPatchResolution);
+            int vertexCountPerAxis = resolution + 1;
+
+            GameObject generatedRoot = DeepLightMapAutoBuilder.FindGeneratedRoot(settings, context);
+            if (generatedRoot == null) { Debug.LogError("[ZoneTerrainPatch] GeneratedWorldRoot not found."); return; }
+
+            Transform zoneRootsTransform = generatedRoot.transform.Find(settings.ZoneRootParentName);
+            if (zoneRootsTransform == null) { Debug.LogError($"[ZoneTerrainPatch] '{settings.ZoneRootParentName}' not found."); return; }
+
+            Material patchMaterial = ResolveTerrainPatchMaterial(settings);
+
+            var log = new StringBuilder();
+            log.AppendLine($"===== {phaseLabel}: Rebuild Terrain Patches for {zoneIds.Length} zones =====");
+            log.AppendLine($"Resolution: {resolution}x{resolution}");
+
+            int totalPatches = 0;
+            int skippedPatches = 0;
+
+            foreach (string zoneIdStr in zoneIds)
+            {
+                string zoneRootName = $"ZoneRoot_{zoneIdStr}";
+                Transform zoneRootTransform = zoneRootsTransform.Find(zoneRootName);
+                if (zoneRootTransform == null)
+                {
+                    LogIfVerbose(settings, $"[SKIP] {zoneRootName} not found.");
+                    skippedPatches++;
+                    continue;
+                }
+
+                WorldMapZoneTerrainPlan plan = planDb.GetPlan(zoneIdStr);
+                if (plan == null)
+                {
+                    LogIfVerbose(settings, $"[SKIP] No terrain plan for {zoneIdStr}.");
+                    skippedPatches++;
+                    continue;
+                }
+
+                Transform geometryTransform = zoneRootTransform.Find(GeometryRootName);
+                if (geometryTransform == null)
+                {
+                    LogIfVerbose(settings, $"[SKIP] {zoneRootName}/Geometry not found.");
+                    skippedPatches++;
+                    continue;
+                }
+
+                // TerrainPatch 부모 찾기/생성
+                Transform terrainPatchParent = geometryTransform.Find(TerrainPatchRootName);
+                if (terrainPatchParent == null)
+                {
+                    GameObject tpParent = new GameObject(TerrainPatchRootName);
+                    tpParent.transform.SetParent(geometryTransform);
+                    tpParent.transform.localPosition = Vector3.zero;
+                    tpParent.transform.localRotation = Quaternion.identity;
+                    tpParent.transform.localScale = Vector3.one;
+                    terrainPatchParent = tpParent.transform;
+                    Undo.RegisterCreatedObjectUndo(tpParent, $"Create {TerrainPatchRootName} for {zoneIdStr}");
+                }
+
+                // 기존 TerrainPatch_XX 제거 (중복 방지)
+                string patchName = $"TerrainPatch_{zoneIdStr}";
+                Transform existingPatch = terrainPatchParent.Find(patchName);
+                if (existingPatch != null)
+                {
+                    Undo.DestroyObjectImmediate(existingPatch.gameObject);
+                }
+
+                // ZoneCoordinate 계산 (zoneId 문자열에서 column/row 추출)
+                char colChar = zoneIdStr[0];
+                int rowNum = int.Parse(zoneIdStr.Substring(1));
+                int colIndex = colChar - 'A';
+                int rowIndex = rowNum - 1;
+                ZoneCoordinate coord = new ZoneCoordinate(colIndex, rowIndex);
+                Vector3 zoneCenter = coord.GetZoneCenterWorldPosition(config);
+
+                // Mesh 생성
+                Mesh patchMesh = GenerateTerrainPatchMesh(plan, zoneCenter, zoneSize, resolution, settings);
+
+                // TerrainPatch GameObject 생성
+                GameObject patchGo = new GameObject(patchName);
+                patchGo.transform.SetParent(terrainPatchParent);
+                patchGo.transform.localPosition = Vector3.zero;
+                patchGo.transform.localRotation = Quaternion.identity;
+                patchGo.transform.localScale = Vector3.one;
+                Undo.RegisterCreatedObjectUndo(patchGo, $"Create {patchName}");
+
+                MeshFilter mf = patchGo.AddComponent<MeshFilter>();
+                mf.sharedMesh = patchMesh;
+
+                MeshRenderer mr = patchGo.AddComponent<MeshRenderer>();
+                if (patchMaterial != null && IsForbiddenTerrainPatchMaterial(patchMaterial))
+                {
+                    Material safeMaterial = ResolveTerrainPatchMaterial(settings);
+                    mr.sharedMaterial = safeMaterial;
+                }
+                else
+                {
+                    mr.sharedMaterial = patchMaterial;
+                }
+
+                bool needsCollider = settings.CreateTerrainPatchMeshCollider || plan.requiresSeafloorCollider;
+                if (needsCollider)
+                {
+                    MeshCollider mc = patchGo.AddComponent<MeshCollider>();
+                    mc.sharedMesh = patchMesh;
+                    mc.convex = false;
+                    mc.isTrigger = false;
+                }
+
+                if (settings.HideLegacySeafloorPlaceholdersWhenPatchExists)
+                {
+                    DisableLegacySeafloorPlaceholdersRecursive(zoneRootTransform);
+                }
+
+                totalPatches++;
+                LogIfVerbose(settings, $"[OK] {patchName} created. Center: {zoneCenter}, Vertices: {patchMesh.vertexCount}");
+            }
+
+            log.AppendLine($"Total patches created: {totalPatches}, Skipped: {skippedPatches}");
+
+            // Phase 14.5 interior detail (prototype zones only)
+            if (totalPatches > 0 && settings.CreateZoneTerrainPatchInteriorDetail)
+            {
+                log.AppendLine($"===== {phaseLabel}: Applying Interior Detail Deformation =====");
+                ApplyInteriorDetailDeformation(settings, zoneRootsTransform, config, planDb, resolution);
+                log.AppendLine($"===== {phaseLabel}: Interior Detail Complete =====");
+            }
+
+            log.AppendLine($"===== {phaseLabel}: Rebuild Complete =====");
+            Debug.Log(log.ToString());
+
+            // Seam stabilization (prototype zones only)
+            if (totalPatches > 0)
+            {
+                StabilizeAllPatchSeams(settings, zoneRootsTransform, config, planDb, resolution);
+            }
+        }
+
+        /// <summary>
         /// Zone Terrain Patches의 유효성을 검사한다.
         /// 30+ 항목을 검사하고 Console에 결과를 출력한다.
         /// Phase 14.4.2: Seafloor placeholder 30/30 검증, Row seam delta 검증 추가.

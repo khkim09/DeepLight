@@ -313,6 +313,116 @@ namespace Project.Editor.AutoTool
         }
 
         /// <summary>
+        /// Phase 14.8.1: 지정된 zoneId 목록에 대해서만 Content Placeholder를 재구축한다.
+        /// 기존 A1~C10 전용 RebuildZoneContentPlaceholders와 독립적으로 동작하며,
+        /// prototype target zone 등 특정 zone만 처리할 때 사용한다.
+        /// 중복 생성 방지를 위해 기존 Content root를 DestroyImmediate 후 재생성한다.
+        /// </summary>
+        public static void RebuildZoneContentPlaceholdersForZoneIds(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context,
+            string[] zoneIds,
+            string phaseLabel)
+        {
+            if (settings == null) { Debug.LogError("[ZoneContentPlaceholder] Settings is null!"); return; }
+            if (settings.WorldMapConfig == null) { Debug.LogError("[ZoneContentPlaceholder] WorldMapConfig is null!"); return; }
+            if (settings.ZoneDesignDatabase == null) { Debug.LogError("[ZoneContentPlaceholder] ZoneDesignDatabase is null!"); return; }
+            if (settings.ZoneDesignRuleDatabase == null) { Debug.LogError("[ZoneContentPlaceholder] ZoneDesignRuleDatabase is null!"); return; }
+            if (settings.ZoneTerrainPlanDatabase == null) { Debug.LogError("[ZoneContentPlaceholder] ZoneTerrainPlanDatabase is null!"); return; }
+            if (zoneIds == null || zoneIds.Length == 0) { Debug.LogWarning("[ZoneContentPlaceholder] zoneIds is empty. Nothing to rebuild."); return; }
+
+            ClearMaterialCache();
+
+            var config = settings.WorldMapConfig;
+            var designDb = settings.ZoneDesignDatabase;
+            var ruleDb = settings.ZoneDesignRuleDatabase;
+            var planDb = settings.ZoneTerrainPlanDatabase;
+
+            GameObject generatedRoot = DeepLightMapAutoBuilder.FindGeneratedRoot(settings, context);
+            if (generatedRoot == null) { Debug.LogError("[ZoneContentPlaceholder] GeneratedWorldRoot not found."); return; }
+
+            Transform zoneRootsTransform = generatedRoot.transform.Find(settings.ZoneRootParentName);
+            if (zoneRootsTransform == null) { Debug.LogError("[ZoneContentPlaceholder] ZoneRoots not found."); return; }
+
+            var log = new StringBuilder();
+            log.AppendLine($"===== {phaseLabel}: Rebuild Content Placeholders for {zoneIds.Length} zones =====");
+            log.AppendLine($"MaxResourceMarkers: {settings.MaxResourceMarkersPerZone}");
+            log.AppendLine($"MaxHazardMarkers: {settings.MaxHazardMarkersPerZone}");
+            log.AppendLine($"MaxLandmarkMarkers: {settings.MaxLandmarkMarkersPerZone}");
+            log.AppendLine($"VisibleDebugMarkers: {settings.CreateVisibleContentDebugMarkers}");
+
+            int totalZonesProcessed = 0;
+            int totalResourceMarkers = 0, totalHazardMarkers = 0, totalLandmarkMarkers = 0, totalNarrativeMarkers = 0, totalRouteMarkers = 0;
+
+            foreach (string zoneIdStr in zoneIds)
+            {
+                string zoneRootName = $"ZoneRoot_{zoneIdStr}";
+                Transform zoneRootTransform = zoneRootsTransform.Find(zoneRootName);
+                if (zoneRootTransform == null) { LogIfVerbose(settings, $"[SKIP] {zoneRootName} not found."); continue; }
+
+                WorldMapZoneDesignEntry entry = designDb.GetEntry(zoneIdStr);
+                if (entry == null) { LogIfVerbose(settings, $"[SKIP] No design entry for {zoneIdStr}."); continue; }
+
+                WorldMapZoneDesignRule rule = ruleDb.GetRule(zoneIdStr);
+                if (rule == null) { LogIfVerbose(settings, $"[SKIP] No design rule for {zoneIdStr}."); continue; }
+
+                WorldMapZoneTerrainPlan plan = planDb.GetPlan(zoneIdStr);
+                if (plan == null) { LogIfVerbose(settings, $"[SKIP] No terrain plan for {zoneIdStr}."); continue; }
+
+                // Parse zone coordinate
+                char colChar = zoneIdStr[0];
+                int rowNum = int.Parse(zoneIdStr.Substring(1));
+                int colIndex = colChar - 'A';
+                int rowIndex = rowNum - 1;
+                ZoneCoordinate coord = new ZoneCoordinate(colIndex, rowIndex);
+                Vector3 zoneCenter = coord.GetZoneCenterWorldPosition(config);
+                var (zoneMin, zoneMax) = coord.GetZoneBounds(config);
+                Bounds? terrainPatchBounds = FindTerrainPatchBounds(zoneRootTransform, zoneIdStr);
+
+                // Destroy existing Content root (중복 방지)
+                Transform existingContent = zoneRootTransform.Find(ContentRootName);
+                if (existingContent != null)
+                {
+                    GameObject.DestroyImmediate(existingContent.gameObject);
+                }
+
+                Transform contentTransform = CreateOrReplaceContentRoot(zoneRootTransform, zoneIdStr);
+                GameObject resourceRoot = GetOrCreateChild(contentTransform.gameObject, ResourceSpawnsName);
+                GameObject hazardRoot = GetOrCreateChild(contentTransform.gameObject, HazardSpawnsName);
+                GameObject landmarkRoot = GetOrCreateChild(contentTransform.gameObject, LandmarkSpawnsName);
+                GameObject narrativeRoot = GetOrCreateChild(contentTransform.gameObject, NarrativeSpawnsName);
+                GameObject routeRoot = GetOrCreateChild(contentTransform.gameObject, RouteMarkersName);
+                GameObject debugRoot = GetOrCreateChild(contentTransform.gameObject, DebugMarkersName);
+
+                CreateResourceMarkers(settings, resourceRoot, zoneRootTransform, zoneIdStr, entry, rule, plan, zoneCenter, zoneMin, zoneMax, terrainPatchBounds, out int rmc);
+                CreateHazardMarkers(settings, hazardRoot, zoneRootTransform, zoneIdStr, entry, rule, plan, zoneCenter, zoneMin, zoneMax, terrainPatchBounds, out int hmc);
+                CreateLandmarkMarkers(settings, landmarkRoot, zoneRootTransform, zoneIdStr, entry, rule, plan, zoneCenter, zoneMin, zoneMax, terrainPatchBounds, out int lmc);
+                CreateNarrativeMarkers(settings, narrativeRoot, zoneRootTransform, zoneIdStr, entry, rule, plan, zoneCenter, zoneMin, zoneMax, terrainPatchBounds, out int nmc);
+                CreateRouteMarkers(settings, routeRoot, zoneRootTransform, zoneIdStr, entry, rule, plan, zoneCenter, zoneMin, zoneMax, terrainPatchBounds, out int rtc);
+
+                totalResourceMarkers += rmc; totalHazardMarkers += hmc; totalLandmarkMarkers += lmc; totalNarrativeMarkers += nmc; totalRouteMarkers += rtc;
+                totalZonesProcessed++;
+                if (settings.LogZoneContentPlaceholderVerbose)
+                    log.AppendLine($"  [OK] {zoneIdStr}: R={rmc} H={hmc} L={lmc} N={nmc} Rt={rtc}");
+            }
+
+            log.AppendLine($"Zones processed: {totalZonesProcessed}");
+            log.AppendLine($"Total markers: Resource={totalResourceMarkers} Hazard={totalHazardMarkers} Landmark={totalLandmarkMarkers} Narrative={totalNarrativeMarkers} Route={totalRouteMarkers}");
+
+            // Attach/rebuild Registry on GeneratedWorldRoot
+            AttachContentRegistry(generatedRoot);
+            WorldMapZoneContentRegistry registry = generatedRoot.GetComponent<WorldMapZoneContentRegistry>();
+            if (registry != null)
+            {
+                registry.RebuildCache();
+                log.AppendLine($"WorldMapZoneContentRegistry cache rebuilt. Marker count: {registry.CachedMarkerCount}");
+            }
+
+            log.AppendLine($"===== {phaseLabel}: Rebuild Complete =====");
+            Debug.Log(log.ToString());
+        }
+
+        /// <summary>
         /// Phase 14.7: GeneratedWorldRoot에 WorldMapZoneContentRegistry를 부착한다.
         /// 이미 존재하면 재사용하고, 없으면 새로 추가한다.
         /// </summary>

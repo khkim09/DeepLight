@@ -234,11 +234,25 @@ namespace Project.Data.World
         [SerializeField, Tooltip("Zone 당 최대 Landmark Marker 개수")]
         private int maxLandmarkMarkersPerZone = 2;
 
+        [Header("Phase 14.8: Prototype Region Rebuild")]
+        [SerializeField, Tooltip("Prototype Region 생성 여부 (Phase 14.8)")]
+        private bool createPrototypeRegions = true;
+        [SerializeField, Tooltip("Prototype Region 생성 후 검증 실행 여부")]
+        private bool validatePrototypeRegionsAfterGenerate = true;
+        [SerializeField, Tooltip("Prototype Region 상세 로그 출력 여부")]
+        private bool logPrototypeRegionVerbose = true;
+
+        [Header("Phase 14.9: Final A~J Zone Data Migration")]
+        [SerializeField, Tooltip("A1~J10 전체 100개 Zone Design Data 생성 여부 (Phase 14.9)")]
+        private bool createFinalZoneDataMigration = true;
+        [SerializeField, Tooltip("A1~J10 전체 데이터 생성 후 검증 실행 여부")]
+        private bool validateFinalZoneDataMigrationAfterGenerate = true;
+        [SerializeField, Tooltip("Phase 14.9 상세 로그 출력 여부")]
+        private bool logFinalZoneDataMigrationVerbose = false;
+
         [Header("Logging")]
-
-
-
         [SerializeField] private bool logVerbose = true; // 상세 로그 출력 여부
+
 
 
         // ===== Public Getters =====
@@ -559,9 +573,31 @@ namespace Project.Data.World
         /// <summary>Zone 당 최대 Landmark Marker 개수</summary>
         public int MaxLandmarkMarkersPerZone => maxLandmarkMarkersPerZone;
 
-        /// <summary>상세 로그 출력 여부</summary>
+        // ===== Phase 14.8 Public Getters =====
 
+        /// <summary>Prototype Region 생성 여부 (Phase 14.8)</summary>
+        public bool CreatePrototypeRegions => createPrototypeRegions;
+
+        /// <summary>Prototype Region 생성 후 검증 실행 여부</summary>
+        public bool ValidatePrototypeRegionsAfterGenerate => validatePrototypeRegionsAfterGenerate;
+
+        /// <summary>Prototype Region 상세 로그 출력 여부</summary>
+        public bool LogPrototypeRegionVerbose => logPrototypeRegionVerbose;
+
+        // ===== Phase 14.9 Public Getters =====
+
+        /// <summary>A1~J10 전체 100개 Zone Design Data 생성 여부 (Phase 14.9)</summary>
+        public bool CreateFinalZoneDataMigration => createFinalZoneDataMigration;
+
+        /// <summary>A1~J10 전체 데이터 생성 후 검증 실행 여부</summary>
+        public bool ValidateFinalZoneDataMigrationAfterGenerate => validateFinalZoneDataMigrationAfterGenerate;
+
+        /// <summary>Phase 14.9 상세 로그 출력 여부</summary>
+        public bool LogFinalZoneDataMigrationVerbose => logFinalZoneDataMigrationVerbose;
+
+        /// <summary>상세 로그 출력 여부</summary>
         public bool LogVerbose => logVerbose;
+
 
 
 

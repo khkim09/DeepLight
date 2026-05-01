@@ -532,6 +532,26 @@ namespace Project.Editor.AutoTool
                 LogIfVerbose(settings, "[SKIP] createZoneTerrainPlans is false. Skipping Phase 14.3.");
             }
 
+            // 18.5. Phase 14.9: Final A~J Zone Data Migration (settings.CreateFinalZoneDataMigration이 true일 때만)
+            // Phase 14.9는 Phase 14.1~14.3 유틸리티 내부가 100개 데이터를 만들도록 확장하고,
+            // AutoBuilder 로그에 "Phase 14.9: Final A~J Zone Data Migration"을 추가한다.
+            // Phase 14.9는 Phase 14.3 이후, Phase 14.4 TerrainPatch generation 이전에 실행된다.
+            if (settings.CreateFinalZoneDataMigration)
+            {
+                Debug.Log("[MapAutoBuilder] === Phase 14.9: Final A~J Zone Data Migration ===");
+                ExecuteFinalZoneDataMigration(settings, context);
+
+                if (settings.ValidateFinalZoneDataMigrationAfterGenerate)
+                {
+                    Debug.Log("[MapAutoBuilder] === Phase 14.9: Validating Final A~J Zone Data Migration ===");
+                    ValidateFinalZoneDataMigration(settings, context);
+                }
+            }
+            else
+            {
+                LogIfVerbose(settings, "[SKIP] createFinalZoneDataMigration is false. Skipping Phase 14.9.");
+            }
+
             // 19. Phase 14.4 + 14.5: Zone Terrain Plan Mesh Patch Generation + Interior Detail
             // (settings.CreateZoneTerrainPatches이 true일 때만)
             // Phase 14.5 interior detail deformation은 RebuildZoneTerrainPatches 내부에서
@@ -569,12 +589,66 @@ namespace Project.Editor.AutoTool
                 LogIfVerbose(settings, "[SKIP] createZoneContentPlaceholders is false. Skipping Phase 14.6/14.7.");
             }
 
-            // 21. 생성 완료 후 Selection 설정
+            // 21. Phase 14.8: Prototype Region Rebuild (settings.CreatePrototypeRegions이 true일 때만)
+            if (settings.CreatePrototypeRegions)
+            {
+                Debug.Log("[MapAutoBuilder] === Phase 14.8: Rebuilding Prototype Regions ===");
+                RebuildPrototypeRegions(settings, context);
+
+                if (settings.ValidatePrototypeRegionsAfterGenerate)
+                {
+                    Debug.Log("[MapAutoBuilder] === Phase 14.8: Validating Prototype Regions ===");
+                    ValidatePrototypeRegions(settings, context);
+                }
+            }
+            else
+            {
+                LogIfVerbose(settings, "[SKIP] createPrototypeRegions is false. Skipping Phase 14.8.");
+            }
+
+            // 22. 생성 완료 후 Selection 설정
             Selection.activeGameObject = generatedRoot;
             EditorGUIUtility.PingObject(generatedRoot);
 
-            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.7) COMPLETE =====");
+            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.8) COMPLETE =====");
 
+        }
+        // ======================================================================
+        //  Phase 14.8: Prototype Region Rebuild
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.8: Prototype Region 데이터를 재구축한다.
+        /// Hub Basin / Harbor Debris Belt / Western Wreck Field 3개 권역의
+        /// DesignEntry / DesignRule / TerrainPlan / TerrainPatch / ContentPlaceholder / Registry를
+        /// 최신 기획 기준으로 override한다.
+        /// DeepLightMapPrototypeRegionUtility에 위임한다.
+        /// </summary>
+        public static void RebuildPrototypeRegions(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild prototype regions.");
+                return;
+            }
+
+            DeepLightMapPrototypeRegionUtility.RebuildPrototypeRegions(settings, context);
+        }
+
+        /// <summary>
+        /// Phase 14.8: Prototype Region 유효성을 검사한다.
+        /// 20개 이상의 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN]을 출력한다.
+        /// DeepLightMapPrototypeRegionUtility에 위임한다.
+        /// </summary>
+        public static void ValidatePrototypeRegions(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate prototype regions.");
+                return;
+            }
+
+            DeepLightMapPrototypeRegionUtility.ValidatePrototypeRegions(settings, context);
         }
 
 
@@ -1382,6 +1456,54 @@ namespace Project.Editor.AutoTool
             }
 
             DeepLightMapZoneContentPlaceholderUtility.ValidateZoneContentPlaceholders(settings, context);
+        }
+
+        // ======================================================================
+        //  Phase 14.9: Final A~J Zone Data Migration
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.9: A1~J10 전체 Zone Design Data Migration을 실행한다.
+        /// Phase 14.1~14.3 유틸리티를 순차 호출하여 100개 데이터를 생성한다.
+        /// </summary>
+        public static void ExecuteFinalZoneDataMigration(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot execute final zone data migration.");
+                return;
+            }
+
+            Debug.Log("===== Phase 14.9: Final A~J Zone Data Migration =====");
+            Debug.Log("[Phase 14.9] Step 1/3: Rebuilding Zone Design Database (A1~J10, 100 entries)...");
+            RebuildZoneDesignDatabase(settings, context);
+
+            Debug.Log("[Phase 14.9] Step 2/3: Rebuilding Zone Design Rules (100 rules)...");
+            RebuildZoneDesignRules(settings, context);
+
+            Debug.Log("[Phase 14.9] Step 3/3: Rebuilding Zone Terrain Plans (100 plans)...");
+            RebuildZoneTerrainPlans(settings, context);
+
+            Debug.Log("[Phase 14.9] Final A~J Zone Data Migration complete. 100 entries / 100 rules / 100 plans created.");
+        }
+
+        /// <summary>
+        /// Phase 14.9: A1~J10 전체 Zone Design Data Migration 결과를 검증한다.
+        /// Phase 14.1~14.3 검증을 순차 호출한다.
+        /// </summary>
+        public static void ValidateFinalZoneDataMigration(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate final zone data migration.");
+                return;
+            }
+
+            Debug.Log("===== Phase 14.9: Validate Final A~J Zone Data Migration =====");
+            ValidateZoneDesignDatabase(settings, context);
+            ValidateZoneDesignRules(settings, context);
+            ValidateZoneTerrainPlans(settings, context);
+            Debug.Log("===== Phase 14.9 Validation complete =====");
         }
 
         /// <summary>

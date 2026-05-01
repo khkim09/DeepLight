@@ -96,10 +96,7 @@ namespace Project.Editor.AutoTool
         {
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("DeepLight Map Auto Builder", _titleStyle);
-            EditorGUILayout.LabelField("Phase 3~14.7: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
-
-
-
+            EditorGUILayout.LabelField("Phase 3~14.9: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
 
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
@@ -349,13 +346,64 @@ namespace Project.Editor.AutoTool
 
             EditorGUILayout.Space(2);
 
-            // Generate Full Scenario Map (Phase 3~11 통합)
+            // Generate Full Scenario Map (Phase 3~14.8 통합)
             GUI.color = new Color(0.3f, 0.8f, 0.3f);
             if (GUILayout.Button("Generate Full Scenario Map", GUILayout.Height(35)))
             {
                 ExecuteGenerate();
             }
             GUI.color = Color.white;
+
+            EditorGUILayout.Space(5);
+
+            // Phase 14.8: Rebuild Prototype Regions Only
+            GUI.color = new Color(0.2f, 0.6f, 0.9f);
+            GUI.enabled = _settings != null;
+            if (GUILayout.Button("Rebuild Prototype Regions Only", GUILayout.Height(30)))
+            {
+                ExecuteRebuildPrototypeRegions();
+            }
+            GUI.color = Color.white;
+
+            EditorGUILayout.Space(2);
+
+            // Phase 14.8: Validate Prototype Regions Only
+            GUI.enabled = _settings != null;
+            if (GUILayout.Button("Validate Prototype Regions Only", GUILayout.Height(30)))
+            {
+                ExecuteValidatePrototypeRegions();
+            }
+            GUI.enabled = true;
+
+            EditorGUILayout.Space(5);
+
+            // Phase 14.9: Execute Final A~J Zone Data Migration
+            GUI.color = new Color(0.6f, 0.4f, 0.8f);
+            GUI.enabled = _settings != null;
+            if (GUILayout.Button("Phase 14.9: Execute Final A~J Zone Data Migration", GUILayout.Height(30)))
+            {
+                ExecuteFinalZoneDataMigration();
+            }
+            GUI.color = Color.white;
+
+            EditorGUILayout.Space(2);
+
+            // Phase 14.9: Validate Final A~J Zone Data Migration
+            GUI.enabled = _settings != null;
+            if (GUILayout.Button("Phase 14.9: Validate Final A~J Zone Data Migration", GUILayout.Height(30)))
+            {
+                ExecuteValidateFinalZoneDataMigration();
+            }
+
+            EditorGUILayout.Space(2);
+
+            // Phase 14.9: Log Migration TODO
+            GUI.enabled = _settings != null;
+            if (GUILayout.Button("Phase 14.9: Log Migration TODO", GUILayout.Height(30)))
+            {
+                ExecuteLogMigrationTodo();
+            }
+            GUI.enabled = true;
 
             EditorGUILayout.Space(5);
 
@@ -429,7 +477,7 @@ namespace Project.Editor.AutoTool
                 "7. Stylized Water 내부 property 이름을 찾을 수 없는 경우 water level source 경고는 남을 수 있음",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "8. Generate Full Scenario Map 한 번으로 Phase 3~13 전체 생성/검증 완료",
+                "8. Generate Full Scenario Map 한 번으로 Phase 3~14.8 전체 생성/검증 완료",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
                 "9. Phase 6: ZoneResolver + DepthSampling 검증 자동 실행",
@@ -476,11 +524,13 @@ namespace Project.Editor.AutoTool
             EditorGUILayout.LabelField(
                 "23. Phase 14.7: Zone Content Marker Metadata Binding + Runtime Query Foundation - WorldMapZoneContentMarker/Registry 부착 + 검증",
                 EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "24. Phase 14.8: Prototype Region Rebuild - Hub Basin/Harbor Debris Belt/Western Wreck Field 3개 권역 최신 기획 기준 override + 검증",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "25. Phase 14.9: Final A~J Zone Data Migration - A1~J10 전체 100개 DesignEntry/DesignRule/TerrainPlan 확장 + 검증",
+                EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.EndVertical();
-
-
-
-
         }
 
         // ===== 실행 메서드 =====
@@ -585,6 +635,34 @@ namespace Project.Editor.AutoTool
             }
 
             DeepLightMapAutoBuilder.GenerateFullScenarioMap(_settings, _context);
+        }
+
+        /// <summary>
+        /// Phase 14.8: Rebuild Prototype Regions Only 실행
+        /// </summary>
+        private void ExecuteRebuildPrototypeRegions()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.RebuildPrototypeRegions(_settings, _context);
+        }
+
+        /// <summary>
+        /// Phase 14.8: Validate Prototype Regions Only 실행
+        /// </summary>
+        private void ExecuteValidatePrototypeRegions()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.ValidatePrototypeRegions(_settings, _context);
         }
 
         /// <summary>
@@ -895,6 +973,87 @@ namespace Project.Editor.AutoTool
             }
 
             DeepLightMapAutoBuilder.ValidateVisualAdapterBinding(_settings, _context);
+        }
+
+        /// <summary>
+        /// Phase 14.9: A1~J10 전체 Zone Design Data Migration을 실행한다.
+        /// Phase 14.1~14.3 유틸리티를 순차 호출하여 100개 데이터를 생성한다.
+        /// </summary>
+        private void ExecuteFinalZoneDataMigration()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            Debug.Log("===== Phase 14.9: Final A~J Zone Data Migration =====");
+            Debug.Log("[Phase 14.9] Step 1/3: Rebuilding Zone Design Database (A1~J10, 100 entries)...");
+            DeepLightMapAutoBuilder.RebuildZoneDesignDatabase(_settings, _context);
+
+            Debug.Log("[Phase 14.9] Step 2/3: Rebuilding Zone Design Rules (100 rules)...");
+            DeepLightMapAutoBuilder.RebuildZoneDesignRules(_settings, _context);
+
+            Debug.Log("[Phase 14.9] Step 3/3: Rebuilding Zone Terrain Plans (100 plans)...");
+            DeepLightMapAutoBuilder.RebuildZoneTerrainPlans(_settings, _context);
+
+            Debug.Log("[Phase 14.9] Final A~J Zone Data Migration complete. 100 entries / 100 rules / 100 plans created.");
+        }
+
+        /// <summary>
+        /// Phase 14.9: A1~J10 전체 Zone Design Data Migration 결과를 검증한다.
+        /// Phase 14.1~14.3 검증을 순차 호출한다.
+        /// </summary>
+        private void ExecuteValidateFinalZoneDataMigration()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            Debug.Log("===== Phase 14.9: Validate Final A~J Zone Data Migration =====");
+            DeepLightMapAutoBuilder.ValidateZoneDesignDatabase(_settings, _context);
+            DeepLightMapAutoBuilder.ValidateZoneDesignRules(_settings, _context);
+            DeepLightMapAutoBuilder.ValidateZoneTerrainPlans(_settings, _context);
+            Debug.Log("===== Phase 14.9 Validation complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.9: Migration TODO 로그를 출력한다.
+        /// 실제 기획 데이터가 없는 D~J column에 대한 안내를 제공한다.
+        /// </summary>
+        private void ExecuteLogMigrationTodo()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            var log = new System.Text.StringBuilder();
+            log.AppendLine("===== Phase 14.9: TODO - Remaining Data Population =====");
+            log.AppendLine();
+            log.AppendLine("[TODO] The following design reference files were NOT found in the repository:");
+            log.AppendLine("  - DeepLight_Final_Design.md");
+            log.AppendLine("  - DeepLight_Final_Scenario.md");
+            log.AppendLine("  - deeplight_map_overview_final_v1.md");
+            log.AppendLine("  - deeplight_zone_detail_final_v1.md");
+            log.AppendLine();
+            log.AppendLine("[TODO] D~J column entries were created as TODO placeholders.");
+            log.AppendLine("  These MUST be updated with actual design data when the reference files become available.");
+            log.AppendLine();
+            log.AppendLine("[TODO] Phase 14.10: TerrainPatch/Content actual scene generation for A~J full expansion");
+            log.AppendLine("[TODO] Phase 21: High-quality terrain erosion/domain warp/real seabed pass");
+            log.AppendLine("[TODO] Actual prefab binding (currently using Debug marker/metadata based structure)");
+            log.AppendLine();
+            log.AppendLine("[INFO] A1~C10 existing data is preserved and unchanged.");
+            log.AppendLine("[INFO] Hub/Harbor/Wreck prototype 15 zones are preserved.");
+            log.AppendLine("[INFO] Phase 14.8 prototype override logic is preserved and runs after Phase 14.9.");
+            log.AppendLine();
+            log.AppendLine("===== End of TODO =====");
+
+            Debug.LogWarning(log.ToString());
         }
 
         /// <summary>

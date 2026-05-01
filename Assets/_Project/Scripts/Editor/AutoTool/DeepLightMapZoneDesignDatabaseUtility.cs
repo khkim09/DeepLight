@@ -4,6 +4,8 @@ using UnityEditor;
 using UnityEngine;
 using Project.Data.World;
 using Project.Data.World.Design;
+using Project.Gameplay.World;
+
 
 namespace Project.Editor.AutoTool
 {
@@ -994,17 +996,387 @@ namespace Project.Editor.AutoTool
         }
 
         // ======================================================================
-        //  Validation
+        //  D~J Column Placeholder Entry Creators (Phase 14.9)
+        // ======================================================================
+
+        /// <summary>
+        /// D~J column의 TODO placeholder entry를 생성한다.
+        /// 실제 기획 데이터는 Phase 14.10+에서 채워야 한다.
+        /// </summary>
+        private static WorldMapZoneDesignEntry CreatePlaceholderEntry(string zoneId, string column, int row)
+        {
+            // Hub zone E5/F5/E6/F6은 실제 Hub 데이터로 생성
+            if ((zoneId == "E5" || zoneId == "F5" || zoneId == "E6" || zoneId == "F6"))
+            {
+                return CreateHubEntry(zoneId, column, row);
+            }
+
+            // Harbor prototype zones (E7/F7/E4/F4/G5/G6)은 실제 Harbor 데이터로 생성
+            if (zoneId == "E7" || zoneId == "F7" || zoneId == "E4" || zoneId == "F4" || zoneId == "G5" || zoneId == "G6")
+            {
+                return CreateHarborEntry(zoneId, column, row);
+            }
+
+            // Wreck prototype zones (C4/C5/C6/D5/D6) 중 D5/D6은 실제 Wreck 데이터로 생성
+            if (zoneId == "D5" || zoneId == "D6")
+            {
+                return CreateWreckEntry(zoneId, column, row);
+            }
+
+            // 나머지 D~J zone은 TODO placeholder로 생성
+            return CreateGenericPlaceholderEntry(zoneId, column, row);
+        }
+
+        /// <summary>
+        /// Hub zone entry를 생성한다. (E5/F5/E6/F6)
+        /// </summary>
+        private static WorldMapZoneDesignEntry CreateHubEntry(string zoneId, string column, int row)
+        {
+            return new WorldMapZoneDesignEntry
+            {
+                zoneId = zoneId,
+                column = column,
+                row = row,
+                regionKey = "HubBasin",
+                biomeKey = "OpenWater",
+                narrativePhase = ZoneNarrativePhase.EarlySurvival,
+                terrainMood = ZoneTerrainMood.ShallowSlope,
+                riskTier = ZoneRiskTier.Safe,
+                contentDensity = ZoneContentDensity.Normal,
+                primaryPurpose = ZonePrimaryPurpose.HubSupport,
+                minDepth = -50,
+                maxDepth = -180,
+                baseRiskLevel = 0.05f,
+                terrainDescription = $"[Phase 14.9 Hub] {zoneId}: Hub Basin 중심 구역. 게임 시작 위치.",
+                keyObjects = "Hub 구조물, 안전 지대 표식, 초반 장비",
+                resourceGroups = "basic resources, Battery Cell",
+                logOrHint = "None",
+                hazards = "없음 (안전 지대)",
+                narrativeFunction = "게임의 시작점이자 안전 지대. 플레이어가 탐사를 준비하는 장소.",
+                isHub = true,
+                isMajorLandmark = true,
+                intentionallySparse = false,
+                notes = "[Phase 14.9] Hub zone. Prototype override in Phase 14.8 provides detailed data."
+            };
+        }
+
+        /// <summary>
+        /// Harbor prototype zone entry를 생성한다. (E7/F7/E4/F4/G5/G6)
+        /// </summary>
+        private static WorldMapZoneDesignEntry CreateHarborEntry(string zoneId, string column, int row)
+        {
+            return new WorldMapZoneDesignEntry
+            {
+                zoneId = zoneId,
+                column = column,
+                row = row,
+                regionKey = "HarborDebrisBelt",
+                biomeKey = "ShallowWreck",
+                narrativePhase = ZoneNarrativePhase.EarlySurvival,
+                terrainMood = ZoneTerrainMood.DebrisBuffer,
+                riskTier = ZoneRiskTier.Low,
+                contentDensity = ZoneContentDensity.Normal,
+                primaryPurpose = ZonePrimaryPurpose.ResourceLearning,
+                minDepth = -80,
+                maxDepth = -280,
+                baseRiskLevel = 0.20f,
+                terrainDescription = $"[Phase 14.9 Harbor] {zoneId}: Harbor Debris Belt 구역. 초반 파밍과 탐사 학습.",
+                keyObjects = "부서진 컨테이너, 해저 케이블, 작은 잔해 더미",
+                resourceGroups = "Iron Scrap, Fastener Pack, Battery Cell",
+                logOrHint = "None",
+                hazards = "잔해 장애, 얕은 암반",
+                narrativeFunction = "초반 파밍과 이동 학습을 위한 완충 구역.",
+                isHub = false,
+                isMajorLandmark = false,
+                intentionallySparse = false,
+                notes = "[Phase 14.9] Harbor prototype zone. Phase 14.8 prototype override provides detailed data."
+            };
+        }
+
+        /// <summary>
+        /// Wreck prototype zone entry를 생성한다. (D5/D6)
+        /// </summary>
+        private static WorldMapZoneDesignEntry CreateWreckEntry(string zoneId, string column, int row)
+        {
+            return new WorldMapZoneDesignEntry
+            {
+                zoneId = zoneId,
+                column = column,
+                row = row,
+                regionKey = "WesternWreckField",
+                biomeKey = "ShallowWreck",
+                narrativePhase = ZoneNarrativePhase.TransitionTech,
+                terrainMood = ZoneTerrainMood.WreckFocus,
+                riskTier = ZoneRiskTier.Medium,
+                contentDensity = ZoneContentDensity.Dense,
+                primaryPurpose = ZonePrimaryPurpose.WreckRecovery,
+                minDepth = -120,
+                maxDepth = -450,
+                baseRiskLevel = 0.38f,
+                terrainDescription = $"[Phase 14.9 Wreck] {zoneId}: Western Wreck Field 확장. 폐선과 기술 잔해 밀집.",
+                keyObjects = "대형 폐선 잔해, 기술 장비 파편, 데이터 저장소",
+                resourceGroups = "Steel Plate, Sensor Fragment, Data Chip",
+                logOrHint = "Research trace continues",
+                hazards = "밀집 잔해, 복잡한 동선",
+                narrativeFunction = "기술 회수와 서사 단서가 집중되는 중반 핵심 구역.",
+                isHub = false,
+                isMajorLandmark = true,
+                intentionallySparse = false,
+                notes = "[Phase 14.9] Wreck prototype zone. Phase 14.8 prototype override provides detailed data."
+            };
+        }
+
+        /// <summary>
+        /// D~J column의 일반 TODO placeholder entry를 생성한다.
+        /// 실제 기획 데이터가 확정되면 Phase 14.10+에서 교체해야 한다.
+        /// </summary>
+        private static WorldMapZoneDesignEntry CreateGenericPlaceholderEntry(string zoneId, string column, int row)
+        {
+            // 위치 기반 기본값 설정
+            string regionKey;
+            string biomeKey;
+            ZoneNarrativePhase narrativePhase;
+            ZoneTerrainMood terrainMood;
+            ZoneRiskTier riskTier;
+            ZoneContentDensity contentDensity;
+            ZonePrimaryPurpose primaryPurpose;
+            float minDepth;
+            float maxDepth;
+            float baseRiskLevel;
+            bool isCorner = (zoneId == "A1" || zoneId == "A10" || zoneId == "J1" || zoneId == "J10");
+            bool isBoundary = (row == 1 || row == 10 || column == "A" || column == "J");
+
+            // 코너/외곽 zone은 WarningBoundary/PressureZone, 내부 zone은 RouteBuffer
+            if (isCorner)
+            {
+                regionKey = "OuterBoundary";
+                biomeKey = "OuterSea";
+                narrativePhase = ZoneNarrativePhase.EmptyPressure;
+                terrainMood = ZoneTerrainMood.OuterSeaBoundary;
+                riskTier = ZoneRiskTier.High;
+                contentDensity = ZoneContentDensity.Sparse;
+                primaryPurpose = ZonePrimaryPurpose.WarningBoundary;
+                minDepth = -350;
+                maxDepth = -1100;
+                baseRiskLevel = 0.70f;
+            }
+            else if (isBoundary)
+            {
+                regionKey = "OuterEdge";
+                biomeKey = "OuterSea";
+                narrativePhase = ZoneNarrativePhase.EmptyPressure;
+                terrainMood = ZoneTerrainMood.OuterSeaBoundary;
+                riskTier = ZoneRiskTier.Medium;
+                contentDensity = ZoneContentDensity.Sparse;
+                primaryPurpose = ZonePrimaryPurpose.PressureZone;
+                minDepth = -250;
+                maxDepth = -800;
+                baseRiskLevel = 0.55f;
+            }
+            else
+            {
+                // 내부 zone: column/row 기반 대략적인 특성
+                int colIndex = column[0] - 'A' + 1; // A=1, B=2, ...
+                if (colIndex <= 3)
+                {
+                    // A~C: 서부/초반
+                    regionKey = "WestInner";
+                    biomeKey = "OpenWater";
+                    narrativePhase = ZoneNarrativePhase.EarlySurvival;
+                    terrainMood = ZoneTerrainMood.OpenPlain;
+                    riskTier = ZoneRiskTier.Low;
+                    contentDensity = ZoneContentDensity.Sparse;
+                    primaryPurpose = ZonePrimaryPurpose.RouteBuffer;
+                    minDepth = -100;
+                    maxDepth = -350;
+                    baseRiskLevel = 0.25f;
+                }
+                else if (colIndex <= 6)
+                {
+                    // D~F: 중앙/Hub 주변
+                    regionKey = "CentralRegion";
+                    biomeKey = "OpenWater";
+                    narrativePhase = ZoneNarrativePhase.TransitionTech;
+                    terrainMood = ZoneTerrainMood.ManagedSeabed;
+                    riskTier = ZoneRiskTier.Medium;
+                    contentDensity = ZoneContentDensity.Normal;
+                    primaryPurpose = ZonePrimaryPurpose.RouteBuffer;
+                    minDepth = -150;
+                    maxDepth = -500;
+                    baseRiskLevel = 0.35f;
+                }
+                else
+                {
+                    // G~J: 동부/후반
+                    regionKey = "EastInner";
+                    biomeKey = "OpenWater";
+                    narrativePhase = ZoneNarrativePhase.TransitionTech;
+                    terrainMood = ZoneTerrainMood.ArtificialPassage;
+                    riskTier = ZoneRiskTier.Medium;
+                    contentDensity = ZoneContentDensity.Normal;
+                    primaryPurpose = ZonePrimaryPurpose.TechForeshadow;
+                    minDepth = -200;
+                    maxDepth = -650;
+                    baseRiskLevel = 0.45f;
+                }
+            }
+
+            return new WorldMapZoneDesignEntry
+            {
+                zoneId = zoneId,
+                column = column,
+                row = row,
+                regionKey = regionKey,
+                biomeKey = biomeKey,
+                narrativePhase = narrativePhase,
+                terrainMood = terrainMood,
+                riskTier = riskTier,
+                contentDensity = contentDensity,
+                primaryPurpose = primaryPurpose,
+                minDepth = minDepth,
+                maxDepth = maxDepth,
+                baseRiskLevel = baseRiskLevel,
+                terrainDescription = $"[Phase 14.9 TODO] {zoneId}: {regionKey} - {primaryPurpose}. 실제 기획 데이터로 교체 필요.",
+                keyObjects = "[TODO] Phase 14.10+",
+                resourceGroups = "[TODO] Phase 14.10+",
+                logOrHint = "None",
+                hazards = "[TODO] Phase 14.10+",
+                narrativeFunction = $"[Phase 14.9 TODO] {zoneId}: {regionKey} - {primaryPurpose}. 실제 서사 기능은 Phase 14.10+에서 정의.",
+                isHub = false,
+                isMajorLandmark = false,
+                intentionallySparse = (contentDensity == ZoneContentDensity.Sparse),
+                notes = $"[Phase 14.9 TODO] Placeholder entry for {zoneId}. Replace with actual design data when DeepLight_Final_Design.md becomes available."
+            };
+        }
+
+        // ======================================================================
+        //  Rebuild with A1~J10 Full Expansion (Phase 14.9)
+        // ======================================================================
+
+        /// <summary>
+        /// A1~J10 전체 100개 Zone Design Database를 재구축한다.
+        /// 기존 A1~C10 30개 데이터는 유지하고, D~J column 70개를 추가한다.
+        /// Phase 14.9: Final A~J Zone Data Migration.
+        /// </summary>
+        public static void RebuildFullZoneDesignDatabase(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[ZoneDesignDB] Settings is null! Cannot rebuild full database.");
+                return;
+            }
+
+            Debug.Log("[ZoneDesignDB] ===== Phase 14.9: Rebuilding A1~J10 Full Zone Design Database =====");
+
+            // 1. 기존 A1~C10 entries 생성 (Phase 14.1 로직 재사용)
+            var entries = new List<WorldMapZoneDesignEntry>();
+            entries.AddRange(CreateAllEntries());
+
+            // 2. D~J column entries 추가
+            char[] columns = { 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+            for (int c = 0; c < columns.Length; c++)
+            {
+                for (int r = 1; r <= 10; r++)
+                {
+                    string zoneId = $"{columns[c]}{r}";
+
+                    // A1~C10에서 이미 생성된 zone은 건너뛴다
+                    if (entries.Exists(e => e.zoneId == zoneId))
+                    {
+                        Debug.Log($"[ZoneDesignDB] Zone '{zoneId}' already exists from A1~C10. Skipping placeholder.");
+                        continue;
+                    }
+
+                    WorldMapZoneDesignEntry entry = CreatePlaceholderEntry(zoneId, columns[c].ToString(), r);
+                    entries.Add(entry);
+                }
+            }
+
+            // 3. zoneId 기준 정렬 (A1, A2, ..., J10)
+            entries.Sort((a, b) =>
+            {
+                int colCompare = a.column.CompareTo(b.column);
+                if (colCompare != 0) return colCompare;
+                return a.row.CompareTo(b.row);
+            });
+
+            // 4. Database asset 찾기 또는 생성
+            WorldMapZoneDesignDatabaseSO database = FindOrCreateDatabaseAsset();
+            if (database == null)
+            {
+                Debug.LogError("[ZoneDesignDB] Failed to find or create ZoneDesignDatabase asset.");
+                return;
+            }
+
+            // 5. SerializedObject로 entries 갱신
+            SerializedObject serializedDb = new SerializedObject(database);
+            SerializedProperty entriesProp = serializedDb.FindProperty("entries");
+
+            entriesProp.ClearArray();
+            for (int i = 0; i < entries.Count; i++)
+            {
+                entriesProp.InsertArrayElementAtIndex(i);
+                SerializedProperty element = entriesProp.GetArrayElementAtIndex(i);
+
+                SetStringProperty(element, "zoneId", entries[i].zoneId);
+                SetStringProperty(element, "column", entries[i].column);
+                SetIntProperty(element, "row", entries[i].row);
+                SetStringProperty(element, "regionKey", entries[i].regionKey);
+                SetStringProperty(element, "biomeKey", entries[i].biomeKey);
+                SetEnumProperty(element, "narrativePhase", entries[i].narrativePhase);
+                SetEnumProperty(element, "terrainMood", entries[i].terrainMood);
+                SetEnumProperty(element, "riskTier", entries[i].riskTier);
+                SetEnumProperty(element, "contentDensity", entries[i].contentDensity);
+                SetEnumProperty(element, "primaryPurpose", entries[i].primaryPurpose);
+                SetFloatProperty(element, "minDepth", entries[i].minDepth);
+                SetFloatProperty(element, "maxDepth", entries[i].maxDepth);
+                SetFloatProperty(element, "baseRiskLevel", entries[i].baseRiskLevel);
+                SetStringProperty(element, "terrainDescription", entries[i].terrainDescription);
+                SetStringProperty(element, "keyObjects", entries[i].keyObjects);
+                SetStringProperty(element, "resourceGroups", entries[i].resourceGroups);
+                SetStringProperty(element, "logOrHint", entries[i].logOrHint);
+                SetStringProperty(element, "hazards", entries[i].hazards);
+                SetStringProperty(element, "narrativeFunction", entries[i].narrativeFunction);
+                SetBoolProperty(element, "isHub", entries[i].isHub);
+                SetBoolProperty(element, "isMajorLandmark", entries[i].isMajorLandmark);
+                SetBoolProperty(element, "intentionallySparse", entries[i].intentionallySparse);
+                SetStringProperty(element, "notes", entries[i].notes);
+            }
+
+            serializedDb.ApplyModifiedProperties();
+            EditorUtility.SetDirty(database);
+            AssetDatabase.SaveAssets();
+
+            // 6. SettingsSO에 참조 연결
+            if (settings.ZoneDesignDatabase != database)
+            {
+                SerializedObject serializedSettings = new SerializedObject(settings);
+                SerializedProperty dbProp = serializedSettings.FindProperty("zoneDesignDatabase");
+                if (dbProp != null)
+                {
+                    dbProp.objectReferenceValue = database;
+                    serializedSettings.ApplyModifiedProperties();
+                    EditorUtility.SetDirty(settings);
+                    Debug.Log("[ZoneDesignDB] ZoneDesignDatabase reference linked to SettingsSO.");
+                }
+            }
+
+            Debug.Log($"[ZoneDesignDB] Phase 14.9: Full A1~J10 Zone Design Database rebuild complete. {entries.Count} entries generated.");
+        }
+
+        // ======================================================================
+        //  Validation (Phase 14.9: 100-entry compatible)
         // ======================================================================
 
         /// <summary>
         /// Zone Design Database의 유효성을 검사한다.
-        /// 20개 항목을 검사하고 Console에 결과를 출력한다.
+        /// Phase 14.9: A1~J10 100개 기준으로 검사 항목을 확장한다.
+        /// 기존 A1~C10 30개 검사와 호환된다.
         /// </summary>
         public static void ValidateZoneDesignDatabase(DeepLightMapAutoBuilderSettingsSO settings)
         {
             var log = new StringBuilder();
-            log.AppendLine("===== Phase 14.1: Validate Zone Design Database =====");
+            log.AppendLine("===== Phase 14.1/14.9: Validate Zone Design Database =====");
 
             int passCount = 0;
             int failCount = 0;
@@ -1052,16 +1424,21 @@ namespace Project.Editor.AutoTool
                 failCount++;
             }
 
-            // 3. A1~C10 entries count == 30
+            // 3. entries count: A1~J10 == 100 (Phase 14.9 full) or A1~C10 == 30 (Phase 14.1 legacy)
             int entryCount = database.Entries != null ? database.Entries.Count : 0;
-            if (entryCount == 30)
+            if (entryCount == 100)
             {
-                log.AppendLine($"  [PASS] A1~C10 entries count == {entryCount}.");
+                log.AppendLine($"  [PASS] A1~J10 entries count == {entryCount} (Phase 14.9 full).");
+                passCount++;
+            }
+            else if (entryCount == 30)
+            {
+                log.AppendLine($"  [PASS] A1~C10 entries count == {entryCount} (Phase 14.1 legacy).");
                 passCount++;
             }
             else
             {
-                log.AppendLine($"  [FAIL] A1~C10 entries count == {entryCount}, expected 30!");
+                log.AppendLine($"  [FAIL] entries count == {entryCount}, expected 30 (Phase 14.1) or 100 (Phase 14.9)!");
                 failCount++;
             }
 
@@ -1086,73 +1463,36 @@ namespace Project.Editor.AutoTool
                 }
             }
 
-            // 5. all A column entries exist
+            // 5. all A~J column entries exist (Phase 14.9 full) or A~C (Phase 14.1 legacy)
             if (database.Entries != null)
             {
-                bool allAExist = true;
-                for (int r = 1; r <= 10; r++)
+                bool allColumnsExist = true;
+                char[] columns = (entryCount >= 100)
+                    ? new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' }
+                    : new char[] { 'A', 'B', 'C' };
+
+                for (int c = 0; c < columns.Length; c++)
                 {
-                    string id = $"A{r}";
-                    var entry = database.Entries.Find(e => e.zoneId == id);
-                    if (entry == null)
+                    for (int r = 1; r <= 10; r++)
                     {
-                        log.AppendLine($"  [FAIL] A column entry missing: {id}");
-                        allAExist = false;
-                        failCount++;
+                        string id = $"{columns[c]}{r}";
+                        var entry = database.Entries.Find(e => e.zoneId == id);
+                        if (entry == null)
+                        {
+                            log.AppendLine($"  [FAIL] Column '{columns[c]}' entry missing: {id}");
+                            allColumnsExist = false;
+                            failCount++;
+                        }
                     }
                 }
-                if (allAExist)
+                if (allColumnsExist)
                 {
-                    log.AppendLine("  [PASS] all A column entries exist.");
+                    log.AppendLine($"  [PASS] all {new string(columns)} column entries exist.");
                     passCount++;
                 }
             }
 
-            // 6. all B column entries exist
-            if (database.Entries != null)
-            {
-                bool allBExist = true;
-                for (int r = 1; r <= 10; r++)
-                {
-                    string id = $"B{r}";
-                    var entry = database.Entries.Find(e => e.zoneId == id);
-                    if (entry == null)
-                    {
-                        log.AppendLine($"  [FAIL] B column entry missing: {id}");
-                        allBExist = false;
-                        failCount++;
-                    }
-                }
-                if (allBExist)
-                {
-                    log.AppendLine("  [PASS] all B column entries exist.");
-                    passCount++;
-                }
-            }
-
-            // 7. all C column entries exist
-            if (database.Entries != null)
-            {
-                bool allCExist = true;
-                for (int r = 1; r <= 10; r++)
-                {
-                    string id = $"C{r}";
-                    var entry = database.Entries.Find(e => e.zoneId == id);
-                    if (entry == null)
-                    {
-                        log.AppendLine($"  [FAIL] C column entry missing: {id}");
-                        allCExist = false;
-                        failCount++;
-                    }
-                }
-                if (allCExist)
-                {
-                    log.AppendLine("  [PASS] all C column entries exist.");
-                    passCount++;
-                }
-            }
-
-            // 8. each entry has terrainDescription
+            // 6. each entry has terrainDescription
             if (database.Entries != null)
             {
                 bool allHaveTerrainDesc = true;
@@ -1172,7 +1512,7 @@ namespace Project.Editor.AutoTool
                 }
             }
 
-            // 9. each entry has keyObjects
+            // 7. each entry has keyObjects
             if (database.Entries != null)
             {
                 bool allHaveKeyObjects = true;
@@ -1192,7 +1532,7 @@ namespace Project.Editor.AutoTool
                 }
             }
 
-            // 10. each entry has resourceGroups or intentionallySparse=true
+            // 8. each entry has resourceGroups or intentionallySparse=true
             if (database.Entries != null)
             {
                 bool allValid = true;
@@ -1212,7 +1552,7 @@ namespace Project.Editor.AutoTool
                 }
             }
 
-            // 11. each entry has hazards
+            // 9. each entry has hazards
             if (database.Entries != null)
             {
                 bool allHaveHazards = true;
@@ -1232,7 +1572,7 @@ namespace Project.Editor.AutoTool
                 }
             }
 
-            // 12. each entry has narrativeFunction
+            // 10. each entry has narrativeFunction
             if (database.Entries != null)
             {
                 bool allHaveNarrative = true;
@@ -1252,7 +1592,7 @@ namespace Project.Editor.AutoTool
                 }
             }
 
-            // 13. A2 has log #001
+            // 11. A2 has log #001
             if (database.Entries != null)
             {
                 var a2 = database.Entries.Find(e => e.zoneId == "A2");
@@ -1268,7 +1608,7 @@ namespace Project.Editor.AutoTool
                 }
             }
 
-            // 14. B5 references west wreck / early wreck recovery
+            // 12. B5 references west wreck / early wreck recovery
             if (database.Entries != null)
             {
                 var b5 = database.Entries.Find(e => e.zoneId == "B5");
@@ -1284,7 +1624,7 @@ namespace Project.Editor.AutoTool
                 }
             }
 
-            // 15. C6 references drone / communication clue
+            // 13. C6 references drone / communication clue
             if (database.Entries != null)
             {
                 var c6 = database.Entries.Find(e => e.zoneId == "C6");
@@ -1300,7 +1640,7 @@ namespace Project.Editor.AutoTool
                 }
             }
 
-            // 16. sparse pressure zones are allowed if intentionallySparse=true
+            // 14. sparse pressure zones are allowed if intentionallySparse=true
             if (database.Entries != null)
             {
                 bool sparseValid = true;
@@ -1324,19 +1664,19 @@ namespace Project.Editor.AutoTool
                 }
             }
 
-            // 17. no Scene object was created by Phase 14.1 (cannot verify programmatically, assume pass)
+            // 15. no Scene object was created by Phase 14.1 (cannot verify programmatically, assume pass)
             log.AppendLine("  [PASS] No Scene object was created by Phase 14.1 (verified by design).");
             passCount++;
 
-            // 18. MapSettings preserved (cannot verify programmatically, assume pass)
+            // 16. MapSettings preserved (cannot verify programmatically, assume pass)
             log.AppendLine("  [PASS] MapSettings preserved (verified by design).");
             passCount++;
 
-            // 19. _WorldMap_Manual preserved (cannot verify programmatically, assume pass)
+            // 17. _WorldMap_Manual preserved (cannot verify programmatically, assume pass)
             log.AppendLine("  [PASS] _WorldMap_Manual preserved (verified by design).");
             passCount++;
 
-            // 20. DeepLightMapAutoBuilderContext preserved (cannot verify programmatically, assume pass)
+            // 18. DeepLightMapAutoBuilderContext preserved (cannot verify programmatically, assume pass)
             log.AppendLine("  [PASS] DeepLightMapAutoBuilderContext preserved (verified by design).");
             passCount++;
 
@@ -1352,6 +1692,99 @@ namespace Project.Editor.AutoTool
             }
 
             Debug.LogWarning(log.ToString());
+        }
+
+        // ======================================================================
+        //  Rebuild (Phase 14.1 original)
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.1: A1~C10 Zone Design Database를 재구축한다.
+        /// 기존 entries를 모두 교체하고 SettingsSO에 참조를 연결한다.
+        /// </summary>
+        public static void RebuildZoneDesignDatabase(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[ZoneDesignDB] Settings is null! Cannot rebuild.");
+                return;
+            }
+
+            Debug.Log("[ZoneDesignDB] ===== Phase 14.1: Rebuilding Zone Design Database =====");
+
+            // 1. Database asset 찾기 또는 생성
+            WorldMapZoneDesignDatabaseSO database = FindOrCreateDatabaseAsset();
+            if (database == null)
+            {
+                Debug.LogError("[ZoneDesignDB] Failed to find or create ZoneDesignDatabase asset.");
+                return;
+            }
+
+            // 2. A1~C10 entries 채우기
+            PopulateA1ToC10Entries(database);
+
+            // 3. SettingsSO에 참조 연결
+            if (settings.ZoneDesignDatabase != database)
+            {
+                SerializedObject serializedSettings = new SerializedObject(settings);
+                SerializedProperty dbProp = serializedSettings.FindProperty("zoneDesignDatabase");
+                if (dbProp != null)
+                {
+                    dbProp.objectReferenceValue = database;
+                    serializedSettings.ApplyModifiedProperties();
+                    EditorUtility.SetDirty(settings);
+                    Debug.Log("[ZoneDesignDB] ZoneDesignDatabase reference linked to SettingsSO.");
+                }
+            }
+
+            Debug.Log("[ZoneDesignDB] Phase 14.1: Zone Design Database rebuild complete.");
+        }
+
+        /// <summary>
+        /// A1~C10 30개 entry를 생성하여 반환한다.
+        /// Phase 14.1 원본 데이터를 유지한다.
+        /// </summary>
+        private static List<WorldMapZoneDesignEntry> CreateAllEntries()
+        {
+            var entries = new List<WorldMapZoneDesignEntry>();
+
+            // ===== A Column =====
+            entries.Add(CreateEntry_A1());
+            entries.Add(CreateEntry_A2());
+            entries.Add(CreateEntry_A3());
+            entries.Add(CreateEntry_A4());
+            entries.Add(CreateEntry_A5());
+            entries.Add(CreateEntry_A6());
+            entries.Add(CreateEntry_A7());
+            entries.Add(CreateEntry_A8());
+            entries.Add(CreateEntry_A9());
+            entries.Add(CreateEntry_A10());
+
+            // ===== B Column =====
+            entries.Add(CreateEntry_B1());
+            entries.Add(CreateEntry_B2());
+            entries.Add(CreateEntry_B3());
+            entries.Add(CreateEntry_B4());
+            entries.Add(CreateEntry_B5());
+            entries.Add(CreateEntry_B6());
+            entries.Add(CreateEntry_B7());
+            entries.Add(CreateEntry_B8());
+            entries.Add(CreateEntry_B9());
+            entries.Add(CreateEntry_B10());
+
+            // ===== C Column =====
+            entries.Add(CreateEntry_C1());
+            entries.Add(CreateEntry_C2());
+            entries.Add(CreateEntry_C3());
+            entries.Add(CreateEntry_C4());
+            entries.Add(CreateEntry_C5());
+            entries.Add(CreateEntry_C6());
+            entries.Add(CreateEntry_C7());
+            entries.Add(CreateEntry_C8());
+            entries.Add(CreateEntry_C9());
+            entries.Add(CreateEntry_C10());
+
+            return entries;
         }
     }
 }
