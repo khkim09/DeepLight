@@ -203,21 +203,21 @@ namespace Project.Editor.AutoTool
                 column = "A",
                 row = 1,
                 regionKey = "SouthWestOuterEntry",
-                biomeKey = "OpenWater",
-                narrativePhase = ZoneNarrativePhase.EarlySurvival,
-                terrainMood = ZoneTerrainMood.FlatCurrentSweep,
-                riskTier = ZoneRiskTier.Low,
+                biomeKey = "OuterSea",
+                narrativePhase = ZoneNarrativePhase.EmptyPressure,
+                terrainMood = ZoneTerrainMood.OuterSeaBoundary,
+                riskTier = ZoneRiskTier.Medium,
                 contentDensity = ZoneContentDensity.Sparse,
-                primaryPurpose = ZonePrimaryPurpose.ResourceLearning,
-                minDepth = -80,
-                maxDepth = -250,
-                baseRiskLevel = 0.20f,
-                terrainDescription = "최남서 외곽 진입부. 거의 평탄하지만 해류가 바닥을 길게 훑는 빈 바다.",
-                keyObjects = "부유 잔해, 해조류 군락, 낡은 표식 부표",
-                resourceGroups = "Iron Scrap, Wet Lumber, Fuel Canister",
+                primaryPurpose = ZonePrimaryPurpose.WarningBoundary,
+                minDepth = -200,
+                maxDepth = -600,
+                baseRiskLevel = 0.45f,
+                terrainDescription = "최남서 외곽 진입부. 해류가 바닥을 길게 훑는 빈 바다. 외곽 경계 성격. 초반 구역 아님.",
+                keyObjects = "드문드문 떠 있는 부유 잔해, 낡은 표식 부표, 해저 균열",
+                resourceGroups = "Iron Scrap (sparse)",
                 logOrHint = "None",
-                hazards = "약한 해류, 넓은 빈 공간",
-                narrativeFunction = "탐사 출발점. 아무 일도 없어 보이는 초반 생계형 회수 구역.",
+                hazards = "약한 해류, 넓은 빈 공간, 외곽 고립감",
+                narrativeFunction = "서남 외곽 경계. 초반 탐사 구역이 아니라 외곽 압박과 경계감을 주는 구역.",
                 intentionallySparse = true
             };
         }
@@ -231,7 +231,7 @@ namespace Project.Editor.AutoTool
                 row = 2,
                 regionKey = "WestWreck",
                 biomeKey = "ShallowWreck",
-                narrativePhase = ZoneNarrativePhase.EarlySurvival,
+                narrativePhase = ZoneNarrativePhase.TransitionTech,
                 terrainMood = ZoneTerrainMood.WreckFocus,
                 riskTier = ZoneRiskTier.Low,
                 contentDensity = ZoneContentDensity.Landmark,
@@ -239,12 +239,12 @@ namespace Project.Editor.AutoTool
                 minDepth = -80,
                 maxDepth = -300,
                 baseRiskLevel = 0.25f,
-                terrainDescription = "초반 폐선권 첫 핵심 지점. 반쯤 가라앉은 어선 앞부분이 시선 중심.",
+                terrainDescription = "서부 폐선권 외곽 지점. 반쯤 가라앉은 어선 앞부분이 시선 중심. 초반 학습 구역 아님.",
                 keyObjects = "폐선 콘솔 1개, 끊긴 케이블 묶음, 부식 갑판판, 작은 적재함",
                 resourceGroups = "Iron Scrap 중심",
                 logOrHint = "Log #001",
                 hazards = "폐선 주변 시야 차단, 약한 파편 장애",
-                narrativeFunction = "평범한 회수처럼 시작하지만 첫 불안을 심는 구역.",
+                narrativeFunction = "서부 폐선권 외곽 단서. 첫 불안을 심는 구역.",
                 isMajorLandmark = true
             };
         }
@@ -258,20 +258,21 @@ namespace Project.Editor.AutoTool
                 row = 3,
                 regionKey = "SouthWestDebris",
                 biomeKey = "OpenWater",
-                narrativePhase = ZoneNarrativePhase.EarlySurvival,
+                narrativePhase = ZoneNarrativePhase.TransitionTech,
                 terrainMood = ZoneTerrainMood.DebrisBuffer,
                 riskTier = ZoneRiskTier.Low,
-                contentDensity = ZoneContentDensity.Normal,
-                primaryPurpose = ZonePrimaryPurpose.ResourceLearning,
+                contentDensity = ZoneContentDensity.Sparse,
+                primaryPurpose = ZonePrimaryPurpose.RouteBuffer,
                 minDepth = -100,
                 maxDepth = -320,
                 baseRiskLevel = 0.22f,
-                terrainDescription = "넓지만 얕은 패임과 돌출이 있는 잔해 완충지대.",
+                terrainDescription = "서부 외곽 잔해 완충지대. 초반 학습 구역이 아닌 외곽 전이 성격.",
                 keyObjects = "부유 물자 상자, 부서진 부표, 작은 수중 신호등 잔해",
-                resourceGroups = "Iron Scrap, Fuel Canister, Battery Cell",
+                resourceGroups = "Iron Scrap (sparse)",
                 logOrHint = "None",
-                hazards = "얕은 돌출 지형",
-                narrativeFunction = "자원 학습과 이동 동선 적응."
+                hazards = "얕은 돌출 지형, 외곽 고립감",
+                narrativeFunction = "서부 외곽 전이 완충. 초반 학습 구역 아님.",
+                intentionallySparse = true
             };
         }
 
@@ -469,22 +470,22 @@ namespace Project.Editor.AutoTool
                 zoneId = "B1",
                 column = "B",
                 row = 1,
-                regionKey = "SouthWestShallow",
+                regionKey = "SouthWestOuterShelf",
                 biomeKey = "OpenWater",
-                narrativePhase = ZoneNarrativePhase.EarlySurvival,
-                terrainMood = ZoneTerrainMood.LowHill,
-                riskTier = ZoneRiskTier.Low,
+                narrativePhase = ZoneNarrativePhase.TransitionTech,
+                terrainMood = ZoneTerrainMood.OuterSeaBoundary,
+                riskTier = ZoneRiskTier.Medium,
                 contentDensity = ZoneContentDensity.Sparse,
-                primaryPurpose = ZonePrimaryPurpose.ResourceLearning,
-                minDepth = -70,
-                maxDepth = -240,
-                baseRiskLevel = 0.18f,
-                terrainDescription = "남서 얕은 봉우리 지대. 작은 언덕형 암반이 드문드문 있는 안정 구간.",
-                keyObjects = "해조류, 작은 부유 잔해, 얕은 돌출 암반",
-                resourceGroups = "A-tier basic resources",
+                primaryPurpose = ZonePrimaryPurpose.RouteBuffer,
+                minDepth = -150,
+                maxDepth = -400,
+                baseRiskLevel = 0.30f,
+                terrainDescription = "남서 외곽 선반. 작은 언덕형 암반이 드문드문 있는 외곽 전이 구역. 초반 학습 구역 아님.",
+                keyObjects = "해조류, 작은 부유 잔해, 얕은 돌출 암반, 외곽 표식",
+                resourceGroups = "Iron Scrap (sparse)",
                 logOrHint = "None",
-                hazards = "낮은 돌출 암반",
-                narrativeFunction = "이동 학습과 반복 채집 리듬을 만드는 완충지대.",
+                hazards = "낮은 돌출 암반, 외곽 고립감",
+                narrativeFunction = "서남 외곽 전이 완충. 초반 학습 구역 아님. RouteBuffer 성격.",
                 intentionallySparse = true
             };
         }
@@ -736,22 +737,22 @@ namespace Project.Editor.AutoTool
                 zoneId = "C1",
                 column = "C",
                 row = 1,
-                regionKey = "SouthShallow",
+                regionKey = "SouthOuterShelf",
                 biomeKey = "OpenWater",
-                narrativePhase = ZoneNarrativePhase.EarlySurvival,
-                terrainMood = ZoneTerrainMood.FlatCurrentSweep,
-                riskTier = ZoneRiskTier.Low,
+                narrativePhase = ZoneNarrativePhase.TransitionTech,
+                terrainMood = ZoneTerrainMood.OuterSeaBoundary,
+                riskTier = ZoneRiskTier.Medium,
                 contentDensity = ZoneContentDensity.Sparse,
-                primaryPurpose = ZonePrimaryPurpose.ResourceLearning,
-                minDepth = -60,
-                maxDepth = -220,
-                baseRiskLevel = 0.16f,
-                terrainDescription = "남쪽 얕은 파도형 지형. 부드럽고 낮은 초반 안정 구간.",
-                keyObjects = "낮은 능선, 부유 잔해, 해초 군락",
-                resourceGroups = "A-tier basic resources",
+                primaryPurpose = ZonePrimaryPurpose.RouteBuffer,
+                minDepth = -120,
+                maxDepth = -350,
+                baseRiskLevel = 0.28f,
+                terrainDescription = "남쪽 외곽 선반. 부드럽고 낮은 외곽 전이 구역. 초반 학습 구역 아님.",
+                keyObjects = "낮은 능선, 부유 잔해, 해초 군락, 외곽 표식",
+                resourceGroups = "Iron Scrap (sparse)",
                 logOrHint = "None",
-                hazards = "낮은 능선",
-                narrativeFunction = "초반 안정감과 반복 채집 리듬.",
+                hazards = "낮은 능선, 외곽 고립감",
+                narrativeFunction = "남쪽 외곽 전이 완충. 초반 학습 구역 아님. RouteBuffer 성격.",
                 intentionallySparse = true
             };
         }
@@ -3661,6 +3662,265 @@ namespace Project.Editor.AutoTool
                 else
                 {
                     log.AppendLine($"  [WARN] 현재 {totalCount}개. A~J 100개 full 구조와 다름.");
+                    warnCount++;
+                }
+            }
+
+            // ======================================================================
+            //  Phase 14.10-D-1: A~C Legacy Zone Data Cleanup + Full 100-Zone Final Design Consistency Pass
+            // ======================================================================
+
+            // 31. A1/A10/J1/J10 are not EarlySurvival
+            if (database.Entries != null)
+            {
+                string[] cornerIds = { "A1", "A10", "J1", "J10" };
+                bool allCornerOk = true;
+                foreach (string id in cornerIds)
+                {
+                    var entry = database.Entries.Find(e => e.zoneId == id);
+                    if (entry != null && entry.narrativePhase == ZoneNarrativePhase.EarlySurvival)
+                    {
+                        log.AppendLine($"  [FAIL] {id} narrativePhase=EarlySurvival (corner zone must not be EarlySurvival)");
+                        allCornerOk = false;
+                        failCount++;
+                    }
+                }
+                if (allCornerOk)
+                {
+                    log.AppendLine("  [PASS] A1/A10/J1/J10 are not EarlySurvival.");
+                    passCount++;
+                }
+            }
+
+            // 32. A1/A10/J1/J10 are not ResourceLearning
+            if (database.Entries != null)
+            {
+                string[] cornerIds = { "A1", "A10", "J1", "J10" };
+                bool allCornerOk = true;
+                foreach (string id in cornerIds)
+                {
+                    var entry = database.Entries.Find(e => e.zoneId == id);
+                    if (entry != null && entry.primaryPurpose == ZonePrimaryPurpose.ResourceLearning)
+                    {
+                        log.AppendLine($"  [FAIL] {id} primaryPurpose=ResourceLearning (corner zone must not be ResourceLearning)");
+                        allCornerOk = false;
+                        failCount++;
+                    }
+                }
+                if (allCornerOk)
+                {
+                    log.AppendLine("  [PASS] A1/A10/J1/J10 are not ResourceLearning.");
+                    passCount++;
+                }
+            }
+
+            // 33. A1/A10/J1/J10 are not Hub/Harbor/Wreck
+            if (database.Entries != null)
+            {
+                string[] cornerIds = { "A1", "A10", "J1", "J10" };
+                bool allCornerOk = true;
+                foreach (string id in cornerIds)
+                {
+                    var entry = database.Entries.Find(e => e.zoneId == id);
+                    if (entry != null && (entry.isHub || entry.regionKey.Contains("Harbor") || entry.regionKey.Contains("Wreck")))
+                    {
+                        log.AppendLine($"  [FAIL] {id} is Hub/Harbor/Wreck (corner zone must not be prototype)");
+                        allCornerOk = false;
+                        failCount++;
+                    }
+                }
+                if (allCornerOk)
+                {
+                    log.AppendLine("  [PASS] A1/A10/J1/J10 are not Hub/Harbor/Wreck.");
+                    passCount++;
+                }
+            }
+
+            // 34. Hub zones are exactly E5/F5/E6/F6
+            if (database.Entries != null)
+            {
+                string[] expectedHubIds = { "E5", "F5", "E6", "F6" };
+                bool allHubOk = true;
+                foreach (var entry in database.Entries)
+                {
+                    if (entry.isHub)
+                    {
+                        bool isExpected = false;
+                        foreach (string id in expectedHubIds)
+                        {
+                            if (entry.zoneId == id) { isExpected = true; break; }
+                        }
+                        if (!isExpected)
+                        {
+                            log.AppendLine($"  [FAIL] {entry.zoneId} isHub=true but not in expected Hub set (E5/F5/E6/F6)");
+                            allHubOk = false;
+                            failCount++;
+                        }
+                    }
+                }
+                foreach (string id in expectedHubIds)
+                {
+                    var entry = database.Entries.Find(e => e.zoneId == id);
+                    if (entry == null)
+                    {
+                        log.AppendLine($"  [FAIL] Expected Hub zone {id} missing");
+                        allHubOk = false;
+                        failCount++;
+                    }
+                    else if (!entry.isHub)
+                    {
+                        log.AppendLine($"  [FAIL] {id} isHub=false (expected true)");
+                        allHubOk = false;
+                        failCount++;
+                    }
+                }
+                if (allHubOk)
+                {
+                    log.AppendLine("  [PASS] Hub zones are exactly E5/F5/E6/F6.");
+                    passCount++;
+                }
+            }
+
+            // 35. Harbor prototype zones are exactly D5,D6,E4,F4,G5,G6,E7,F7
+            if (database.Entries != null)
+            {
+                string[] expectedHarborIds = { "D5", "D6", "E4", "F4", "G5", "G6", "E7", "F7" };
+                bool allHarborOk = true;
+                foreach (string id in expectedHarborIds)
+                {
+                    var entry = database.Entries.Find(e => e.zoneId == id);
+                    if (entry == null)
+                    {
+                        log.AppendLine($"  [FAIL] Expected Harbor zone {id} missing");
+                        allHarborOk = false;
+                        failCount++;
+                    }
+                    else if (entry.regionKey != "HarborDebrisBelt")
+                    {
+                        log.AppendLine($"  [WARN] {id} regionKey='{entry.regionKey}' (expected HarborDebrisBelt)");
+                        allHarborOk = false;
+                        warnCount++;
+                    }
+                }
+                if (allHarborOk)
+                {
+                    log.AppendLine("  [PASS] Harbor prototype zones are exactly D5,D6,E4,F4,G5,G6,E7,F7.");
+                    passCount++;
+                }
+            }
+
+            // 36. Wreck prototype zones are exactly B5,C5,B6,C6,C7
+            if (database.Entries != null)
+            {
+                string[] expectedWreckIds = { "B5", "C5", "B6", "C6", "C7" };
+                bool allWreckOk = true;
+                foreach (string id in expectedWreckIds)
+                {
+                    var entry = database.Entries.Find(e => e.zoneId == id);
+                    if (entry == null)
+                    {
+                        log.AppendLine($"  [FAIL] Expected Wreck zone {id} missing");
+                        allWreckOk = false;
+                        failCount++;
+                    }
+                    else if (entry.primaryPurpose != ZonePrimaryPurpose.WreckRecovery)
+                    {
+                        log.AppendLine($"  [WARN] {id} primaryPurpose={entry.primaryPurpose} (expected WreckRecovery)");
+                        allWreckOk = false;
+                        warnCount++;
+                    }
+                }
+                if (allWreckOk)
+                {
+                    log.AppendLine("  [PASS] Wreck prototype zones are exactly B5,C5,B6,C6,C7.");
+                    passCount++;
+                }
+            }
+
+            // 37. A~C non-prototype zones no longer contain old HubApproach/tutorial/start-area wording
+            if (database.Entries != null)
+            {
+                bool noOldWording = true;
+                string[] forbiddenTerms = { "HubApproach", "tutorial", "start-area", "초반 생계형", "초반 안정감", "초반 안정 구간" };
+                char[] abcCols = { 'A', 'B', 'C' };
+                string[] prototypeIds = { "B5", "C5", "B6", "C6", "C7" };
+                for (int c = 0; c < abcCols.Length; c++)
+                {
+                    for (int r = 1; r <= 10; r++)
+                    {
+                        string id = $"{abcCols[c]}{r}";
+                        // Skip prototype zones
+                        bool isPrototype = false;
+                        foreach (string pid in prototypeIds) { if (id == pid) { isPrototype = true; break; } }
+                        if (isPrototype) continue;
+
+                        var entry = database.Entries.Find(e => e.zoneId == id);
+                        if (entry == null) continue;
+
+                        string combinedText = (entry.terrainDescription + " " + entry.narrativeFunction + " " + entry.notes).ToLower();
+                        foreach (string term in forbiddenTerms)
+                        {
+                            if (combinedText.Contains(term.ToLower()))
+                            {
+                                log.AppendLine($"  [FAIL] {id} contains forbidden term '{term}'");
+                                noOldWording = false;
+                                failCount++;
+                            }
+                        }
+                    }
+                }
+                if (noOldWording)
+                {
+                    log.AppendLine("  [PASS] A~C non-prototype zones no longer contain old HubApproach/tutorial/start-area wording.");
+                    passCount++;
+                }
+            }
+
+            // 38. No design entry uses Day as trigger wording
+            if (database.Entries != null)
+            {
+                bool noDayTrigger = true;
+                foreach (var entry in database.Entries)
+                {
+                    string combinedText = (entry.terrainDescription + " " + entry.narrativeFunction + " " + entry.logOrHint + " " + entry.notes).ToLower();
+                    // Check for "Day" as standalone trigger word (not part of "Today", "Daylight", etc.)
+                    if (System.Text.RegularExpressions.Regex.IsMatch(combinedText, @"\bday\b"))
+                    {
+                        log.AppendLine($"  [FAIL] {entry.zoneId} contains 'Day' as trigger wording");
+                        noDayTrigger = false;
+                        failCount++;
+                    }
+                }
+                if (noDayTrigger)
+                {
+                    log.AppendLine("  [PASS] No design entry uses Day as trigger wording.");
+                    passCount++;
+                }
+            }
+
+            // 39. All 100 entries still exist and are unique
+            if (database.Entries != null)
+            {
+                int totalCount = database.Entries.Count;
+                var zoneIds = new HashSet<string>();
+                bool allUnique = true;
+                foreach (var entry in database.Entries)
+                {
+                    if (!zoneIds.Add(entry.zoneId))
+                    {
+                        log.AppendLine($"  [FAIL] Duplicate zoneId: {entry.zoneId}");
+                        allUnique = false;
+                        failCount++;
+                    }
+                }
+                if (totalCount == 100 && allUnique)
+                {
+                    log.AppendLine("  [PASS] All 100 entries exist and are unique.");
+                    passCount++;
+                }
+                else
+                {
+                    log.AppendLine($"  [WARN] Total entries: {totalCount}, Unique: {zoneIds.Count} (expected 100 unique)");
                     warnCount++;
                 }
             }

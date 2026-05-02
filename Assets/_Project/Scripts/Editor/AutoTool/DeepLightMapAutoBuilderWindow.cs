@@ -447,7 +447,7 @@ namespace Project.Editor.AutoTool
                 "7. Stylized Water 내부 property 이름을 찾을 수 없는 경우 water level source 경고는 남을 수 있음",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "8. Generate Full Scenario Map 한 번으로 Phase 3~14.8 전체 생성/검증 완료",
+                "8. Generate Full Scenario Map 한 번으로 Phase 3~14.10-C 전체 생성/검증 완료",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
                 "9. Phase 6: ZoneResolver + DepthSampling 검증 자동 실행",
@@ -499,6 +499,21 @@ namespace Project.Editor.AutoTool
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
                 "25. Phase 14.9: Final A~J Zone Data Migration - Generate Full Scenario Map에서 자동 실행 (A1~J10 100개 확장 + 검증)",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "26. Phase 14.10-A: Full Terrain Patch Generation - Generate Full Scenario Map에서 자동 실행 (A1~J10 100개 TerrainPatch mesh 생성 + 검증)",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "27. Phase 14.10-B: Full Content Root Generation - Generate Full Scenario Map에서 자동 실행 (A1~J10 100개 Content root 생성 + 검증)",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "28. Phase 14.10-C: Full Content Marker Generation - Generate Full Scenario Map에서 자동 실행 (non-prototype 83개 zone Content marker 생성, prototype 17개 zone은 Phase 14.8 marker 보존 + 검증)",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "29. Phase 14.10-A/B/C는 Generate Full Scenario Map에서 자동 실행됨 - 별도 실행 버튼은 제공하지 않음",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "30. Phase 14.10-D-2: Content Marker Debug Visual Generation - Generate Full Scenario Map에서 자동 실행 (모든 marker에 DebugVisual child 생성 + 검증)",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.EndVertical();
         }
@@ -984,3 +999,4 @@ namespace Project.Editor.AutoTool
         }
     }
 }
+

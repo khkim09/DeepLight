@@ -937,6 +937,179 @@ namespace Project.Editor.AutoTool
                 }
             }
 
+            // ======================================================================
+            //  Phase 14.10-D-1: A~C Legacy Zone Data Cleanup + Full 100-Zone Final Design Consistency Pass
+            // ======================================================================
+
+            // 31. A1/A10/J1/J10 routeRole is not HubApproach
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                string[] cornerIds = { "A1", "A10", "J1", "J10" };
+                bool allCornerOk = true;
+                foreach (string id in cornerIds)
+                {
+                    var rule = ruleDb.GetRule(id);
+                    if (rule != null && rule.routeRole == ZoneRouteRole.HubApproach)
+                    {
+                        log.AppendLine($"  [FAIL] {id} routeRole=HubApproach (corner zone must not be HubApproach)");
+                        allCornerOk = false;
+                        failCount++;
+                    }
+                }
+                if (allCornerOk)
+                {
+                    log.AppendLine("  [PASS] A1/A10/J1/J10 routeRole is not HubApproach.");
+                    passCount++;
+                }
+            }
+
+            // 32. A1/A10/J1/J10 resourceDensity01 is low
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                string[] cornerIds = { "A1", "A10", "J1", "J10" };
+                bool allCornerOk = true;
+                foreach (string id in cornerIds)
+                {
+                    var rule = ruleDb.GetRule(id);
+                    if (rule != null && rule.resourceDensity01 > 0.25f)
+                    {
+                        log.AppendLine($"  [WARN] {id} resourceDensity01={rule.resourceDensity01:F2} (expected low for corner zone)");
+                        allCornerOk = false;
+                        warnCount++;
+                    }
+                }
+                if (allCornerOk)
+                {
+                    log.AppendLine("  [PASS] A1/A10/J1/J10 resourceDensity01 is low.");
+                    passCount++;
+                }
+            }
+
+            // 33. Prototype 17 zone classification remains unchanged
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                string[] prototypeIds = { "E5", "F5", "E6", "F6", "D5", "D6", "E4", "F4", "G5", "G6", "E7", "F7", "B5", "C5", "B6", "C6", "C7" };
+                bool allPrototypeOk = true;
+                foreach (string id in prototypeIds)
+                {
+                    var rule = ruleDb.GetRule(id);
+                    if (rule == null)
+                    {
+                        log.AppendLine($"  [FAIL] Prototype rule missing: {id}");
+                        allPrototypeOk = false;
+                        failCount++;
+                    }
+                }
+                if (allPrototypeOk)
+                {
+                    log.AppendLine("  [PASS] Prototype 17 zone classification remains unchanged.");
+                    passCount++;
+                }
+            }
+
+            // 34. Wreck prototype 5 zones keep Wreck-related rule tags
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                string[] wreckIds = { "B5", "C5", "B6", "C6", "C7" };
+                bool allWreckOk = true;
+                foreach (string id in wreckIds)
+                {
+                    var rule = ruleDb.GetRule(id);
+                    if (rule == null) continue;
+                    if (rule.landmarkRole != ZoneLandmarkRole.Wreck &&
+                        rule.landmarkRole != ZoneLandmarkRole.CommunicationClue)
+                    {
+                        log.AppendLine($"  [WARN] {id} landmarkRole={rule.landmarkRole} (expected Wreck/CommunicationClue for Wreck prototype)");
+                        allWreckOk = false;
+                        warnCount++;
+                    }
+                }
+                if (allWreckOk)
+                {
+                    log.AppendLine("  [PASS] Wreck prototype 5 zones keep Wreck-related rule tags.");
+                    passCount++;
+                }
+            }
+
+            // 35. Harbor prototype 8 zones keep Harbor/EarlySurvival-related rule tags
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                string[] harborIds = { "D5", "D6", "E4", "F4", "G5", "G6", "E7", "F7" };
+                bool allHarborOk = true;
+                foreach (string id in harborIds)
+                {
+                    var rule = ruleDb.GetRule(id);
+                    if (rule == null) continue;
+                    if (rule.collisionRequirement == ZoneCollisionRequirement.None)
+                    {
+                        log.AppendLine($"  [FAIL] {id} collisionRequirement=None (expected SeafloorAndLargeProps or higher for Harbor)");
+                        allHarborOk = false;
+                        failCount++;
+                    }
+                }
+                if (allHarborOk)
+                {
+                    log.AppendLine("  [PASS] Harbor prototype 8 zones keep Harbor-related rule tags.");
+                    passCount++;
+                }
+            }
+
+            // 36. Hub prototype 4 zones keep Hub-related rule tags
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                string[] hubIds = { "E5", "F5", "E6", "F6" };
+                bool allHubOk = true;
+                foreach (string id in hubIds)
+                {
+                    var rule = ruleDb.GetRule(id);
+                    if (rule == null)
+                    {
+                        log.AppendLine($"  [FAIL] Hub rule missing: {id}");
+                        allHubOk = false;
+                        failCount++;
+                    }
+                    else if (rule.routeRole != ZoneRouteRole.HubApproach && rule.routeRole != ZoneRouteRole.FreeExploration)
+                    {
+                        log.AppendLine($"  [FAIL] {id} routeRole={rule.routeRole} (expected HubApproach or FreeExploration for Hub)");
+                        allHubOk = false;
+                        failCount++;
+                    }
+                }
+                if (allHubOk)
+                {
+                    log.AppendLine("  [PASS] Hub prototype 4 zones keep Hub-related rule tags.");
+                    passCount++;
+                }
+            }
+
+            // 37. All 100 rules still exist and are unique
+            if (ruleDb != null && ruleDb.Rules != null)
+            {
+                int totalCount = ruleDb.Rules.Count;
+                var zoneIds = new HashSet<string>();
+                bool allUnique = true;
+                foreach (var rule in ruleDb.Rules)
+                {
+                    if (rule == null) continue;
+                    if (!zoneIds.Add(rule.zoneId))
+                    {
+                        log.AppendLine($"  [FAIL] Duplicate zoneId in rules: {rule.zoneId}");
+                        allUnique = false;
+                        failCount++;
+                    }
+                }
+                if (totalCount == 100 && allUnique)
+                {
+                    log.AppendLine("  [PASS] All 100 rules exist and are unique.");
+                    passCount++;
+                }
+                else
+                {
+                    log.AppendLine($"  [WARN] Total rules: {totalCount}, Unique: {zoneIds.Count} (expected 100 unique)");
+                    warnCount++;
+                }
+            }
+
             // Summary
             log.AppendLine($"===== Validation Complete: {passCount} PASS, {failCount} FAIL, {warnCount} WARN =====");
 

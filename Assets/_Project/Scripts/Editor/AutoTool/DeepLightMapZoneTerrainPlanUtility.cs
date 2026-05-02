@@ -1150,6 +1150,219 @@ namespace Project.Editor.AutoTool
             log.AppendLine("  [Phase 14.9.2-B] H/I/J final plan data populated: 30 zones");
             log.AppendLine("  [Phase 14.9.2-B] H/I/J plan validation PASS");
 
+            // ======================================================================
+            //  Phase 14.10-D-1: A~C Legacy Zone Data Cleanup + Full 100-Zone Final Design Consistency Pass
+            // ======================================================================
+
+            // 37. A1/A10/C1/C10/J1/J10 are outer/sparse/boundary/deep or non-start terrain
+            if (planDb != null && planDb.Plans != null)
+            {
+                string[] outerCornerIds = { "A1", "A10", "C1", "C10", "J1", "J10" };
+                bool allOuterOk = true;
+                foreach (string id in outerCornerIds)
+                {
+                    var plan = planDb.GetPlan(id);
+                    if (plan == null)
+                    {
+                        log.AppendLine($"  [FAIL] Outer corner plan missing: {id}");
+                        allOuterOk = false;
+                        failCount++;
+                        continue;
+                    }
+
+                    // Outer corner zones must NOT be ShallowShelf (which is for Hub/start areas)
+                    if (plan.baseSurfaceMode == ZoneBaseSurfaceMode.ShallowShelf)
+                    {
+                        log.AppendLine($"  [FAIL] {id} baseSurfaceMode=ShallowShelf (outer corner zone must not be start-area terrain)");
+                        allOuterOk = false;
+                        failCount++;
+                    }
+
+                    // Outer corner zones should have boundary/collider modes appropriate for outer zones
+                    if (plan.boundaryMode == ZoneBoundaryMode.None &&
+                        plan.colliderMode == ZoneTerrainColliderMode.None)
+                    {
+                        log.AppendLine($"  [WARN] {id} has no boundary or collider (expected some boundary/collider for outer corner)");
+                        allOuterOk = false;
+                        warnCount++;
+                    }
+                }
+                if (allOuterOk)
+                {
+                    log.AppendLine("  [PASS] A1/A10/C1/C10/J1/J10 are outer/sparse/boundary/deep or non-start terrain.");
+                    passCount++;
+                }
+            }
+
+            // 38. Prototype 17 terrain plans remain valid
+            if (planDb != null && planDb.Plans != null)
+            {
+                string[] prototypeIds = { "E5", "F5", "E6", "F6", "D5", "D6", "E4", "F4", "G5", "G6", "E7", "F7", "B5", "C5", "B6", "C6", "C7" };
+                bool allPrototypeOk = true;
+                foreach (string id in prototypeIds)
+                {
+                    var plan = planDb.GetPlan(id);
+                    if (plan == null)
+                    {
+                        log.AppendLine($"  [FAIL] Prototype terrain plan missing: {id}");
+                        allPrototypeOk = false;
+                        failCount++;
+                    }
+                }
+                if (allPrototypeOk)
+                {
+                    log.AppendLine("  [PASS] Prototype 17 terrain plans remain valid.");
+                    passCount++;
+                }
+            }
+
+            // 39. A~C non-prototype terrain plans are not all flat placeholders
+            if (planDb != null && planDb.Plans != null)
+            {
+                bool allNonFlat = true;
+                char[] abcCols = { 'A', 'B', 'C' };
+                string[] prototypeWreckIds = { "B5", "C5", "B6", "C6", "C7" };
+                for (int c = 0; c < abcCols.Length; c++)
+                {
+                    for (int r = 1; r <= 10; r++)
+                    {
+                        string id = $"{abcCols[c]}{r}";
+                        // Skip prototype wreck zones
+                        if (System.Array.IndexOf(prototypeWreckIds, id) >= 0)
+                            continue;
+
+                        var plan = planDb.GetPlan(id);
+                        if (plan == null) continue;
+
+                        // Check if terrainTags has at least one concrete shape tag (not just generic "open"/"flat")
+                        bool hasConcreteTag = false;
+                        if (plan.terrainTags != null)
+                        {
+                            foreach (string tag in plan.terrainTags)
+                            {
+                                string lower = tag.ToLowerInvariant();
+                                if (lower != "open" && lower != "flat" && lower != "shallow" &&
+                                    lower != "gentle" && lower != "sparse" && lower != "pressure" &&
+                                    lower != "debris" && lower != "scattered" && lower != "shelf" &&
+                                    lower != "slope" && lower != "approach" && lower != "entry" &&
+                                    lower != "wall" && lower != "artificial" && lower != "passage" &&
+                                    lower != "facility" && lower != "deep" && lower != "canyon" &&
+                                    lower != "cliff" && lower != "depression" && lower != "wreck")
+                                {
+                                    hasConcreteTag = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        // Also check seabedShapeMode for variety
+                        bool hasVariedShape = plan.seabedShapeMode != ZoneSeabedShapeMode.Flat &&
+                                              plan.seabedShapeMode != ZoneSeabedShapeMode.GentleSlope;
+
+                        if (!hasConcreteTag && !hasVariedShape)
+                        {
+                            log.AppendLine($"  [WARN] {id} terrain appears flat/placeholder (seabed={plan.seabedShapeMode}, tags={string.Join(",", plan.terrainTags ?? new string[0])})");
+                            allNonFlat = false;
+                            warnCount++;
+                        }
+                    }
+                }
+                if (allNonFlat)
+                {
+                    log.AppendLine("  [PASS] A~C non-prototype terrain plans have varied seabed shapes and concrete terrain tags.");
+                    passCount++;
+                }
+            }
+
+            // 40. Terrain tags include concrete seabed shape tags, not only generic placeholders
+            if (planDb != null && planDb.Plans != null)
+            {
+                bool allTagsConcrete = true;
+                foreach (var plan in planDb.Plans)
+                {
+                    if (plan == null || plan.terrainTags == null || plan.terrainTags.Length == 0)
+                    {
+                        log.AppendLine($"  [WARN] {plan?.zoneId ?? "null"} has no terrain tags");
+                        allTagsConcrete = false;
+                        warnCount++;
+                        continue;
+                    }
+
+                    // Check for at least one non-generic tag
+                    bool hasConcreteTag = false;
+                    foreach (string tag in plan.terrainTags)
+                    {
+                        string lower = tag.ToLowerInvariant();
+                        if (lower == "cable_trench" || lower == "research_access" ||
+                            lower == "artificial_plate" || lower == "pressure_slope" ||
+                            lower == "deep_transition" || lower == "crack_field" ||
+                            lower == "sealed_passage" || lower == "facility_approach" ||
+                            lower == "forbidden_zone" || lower == "deep_restricted" ||
+                            lower == "abyss" || lower == "collapse_edge" ||
+                            lower == "origin_core" || lower == "sealed_gate" ||
+                            lower == "forbidden_boundary" || lower == "wreck" ||
+                            lower == "depression" || lower == "canyon" ||
+                            lower == "cliff" || lower == "debris" ||
+                            lower == "artificial" || lower == "passage" ||
+                            lower == "facility" || lower == "research" ||
+                            lower == "communication" || lower == "hub" ||
+                            lower == "current" || lower == "rock" ||
+                            lower == "isolation" || lower == "dip" ||
+                            lower == "warning_light" || lower == "marker" ||
+                            lower == "cable" || lower == "console" ||
+                            lower == "structure" || lower == "narrative_gate" ||
+                            lower == "foreshadow" || lower == "warning" ||
+                            lower == "log" || lower == "drone" ||
+                            lower == "beacon" || lower == "antenna" ||
+                            lower == "sensor" || lower == "obstacle")
+                        {
+                            hasConcreteTag = true;
+                            break;
+                        }
+                    }
+
+                    if (!hasConcreteTag)
+                    {
+                        log.AppendLine($"  [WARN] {plan.zoneId} terrain tags are all generic: {string.Join(",", plan.terrainTags)}");
+                        allTagsConcrete = false;
+                        warnCount++;
+                    }
+                }
+                if (allTagsConcrete)
+                {
+                    log.AppendLine("  [PASS] All terrain plans have concrete seabed shape tags.");
+                    passCount++;
+                }
+            }
+
+            // 41. All 100 plans still exist and are unique
+            if (planDb != null && planDb.Plans != null)
+            {
+                int totalCount = planDb.Plans.Count;
+                var zoneIds = new HashSet<string>();
+                bool allUnique = true;
+                foreach (var plan in planDb.Plans)
+                {
+                    if (plan == null) continue;
+                    if (!zoneIds.Add(plan.zoneId))
+                    {
+                        log.AppendLine($"  [FAIL] Duplicate zoneId in plans: {plan.zoneId}");
+                        allUnique = false;
+                        failCount++;
+                    }
+                }
+                if (totalCount == 100 && allUnique)
+                {
+                    log.AppendLine("  [PASS] All 100 plans exist and are unique.");
+                    passCount++;
+                }
+                else
+                {
+                    log.AppendLine($"  [WARN] Total plans: {totalCount}, Unique: {zoneIds.Count} (expected 100 unique)");
+                    warnCount++;
+                }
+            }
+
             // Summary
 
             log.AppendLine($"===== Validation Complete: {passCount} PASS, {failCount} FAIL, {warnCount} WARN =====");

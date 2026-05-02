@@ -14,36 +14,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: Project.Data::Project.Data.World.Design.WorldMapZoneDesignRuleDatabaseSO
   rules:
   - zoneId: A1
-    terrainArchetype: 0
-    routeRole: 0
-    landmarkRole: 0
-    collisionRequirement: 1
-    targetMinDepth: -80
-    targetMaxDepth: -250
-    terrainRoughness01: 0.15
-    slopeIntensity01: 0.1
-    canyonIntensity01: 0
-    cliffIntensity01: 0
-    openWaterFlatness01: 0.9
+    terrainArchetype: 10
+    routeRole: 4
+    landmarkRole: 5
+    collisionRequirement: 3
+    targetMinDepth: -200
+    targetMaxDepth: -600
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
     resourceDensity01: 0.15
-    hazardDensity01: 0.15
+    hazardDensity01: 0.4
     landmarkWeight01: 0.2
-    visualIntensity01: 0.28
+    visualIntensity01: 0.48999998
     requiresTerrainCollider: 1
     allowsSurfaceIslandVisual: 1
     requiresNarrativeObject: 0
     intentionallySparse: 1
     resourceTags:
     - iron
-    - fuel
     hazardTags:
     - current
+    - isolation
     landmarkTags:
     - wreck
+    - canyon
+    - warning
+    - pressure
     - marker
-    debugSummary: '[A1] OpenFlat | Route:FreeExploration Landmark:None Collision:SeafloorOnly
-      | Depth:(-80,-250) | R:0.15 S:0.10 C:0.00 Cl:0.00 F:0.90 | Res:0.15 Haz:0.15
-      Lm:0.20 Vis:0.28 | Sparse:True Collider:True Narrative:False'
+    debugSummary: '[A1] SparsePressure | Route:Boundary Landmark:HazardWarning Collision:BlockingBoundary
+      | Depth:(-200,-600) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.15 Haz:0.40
+      Lm:0.20 Vis:0.49 | Sparse:True Collider:True Narrative:False'
   - zoneId: A2
     terrainArchetype: 4
     routeRole: 1
@@ -90,25 +93,24 @@ MonoBehaviour:
     canyonIntensity01: 0
     cliffIntensity01: 0
     openWaterFlatness01: 0.5
-    resourceDensity01: 0.45
+    resourceDensity01: 0.15
     hazardDensity01: 0.15
     landmarkWeight01: 0.2
-    visualIntensity01: 0.48999998
+    visualIntensity01: 0.28
     requiresTerrainCollider: 1
     allowsSurfaceIslandVisual: 1
     requiresNarrativeObject: 0
-    intentionallySparse: 0
+    intentionallySparse: 1
     resourceTags:
     - iron
-    - battery
-    - fuel
-    hazardTags: []
+    hazardTags:
+    - isolation
     landmarkTags:
     - wreck
     - marker
     debugSummary: '[A3] DebrisField | Route:FreeExploration Landmark:None Collision:SeafloorAndLargeProps
-      | Depth:(-100,-320) | R:0.50 S:0.20 C:0.00 Cl:0.00 F:0.50 | Res:0.45 Haz:0.15
-      Lm:0.20 Vis:0.49 | Sparse:False Collider:True Narrative:False'
+      | Depth:(-100,-320) | R:0.50 S:0.20 C:0.00 Cl:0.00 F:0.50 | Res:0.15 Haz:0.15
+      Lm:0.20 Vis:0.28 | Sparse:True Collider:True Narrative:False'
   - zoneId: A4
     terrainArchetype: 1
     routeRole: 1
@@ -347,34 +349,36 @@ MonoBehaviour:
       | Depth:(-380,-1100) | R:0.70 S:0.70 C:0.30 Cl:0.70 F:0.15 | Res:0.15 Haz:0.65
       Lm:0.20 Vis:0.63 | Sparse:True Collider:True Narrative:False'
   - zoneId: B1
-    terrainArchetype: 2
+    terrainArchetype: 10
     routeRole: 0
     landmarkRole: 0
     collisionRequirement: 1
-    targetMinDepth: -70
-    targetMaxDepth: -240
-    terrainRoughness01: 0.3
-    slopeIntensity01: 0.25
-    canyonIntensity01: 0
-    cliffIntensity01: 0
-    openWaterFlatness01: 0.65
+    targetMinDepth: -150
+    targetMaxDepth: -400
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
     resourceDensity01: 0.15
-    hazardDensity01: 0.15
+    hazardDensity01: 0.4
     landmarkWeight01: 0.2
-    visualIntensity01: 0.28
+    visualIntensity01: 0.48999998
     requiresTerrainCollider: 1
     allowsSurfaceIslandVisual: 1
     requiresNarrativeObject: 0
     intentionallySparse: 1
     resourceTags:
-    - basic
+    - iron
     hazardTags:
     - rock
+    - isolation
     landmarkTags:
     - wreck
-    debugSummary: '[B1] GentleSlope | Route:FreeExploration Landmark:None Collision:SeafloorOnly
-      | Depth:(-70,-240) | R:0.30 S:0.25 C:0.00 Cl:0.00 F:0.65 | Res:0.15 Haz:0.15
-      Lm:0.20 Vis:0.28 | Sparse:True Collider:True Narrative:False'
+    - marker
+    debugSummary: '[B1] SparsePressure | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-150,-400) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.15 Haz:0.40
+      Lm:0.20 Vis:0.49 | Sparse:True Collider:True Narrative:False'
   - zoneId: B2
     terrainArchetype: 3
     routeRole: 0
@@ -679,33 +683,35 @@ MonoBehaviour:
       | Depth:(-350,-1100) | R:0.70 S:0.70 C:0.30 Cl:0.70 F:0.15 | Res:0.15 Haz:0.65
       Lm:0.20 Vis:0.63 | Sparse:True Collider:True Narrative:False'
   - zoneId: C1
-    terrainArchetype: 0
+    terrainArchetype: 10
     routeRole: 0
     landmarkRole: 0
     collisionRequirement: 1
-    targetMinDepth: -60
-    targetMaxDepth: -220
-    terrainRoughness01: 0.15
-    slopeIntensity01: 0.1
-    canyonIntensity01: 0
-    cliffIntensity01: 0
-    openWaterFlatness01: 0.9
+    targetMinDepth: -120
+    targetMaxDepth: -350
+    terrainRoughness01: 0.4
+    slopeIntensity01: 0.3
+    canyonIntensity01: 0.2
+    cliffIntensity01: 0.15
+    openWaterFlatness01: 0.45
     resourceDensity01: 0.15
-    hazardDensity01: 0.15
+    hazardDensity01: 0.4
     landmarkWeight01: 0.2
-    visualIntensity01: 0.28
+    visualIntensity01: 0.48999998
     requiresTerrainCollider: 1
     allowsSurfaceIslandVisual: 1
     requiresNarrativeObject: 0
     intentionallySparse: 1
     resourceTags:
-    - basic
-    hazardTags: []
+    - iron
+    hazardTags:
+    - isolation
     landmarkTags:
     - wreck
-    debugSummary: '[C1] OpenFlat | Route:FreeExploration Landmark:None Collision:SeafloorOnly
-      | Depth:(-60,-220) | R:0.15 S:0.10 C:0.00 Cl:0.00 F:0.90 | Res:0.15 Haz:0.15
-      Lm:0.20 Vis:0.28 | Sparse:True Collider:True Narrative:False'
+    - marker
+    debugSummary: '[C1] SparsePressure | Route:FreeExploration Landmark:None Collision:SeafloorOnly
+      | Depth:(-120,-350) | R:0.40 S:0.30 C:0.20 Cl:0.15 F:0.45 | Res:0.15 Haz:0.40
+      Lm:0.20 Vis:0.49 | Sparse:True Collider:True Narrative:False'
   - zoneId: C2
     terrainArchetype: 9
     routeRole: 0

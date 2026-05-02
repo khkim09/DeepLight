@@ -586,14 +586,46 @@ namespace Project.Editor.AutoTool
                 LogIfVerbose(settings, "[SKIP] createPrototypeRegions is false. Skipping Phase 14.8.");
             }
 
-            // 22. 생성 완료 후 Selection 설정
+            // 22. Phase 14.10-A: Full Terrain Patch Generation (A1~J10, 100개)
+            // Phase 14.8 Prototype Region override 결과를 기준으로 실행되어야 하므로
+            // Phase 14.8 이후, 최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-A: Rebuild Full Terrain Patches =====");
+            RebuildFullTerrainPatches(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-A: Validate Full Terrain Patches =====");
+            ValidateFullTerrainPatches(settings, context);
+
+            // 23. Phase 14.10-B: Full Content Root Generation (A1~J10, 100개)
+            // Phase 14.10-A Full Terrain Patch 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-A 이후, Phase 14.6/14.7 Content Placeholder/Metadata 생성 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-B: Full Content Root Generation (A1~J10, 100 zones) =====");
+            DeepLightMapFullContentRootGenerationUtility.RebuildFullContentRoots(settings, context);
+            DeepLightMapFullContentRootGenerationUtility.ValidateFullContentRoots(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-B: Full Content Root Generation Complete =====");
+
+            // 24. Phase 14.10-C: Full Content Marker Generation (non-prototype 83개 zone)
+            // Phase 14.10-B Full Content Root 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-B 이후, 최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-C: Full Content Marker Generation =====");
+            DeepLightMapFullContentMarkerGenerationUtility.RebuildFullContentMarkers(settings, context);
+            DeepLightMapFullContentMarkerGenerationUtility.ValidateFullContentMarkers(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-C: Full Content Marker Generation Complete =====");
+
+            // 25. Phase 14.10-D-2: Content Marker Debug Visual Generation
+            // Phase 14.10-C Full Content Marker 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-C 이후, 최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-D-2: Content Marker Debug Visual Generation =====");
+            DeepLightMapContentMarkerDebugVisualUtility.RebuildMarkerDebugVisuals(settings, context);
+            DeepLightMapContentMarkerDebugVisualUtility.ValidateMarkerDebugVisuals(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-D-2: Content Marker Debug Visual Generation Complete =====");
+
+            // 26. 생성 완료 후 Selection 설정
             Selection.activeGameObject = generatedRoot;
             EditorGUIUtility.PingObject(generatedRoot);
 
-            // 23. 최종 데이터 카운트 검증 로그
+            // 27. 최종 데이터 카운트 검증 로그
             LogFinalDataCount(settings);
 
-            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.8) COMPLETE =====");
+            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.10-D) COMPLETE =====");
 
         }
         // ======================================================================
@@ -632,6 +664,159 @@ namespace Project.Editor.AutoTool
             }
 
             DeepLightMapPrototypeRegionUtility.ValidatePrototypeRegions(settings, context);
+        }
+
+
+        // ======================================================================
+        //  Phase 14.10-A: Full Terrain Patch Generation (A1~J10, 100개)
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-A: A~J 전체 100개 ZoneRoot에 TerrainPatch scene artifact를 재구축한다.
+        /// DeepLightMapFullTerrainPatchGenerationUtility.RebuildFullTerrainPatches에 위임한다.
+        /// </summary>
+        public static void RebuildFullTerrainPatches(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild full terrain patches.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot rebuild full terrain patches.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] === Phase 14.10-A: Rebuild Full Terrain Patches (A1~J10) ===");
+            DeepLightMapFullTerrainPatchGenerationUtility.RebuildFullTerrainPatches(settings, context);
+            Debug.Log("[MapAutoBuilder] === Phase 14.10-A: Rebuild Full Terrain Patches Complete ===");
+        }
+
+        /// <summary>
+        /// Phase 14.10-A: A~J 전체 100개 ZoneRoot의 TerrainPatch scene artifact 유효성을 검사한다.
+        /// DeepLightMapFullTerrainPatchGenerationUtility.ValidateFullTerrainPatches에 위임한다.
+        /// </summary>
+        public static void ValidateFullTerrainPatches(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate full terrain patches.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot validate full terrain patches.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] === Phase 14.10-A: Validate Full Terrain Patches (A1~J10) ===");
+            DeepLightMapFullTerrainPatchGenerationUtility.ValidateFullTerrainPatches(settings, context);
+            Debug.Log("[MapAutoBuilder] === Phase 14.10-A: Validate Full Terrain Patches Complete ===");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-B: Full Content Root Generation (A1~J10, 100개)
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-B: A~J 전체 100개 ZoneRoot에 Content root 구조만 재구축한다.
+        /// DeepLightMapFullContentRootGenerationUtility.RebuildFullContentRoots에 위임한다.
+        /// </summary>
+        public static void RebuildFullContentRoots(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [Phase 14.10-B] Settings is null! Cannot rebuild full content roots.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [Phase 14.10-B] Context is null! Cannot rebuild full content roots.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] === Phase 14.10-B: Rebuild Full Content Roots (A1~J10) ===");
+            DeepLightMapFullContentRootGenerationUtility.RebuildFullContentRoots(settings, context);
+            Debug.Log("[MapAutoBuilder] === Phase 14.10-B: Rebuild Full Content Roots Complete ===");
+        }
+
+        /// <summary>
+        /// Phase 14.10-B: A~J 전체 100개 ZoneRoot의 Content root 구조 유효성을 검사한다.
+        /// DeepLightMapFullContentRootGenerationUtility.ValidateFullContentRoots에 위임한다.
+        /// </summary>
+        public static void ValidateFullContentRoots(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [Phase 14.10-B] Settings is null! Cannot validate full content roots.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [Phase 14.10-B] Context is null! Cannot validate full content roots.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] === Phase 14.10-B: Validate Full Content Roots (A1~J10) ===");
+            DeepLightMapFullContentRootGenerationUtility.ValidateFullContentRoots(settings, context);
+            Debug.Log("[MapAutoBuilder] === Phase 14.10-B: Validate Full Content Roots Complete ===");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-C: Full Content Marker Generation (A1~J10, 100개)
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-C: A~J 전체 100개 ZoneRoot의 Content 하위에 marker를 재구축한다.
+        /// prototype 17개 zone은 스킵하고, non-prototype 83개 zone에 대해서만 생성한다.
+        /// DeepLightMapFullContentMarkerGenerationUtility.RebuildFullContentMarkers에 위임한다.
+        /// </summary>
+        public static void RebuildFullContentMarkers(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild full content markers.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot rebuild full content markers.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-C: Rebuild Full Content Markers =====");
+            DeepLightMapFullContentMarkerGenerationUtility.RebuildFullContentMarkers(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-C: Rebuild Full Content Markers Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-C: A~J 전체 100개 ZoneRoot의 Content marker 유효성을 검사한다.
+        /// prototype 17개 zone은 validation 대상에서 제외한다.
+        /// DeepLightMapFullContentMarkerGenerationUtility.ValidateFullContentMarkers에 위임한다.
+        /// </summary>
+        public static void ValidateFullContentMarkers(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate full content markers.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot validate full content markers.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-C: Validate Full Content Markers =====");
+            DeepLightMapFullContentMarkerGenerationUtility.ValidateFullContentMarkers(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-C: Validate Full Content Markers Complete =====");
         }
 
 
