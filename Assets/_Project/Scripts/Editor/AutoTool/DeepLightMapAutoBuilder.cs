@@ -618,14 +618,32 @@ namespace Project.Editor.AutoTool
             DeepLightMapContentMarkerDebugVisualUtility.ValidateMarkerDebugVisuals(settings, context);
             Debug.Log("[MapAutoBuilder] ===== Phase 14.10-D-2: Content Marker Debug Visual Generation Complete =====");
 
-            // 26. 생성 완료 후 Selection 설정
+            // 26. Phase 14.10-E: Runtime Placeholder Generation
+            // Phase 14.10-D-2 Content Marker Debug Visual 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-D-2 이후, 최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-E: Runtime Placeholder Generation =====");
+            DeepLightMapRuntimePlaceholderGenerationUtility.RebuildRuntimePlaceholders(settings, context);
+            DeepLightMapRuntimePlaceholderGenerationUtility.ValidateRuntimePlaceholders(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-E: Runtime Placeholder Generation Complete =====");
+
+            // 27. Phase 14.10-G: Runtime Placeholder Binding
+            // Phase 14.10-E Runtime Placeholder 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-E 이후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-G: Runtime Placeholder Binding =====");
+            DeepLightMapRuntimePlaceholderBindingUtility.RebuildRuntimePlaceholderBindings(settings, context);
+            DeepLightMapRuntimePlaceholderBindingUtility.ValidateRuntimePlaceholderBindings(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-G: Runtime Placeholder Binding Complete =====");
+
+            // 28. 생성 완료 후 Selection 설정
+
             Selection.activeGameObject = generatedRoot;
             EditorGUIUtility.PingObject(generatedRoot);
 
-            // 27. 최종 데이터 카운트 검증 로그
+            // 29. 최종 데이터 카운트 검증 로그
             LogFinalDataCount(settings);
 
-            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.10-D) COMPLETE =====");
+            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.10-G) COMPLETE =====");
+
 
         }
         // ======================================================================
@@ -820,12 +838,120 @@ namespace Project.Editor.AutoTool
         }
 
 
+        // ======================================================================
+        //  Phase 14.10-E: Runtime Placeholder Generation (독립 실행 wrapper)
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-E: Content marker metadata를 기반으로 runtime placeholder를 재구축한다.
+        /// DeepLightMapRuntimePlaceholderGenerationUtility.RebuildRuntimePlaceholders에 위임한다.
+        /// GenerateFullScenarioMap에서 자동 실행됨.
+        /// </summary>
+        public static void RebuildRuntimePlaceholders(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild runtime placeholders.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot rebuild runtime placeholders.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-E: Rebuild Runtime Placeholders =====");
+            DeepLightMapRuntimePlaceholderGenerationUtility.RebuildRuntimePlaceholders(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-E: Rebuild Runtime Placeholders Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-E: Runtime placeholder의 유효성을 검사한다.
+        /// DeepLightMapRuntimePlaceholderGenerationUtility.ValidateRuntimePlaceholders에 위임한다.
+        /// GenerateFullScenarioMap에서 자동 실행됨.
+        /// </summary>
+        public static void ValidateRuntimePlaceholders(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate runtime placeholders.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot validate runtime placeholders.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-E: Validate Runtime Placeholders =====");
+            DeepLightMapRuntimePlaceholderGenerationUtility.ValidateRuntimePlaceholders(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-E: Validate Runtime Placeholders Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-G: Runtime Placeholder Binding (public wrapper)
+        //  GenerateFullScenarioMap에서 자동 실행됨.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-G: RuntimePlaceholder에 WorldMapRuntimePlaceholderBinding 컴포넌트를 재구축한다.
+        /// DeepLightMapRuntimePlaceholderBindingUtility.RebuildRuntimePlaceholderBindings에 위임한다.
+        /// GenerateFullScenarioMap에서 자동 실행됨.
+        /// </summary>
+
+        public static void RebuildRuntimePlaceholderBindings(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild runtime placeholder bindings.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot rebuild runtime placeholder bindings.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-G: Rebuild Runtime Placeholder Bindings =====");
+            DeepLightMapRuntimePlaceholderBindingUtility.RebuildRuntimePlaceholderBindings(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-G: Rebuild Runtime Placeholder Bindings Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-G: RuntimePlaceholder의 WorldMapRuntimePlaceholderBinding 유효성을 검사한다.
+        /// DeepLightMapRuntimePlaceholderBindingUtility.ValidateRuntimePlaceholderBindings에 위임한다.
+        /// GenerateFullScenarioMap에서 자동 실행됨.
+        /// </summary>
+
+        public static void ValidateRuntimePlaceholderBindings(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate runtime placeholder bindings.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot validate runtime placeholder bindings.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-G: Validate Runtime Placeholder Bindings =====");
+            DeepLightMapRuntimePlaceholderBindingUtility.ValidateRuntimePlaceholderBindings(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-G: Validate Runtime Placeholder Bindings Complete =====");
+        }
+
         /// <summary>
         /// ZoneRoot_A1~J10만 다시 생성한다.
         /// 기존 ZoneRoot가 있으면 재사용하고 위치/이름을 보정한다.
         /// GeneratedWorldRoot/ZoneRoots 하위에만 생성하며, 그 외 Hierarchy는 절대 수정하지 않는다.
         /// </summary>
         public static void RebuildZoneRootsOnly(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+
         {
             if (settings == null)
             {

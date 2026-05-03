@@ -96,7 +96,7 @@ namespace Project.Editor.AutoTool
         {
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("DeepLight Map Auto Builder", _titleStyle);
-            EditorGUILayout.LabelField("Phase 3~14.9: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("Phase 3~14.10-G: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
 
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
@@ -346,7 +346,7 @@ namespace Project.Editor.AutoTool
 
             EditorGUILayout.Space(2);
 
-            // Generate Full Scenario Map (Phase 3~14.8 통합)
+            // Generate Full Scenario Map (Phase 3~14.10-G 통합)
             GUI.color = new Color(0.3f, 0.8f, 0.3f);
             if (GUILayout.Button("Generate Full Scenario Map", GUILayout.Height(35)))
             {
@@ -447,7 +447,7 @@ namespace Project.Editor.AutoTool
                 "7. Stylized Water 내부 property 이름을 찾을 수 없는 경우 water level source 경고는 남을 수 있음",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "8. Generate Full Scenario Map 한 번으로 Phase 3~14.10-C 전체 생성/검증 완료",
+                "8. Generate Full Scenario Map 한 번으로 Phase 3~14.10-G 전체 생성/검증 완료",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
                 "9. Phase 6: ZoneResolver + DepthSampling 검증 자동 실행",
@@ -514,6 +514,15 @@ namespace Project.Editor.AutoTool
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
                 "30. Phase 14.10-D-2: Content Marker Debug Visual Generation - Generate Full Scenario Map에서 자동 실행 (모든 marker에 DebugVisual child 생성 + 검증)",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "31. Phase 14.10-E: Runtime Placeholder Generation - Content marker metadata를 기반으로 Props/HarvestSpawns/LogSpawns/Hazards/Triggers/DebugGizmos 아래 runtime placeholder를 생성한다. Generate Full Scenario Map에서 자동 실행됨.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "32. Phase 14.10-G: Runtime Placeholder Binding - Generate Full Scenario Map에서 자동 실행됨. RuntimePlaceholder에 ZoneId/MarkerId/MarkerType/SemanticTags/RuntimeCategory/RuntimeKey binding metadata를 부여함.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "33. Phase 14.10-G는 별도 버튼 없이 Generate Full Scenario Map에서 자동 실행됨",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.EndVertical();
         }
