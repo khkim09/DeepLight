@@ -1,0 +1,218 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62dc8acaef21f80478524e5080cadbe3, type: 3}
+  m_Name: WorldMapRuntimeSpawnProfileDatabase
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.World.Content.WorldMapRuntimeSpawnProfileDatabaseSO
+  _entries:
+  - ProfileId: Fallback_HarvestResource
+    MarkerType: 0
+    RuntimeCategory: HarvestResource
+    RuntimeKey: 
+    MatchTags: []
+    Prefab: {fileID: 6035291628222078953, guid: 422e94a85bc3fc74fadc1404870a8dd8, type: 3}
+    IsFallbackProfile: 1
+    Priority: 10
+    Description: Fallback for any HarvestResource candidate without exact key match
+  - ProfileId: Fallback_Hazard
+    MarkerType: 1
+    RuntimeCategory: Hazard
+    RuntimeKey: 
+    MatchTags: []
+    Prefab: {fileID: 1254352061029022094, guid: 7eccf9bed1eb46e409e3f4542922bb33, type: 3}
+    IsFallbackProfile: 1
+    Priority: 10
+    Description: Fallback for any Hazard candidate without exact key match
+  - ProfileId: Fallback_WorldProp
+    MarkerType: 2
+    RuntimeCategory: WorldProp
+    RuntimeKey: 
+    MatchTags: []
+    Prefab: {fileID: 354163299589338474, guid: 069176eadaeafb34787996fc616a1e42, type: 3}
+    IsFallbackProfile: 1
+    Priority: 10
+    Description: Fallback for any WorldProp/Landmark candidate without exact key
+      match
+  - ProfileId: Fallback_NarrativeLog
+    MarkerType: 3
+    RuntimeCategory: NarrativeLog
+    RuntimeKey: 
+    MatchTags: []
+    Prefab: {fileID: 1309719277122113600, guid: a878cadad3688d2439b77c9e13425d2d, type: 3}
+    IsFallbackProfile: 1
+    Priority: 10
+    Description: Fallback for any NarrativeLog candidate without exact key match
+  - ProfileId: Fallback_RouteTrigger
+    MarkerType: 4
+    RuntimeCategory: RouteTrigger
+    RuntimeKey: 
+    MatchTags: []
+    Prefab: {fileID: 2871345728743151322, guid: f5206de41c65e5b4695b58dc75dc77aa, type: 3}
+    IsFallbackProfile: 1
+    Priority: 10
+    Description: Fallback for any RouteTrigger candidate without exact key match
+  - ProfileId: Fallback_Debug
+    MarkerType: 5
+    RuntimeCategory: Debug
+    RuntimeKey: 
+    MatchTags: []
+    Prefab: {fileID: 4507088665240305546, guid: cb9580807ce6edc4fa279c0dd4119e8f, type: 3}
+    IsFallbackProfile: 1
+    Priority: 10
+    Description: Fallback for any Debug candidate without exact key match
+  - ProfileId: Fallback_Unknown
+    MarkerType: 6
+    RuntimeCategory: Unknown
+    RuntimeKey: 
+    MatchTags: []
+    Prefab: {fileID: 8031448944237448065, guid: fa28056c79f5115458967d070f4b5175, type: 3}
+    IsFallbackProfile: 1
+    Priority: 1
+    Description: Ultimate fallback for any candidate that doesn't match other entries
+  - ProfileId: HarvestResource_iron
+    MarkerType: 0
+    RuntimeCategory: HarvestResource
+    RuntimeKey: iron
+    MatchTags:
+    - iron
+    Prefab: {fileID: 6153475583315723364, guid: 1b2eca03f3eca934a89d79eb0c408068, type: 3}
+    IsFallbackProfile: 0
+    Priority: 100
+    Description: Exact match for HarvestResource/iron
+  - ProfileId: HarvestResource_steel
+    MarkerType: 0
+    RuntimeCategory: HarvestResource
+    RuntimeKey: steel
+    MatchTags:
+    - steel
+    Prefab: {fileID: 4475039697118050267, guid: 07d345eaabcc4314dbb8228356b1f1ae, type: 3}
+    IsFallbackProfile: 0
+    Priority: 100
+    Description: Exact match for HarvestResource/steel
+  - ProfileId: HarvestResource_fuel
+    MarkerType: 0
+    RuntimeCategory: HarvestResource
+    RuntimeKey: fuel
+    MatchTags:
+    - fuel
+    Prefab: {fileID: 2507204254272663630, guid: ed115d10b4f8edd42b77d887ebde6fc3, type: 3}
+    IsFallbackProfile: 0
+    Priority: 100
+    Description: Exact match for HarvestResource/fuel
+  - ProfileId: Hazard_current
+    MarkerType: 1
+    RuntimeCategory: Hazard
+    RuntimeKey: current
+    MatchTags:
+    - current
+    Prefab: {fileID: 31257308386294044, guid: 895c098f82ba84b419a6693188a0e147, type: 3}
+    IsFallbackProfile: 0
+    Priority: 100
+    Description: Exact match for Hazard/current
+  - ProfileId: Hazard_pressure
+    MarkerType: 1
+    RuntimeCategory: Hazard
+    RuntimeKey: pressure
+    MatchTags:
+    - pressure
+    Prefab: {fileID: 6681481425397661402, guid: 304bf0720ee70154bb7f2481bc0b7076, type: 3}
+    IsFallbackProfile: 0
+    Priority: 100
+    Description: Exact match for Hazard/pressure
+  - ProfileId: NarrativeLog_log
+    MarkerType: 3
+    RuntimeCategory: NarrativeLog
+    RuntimeKey: log
+    MatchTags:
+    - log
+    Prefab: {fileID: 5219698370363297676, guid: cb20bd2a5fa8d224ea54dcfe5c6b1afe, type: 3}
+    IsFallbackProfile: 0
+    Priority: 100
+    Description: Exact match for NarrativeLog/log
+  - ProfileId: RouteTrigger_route
+    MarkerType: 4
+    RuntimeCategory: RouteTrigger
+    RuntimeKey: route
+    MatchTags:
+    - route
+    Prefab: {fileID: 5831578090213766894, guid: b436757f5bf35f744a61d010cbab80e3, type: 3}
+    IsFallbackProfile: 0
+    Priority: 100
+    Description: Exact match for RouteTrigger/route
+  - ProfileId: WorldProp_hub
+    MarkerType: 2
+    RuntimeCategory: WorldProp
+    RuntimeKey: hub
+    MatchTags:
+    - hub
+    Prefab: {fileID: 7962816206508278603, guid: 765e92b7e53a1c14fab1c0fe97cfe17f, type: 3}
+    IsFallbackProfile: 0
+    Priority: 100
+    Description: Exact match for WorldProp/hub
+  - ProfileId: WorldProp_wreck
+    MarkerType: 2
+    RuntimeCategory: WorldProp
+    RuntimeKey: wreck
+    MatchTags:
+    - wreck
+    Prefab: {fileID: 6479924305685251359, guid: d2e4cfe3ed3659a428f45e286231b993, type: 3}
+    IsFallbackProfile: 0
+    Priority: 100
+    Description: Exact match for WorldProp/wreck
+  - ProfileId: WorldProp_harbor
+    MarkerType: 2
+    RuntimeCategory: WorldProp
+    RuntimeKey: harbor
+    MatchTags:
+    - harbor
+    Prefab: {fileID: 7109758211119380831, guid: e0240be68bf4f4a4498a43669908973f, type: 3}
+    IsFallbackProfile: 0
+    Priority: 100
+    Description: Exact match for WorldProp/harbor
+  - ProfileId: Fallback_Landmark
+    MarkerType: 2
+    RuntimeCategory: Landmark
+    RuntimeKey: 
+    MatchTags: []
+    Prefab: {fileID: 8325422363867196477, guid: 9f7e2a10a1fda27468f2b35fab9c5f90, type: 3}
+    IsFallbackProfile: 1
+    Priority: 10
+    Description: Fallback for any Landmark candidate without exact key match
+  - ProfileId: Landmark_hub
+    MarkerType: 2
+    RuntimeCategory: Landmark
+    RuntimeKey: hub
+    MatchTags:
+    - hub
+    Prefab: {fileID: 1413608682348846696, guid: e10edbf307eecff4985148dfd9ccdd62, type: 3}
+    IsFallbackProfile: 0
+    Priority: 100
+    Description: Exact match for Landmark/hub
+  - ProfileId: Landmark_wreck
+    MarkerType: 2
+    RuntimeCategory: Landmark
+    RuntimeKey: wreck
+    MatchTags:
+    - wreck
+    Prefab: {fileID: 5829475006890704128, guid: 5ce5568a80a1d954bad9ef66b5be1234, type: 3}
+    IsFallbackProfile: 0
+    Priority: 100
+    Description: Exact match for Landmark/wreck
+  - ProfileId: Landmark_harbor
+    MarkerType: 2
+    RuntimeCategory: Landmark
+    RuntimeKey: harbor
+    MatchTags:
+    - harbor
+    Prefab: {fileID: 3812062500427679660, guid: 60d366f07716c204db194d808f542ca0, type: 3}
+    IsFallbackProfile: 0
+    Priority: 100
+    Description: Exact match for Landmark/harbor

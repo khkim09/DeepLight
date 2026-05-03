@@ -634,15 +634,53 @@ namespace Project.Editor.AutoTool
             DeepLightMapRuntimePlaceholderBindingUtility.ValidateRuntimePlaceholderBindings(settings, context);
             Debug.Log("[MapAutoBuilder] ===== Phase 14.10-G: Runtime Placeholder Binding Complete =====");
 
-            // 28. 생성 완료 후 Selection 설정
+            // 28. Phase 14.10-H-1: Runtime Spawn Profile Candidate Resolve
+            // Phase 14.10-G Runtime Placeholder Binding 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-G 이후, 최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-H-1: Runtime Spawn Profile Candidate Resolve =====");
+            DeepLightMapRuntimeSpawnProfileResolverUtility.RebuildRuntimeSpawnProfileCandidates(settings, context);
+            DeepLightMapRuntimeSpawnProfileResolverUtility.ValidateRuntimeSpawnProfileCandidates(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-H-1: Runtime Spawn Profile Candidate Resolve Complete =====");
+
+            // 29. Phase 14.10-H-2: Runtime Spawn Profile Database
+            // Phase 14.10-H-1 Candidate Resolve 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-H-1 이후, 최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-H-2: Runtime Spawn Profile Database =====");
+            DeepLightMapRuntimeSpawnProfileDatabaseUtility.CreateOrUpdateDefaultRuntimeSpawnProfileDatabase(settings, context);
+            DeepLightMapRuntimeSpawnProfileDatabaseUtility.ValidateRuntimeSpawnProfileDatabase(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-H-2: Runtime Spawn Profile Database Complete =====");
+
+            // 30. Phase 14.10-I: Runtime Spawn Placeholder Prefab Binding
+            // Phase 14.10-H-2 Database 완료 직후 실행되어야 하므로
+            // Phase 14.10-H-2 이후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            // 실행 순서: I-2 Create/Update → I-2 Validate → I-1 Validate
+            // I-1 Validate는 반드시 I-2 Create/Update 이후에 실행해야 한다.
+            // 이유: I-2가 DB entry Prefab slot에 placeholder prefab을 연결한 뒤 I-1이 missing prefab count를 검증해야 하기 때문.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-I: Runtime Spawn Placeholder Prefab Binding =====");
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-I-2: Create/Update Runtime Spawn Placeholder Prefabs =====");
+            DeepLightMapRuntimeSpawnPlaceholderPrefabUtility.CreateOrUpdateRuntimeSpawnPlaceholderPrefabs(settings, context);
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-I-2: Validate Runtime Spawn Placeholder Prefabs =====");
+            DeepLightMapRuntimeSpawnPlaceholderPrefabUtility.ValidateRuntimeSpawnPlaceholderPrefabs(settings, context);
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-I-1: Validate Runtime Spawn Profile Prefab Slots =====");
+            DeepLightMapRuntimeSpawnProfilePrefabValidationUtility.ValidateRuntimeSpawnProfilePrefabSlots(settings, context);
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-I: Runtime Spawn Placeholder Prefab Binding Complete =====");
+
+            // 31. 생성 완료 후 Selection 설정
 
             Selection.activeGameObject = generatedRoot;
+
             EditorGUIUtility.PingObject(generatedRoot);
 
-            // 29. 최종 데이터 카운트 검증 로그
+            // 32. 최종 데이터 카운트 검증 로그
             LogFinalDataCount(settings);
 
-            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.10-G) COMPLETE =====");
+            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.10-I) COMPLETE =====");
+
+
 
 
         }
@@ -945,12 +983,199 @@ namespace Project.Editor.AutoTool
             Debug.Log("[MapAutoBuilder] ===== Phase 14.10-G: Validate Runtime Placeholder Bindings Complete =====");
         }
 
+        // ======================================================================
+        //  Phase 14.10-H: Runtime Spawn Profile Resolver (public wrapper)
+        //  GenerateFullScenarioMap에서 자동 실행됨.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-H: RuntimePlaceholderBinding을 해석하여 SpawnProfileCandidate를 재구축한다.
+        /// DeepLightMapRuntimeSpawnProfileResolverUtility.RebuildRuntimeSpawnProfileCandidates에 위임한다.
+        /// GenerateFullScenarioMap에서 자동 실행됨.
+        /// </summary>
+        public static void RebuildRuntimeSpawnProfileCandidates(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild runtime spawn profile candidates.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot rebuild runtime spawn profile candidates.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-H: Rebuild Runtime Spawn Profile Candidates =====");
+            DeepLightMapRuntimeSpawnProfileResolverUtility.RebuildRuntimeSpawnProfileCandidates(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-H: Rebuild Runtime Spawn Profile Candidates Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-H: Runtime Spawn Profile Candidate의 유효성을 검사한다.
+        /// DeepLightMapRuntimeSpawnProfileResolverUtility.ValidateRuntimeSpawnProfileCandidates에 위임한다.
+        /// GenerateFullScenarioMap에서 자동 실행됨.
+        /// </summary>
+        public static void ValidateRuntimeSpawnProfileCandidates(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate runtime spawn profile candidates.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot validate runtime spawn profile candidates.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-H: Validate Runtime Spawn Profile Candidates =====");
+            DeepLightMapRuntimeSpawnProfileResolverUtility.ValidateRuntimeSpawnProfileCandidates(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-H: Validate Runtime Spawn Profile Candidates Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-H-2: Runtime Spawn Profile Database (public wrapper)
+        //  GenerateFullScenarioMap에서 자동 실행됨.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-H-2: Runtime Spawn Profile Database asset을 생성/갱신한다.
+        /// DeepLightMapRuntimeSpawnProfileDatabaseUtility.CreateOrUpdateDefaultRuntimeSpawnProfileDatabase에 위임한다.
+        /// GenerateFullScenarioMap에서 자동 실행됨.
+        /// </summary>
+        public static void CreateOrUpdateDefaultRuntimeSpawnProfileDatabase(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot create/update runtime spawn profile database.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-H-2: Create/Update Runtime Spawn Profile Database =====");
+            DeepLightMapRuntimeSpawnProfileDatabaseUtility.CreateOrUpdateDefaultRuntimeSpawnProfileDatabase(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-H-2: Create/Update Runtime Spawn Profile Database Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-H-2: Runtime Spawn Profile Database의 유효성을 검사한다.
+        /// DeepLightMapRuntimeSpawnProfileDatabaseUtility.ValidateRuntimeSpawnProfileDatabase에 위임한다.
+        /// GenerateFullScenarioMap에서 자동 실행됨.
+        /// </summary>
+        public static void ValidateRuntimeSpawnProfileDatabase(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate runtime spawn profile database.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot validate runtime spawn profile database.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-H-2: Validate Runtime Spawn Profile Database =====");
+            DeepLightMapRuntimeSpawnProfileDatabaseUtility.ValidateRuntimeSpawnProfileDatabase(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-H-2: Validate Runtime Spawn Profile Database Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-I: Runtime Spawn Profile Prefab Slot Validation (public wrapper)
+        //  GenerateFullScenarioMap에서 자동 실행됨.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-I: Runtime Spawn Profile Database의 prefab slot 상태를 검사한다.
+        /// DeepLightMapRuntimeSpawnProfilePrefabValidationUtility.ValidateRuntimeSpawnProfilePrefabSlots에 위임한다.
+        /// GenerateFullScenarioMap에서 자동 실행됨. I-2 Create/Update 이후에 실행되어야 함.
+        /// </summary>
+
+        public static void ValidateRuntimeSpawnProfilePrefabSlots(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate runtime spawn profile prefab slots.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot validate runtime spawn profile prefab slots.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-I: Validate Runtime Spawn Profile Prefab Slots =====");
+            DeepLightMapRuntimeSpawnProfilePrefabValidationUtility.ValidateRuntimeSpawnProfilePrefabSlots(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-I: Validate Runtime Spawn Profile Prefab Slots Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-I-2: Runtime Spawn Placeholder Prefab (public wrapper)
+        //  GenerateFullScenarioMap에서 자동 실행됨.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-I-2: RuntimeSpawnProfileDatabase의 모든 entry에 대해 Editor/Test용 placeholder prefab을 생성/갱신한다.
+        /// DeepLightMapRuntimeSpawnPlaceholderPrefabUtility.CreateOrUpdateRuntimeSpawnPlaceholderPrefabs에 위임한다.
+        /// GenerateFullScenarioMap에서 자동 실행됨. I-1 Validate보다 먼저 실행되어야 함.
+        /// </summary>
+
+        public static void CreateOrUpdateRuntimeSpawnPlaceholderPrefabs(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot create/update runtime spawn placeholder prefabs.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot create/update runtime spawn placeholder prefabs.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-I-2: Create/Update Runtime Spawn Placeholder Prefabs =====");
+            DeepLightMapRuntimeSpawnPlaceholderPrefabUtility.CreateOrUpdateRuntimeSpawnPlaceholderPrefabs(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-I-2: Create/Update Runtime Spawn Placeholder Prefabs Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-I-2: RuntimeSpawnProfileDatabase의 모든 entry에 대해 placeholder prefab의 유효성을 검사한다.
+        /// DeepLightMapRuntimeSpawnPlaceholderPrefabUtility.ValidateRuntimeSpawnPlaceholderPrefabs에 위임한다.
+        /// GenerateFullScenarioMap에서 자동 실행됨. I-1 Validate보다 먼저 실행되어야 함.
+        /// </summary>
+
+        public static void ValidateRuntimeSpawnPlaceholderPrefabs(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate runtime spawn placeholder prefabs.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot validate runtime spawn placeholder prefabs.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-I-2: Validate Runtime Spawn Placeholder Prefabs =====");
+            DeepLightMapRuntimeSpawnPlaceholderPrefabUtility.ValidateRuntimeSpawnPlaceholderPrefabs(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-I-2: Validate Runtime Spawn Placeholder Prefabs Complete =====");
+        }
+
+
         /// <summary>
         /// ZoneRoot_A1~J10만 다시 생성한다.
         /// 기존 ZoneRoot가 있으면 재사용하고 위치/이름을 보정한다.
         /// GeneratedWorldRoot/ZoneRoots 하위에만 생성하며, 그 외 Hierarchy는 절대 수정하지 않는다.
         /// </summary>
         public static void RebuildZoneRootsOnly(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+
 
         {
             if (settings == null)
@@ -1791,6 +2016,243 @@ namespace Project.Editor.AutoTool
             {
                 Debug.Log("[MapAutoBuilder] [PASS] Final A~J data count preserved after GenerateFullScenarioMap.");
             }
+        }
+
+        // ======================================================================
+        //  Phase 14.10-J-3: Runtime Spawn Instance Replacement (public wrapper)
+        //  Phase 14.10-J-3 runtime spawn instance replacement is intentionally not
+        //  integrated into GenerateFullScenarioMap.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-J-3: RuntimePlaceholder를 실제 prefab instance로 치환한다.
+        /// RuntimePlaceholder 원본은 삭제하지 않고, 옵션에 따라 비활성화만 한다.
+        /// DeepLightMapRuntimeSpawnInstanceReplacementUtility.RebuildRuntimeSpawnInstances에 위임한다.
+        /// GenerateFullScenarioMap에는 통합하지 않는다.
+        /// </summary>
+        public static void RebuildRuntimeSpawnInstances(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context,
+            bool disableSourcePlaceholders)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild runtime spawn instances.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot rebuild runtime spawn instances.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-3: Rebuild Runtime Spawn Instances =====");
+            DeepLightMapRuntimeSpawnInstanceReplacementUtility.RebuildRuntimeSpawnInstances(settings, context, disableSourcePlaceholders);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-3: Rebuild Runtime Spawn Instances Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-J-3: Runtime Spawn Instance의 유효성을 검사한다.
+        /// 20개 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN] summary를 출력한다.
+        /// DeepLightMapRuntimeSpawnInstanceReplacementUtility.ValidateRuntimeSpawnInstances에 위임한다.
+        /// GenerateFullScenarioMap에는 통합하지 않는다.
+        /// </summary>
+        public static void ValidateRuntimeSpawnInstances(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate runtime spawn instances.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot validate runtime spawn instances.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-3: Validate Runtime Spawn Instances =====");
+            DeepLightMapRuntimeSpawnInstanceReplacementUtility.ValidateRuntimeSpawnInstances(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-3: Validate Runtime Spawn Instances Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-J-3: Runtime Spawn Instance를 모두 삭제한다.
+        /// 삭제 대상: WorldMapRuntimeSpawnInstanceTag.IsPreviewInstance == false 인 GameObject.
+        /// Preview instance / RuntimePlaceholder / Marker / DebugVisual은 절대 삭제하지 않는다.
+        /// reactivateSourcePlaceholders == true이면 비활성화된 RuntimePlaceholder를 다시 활성화한다.
+        /// DeepLightMapRuntimeSpawnInstanceReplacementUtility.ClearRuntimeSpawnInstances에 위임한다.
+        /// GenerateFullScenarioMap에는 통합하지 않는다.
+        /// </summary>
+        public static void ClearRuntimeSpawnInstances(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context,
+            bool reactivateSourcePlaceholders)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot clear runtime spawn instances.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot clear runtime spawn instances.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-3: Clear Runtime Spawn Instances =====");
+            DeepLightMapRuntimeSpawnInstanceReplacementUtility.ClearRuntimeSpawnInstances(settings, context, reactivateSourcePlaceholders);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-3: Clear Runtime Spawn Instances Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-J-1: Runtime Spawn Replacement Plan (public wrapper)
+        //  Phase 14.10-J-1 is currently exposed as independent validation buttons only.
+        //  Actual runtime replacement is not integrated yet.
+        // ======================================================================
+        // ======================================================================
+        //  Phase 14.10-J-2: Runtime Spawn Preview Instance (public wrapper)
+        //  Phase 14.10-J-2 preview instance generation is intentionally not integrated
+        //  into GenerateFullScenarioMap.
+        // ======================================================================
+
+
+        /// <summary>
+        /// Phase 14.10-J-2: RuntimePlaceholder를 직접 교체하지 않고,
+        /// Replacement Plan마다 대응되는 preview prefab instance를 생성한다.
+        /// DeepLightMapRuntimeSpawnPreviewInstanceUtility.RebuildRuntimeSpawnPreviewInstances에 위임한다.
+        /// GenerateFullScenarioMap에는 통합하지 않는다.
+        /// </summary>
+        public static void RebuildRuntimeSpawnPreviewInstances(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild runtime spawn preview instances.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot rebuild runtime spawn preview instances.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-2: Rebuild Runtime Spawn Preview Instances =====");
+            DeepLightMapRuntimeSpawnPreviewInstanceUtility.RebuildRuntimeSpawnPreviewInstances(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-2: Rebuild Runtime Spawn Preview Instances Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-J-2: Runtime Spawn Preview Instance의 유효성을 검사한다.
+        /// 18개 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN] summary를 출력한다.
+        /// DeepLightMapRuntimeSpawnPreviewInstanceUtility.ValidateRuntimeSpawnPreviewInstances에 위임한다.
+        /// GenerateFullScenarioMap에는 통합하지 않는다.
+        /// </summary>
+        public static void ValidateRuntimeSpawnPreviewInstances(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate runtime spawn preview instances.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot validate runtime spawn preview instances.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-2: Validate Runtime Spawn Preview Instances =====");
+            DeepLightMapRuntimeSpawnPreviewInstanceUtility.ValidateRuntimeSpawnPreviewInstances(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-2: Validate Runtime Spawn Preview Instances Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-J-2: Runtime Spawn Preview Instance를 모두 삭제한다.
+        /// 삭제 대상: WorldMapRuntimeSpawnInstanceTag.IsPreviewInstance == true 인 GameObject.
+        /// RuntimePlaceholder / Marker / DebugVisual은 절대 삭제하지 않는다.
+        /// DeepLightMapRuntimeSpawnPreviewInstanceUtility.ClearRuntimeSpawnPreviewInstances에 위임한다.
+        /// GenerateFullScenarioMap에는 통합하지 않는다.
+        /// </summary>
+        public static void ClearRuntimeSpawnPreviewInstances(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot clear runtime spawn preview instances.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot clear runtime spawn preview instances.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-2: Clear Runtime Spawn Preview Instances =====");
+            DeepLightMapRuntimeSpawnPreviewInstanceUtility.ClearRuntimeSpawnPreviewInstances(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-2: Clear Runtime Spawn Preview Instances Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-J-1: Runtime Spawn Replacement Plan (public wrapper)
+        //  Phase 14.10-J-1 is currently exposed as independent validation buttons only.
+        //  Actual runtime replacement is not integrated yet.
+        // ======================================================================
+
+
+        /// <summary>
+        /// Phase 14.10-J-1: RuntimePlaceholder를 실제 prefab으로 교체하지 않고,
+        /// 어떤 prefab으로 치환될 예정인지 Replacement Plan만 재생성/로그 출력한다.
+        /// scene/database는 수정하지 않는다.
+        /// DeepLightMapRuntimeSpawnReplacementPlanUtility.RebuildRuntimeSpawnReplacementPlans에 위임한다.
+        /// GenerateFullScenarioMap에는 통합하지 않는다.
+        /// </summary>
+        public static void RebuildRuntimeSpawnReplacementPlans(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot rebuild runtime spawn replacement plans.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot rebuild runtime spawn replacement plans.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-1: Rebuild Runtime Spawn Replacement Plans =====");
+            DeepLightMapRuntimeSpawnReplacementPlanUtility.RebuildRuntimeSpawnReplacementPlans(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-1: Rebuild Runtime Spawn Replacement Plans Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-J-1: Runtime Spawn Replacement Plan의 유효성을 검사한다.
+        /// 14개 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN] summary를 출력한다.
+        /// DeepLightMapRuntimeSpawnReplacementPlanUtility.ValidateRuntimeSpawnReplacementPlans에 위임한다.
+        /// GenerateFullScenarioMap에는 통합하지 않는다.
+        /// </summary>
+        public static void ValidateRuntimeSpawnReplacementPlans(DeepLightMapAutoBuilderSettingsSO settings, DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Settings is null! Cannot validate runtime spawn replacement plans.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] Context is null! Cannot validate runtime spawn replacement plans.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-1: Validate Runtime Spawn Replacement Plans =====");
+            DeepLightMapRuntimeSpawnReplacementPlanUtility.ValidateRuntimeSpawnReplacementPlans(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-1: Validate Runtime Spawn Replacement Plans Complete =====");
         }
 
         /// <summary>
