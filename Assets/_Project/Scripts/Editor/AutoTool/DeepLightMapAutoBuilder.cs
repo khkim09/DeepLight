@@ -769,13 +769,32 @@ namespace Project.Editor.AutoTool
 
             // 43. Phase 14.10-M-4: Runtime Final Content Resolution Plans
             // Phase 14.10-M-3 Runtime Final Content Placeholder Assets 생성/검증 이후 실행되어야 하므로
-            // Phase 14.10-M-3 이후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            // Phase 14.10-M-3 이후, M-5 실행 직전에 배치한다.
             Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-4: Runtime Final Content Resolution Plans =====");
             RebuildRuntimeFinalContentResolutionPlans(settings, context);
             ValidateRuntimeFinalContentResolutionPlans(settings, context);
             Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-4: Runtime Final Content Resolution Plans Complete =====");
 
-            // 44. 생성 완료 후 Selection 설정
+            // 44. Phase 14.10-M-5: Runtime Final Content Instances
+            // Phase 14.10-M-4 Runtime Final Content Resolution Plans 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-M-4 이후, M-6 실행 직전에 배치한다.
+            // 중요: GenerateFullScenarioMap에서는 disableSourceRuntimeSpawnedInstances=false를 사용한다.
+            // 이유: RuntimeSpawnedInstances source object를 비활성화하지 않고 RuntimeFinalContentInstances만 생성/검증한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-5: Runtime Final Content Instances =====");
+            RebuildRuntimeFinalContentInstances(settings, context, false);
+            ValidateRuntimeFinalContentInstances(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-5: Runtime Final Content Instances Complete =====");
+
+            // 45. Phase 14.10-M-6: Runtime Final Content Query
+            // Phase 14.10-M-5 Runtime Final Content Instances 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-M-5 이후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-6: Runtime Final Content Query =====");
+            RebuildRuntimeFinalContentQuery(settings, context);
+            ValidateRuntimeFinalContentQuery(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-6: Runtime Final Content Query Complete =====");
+
+            // 46. 생성 완료 후 Selection 설정
+
 
 
 
@@ -784,7 +803,7 @@ namespace Project.Editor.AutoTool
 
             EditorGUIUtility.PingObject(generatedRoot);
 
-            // 45. 최종 데이터 카운트 검증 로그
+            // 47. 최종 데이터 카운트 검증 로그
             LogFinalDataCount(settings);
 
             Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.10-M) COMPLETE =====");
@@ -2967,10 +2986,138 @@ namespace Project.Editor.AutoTool
             Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-4: Validate Runtime Final Content Resolution Plans Complete =====");
         }
 
+        // ======================================================================
+        //  Phase 14.10-M-5: Runtime Final Content Instance (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-M-5: M-4 Resolution Plan을 기반으로 RuntimeFinalContentInstances root 아래에
+        /// final content instance를 생성한다. source RuntimeSpawnedInstances는 기본 보존.
+        /// DeepLightMapRuntimeFinalContentInstanceUtility.RebuildRuntimeFinalContentInstances에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeFinalContentInstances(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context,
+            bool disableSourceRuntimeSpawnedInstances)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-5] Settings is null! Cannot rebuild final content instances.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-5] Context is null! Cannot rebuild final content instances.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-5: Rebuild Runtime Final Content Instances =====");
+            DeepLightMapRuntimeFinalContentInstanceUtility.RebuildRuntimeFinalContentInstances(settings, context, disableSourceRuntimeSpawnedInstances);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-5: Rebuild Runtime Final Content Instances Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-M-5: RuntimeFinalContentInstances의 유효성을 검사한다.
+        /// 30개 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// Read-only 검증이며 scene object를 수정하지 않는다.
+        /// DeepLightMapRuntimeFinalContentInstanceUtility.ValidateRuntimeFinalContentInstances에 위임한다.
+        /// </summary>
+        public static void ValidateRuntimeFinalContentInstances(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-5] Settings is null! Cannot validate final content instances.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-5] Context is null! Cannot validate final content instances.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-5: Validate Runtime Final Content Instances =====");
+            DeepLightMapRuntimeFinalContentInstanceUtility.ValidateRuntimeFinalContentInstances(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-5: Validate Runtime Final Content Instances Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-M-5: RuntimeFinalContentInstances 하위의 generated final content instance를 모두 삭제한다.
+        /// RuntimeSpawnedInstances 원본 / RuntimePlaceholder / Marker / DebugVisual / Binding object는 절대 삭제하지 않는다.
+        /// DeepLightMapRuntimeFinalContentInstanceUtility.ClearRuntimeFinalContentInstances에 위임한다.
+        /// </summary>
+        public static void ClearRuntimeFinalContentInstances(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context,
+            bool reactivateSourceRuntimeSpawnedInstances)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-5] Settings is null! Cannot clear final content instances.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-5] Context is null! Cannot clear final content instances.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-5: Clear Runtime Final Content Instances =====");
+            DeepLightMapRuntimeFinalContentInstanceUtility.ClearRuntimeFinalContentInstances(settings, context, reactivateSourceRuntimeSpawnedInstances);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-5: Clear Runtime Final Content Instances Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-M-6: RuntimeFinalContentInstances 하위 final content instance를
+        /// gameplay 시스템이 조회할 수 있도록 Registry/QueryService를 구축한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeFinalContentQuery(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-6] Settings is null! Cannot rebuild runtime final content query.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-6: Rebuild Runtime Final Content Query =====");
+            DeepLightMapRuntimeFinalContentQueryUtility.RebuildRuntimeFinalContentQuery(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-6: Rebuild Runtime Final Content Query Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-M-6: WorldMapRuntimeFinalContentInstanceRegistry와
+        /// WorldMapRuntimeFinalContentQueryService의 유효성을 검증한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void ValidateRuntimeFinalContentQuery(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-6] Settings is null! Cannot validate runtime final content query.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-6: Validate Runtime Final Content Query =====");
+            DeepLightMapRuntimeFinalContentQueryUtility.ValidateRuntimeFinalContentQuery(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-6: Validate Runtime Final Content Query Complete =====");
+        }
+
         /// <summary>
         /// logVerbose가 true일 때만 로그를 출력한다
         /// </summary>
         private static void LogIfVerbose(DeepLightMapAutoBuilderSettingsSO settings, string message)
+
 
         {
             if (settings != null && settings.LogVerbose)
@@ -2980,4 +3127,5 @@ namespace Project.Editor.AutoTool
         }
     }
 }
+
 

@@ -358,21 +358,16 @@ namespace Project.Editor.AutoTool
             }
             GUI.color = Color.white;
 
-            EditorGUILayout.Space(2);
-
             // Phase 14.8: Rebuild Prototype Regions Only
-
-
-
 
             GUI.color = new Color(0.2f, 0.6f, 0.9f);
             GUI.enabled = _settings != null;
             if (GUILayout.Button("Rebuild Prototype Regions Only", GUILayout.Height(30)))
-
             {
                 ExecuteRebuildPrototypeRegions();
             }
             GUI.color = Color.white;
+
 
 
             EditorGUILayout.Space(2);
@@ -597,9 +592,14 @@ namespace Project.Editor.AutoTool
                 "52. Phase 14.10-M-4: Runtime Final Content Resolution Plan - M-1 Contract + M-2 Requirement DB + M-3 finalPrefab/finalProfile binding을 사용해서 각 RuntimeSpawnedInstance가 어떤 final content prefab/profile로 교체될 수 있는지 최종 해석 계획을 생성/검증한다. read-only plan build만 수행하며 scene instance를 교체하지 않는다. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "53. Phase 14.10-M-5: Runtime Final Content Scene Replacement (예약) - RuntimeSpawnedInstances를 finalPrefab/finalProfile 기반 실제 final content instance로 교체하는 단계. 이번 작업에서는 구현/통합하지 않음.",
+                "53. Phase 14.10-M-5: Runtime Final Content Instances - Generate Full Scenario Map에서 자동 실행됨. RuntimeFinalContentInstances를 생성하고 검증한다. 별도 실행 버튼은 제공하지 않음.",
                 EditorStyles.wordWrappedMiniLabel);
-
+            EditorGUILayout.LabelField(
+                "54. Phase 14.10-M-6: Runtime Final Content Query - Generate Full Scenario Map에서 자동 실행됨. final content instance 전용 Registry/QueryService를 생성하고 검증한다. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "55. Phase 14.10-N: Category-specific final content binding - HarvestResource/Hazard/Landmark/NarrativeLog/RouteTrigger별 실제 gameplay component 연결 단계. (다음 단계 예약)",
+                EditorStyles.wordWrappedMiniLabel);
 
             EditorGUILayout.EndVertical();
 
@@ -1053,15 +1053,11 @@ namespace Project.Editor.AutoTool
 
         /// <summary>
         /// Clear Generated Map 실행 (확인 대화상자 포함)
-
-
-
         /// </summary>
+
         private void ExecuteClear()
-
-
-
         {
+
             if (_settings == null)
             {
                 Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
