@@ -96,7 +96,8 @@ namespace Project.Editor.AutoTool
         {
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("DeepLight Map Auto Builder", _titleStyle);
-            EditorGUILayout.LabelField("Phase 3~14.10-I: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("Phase 3~14.10-K: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
+
 
 
             EditorGUILayout.Space(5);
@@ -347,7 +348,8 @@ namespace Project.Editor.AutoTool
 
             EditorGUILayout.Space(2);
 
-            // Generate Full Scenario Map (Phase 3~14.10-I 통합)
+            // Generate Full Scenario Map (Phase 3~14.10-J 통합)
+
 
             GUI.color = new Color(0.3f, 0.8f, 0.3f);
             if (GUILayout.Button("Generate Full Scenario Map", GUILayout.Height(35)))
@@ -358,121 +360,12 @@ namespace Project.Editor.AutoTool
 
             EditorGUILayout.Space(2);
 
-            // Phase 14.10-J-1: Rebuild Runtime Spawn Replacement Plans Only
-            GUI.color = new Color(0.2f, 0.6f, 0.9f);
-            GUI.enabled = _settings != null;
-            if (GUILayout.Button("Phase 14.10-J-1: Rebuild Runtime Spawn Replacement Plans Only", GUILayout.Height(30)))
-            {
-                ExecuteRebuildRuntimeSpawnReplacementPlans();
-            }
-            GUI.color = Color.white;
-
-            EditorGUILayout.Space(2);
-
-            // Phase 14.10-J-1: Validate Runtime Spawn Replacement Plans Only
-            GUI.enabled = _settings != null;
-            if (GUILayout.Button("Phase 14.10-J-1: Validate Runtime Spawn Replacement Plans Only", GUILayout.Height(30)))
-            {
-                ExecuteValidateRuntimeSpawnReplacementPlans();
-            }
-            GUI.enabled = true;
-
-            EditorGUILayout.Space(5);
-
-            // Phase 14.10-J-2: Rebuild Runtime Spawn Preview Instances Only
-            GUI.color = new Color(0.2f, 0.6f, 0.9f);
-            GUI.enabled = _settings != null;
-            if (GUILayout.Button("Phase 14.10-J-2: Rebuild Runtime Spawn Preview Instances Only", GUILayout.Height(30)))
-            {
-                ExecuteRebuildRuntimeSpawnPreviewInstances();
-            }
-            GUI.color = Color.white;
-
-            EditorGUILayout.Space(2);
-
-            // Phase 14.10-J-2: Validate Runtime Spawn Preview Instances Only
-            GUI.enabled = _settings != null;
-            if (GUILayout.Button("Phase 14.10-J-2: Validate Runtime Spawn Preview Instances Only", GUILayout.Height(30)))
-            {
-                ExecuteValidateRuntimeSpawnPreviewInstances();
-            }
-            GUI.enabled = true;
-
-            EditorGUILayout.Space(2);
-
-            // Phase 14.10-J-2: Clear Runtime Spawn Preview Instances Only (위험도 낮음 - preview instance만 삭제)
-            GUI.color = new Color(0.9f, 0.6f, 0.1f);
-            GUI.enabled = _settings != null;
-            if (GUILayout.Button("Phase 14.10-J-2: Clear Runtime Spawn Preview Instances Only", GUILayout.Height(30)))
-            {
-                ExecuteClearRuntimeSpawnPreviewInstances();
-            }
-            GUI.color = Color.white;
-            GUI.enabled = true;
-
-            EditorGUILayout.Space(5);
-
-            // Phase 14.10-J-3: Rebuild Runtime Spawn Instances Only
-            GUI.color = new Color(0.2f, 0.6f, 0.9f);
-            GUI.enabled = _settings != null;
-            if (GUILayout.Button("Phase 14.10-J-3: Rebuild Runtime Spawn Instances Only", GUILayout.Height(30)))
-            {
-                ExecuteRebuildRuntimeSpawnInstances();
-            }
-            GUI.color = Color.white;
-
-            EditorGUILayout.Space(2);
-
-            // Phase 14.10-J-3: Rebuild Runtime Spawn Instances + Disable Placeholders Only
-            GUI.color = new Color(0.9f, 0.6f, 0.1f);
-            GUI.enabled = _settings != null;
-            if (GUILayout.Button("Phase 14.10-J-3: Rebuild Runtime Spawn Instances + Disable Placeholders Only", GUILayout.Height(30)))
-            {
-                ExecuteRebuildRuntimeSpawnInstancesAndDisablePlaceholders();
-            }
-            GUI.color = Color.white;
-
-            EditorGUILayout.Space(2);
-
-            // Phase 14.10-J-3: Validate Runtime Spawn Instances Only
-            GUI.enabled = _settings != null;
-            if (GUILayout.Button("Phase 14.10-J-3: Validate Runtime Spawn Instances Only", GUILayout.Height(30)))
-            {
-                ExecuteValidateRuntimeSpawnInstances();
-            }
-            GUI.enabled = true;
-
-            EditorGUILayout.Space(2);
-
-            // Phase 14.10-J-3: Clear Runtime Spawn Instances Only
-            GUI.color = new Color(0.9f, 0.6f, 0.1f);
-            GUI.enabled = _settings != null;
-            if (GUILayout.Button("Phase 14.10-J-3: Clear Runtime Spawn Instances Only", GUILayout.Height(30)))
-            {
-                ExecuteClearRuntimeSpawnInstances();
-            }
-            GUI.color = Color.white;
-            GUI.enabled = true;
-
-            EditorGUILayout.Space(2);
-
-            // Phase 14.10-J-3: Clear Runtime Spawn Instances + Reactivate Placeholders Only
-            GUI.color = new Color(0.9f, 0.4f, 0.1f);
-            GUI.enabled = _settings != null;
-            if (GUILayout.Button("Phase 14.10-J-3: Clear Runtime Spawn Instances + Reactivate Placeholders Only", GUILayout.Height(30)))
-            {
-                ExecuteClearRuntimeSpawnInstancesAndReactivatePlaceholders();
-            }
-            GUI.color = Color.white;
-            GUI.enabled = true;
-
-            EditorGUILayout.Space(5);
-
             // Phase 14.8: Rebuild Prototype Regions Only
 
             GUI.color = new Color(0.2f, 0.6f, 0.9f);
             GUI.enabled = _settings != null;
             if (GUILayout.Button("Rebuild Prototype Regions Only", GUILayout.Height(30)))
+
             {
                 ExecuteRebuildPrototypeRegions();
             }
@@ -562,7 +455,8 @@ namespace Project.Editor.AutoTool
                 "7. Stylized Water 내부 property 이름을 찾을 수 없는 경우 water level source 경고는 남을 수 있음",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "8. Generate Full Scenario Map 한 번으로 Phase 3~14.10-I 전체 생성/검증 완료",
+                "8. Generate Full Scenario Map 한 번으로 Phase 3~14.10-K 전체 생성/검증 완료",
+
 
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
@@ -659,10 +553,17 @@ namespace Project.Editor.AutoTool
                 "39. Phase 14.10-I-1: Validate Runtime Spawn Profile Prefab Slots - I-2가 placeholder prefab을 연결한 후 최종 prefab slot validation 수행. Assigned=21, Missing=0, FAIL=0, WARN=0이 정상.",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "40. Phase 14.10-J: Runtime Spawn Prefab Replacement (예약) - RuntimePlaceholder scene object를 실제 gameplay prefab instance로 교체. Phase 14.10-I 완료 후 다음 Phase에서 진행 예정.",
+                "40. Phase 14.10-J-1: Runtime Spawn Replacement Plan - RuntimePlaceholder를 실제 prefab으로 바로 교체하지 않고, 어떤 prefab으로 치환될 예정인지 plan만 생성/검증한다. scene/database는 수정하지 않는다. Generate Full Scenario Map에서 자동 실행됨.",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "41. Phase 14.10-J-1: Runtime Spawn Replacement Plan - RuntimePlaceholder를 실제 prefab으로 바로 교체하지 않고, 어떤 prefab으로 치환될 예정인지 plan만 생성/검증한다. scene/database는 수정하지 않는다. 실제 Instantiate/Replace는 Phase 14.10-J-2 이후에 진행한다.",
+                "41. Phase 14.10-J-2: Runtime Spawn Preview Instance - Replacement Plan마다 대응되는 preview prefab instance를 RuntimeSpawnInstances root 아래 생성/검증한다. RuntimePlaceholder 원본은 보존. Generate Full Scenario Map에서 자동 실행됨.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "42. Phase 14.10-J-3: Runtime Spawn Instance - Replacement Plan 기반 실제 runtime instance를 RuntimeSpawnedInstances root 아래 생성/검증한다. Generate Full Scenario Map에서는 disableSourcePlaceholders=false로 실행되어 RuntimePlaceholder가 자동 비활성화되지 않음. Placeholder 비활성화/정리/완전 교체는 이후 별도 Phase에서 처리 예정.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "43. Phase 14.10-K-1: Runtime Spawn Instance Registry - RuntimeSpawnedInstances 기반 runtime instance registry를 생성/검증한다. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.EndVertical();
 
@@ -1114,222 +1015,11 @@ namespace Project.Editor.AutoTool
         }
 
         /// <summary>
-        /// Phase 14.10-J-1: Runtime Spawn Replacement Plan만 재생성/로그 출력한다.
-        /// scene/database는 수정하지 않는다.
-        /// </summary>
-        private void ExecuteRebuildRuntimeSpawnReplacementPlans()
-        {
-            if (_settings == null)
-            {
-                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
-                return;
-            }
-
-            DeepLightMapAutoBuilder.RebuildRuntimeSpawnReplacementPlans(_settings, _context);
-        }
-
-        /// <summary>
-        /// Phase 14.10-J-1: Runtime Spawn Replacement Plan의 유효성을 검사한다.
-        /// 14개 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN] summary를 출력한다.
-        /// </summary>
-        private void ExecuteValidateRuntimeSpawnReplacementPlans()
-        {
-            if (_settings == null)
-            {
-                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
-                return;
-            }
-
-            DeepLightMapAutoBuilder.ValidateRuntimeSpawnReplacementPlans(_settings, _context);
-        }
-
-        /// <summary>
-        /// Phase 14.10-J-2: Runtime Spawn Preview Instance를 재생성한다.
-        /// RuntimePlaceholder를 직접 교체하지 않고, Replacement Plan마다 대응되는 preview prefab instance를
-        /// 별도 RuntimeSpawnInstances root 아래 생성한다.
-        /// </summary>
-        private void ExecuteRebuildRuntimeSpawnPreviewInstances()
-        {
-            if (_settings == null)
-            {
-                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
-                return;
-            }
-
-            DeepLightMapAutoBuilder.RebuildRuntimeSpawnPreviewInstances(_settings, _context);
-        }
-
-        /// <summary>
-        /// Phase 14.10-J-2: Runtime Spawn Preview Instance의 유효성을 검사한다.
-        /// 18개 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN] summary를 출력한다.
-        /// RuntimePlaceholder 원본 count/transform/name 변경 없음을 검증한다.
-        /// </summary>
-        private void ExecuteValidateRuntimeSpawnPreviewInstances()
-        {
-            if (_settings == null)
-            {
-                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
-                return;
-            }
-
-            DeepLightMapAutoBuilder.ValidateRuntimeSpawnPreviewInstances(_settings, _context);
-        }
-
-        /// <summary>
-        /// Phase 14.10-J-2: Runtime Spawn Preview Instance를 모두 삭제한다.
-        /// 삭제 대상: WorldMapRuntimeSpawnInstanceTag.IsPreviewInstance == true 인 GameObject.
-        /// RuntimePlaceholder / Marker / DebugVisual은 절대 삭제하지 않는다.
-        /// </summary>
-        private void ExecuteClearRuntimeSpawnPreviewInstances()
-        {
-            if (_settings == null)
-            {
-                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
-                return;
-            }
-
-            // 확인 대화상자 (preview instance만 삭제하므로 위험도 낮지만 확인)
-            bool confirmed = EditorUtility.DisplayDialog(
-                "Clear Runtime Spawn Preview Instances",
-                "Runtime Spawn Preview Instance를 모두 삭제하시겠습니까?\n\n" +
-                "삭제 대상: WorldMapRuntimeSpawnInstanceTag.IsPreviewInstance == true 인 GameObject.\n" +
-                "RuntimePlaceholder / Marker / DebugVisual은 절대 삭제되지 않습니다.\n" +
-                "이 작업은 Undo로 되돌릴 수 있습니다.",
-                "삭제",
-                "취소");
-
-            if (confirmed)
-            {
-                DeepLightMapAutoBuilder.ClearRuntimeSpawnPreviewInstances(_settings, _context);
-            }
-            else
-            {
-                Debug.Log("[MapAutoBuilder] Clear Runtime Spawn Preview Instances cancelled by user.");
-            }
-        }
-
-        // ===== Phase 14.10-J-3: Runtime Spawn Instance Replacement =====
-
-        /// <summary>
-        /// Phase 14.10-J-3: RuntimePlaceholder를 실제 prefab instance로 치환한다.
-        /// RuntimePlaceholder 원본은 삭제하지 않고 유지한다.
-        /// disableSourcePlaceholders=false.
-        /// </summary>
-        private void ExecuteRebuildRuntimeSpawnInstances()
-        {
-            if (_settings == null)
-            {
-                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
-                return;
-            }
-
-            DeepLightMapAutoBuilder.RebuildRuntimeSpawnInstances(_settings, _context, false);
-        }
-
-        /// <summary>
-        /// Phase 14.10-J-3: RuntimePlaceholder를 실제 prefab instance로 치환하고,
-        /// RuntimePlaceholder 원본을 비활성화한다.
-        /// disableSourcePlaceholders=true.
-        /// </summary>
-        private void ExecuteRebuildRuntimeSpawnInstancesAndDisablePlaceholders()
-        {
-            if (_settings == null)
-            {
-                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
-                return;
-            }
-
-            DeepLightMapAutoBuilder.RebuildRuntimeSpawnInstances(_settings, _context, true);
-        }
-
-        /// <summary>
-        /// Phase 14.10-J-3: Runtime Spawn Instance의 유효성을 검사한다.
-        /// 20개 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN] summary를 출력한다.
-        /// </summary>
-        private void ExecuteValidateRuntimeSpawnInstances()
-        {
-            if (_settings == null)
-            {
-                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
-                return;
-            }
-
-            DeepLightMapAutoBuilder.ValidateRuntimeSpawnInstances(_settings, _context);
-        }
-
-        /// <summary>
-        /// Phase 14.10-J-3: Runtime Spawn Instance를 모두 삭제한다.
-        /// 삭제 대상: WorldMapRuntimeSpawnInstanceTag.IsPreviewInstance == false 인 GameObject.
-        /// Preview instance / RuntimePlaceholder / Marker / DebugVisual은 절대 삭제하지 않는다.
-        /// reactivateSourcePlaceholders=false.
-        /// </summary>
-        private void ExecuteClearRuntimeSpawnInstances()
-        {
-            if (_settings == null)
-            {
-                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
-                return;
-            }
-
-            // 확인 대화상자
-            bool confirmed = EditorUtility.DisplayDialog(
-                "Clear Runtime Spawn Instances",
-                "Runtime Spawn Instance를 모두 삭제하시겠습니까?\n\n" +
-                "삭제 대상: WorldMapRuntimeSpawnInstanceTag.IsPreviewInstance == false 인 GameObject.\n" +
-                "Preview instance / RuntimePlaceholder / Marker / DebugVisual은 절대 삭제되지 않습니다.\n" +
-                "이 작업은 Undo로 되돌릴 수 있습니다.",
-                "삭제",
-                "취소");
-
-            if (confirmed)
-            {
-                DeepLightMapAutoBuilder.ClearRuntimeSpawnInstances(_settings, _context, false);
-            }
-            else
-            {
-                Debug.Log("[MapAutoBuilder] Clear Runtime Spawn Instances cancelled by user.");
-            }
-        }
-
-        /// <summary>
-        /// Phase 14.10-J-3: Runtime Spawn Instance를 모두 삭제하고,
-        /// 비활성화된 RuntimePlaceholder를 다시 활성화한다.
-        /// reactivateSourcePlaceholders=true.
-        /// </summary>
-        private void ExecuteClearRuntimeSpawnInstancesAndReactivatePlaceholders()
-        {
-            if (_settings == null)
-            {
-                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
-                return;
-            }
-
-            // 확인 대화상자
-            bool confirmed = EditorUtility.DisplayDialog(
-                "Clear Runtime Spawn Instances + Reactivate Placeholders",
-                "Runtime Spawn Instance를 모두 삭제하고 비활성화된 RuntimePlaceholder를 다시 활성화하시겠습니까?\n\n" +
-                "삭제 대상: WorldMapRuntimeSpawnInstanceTag.IsPreviewInstance == false 인 GameObject.\n" +
-                "Preview instance / RuntimePlaceholder / Marker / DebugVisual은 절대 삭제되지 않습니다.\n" +
-                "비활성화된 RuntimePlaceholder가 다시 활성화됩니다.\n" +
-                "이 작업은 Undo로 되돌릴 수 있습니다.",
-                "삭제 및 활성화",
-                "취소");
-
-            if (confirmed)
-            {
-                DeepLightMapAutoBuilder.ClearRuntimeSpawnInstances(_settings, _context, true);
-            }
-            else
-            {
-                Debug.Log("[MapAutoBuilder] Clear Runtime Spawn Instances + Reactivate Placeholders cancelled by user.");
-            }
-        }
-
-        /// <summary>
         /// Clear Generated Map 실행 (확인 대화상자 포함)
 
         /// </summary>
         private void ExecuteClear()
+
 
         {
             if (_settings == null)
