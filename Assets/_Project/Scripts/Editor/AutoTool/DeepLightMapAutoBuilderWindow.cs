@@ -96,9 +96,7 @@ namespace Project.Editor.AutoTool
         {
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("DeepLight Map Auto Builder", _titleStyle);
-            EditorGUILayout.LabelField("Phase 3~14.10-M: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
-
-
+            EditorGUILayout.LabelField("Phase 3~14.10-N: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
 
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
@@ -358,6 +356,8 @@ namespace Project.Editor.AutoTool
             }
             GUI.color = Color.white;
 
+            EditorGUILayout.Space(3);
+
             // Phase 14.8: Rebuild Prototype Regions Only
 
             GUI.color = new Color(0.2f, 0.6f, 0.9f);
@@ -598,7 +598,19 @@ namespace Project.Editor.AutoTool
                 "54. Phase 14.10-M-6: Runtime Final Content Query - Generate Full Scenario Map에서 자동 실행됨. final content instance 전용 Registry/QueryService를 생성하고 검증한다. 별도 실행 버튼은 제공하지 않음.",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "55. Phase 14.10-N: Category-specific final content binding - HarvestResource/Hazard/Landmark/NarrativeLog/RouteTrigger별 실제 gameplay component 연결 단계. (다음 단계 예약)",
+                "55. Phase 14.10-N-1: RuntimeFinalContentInstances를 실제 gameplay 시스템이 소비하기 전, category별 gameplay 후보 binding을 부착/검증하는 단계. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "56. Phase 14.10-N-2: RuntimeFinalContentGameplayBinding을 category/zone/kind/sourceMarkerId/nearest 기준으로 조회하기 위한 Registry + QueryService 검증 단계. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "57. Phase 14.10-N-3: RuntimeFinalContentGameplayBinding을 실제 gameplay 시스템 연결 전 consumer contract로 분류하는 검증 단계. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "58. Phase 14.10-N-4: RuntimeGameplayConsumerContract를 gameplay system이 직접 검색하지 않도록 Registry/QueryService로 조회하는 검증 단계. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "59. Phase 14.10-O: HarvestResource Consumer Bridge - generated consumer contract/query를 기존 Harvest 시스템 후보 지점으로 연결하는 단계. (다음 단계 예약)",
                 EditorStyles.wordWrappedMiniLabel);
 
             EditorGUILayout.EndVertical();

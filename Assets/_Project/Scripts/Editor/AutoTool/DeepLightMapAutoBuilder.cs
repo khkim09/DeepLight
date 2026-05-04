@@ -5,6 +5,7 @@ using UnityEngine;
 using Project.Data.World;
 using Project.Data.World.Design;
 using Project.Gameplay.World;
+using Project.Gameplay.World.Content;
 
 
 namespace Project.Editor.AutoTool
@@ -793,7 +794,39 @@ namespace Project.Editor.AutoTool
             ValidateRuntimeFinalContentQuery(settings, context);
             Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-6: Runtime Final Content Query Complete =====");
 
-            // 46. 생성 완료 후 Selection 설정
+            // 46. Phase 14.10-N-1: Runtime Final Content Gameplay Bindings
+            // Phase 14.10-M-6 Runtime Final Content Query 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-M-6 이후, N-2 실행 직전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-1: Runtime Final Content Gameplay Bindings =====");
+            RebuildRuntimeFinalContentGameplayBindings(settings, context);
+            ValidateRuntimeFinalContentGameplayBindings(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-1: Runtime Final Content Gameplay Bindings Complete =====");
+
+            // 47. Phase 14.10-N-2: Runtime Final Content Gameplay Binding Query
+            // Phase 14.10-N-1 Runtime Final Content Gameplay Bindings 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-N-1 이후, N-3 실행 직전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-2: Runtime Final Content Gameplay Binding Query =====");
+            RebuildRuntimeFinalContentGameplayBindingQuery(settings, context);
+            ValidateRuntimeFinalContentGameplayBindingQuery(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-2: Runtime Final Content Gameplay Binding Query Complete =====");
+
+            // 48. Phase 14.10-N-3: Runtime Gameplay Consumer Contracts
+            // Phase 14.10-N-2 Runtime Final Content Gameplay Binding Query 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-N-2 이후, N-4 실행 직전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-3: Runtime Gameplay Consumer Contracts =====");
+            RebuildRuntimeGameplayConsumerContracts(settings, context);
+            ValidateRuntimeGameplayConsumerContracts(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-3: Runtime Gameplay Consumer Contracts Complete =====");
+
+            // 49. Phase 14.10-N-4: Runtime Gameplay Consumer Contract Query
+            // Phase 14.10-N-3 Runtime Gameplay Consumer Contracts 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-N-3 이후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-4: Runtime Gameplay Consumer Contract Query =====");
+            RebuildRuntimeGameplayConsumerContractQuery(settings, context);
+            ValidateRuntimeGameplayConsumerContractQuery(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-4: Runtime Gameplay Consumer Contract Query Complete =====");
+
+            // 50. 생성 완료 후 Selection 설정
 
 
 
@@ -803,10 +836,10 @@ namespace Project.Editor.AutoTool
 
             EditorGUIUtility.PingObject(generatedRoot);
 
-            // 47. 최종 데이터 카운트 검증 로그
+            // 51. 최종 데이터 카운트 검증 로그
             LogFinalDataCount(settings);
 
-            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.10-M) COMPLETE =====");
+            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.10-N) COMPLETE =====");
 
 
 
@@ -3113,12 +3146,263 @@ namespace Project.Editor.AutoTool
             Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-6: Validate Runtime Final Content Query Complete =====");
         }
 
+        // ======================================================================
+        //  Phase 14.10-N-1: Runtime Final Content Gameplay Binding (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        //  RuntimeFinalContentInstances를 실제 gameplay 시스템이 소비하기 전,
+        //  category별 gameplay 후보 binding을 부착/검증하는 독립 단계.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-N-1: RuntimeFinalContentInstances 하위 모든 final content instance에
+        /// WorldMapRuntimeFinalContentGameplayBinding을 부착/갱신한다.
+        /// DeepLightMapRuntimeFinalContentGameplayBindingUtility.RebuildRuntimeFinalContentGameplayBindings에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeFinalContentGameplayBindings(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-1] Settings is null! Cannot rebuild runtime final content gameplay bindings.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-1] Context is null! Cannot rebuild runtime final content gameplay bindings.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-1: Rebuild Runtime Final Content Gameplay Bindings =====");
+            DeepLightMapRuntimeFinalContentGameplayBindingUtility.RebuildRuntimeFinalContentGameplayBindings(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-1: Rebuild Runtime Final Content Gameplay Bindings Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-N-1: RuntimeFinalContentInstances 하위 final content instance에 부착된
+        /// WorldMapRuntimeFinalContentGameplayBinding의 유효성을 검사한다.
+        /// DeepLightMapRuntimeFinalContentGameplayBindingUtility.ValidateRuntimeFinalContentGameplayBindings에 위임한다.
+        /// GenerateFullScenarioMap에는 아직 통합하지 않는다.
+        /// </summary>
+        public static void ValidateRuntimeFinalContentGameplayBindings(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-1] Settings is null! Cannot validate runtime final content gameplay bindings.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-1] Context is null! Cannot validate runtime final content gameplay bindings.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-1: Validate Runtime Final Content Gameplay Bindings =====");
+            DeepLightMapRuntimeFinalContentGameplayBindingUtility.ValidateRuntimeFinalContentGameplayBindings(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-1: Validate Runtime Final Content Gameplay Bindings Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-N-2: Runtime Final Content Gameplay Binding Query (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        //  RuntimeFinalContentInstances 하위 final content object에 부착된
+        //  WorldMapRuntimeFinalContentGameplayBinding을 gameplay 시스템이 직접
+        //  FindObjectsByType으로 찾지 않도록, 전용 Registry + QueryService 계층을 구축한다.
+        //  이번 단계는 category별 gameplay 후보 binding을 안전하게 조회하는 read/query layer만 만든다.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-N-2: GeneratedWorldRoot에 WorldMapRuntimeFinalContentGameplayBindingRegistry와
+        /// WorldMapRuntimeFinalContentGameplayBindingQueryService를 추가/갱신하고 cache를 재구축한다.
+        /// DeepLightMapRuntimeFinalContentGameplayBindingQueryUtility.RebuildRuntimeFinalContentGameplayBindingQuery에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeFinalContentGameplayBindingQuery(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-2] Settings is null! Cannot rebuild gameplay binding query.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-2] Context is null! Cannot rebuild gameplay binding query.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-2: Rebuild Runtime Final Content Gameplay Binding Query =====");
+            DeepLightMapRuntimeFinalContentGameplayBindingQueryUtility.RebuildRuntimeFinalContentGameplayBindingQuery(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-2: Rebuild Runtime Final Content Gameplay Binding Query Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-N-2: WorldMapRuntimeFinalContentGameplayBindingRegistry와
+        /// WorldMapRuntimeFinalContentGameplayBindingQueryService의 유효성을 검사한다.
+        /// 40개 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeFinalContentGameplayBindingQueryUtility.ValidateRuntimeFinalContentGameplayBindingQuery에 위임한다.
+        /// GenerateFullScenarioMap에는 아직 통합하지 않는다.
+        /// </summary>
+        public static void ValidateRuntimeFinalContentGameplayBindingQuery(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-2] Settings is null! Cannot validate gameplay binding query.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-2] Context is null! Cannot validate gameplay binding query.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-2: Validate Runtime Final Content Gameplay Binding Query =====");
+            DeepLightMapRuntimeFinalContentGameplayBindingQueryUtility.ValidateRuntimeFinalContentGameplayBindingQuery(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-2: Validate Runtime Final Content Gameplay Binding Query Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-N-3: Runtime Gameplay Consumer Contract (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        //  RuntimeFinalContentGameplayBinding을 실제 gameplay 시스템 연결 전
+        //  consumer contract로 분류하는 독립 검증 단계.
+        //  각 category별 gameplay 연결 전 "소비 계약/후보 계약"만 생성하고 검증한다.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-N-3: RuntimeFinalContentInstances 하위 모든 final content object에
+        /// WorldMapRuntimeGameplayConsumerContract를 부착/갱신한다.
+        /// WorldMapRuntimeFinalContentGameplayBindingQueryService.GetAll()로 binding을 수집하고,
+        /// 각 binding GameObject에 contract를 추가/재사용하여 Configure(binding)을 호출한다.
+        /// DeepLightMapRuntimeGameplayConsumerContractUtility.RebuildRuntimeGameplayConsumerContracts에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeGameplayConsumerContracts(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-3] Settings is null! Cannot rebuild consumer contracts.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-3] Context is null! Cannot rebuild consumer contracts.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-3: Rebuild Runtime Gameplay Consumer Contracts =====");
+            DeepLightMapRuntimeGameplayConsumerContractUtility.RebuildRuntimeGameplayConsumerContracts(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-3: Rebuild Runtime Gameplay Consumer Contracts Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-N-3: RuntimeFinalContentInstances 하위 final content object에 부착된
+        /// WorldMapRuntimeGameplayConsumerContract의 유효성을 검사한다.
+        /// 28개 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeGameplayConsumerContractUtility.ValidateRuntimeGameplayConsumerContracts에 위임한다.
+        /// GenerateFullScenarioMap에는 아직 통합하지 않는다.
+        /// </summary>
+        public static void ValidateRuntimeGameplayConsumerContracts(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-3] Settings is null! Cannot validate consumer contracts.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-3] Context is null! Cannot validate consumer contracts.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-3: Validate Runtime Gameplay Consumer Contracts =====");
+            DeepLightMapRuntimeGameplayConsumerContractUtility.ValidateRuntimeGameplayConsumerContracts(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-3: Validate Runtime Gameplay Consumer Contracts Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-N-4: Runtime Gameplay Consumer Contract Query (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        //  RuntimeGameplayConsumerContract를 gameplay 시스템이 직접
+        //  FindObjectsByType으로 찾지 않도록, 전용 Registry + QueryService 계층을 구축한다.
+        //  이번 단계는 consumer contract를 안전하게 조회하는 read/query layer만 만든다.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-N-4: GeneratedWorldRoot에 WorldMapRuntimeGameplayConsumerContractRegistry와
+        /// WorldMapRuntimeGameplayConsumerContractQueryService를 추가/갱신하고 cache를 재구축한다.
+        /// DeepLightMapRuntimeGameplayConsumerContractQueryUtility.RebuildRuntimeGameplayConsumerContractQuery에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeGameplayConsumerContractQuery(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-4] Settings is null! Cannot rebuild consumer contract query.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-4] Context is null! Cannot rebuild consumer contract query.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-4: Rebuild Runtime Gameplay Consumer Contract Query =====");
+            DeepLightMapRuntimeGameplayConsumerContractQueryUtility.RebuildRuntimeGameplayConsumerContractQuery(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-4: Rebuild Runtime Gameplay Consumer Contract Query Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-N-4: WorldMapRuntimeGameplayConsumerContractRegistry와
+        /// WorldMapRuntimeGameplayConsumerContractQueryService의 유효성을 검사한다.
+        /// 42개 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeGameplayConsumerContractQueryUtility.ValidateRuntimeGameplayConsumerContractQuery에 위임한다.
+        /// GenerateFullScenarioMap에는 아직 통합하지 않는다.
+        /// </summary>
+        public static void ValidateRuntimeGameplayConsumerContractQuery(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-4] Settings is null! Cannot validate consumer contract query.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [N-4] Context is null! Cannot validate consumer contract query.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-4: Validate Runtime Gameplay Consumer Contract Query =====");
+            DeepLightMapRuntimeGameplayConsumerContractQueryUtility.ValidateRuntimeGameplayConsumerContractQuery(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-4: Validate Runtime Gameplay Consumer Contract Query Complete =====");
+        }
+
         /// <summary>
         /// logVerbose가 true일 때만 로그를 출력한다
         /// </summary>
         private static void LogIfVerbose(DeepLightMapAutoBuilderSettingsSO settings, string message)
-
-
         {
             if (settings != null && settings.LogVerbose)
             {
