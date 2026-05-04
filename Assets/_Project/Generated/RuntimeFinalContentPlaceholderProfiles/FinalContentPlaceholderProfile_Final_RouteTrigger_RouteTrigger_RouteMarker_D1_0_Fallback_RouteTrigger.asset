@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5bb36c6e223f0945aa5b17bdd841bb1, type: 3}
+  m_Name: FinalContentPlaceholderProfile_Final_RouteTrigger_RouteTrigger_RouteMarker_D1_0_Fallback_RouteTrigger
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.World.Content.WorldMapRuntimeFinalContentPlaceholderProfileSO
+  _requirementId: Final_RouteTrigger_RouteTrigger_RouteMarker_D1_0_Fallback_RouteTrigger
+  _finalContentKind: 5
+  _adapterKind: 5
+  _runtimeCategory: RouteTrigger
+  _runtimeKey: RouteMarker_D1_0
+  _profileId: Fallback_RouteTrigger
+  _displayName: RouteTrigger - RouteTrigger/RouteMarker_D1_0 (Fallback_RouteTrigger)
+  _description: Auto-generated requirement for RouteTrigger | Category=RouteTrigger
+    Key=RouteMarker_D1_0 ProfileId=Fallback_RouteTrigger | Matched 1 contract(s)
+  _isFallbackRequirement: 0
+  _isGeneratedPlaceholder: 1

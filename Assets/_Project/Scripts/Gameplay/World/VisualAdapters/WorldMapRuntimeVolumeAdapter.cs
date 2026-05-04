@@ -17,13 +17,11 @@ namespace Project.Gameplay.World.VisualAdapters
         [Header("Apply Flags")]
         [SerializeField] private bool applyColorAdjustments = true;
         [SerializeField] private bool applyVignette = true;
-        [SerializeField] private bool logUnsupportedVolumeComponents = false;
 
         // Internal
         private VolumeProfile runtimeProfile;
         private bool isReady;
         private bool hasLoggedMissingVolume;
-        private bool hasLoggedMissingComponents;
 
         // Cached component references
         private UnityEngine.Rendering.Universal.ColorAdjustments colorAdjustments;
@@ -170,7 +168,6 @@ namespace Project.Gameplay.World.VisualAdapters
             vignette = null;
             isReady = false;
             hasLoggedMissingVolume = false;
-            hasLoggedMissingComponents = false;
         }
     }
 }

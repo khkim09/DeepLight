@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5bb36c6e223f0945aa5b17bdd841bb1, type: 3}
+  m_Name: FinalContentPlaceholderProfile_Final_LandmarkProp_Landmark_wreck_Landmark_wreck
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.World.Content.WorldMapRuntimeFinalContentPlaceholderProfileSO
+  _requirementId: Final_LandmarkProp_Landmark_wreck_Landmark_wreck
+  _finalContentKind: 3
+  _adapterKind: 3
+  _runtimeCategory: Landmark
+  _runtimeKey: wreck
+  _profileId: Landmark_wreck
+  _displayName: LandmarkProp - Landmark/wreck (Landmark_wreck)
+  _description: Auto-generated requirement for LandmarkProp | Category=Landmark Key=wreck
+    ProfileId=Landmark_wreck | Matched 11 contract(s)
+  _isFallbackRequirement: 0
+  _isGeneratedPlaceholder: 1

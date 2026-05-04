@@ -13,6 +13,25 @@ namespace Project.Gameplay.World.Content
     /// </summary>
     public class WorldMapRuntimeSpawnInstanceRegistry : MonoBehaviour
     {
+        // ===== Runtime Initialization Options =====
+
+        [SerializeField, Tooltip("Awake에서 자동으로 RebuildCacheFromRoot(transform)를 호출할지 여부")]
+        private bool rebuildOnAwake = true;
+
+        [SerializeField, Tooltip("OnEnable에서 cache가 비어 있으면 자동으로 RebuildCacheFromRoot(transform)를 호출할지 여부")]
+        private bool rebuildOnEnableIfEmpty = true;
+
+        [SerializeField, Tooltip("GetComponentsInChildren에서 includeInactive 사용 여부")]
+        private bool includeInactiveInstances = true;
+
+        [SerializeField, Tooltip("Runtime 초기화 관련 로그를 출력할지 여부")]
+        private bool logRuntimeInitialization = false;
+
+        // ===== Internal State =====
+
+        /// <summary>중복 초기화 방지를 위한 내부 상태. ClearCache() 호출 시 false로 되돌아감.</summary>
+        private bool hasRuntimeInitialized;
+
         // ===== Cache Fields =====
 
         /// <summary>모든 runtime instance의 flat list cache</summary>
@@ -40,6 +59,40 @@ namespace Project.Gameplay.World.Content
 
         /// <summary>중복 MarkerId 목록 (읽기 전용)</summary>
         public IReadOnlyList<string> DuplicateMarkerIds => _duplicateMarkerIds;
+
+        // ===== Unity Lifecycle =====
+
+        /// <summary>
+        /// Awake: rebuildOnAwake가 true이면 RebuildCacheFromRoot(transform)를 호출하여
+        /// PlayMode 진입 시 cache가 비어 있지 않도록 보장한다.
+        /// </summary>
+        private void Awake()
+        {
+            if (rebuildOnAwake && !hasRuntimeInitialized)
+            {
+                if (logRuntimeInitialization)
+                    UnityEngine.Debug.Log("[WorldMapRuntimeSpawnInstanceRegistry] Awake: rebuildOnAwake is true. Rebuilding cache from root.");
+
+                RebuildCacheFromRoot(transform);
+                hasRuntimeInitialized = true;
+            }
+        }
+
+        /// <summary>
+        /// OnEnable: rebuildOnEnableIfEmpty가 true이고 AllInstances count가 0이면
+        /// RebuildCacheFromRoot(transform)를 호출한다.
+        /// </summary>
+        private void OnEnable()
+        {
+            if (rebuildOnEnableIfEmpty && _allInstances.Count == 0)
+            {
+                if (logRuntimeInitialization)
+                    UnityEngine.Debug.Log("[WorldMapRuntimeSpawnInstanceRegistry] OnEnable: cache is empty. Rebuilding cache from root.");
+
+                RebuildCacheFromRoot(transform);
+                hasRuntimeInitialized = true;
+            }
+        }
 
         // ===== Query API =====
 
@@ -158,7 +211,7 @@ namespace Project.Gameplay.World.Content
                 root = transform;
 
             // 1. root 하위 모든 WorldMapRuntimeSpawnInstanceTag를 includeInactive=true로 수집
-            WorldMapRuntimeSpawnInstanceTag[] allTags = root.GetComponentsInChildren<WorldMapRuntimeSpawnInstanceTag>(true);
+            WorldMapRuntimeSpawnInstanceTag[] allTags = root.GetComponentsInChildren<WorldMapRuntimeSpawnInstanceTag>(includeInactiveInstances);
 
             // 2. cache 컨테이너 초기화
             _allInstances = new List<WorldMapRuntimeSpawnInstanceTag>();
@@ -267,7 +320,7 @@ namespace Project.Gameplay.World.Content
         }
 
         /// <summary>
-        /// 모든 cache를 비운다.
+        /// 모든 cache를 비운다. hasRuntimeInitialized도 false로 되돌린다.
         /// </summary>
         public void ClearCache()
         {
@@ -277,6 +330,9 @@ namespace Project.Gameplay.World.Content
             _byMarkerType.Clear();
             _byMarkerId.Clear();
             _duplicateMarkerIds.Clear();
+
+            // 중복 초기화 방지 상태도 초기화
+            hasRuntimeInitialized = false;
 
             UnityEngine.Debug.Log("[WorldMapRuntimeSpawnInstanceRegistry] Cache cleared.");
         }

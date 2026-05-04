@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5bb36c6e223f0945aa5b17bdd841bb1, type: 3}
+  m_Name: "FinalContentPlaceholderProfile_Final_NarrativeLog_NarrativeLog_\uBD95\uAD34
+    \uAC00\uC7A5\uC790\uB9AC \uACBD\uACE0 \uB85C\uADF8, \uC6D0\uC810 \uC555\uB825
+    \uAE30\uB85D, \uAE08\uC9C0\uAD6C\uC5ED \uCD5C\uC885_Fallback_NarrativeLog"
+  m_EditorClassIdentifier: Project.Gameplay::Project.Gameplay.World.Content.WorldMapRuntimeFinalContentPlaceholderProfileSO
+  _requirementId: "Final_NarrativeLog_NarrativeLog_\uBD95\uAD34 \uAC00\uC7A5\uC790\uB9AC
+    \uACBD\uACE0 \uB85C\uADF8, \uC6D0\uC810 \uC555\uB825 \uAE30\uB85D, \uAE08\uC9C0\uAD6C\uC5ED
+    \uCD5C\uC885_Fallback_NarrativeLog"
+  _finalContentKind: 4
+  _adapterKind: 4
+  _runtimeCategory: NarrativeLog
+  _runtimeKey: "\uBD95\uAD34 \uAC00\uC7A5\uC790\uB9AC \uACBD\uACE0 \uB85C\uADF8,
+    \uC6D0\uC810 \uC555\uB825 \uAE30\uB85D, \uAE08\uC9C0\uAD6C\uC5ED \uCD5C\uC885"
+  _profileId: Fallback_NarrativeLog
+  _displayName: "NarrativeLog - NarrativeLog/\uBD95\uAD34 \uAC00\uC7A5\uC790\uB9AC
+    \uACBD\uACE0 \uB85C\uADF8, \uC6D0\uC810 \uC555\uB825 \uAE30\uB85D, \uAE08\uC9C0\uAD6C\uC5ED
+    \uCD5C\uC885 (Fallback_NarrativeLog)"
+  _description: "Auto-generated requirement for NarrativeLog | Category=NarrativeLog
+    Key=\uBD95\uAD34 \uAC00\uC7A5\uC790\uB9AC \uACBD\uACE0 \uB85C\uADF8, \uC6D0\uC810
+    \uC555\uB825 \uAE30\uB85D, \uAE08\uC9C0\uAD6C\uC5ED \uCD5C\uC885 ProfileId=Fallback_NarrativeLog
+    | Matched 1 contract(s)"
+  _isFallbackRequirement: 0
+  _isGeneratedPlaceholder: 1

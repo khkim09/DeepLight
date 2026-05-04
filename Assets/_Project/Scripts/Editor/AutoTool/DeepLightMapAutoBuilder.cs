@@ -703,16 +703,92 @@ namespace Project.Editor.AutoTool
             DeepLightMapRuntimeSpawnInstanceRegistryUtility.ValidateRuntimeSpawnInstanceRegistry(settings, context);
             Debug.Log("[MapAutoBuilder] ===== Phase 14.10-K-1: Runtime Spawn Instance Registry Complete =====");
 
-            // 35. 생성 완료 후 Selection 설정
+            // 35. Phase 14.10-K-3: Runtime Spawn Query Service
+            // Phase 14.10-K-1 Runtime Spawn Instance Registry 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-K-1 이후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-K-3: Runtime Spawn Query Service =====");
+            DeepLightMapRuntimeSpawnQueryValidationUtility.RebuildRuntimeSpawnQueryService(settings, context);
+            DeepLightMapRuntimeSpawnQueryValidationUtility.ValidateRuntimeSpawnQueryService(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-K-3: Runtime Spawn Query Service Complete =====");
+
+            // 36. Phase 14.10-K-4: Runtime Spawn Runtime Readiness
+            // Phase 14.10-K-3 Runtime Spawn Query Service 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-K-3 이후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-K-4: Runtime Spawn Runtime Readiness =====");
+            DeepLightMapRuntimeSpawnRuntimeReadinessUtility.RebuildRuntimeSpawnRuntimeReadiness(settings, context);
+            DeepLightMapRuntimeSpawnRuntimeReadinessUtility.ValidateRuntimeSpawnRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-K-4: Runtime Spawn Runtime Readiness Complete =====");
+
+            // 37. Phase 14.10-L-1: Runtime Spawn Gameplay Adapters
+            // Phase 14.10-K-4 Runtime Spawn Runtime Readiness 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-K-4 이후, L-2 실행 직전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-1: Runtime Spawn Gameplay Adapters =====");
+            RebuildRuntimeSpawnGameplayAdapters(settings, context);
+            ValidateRuntimeSpawnGameplayAdapters(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-1: Runtime Spawn Gameplay Adapters Complete =====");
+
+            // 38. Phase 14.10-L-2: Runtime Gameplay Adapter Query
+            // Phase 14.10-L-1 Runtime Spawn Gameplay Adapter 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-L-1 이후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-2: Runtime Gameplay Adapter Query =====");
+            DeepLightMapRuntimeGameplayAdapterQueryUtility.RebuildRuntimeGameplayAdapterQuery(settings, context);
+            DeepLightMapRuntimeGameplayAdapterQueryUtility.ValidateRuntimeGameplayAdapterQuery(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-2: Runtime Gameplay Adapter Query Complete =====");
+
+            // 39. Phase 14.10-L-3: Runtime Gameplay Adapter Runtime Readiness
+            // Phase 14.10-L-2 Runtime Gameplay Adapter Query 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-L-2 이후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-3: Runtime Gameplay Adapter Runtime Readiness =====");
+            DeepLightMapRuntimeGameplayAdapterRuntimeReadinessUtility.RebuildRuntimeGameplayAdapterRuntimeReadiness(settings, context);
+            DeepLightMapRuntimeGameplayAdapterRuntimeReadinessUtility.ValidateRuntimeGameplayAdapterRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-3: Runtime Gameplay Adapter Runtime Readiness Complete =====");
+
+            // 40. Phase 14.10-M-1: Runtime Final Content Contracts
+            // Phase 14.10-L-3 Runtime Gameplay Adapter Runtime Readiness 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-L-3 이후, M-2 실행 직전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-1: Runtime Final Content Contracts =====");
+            RebuildRuntimeFinalContentContracts(settings, context);
+            ValidateRuntimeFinalContentContracts(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-1: Runtime Final Content Contracts Complete =====");
+
+            // 41. Phase 14.10-M-2: Runtime Final Content Requirement Database
+            // Phase 14.10-M-1 Runtime Final Content Contracts 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-M-1 이후, M-3 실행 직전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-2: Runtime Final Content Requirement Database =====");
+            CreateOrUpdateDefaultRuntimeFinalContentRequirementDatabase(settings, context);
+            ValidateRuntimeFinalContentRequirementDatabase(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-2: Runtime Final Content Requirement Database Complete =====");
+
+            // 42. Phase 14.10-M-3: Runtime Final Content Placeholder Assets
+            // Phase 14.10-M-2 Runtime Final Content Requirement Database 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-M-2 이후, M-4 실행 직전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-3: Runtime Final Content Placeholder Assets =====");
+            CreateOrUpdateRuntimeFinalContentPlaceholderAssets(settings, context);
+            ValidateRuntimeFinalContentPlaceholderAssets(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-3: Runtime Final Content Placeholder Assets Complete =====");
+
+            // 43. Phase 14.10-M-4: Runtime Final Content Resolution Plans
+            // Phase 14.10-M-3 Runtime Final Content Placeholder Assets 생성/검증 이후 실행되어야 하므로
+            // Phase 14.10-M-3 이후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-4: Runtime Final Content Resolution Plans =====");
+            RebuildRuntimeFinalContentResolutionPlans(settings, context);
+            ValidateRuntimeFinalContentResolutionPlans(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-4: Runtime Final Content Resolution Plans Complete =====");
+
+            // 44. 생성 완료 후 Selection 설정
+
+
 
             Selection.activeGameObject = generatedRoot;
 
+
             EditorGUIUtility.PingObject(generatedRoot);
 
-            // 36. 최종 데이터 카운트 검증 로그
+            // 45. 최종 데이터 카운트 검증 로그
             LogFinalDataCount(settings);
 
-            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.10-K) COMPLETE =====");
+            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.10-M) COMPLETE =====");
+
 
 
 
@@ -2145,6 +2221,308 @@ namespace Project.Editor.AutoTool
         }
 
         // ======================================================================
+        // ======================================================================
+        //  Phase 14.10-K-3: Runtime Spawn Query Service (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        //  K-3은 gameplay query facade 검증 단계이며, K-1 registry 생성 직후 자동 실행된다.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-K-3: GeneratedWorldRoot에 WorldMapRuntimeSpawnQueryService를 부착/보정하고
+        /// QueryService.TryInitializeFromRoot()를 호출한다.
+        /// DeepLightMapRuntimeSpawnQueryValidationUtility.RebuildRuntimeSpawnQueryService에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+
+        public static void RebuildRuntimeSpawnQueryService(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [K-3] Settings is null! Cannot rebuild runtime spawn query service.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [K-3] Context is null! Cannot rebuild runtime spawn query service.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-K-3: Rebuild Runtime Spawn Query Service =====");
+            DeepLightMapRuntimeSpawnQueryValidationUtility.RebuildRuntimeSpawnQueryService(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-K-3: Rebuild Runtime Spawn Query Service Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-K-3: WorldMapRuntimeSpawnQueryService의 유효성을 검사한다.
+        /// 18개 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeSpawnQueryValidationUtility.ValidateRuntimeSpawnQueryService에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+
+        public static void ValidateRuntimeSpawnQueryService(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [K-3] Settings is null! Cannot validate runtime spawn query service.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [K-3] Context is null! Cannot validate runtime spawn query service.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-K-3: Validate Runtime Spawn Query Service =====");
+            DeepLightMapRuntimeSpawnQueryValidationUtility.ValidateRuntimeSpawnQueryService(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-K-3: Validate Runtime Spawn Query Service Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-L-1: Runtime Spawn Gameplay Adapter (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-L-1: RuntimeSpawnedInstances 하위 runtime instance에
+        /// WorldMapRuntimeSpawnGameplayAdapter를 부착/갱신한다.
+        /// DeepLightMapRuntimeSpawnGameplayAdapterUtility.RebuildRuntimeSpawnGameplayAdapters에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeSpawnGameplayAdapters(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [L-1] Settings is null! Cannot rebuild runtime spawn gameplay adapters.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [L-1] Context is null! Cannot rebuild runtime spawn gameplay adapters.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-1: Rebuild Runtime Spawn Gameplay Adapters =====");
+            DeepLightMapRuntimeSpawnGameplayAdapterUtility.RebuildRuntimeSpawnGameplayAdapters(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-1: Rebuild Runtime Spawn Gameplay Adapters Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-L-1: RuntimeSpawnedInstances 하위 runtime instance의
+        /// WorldMapRuntimeSpawnGameplayAdapter 유효성을 검사한다.
+        /// DeepLightMapRuntimeSpawnGameplayAdapterUtility.ValidateRuntimeSpawnGameplayAdapters에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void ValidateRuntimeSpawnGameplayAdapters(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [L-1] Settings is null! Cannot validate runtime spawn gameplay adapters.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [L-1] Context is null! Cannot validate runtime spawn gameplay adapters.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-1: Validate Runtime Spawn Gameplay Adapters =====");
+            DeepLightMapRuntimeSpawnGameplayAdapterUtility.ValidateRuntimeSpawnGameplayAdapters(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-1: Validate Runtime Spawn Gameplay Adapters Complete =====");
+        }
+
+
+        // ======================================================================
+        //  Phase 14.10-L-2: Runtime Gameplay Adapter Query (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-L-2: GeneratedWorldRoot에 WorldMapRuntimeGameplayAdapterRegistry와
+        /// WorldMapRuntimeGameplayAdapterQueryService를 부착/보강하고 cache를 재구축한다.
+        /// DeepLightMapRuntimeGameplayAdapterQueryUtility.RebuildRuntimeGameplayAdapterQuery에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeGameplayAdapterQuery(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [L-2] Settings is null! Cannot rebuild runtime gameplay adapter query.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [L-2] Context is null! Cannot rebuild runtime gameplay adapter query.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-2: Rebuild Runtime Gameplay Adapter Query =====");
+            DeepLightMapRuntimeGameplayAdapterQueryUtility.RebuildRuntimeGameplayAdapterQuery(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-2: Rebuild Runtime Gameplay Adapter Query Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-L-2: WorldMapRuntimeGameplayAdapterRegistry와 WorldMapRuntimeGameplayAdapterQueryService의
+        /// 유효성을 25개 항목으로 검사하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeGameplayAdapterQueryUtility.ValidateRuntimeGameplayAdapterQuery에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void ValidateRuntimeGameplayAdapterQuery(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [L-2] Settings is null! Cannot validate runtime gameplay adapter query.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [L-2] Context is null! Cannot validate runtime gameplay adapter query.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-2: Validate Runtime Gameplay Adapter Query =====");
+            DeepLightMapRuntimeGameplayAdapterQueryUtility.ValidateRuntimeGameplayAdapterQuery(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-2: Validate Runtime Gameplay Adapter Query Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-L-3: Runtime Gameplay Adapter Runtime Readiness (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-L-3: GeneratedWorldRoot에 WorldMapRuntimeGameplayAdapterRegistry와
+        /// WorldMapRuntimeGameplayAdapterQueryService를 부착/보강하고 cache를 재구축한다.
+        /// DeepLightMapRuntimeGameplayAdapterRuntimeReadinessUtility.RebuildRuntimeGameplayAdapterRuntimeReadiness에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeGameplayAdapterRuntimeReadiness(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [L-3] Settings is null! Cannot rebuild runtime gameplay adapter runtime readiness.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [L-3] Context is null! Cannot rebuild runtime gameplay adapter runtime readiness.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-3: Rebuild Runtime Gameplay Adapter Runtime Readiness =====");
+            DeepLightMapRuntimeGameplayAdapterRuntimeReadinessUtility.RebuildRuntimeGameplayAdapterRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-3: Rebuild Runtime Gameplay Adapter Runtime Readiness Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-L-3: WorldMapRuntimeGameplayAdapterRegistry와 WorldMapRuntimeGameplayAdapterQueryService의
+        /// runtime readiness를 검증한다. 25개 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeGameplayAdapterRuntimeReadinessUtility.ValidateRuntimeGameplayAdapterRuntimeReadiness에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void ValidateRuntimeGameplayAdapterRuntimeReadiness(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [L-3] Settings is null! Cannot validate runtime gameplay adapter runtime readiness.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [L-3] Context is null! Cannot validate runtime gameplay adapter runtime readiness.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-3: Validate Runtime Gameplay Adapter Runtime Readiness =====");
+            DeepLightMapRuntimeGameplayAdapterRuntimeReadinessUtility.ValidateRuntimeGameplayAdapterRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-L-3: Validate Runtime Gameplay Adapter Runtime Readiness Complete =====");
+        }
+
+
+        // ======================================================================
+        //  Phase 14.10-K-4: Runtime Spawn Runtime Readiness (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-K-4: GeneratedWorldRoot에 WorldMapRuntimeSpawnInstanceRegistry와
+        /// WorldMapRuntimeSpawnQueryService를 부착/보강하고 cache를 재구축한다.
+        /// DeepLightMapRuntimeSpawnRuntimeReadinessUtility.RebuildRuntimeSpawnRuntimeReadiness에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능한 Runtime readiness 검증 단계.
+        /// </summary>
+        public static void RebuildRuntimeSpawnRuntimeReadiness(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [K-4] Settings is null! Cannot rebuild runtime spawn runtime readiness.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [K-4] Context is null! Cannot rebuild runtime spawn runtime readiness.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-K-4: Rebuild Runtime Spawn Runtime Readiness =====");
+            DeepLightMapRuntimeSpawnRuntimeReadinessUtility.RebuildRuntimeSpawnRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-K-4: Rebuild Runtime Spawn Runtime Readiness Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-K-4: WorldMapRuntimeSpawnInstanceRegistry와 WorldMapRuntimeSpawnQueryService의
+        /// runtime readiness를 검증한다. 18개 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeSpawnRuntimeReadinessUtility.ValidateRuntimeSpawnRuntimeReadiness에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능한 Runtime readiness 검증 단계.
+        /// </summary>
+        public static void ValidateRuntimeSpawnRuntimeReadiness(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [K-4] Settings is null! Cannot validate runtime spawn runtime readiness.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [K-4] Context is null! Cannot validate runtime spawn runtime readiness.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-K-4: Validate Runtime Spawn Runtime Readiness =====");
+            DeepLightMapRuntimeSpawnRuntimeReadinessUtility.ValidateRuntimeSpawnRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-K-4: Validate Runtime Spawn Runtime Readiness Complete =====");
+        }
+
+
+        // ======================================================================
         //  Phase 14.10-K-1: Runtime Spawn Instance Registry (public wrapper)
         //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
         // ======================================================================
@@ -2350,10 +2728,250 @@ namespace Project.Editor.AutoTool
             Debug.Log("[MapAutoBuilder] ===== Phase 14.10-J-1: Validate Runtime Spawn Replacement Plans Complete =====");
         }
 
+        // ======================================================================
+        //  Phase 14.10-M-1: Runtime Final Content Contract (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-M-1: RuntimeSpawnedInstances 하위 runtime instance에
+        /// WorldMapRuntimeFinalContentContract를 부착/갱신한다.
+        /// DeepLightMapRuntimeFinalContentContractUtility.RebuildRuntimeFinalContentContracts에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeFinalContentContracts(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-1] Settings is null! Cannot rebuild runtime final content contracts.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-1] Context is null! Cannot rebuild runtime final content contracts.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-1: Rebuild Runtime Final Content Contracts =====");
+            DeepLightMapRuntimeFinalContentContractUtility.RebuildRuntimeFinalContentContracts(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-1: Rebuild Runtime Final Content Contracts Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-M-1: RuntimeSpawnedInstances 하위 runtime instance에 부착된
+        /// WorldMapRuntimeFinalContentContract의 유효성을 검사한다.
+        /// 21개 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeFinalContentContractUtility.ValidateRuntimeFinalContentContracts에 위임한다.
+        /// GenerateFullScenarioMap에는 통합하지 않는다.
+        /// </summary>
+        public static void ValidateRuntimeFinalContentContracts(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-1] Settings is null! Cannot validate runtime final content contracts.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-1] Context is null! Cannot validate runtime final content contracts.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-1: Validate Runtime Final Content Contracts =====");
+            DeepLightMapRuntimeFinalContentContractUtility.ValidateRuntimeFinalContentContracts(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-1: Validate Runtime Final Content Contracts Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-M-2: Runtime Final Content Requirement Database (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-M-2: M-1 contract 기준으로 Runtime Final Content Requirement Database를 생성/갱신한다.
+        /// DeepLightMapRuntimeFinalContentRequirementDatabaseUtility.CreateOrUpdateDefaultRuntimeFinalContentRequirementDatabase에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void CreateOrUpdateDefaultRuntimeFinalContentRequirementDatabase(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-2] Settings is null! Cannot create/update requirement database.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-2] Context is null! Cannot create/update requirement database.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-2: Create/Update Runtime Final Content Requirement Database =====");
+            DeepLightMapRuntimeFinalContentRequirementDatabaseUtility.CreateOrUpdateDefaultRuntimeFinalContentRequirementDatabase(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-2: Create/Update Runtime Final Content Requirement Database Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-M-2: Runtime Final Content Requirement Database의 유효성을 검사한다.
+        /// 16개 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeFinalContentRequirementDatabaseUtility.ValidateRuntimeFinalContentRequirementDatabase에 위임한다.
+        /// GenerateFullScenarioMap에는 통합하지 않는다.
+        /// </summary>
+        public static void ValidateRuntimeFinalContentRequirementDatabase(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-2] Settings is null! Cannot validate requirement database.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-2] Context is null! Cannot validate requirement database.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-2: Validate Runtime Final Content Requirement Database =====");
+            DeepLightMapRuntimeFinalContentRequirementDatabaseUtility.ValidateRuntimeFinalContentRequirementDatabase(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-2: Validate Runtime Final Content Requirement Database Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-M-3: Runtime Final Content Placeholder Binding (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-M-3: M-2 Requirement Database의 각 entry에 대해,
+        /// finalPrefab/finalProfile이 null인 entry에 generated placeholder prefab/profile을 생성/갱신하고 연결한다.
+        /// 기존 사용자 연결값은 절대 덮어쓰지 않는다.
+        /// DeepLightMapRuntimeFinalContentPlaceholderBindingUtility.CreateOrUpdateRuntimeFinalContentPlaceholderAssets에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void CreateOrUpdateRuntimeFinalContentPlaceholderAssets(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-3] Settings is null! Cannot create/update placeholder assets.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-3] Context is null! Cannot create/update placeholder assets.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-3: Create/Update Runtime Final Content Placeholder Assets =====");
+            DeepLightMapRuntimeFinalContentPlaceholderBindingUtility.CreateOrUpdateRuntimeFinalContentPlaceholderAssets(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-3: Create/Update Runtime Final Content Placeholder Assets Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-M-3: Runtime Final Content Placeholder Asset의 유효성을 검사한다.
+        /// 20개 항목을 검사하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeFinalContentPlaceholderBindingUtility.ValidateRuntimeFinalContentPlaceholderAssets에 위임한다.
+        /// GenerateFullScenarioMap에는 통합하지 않는다.
+        /// </summary>
+        public static void ValidateRuntimeFinalContentPlaceholderAssets(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-3] Settings is null! Cannot validate placeholder assets.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-3] Context is null! Cannot validate placeholder assets.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-3: Validate Runtime Final Content Placeholder Assets =====");
+            DeepLightMapRuntimeFinalContentPlaceholderBindingUtility.ValidateRuntimeFinalContentPlaceholderAssets(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-3: Validate Runtime Final Content Placeholder Assets Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-M-4: Runtime Final Content Resolution Plan (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-M-4: M-1 Contract + M-2 Requirement DB + M-3 finalPrefab/finalProfile binding을 사용해서,
+        /// 각 RuntimeSpawnedInstance가 어떤 final content prefab/profile로 교체될 수 있는지
+        /// "최종 해석 계획"을 생성한다. read-only plan build만 수행하며 scene instance를 교체하지 않는다.
+        /// DeepLightMapRuntimeFinalContentResolutionPlanUtility.RebuildRuntimeFinalContentResolutionPlans에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeFinalContentResolutionPlans(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-4] Settings is null! Cannot rebuild resolution plans.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-4] Context is null! Cannot rebuild resolution plans.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-4: Rebuild Runtime Final Content Resolution Plans =====");
+            DeepLightMapRuntimeFinalContentResolutionPlanUtility.RebuildRuntimeFinalContentResolutionPlans(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-4: Rebuild Runtime Final Content Resolution Plans Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-M-4: 생성된 resolution plan의 유효성을 검사한다.
+        /// 최소 25개 이상의 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// Scene object를 생성/삭제/이동/name 변경하지 않는다.
+        /// DeepLightMapRuntimeFinalContentResolutionPlanUtility.ValidateRuntimeFinalContentResolutionPlans에 위임한다.
+        /// GenerateFullScenarioMap에는 통합하지 않는다.
+        /// </summary>
+        public static void ValidateRuntimeFinalContentResolutionPlans(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-4] Settings is null! Cannot validate resolution plans.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [M-4] Context is null! Cannot validate resolution plans.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-4: Validate Runtime Final Content Resolution Plans =====");
+            DeepLightMapRuntimeFinalContentResolutionPlanUtility.ValidateRuntimeFinalContentResolutionPlans(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-M-4: Validate Runtime Final Content Resolution Plans Complete =====");
+        }
+
         /// <summary>
         /// logVerbose가 true일 때만 로그를 출력한다
         /// </summary>
         private static void LogIfVerbose(DeepLightMapAutoBuilderSettingsSO settings, string message)
+
         {
             if (settings != null && settings.LogVerbose)
             {

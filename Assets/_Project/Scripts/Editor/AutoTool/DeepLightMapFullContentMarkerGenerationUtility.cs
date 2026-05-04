@@ -761,7 +761,6 @@ namespace Project.Editor.AutoTool
             if (entry == null) return 0;
             bool hasLogOrHint = !string.IsNullOrEmpty(entry.logOrHint);
             bool hasNarrativeFunction = !string.IsNullOrEmpty(entry.narrativeFunction);
-            bool requiresNarrative = false; // rule에서 확인하지만 entry 기반으로도 판단
             if (!hasLogOrHint && !hasNarrativeFunction) return 0;
             return 1;
         }

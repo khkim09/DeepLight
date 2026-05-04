@@ -96,7 +96,7 @@ namespace Project.Editor.AutoTool
         {
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("DeepLight Map Auto Builder", _titleStyle);
-            EditorGUILayout.LabelField("Phase 3~14.10-K: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("Phase 3~14.10-M: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
 
 
 
@@ -362,6 +362,9 @@ namespace Project.Editor.AutoTool
 
             // Phase 14.8: Rebuild Prototype Regions Only
 
+
+
+
             GUI.color = new Color(0.2f, 0.6f, 0.9f);
             GUI.enabled = _settings != null;
             if (GUILayout.Button("Rebuild Prototype Regions Only", GUILayout.Height(30)))
@@ -370,6 +373,7 @@ namespace Project.Editor.AutoTool
                 ExecuteRebuildPrototypeRegions();
             }
             GUI.color = Color.white;
+
 
             EditorGUILayout.Space(2);
 
@@ -382,6 +386,7 @@ namespace Project.Editor.AutoTool
             GUI.enabled = true;
 
             EditorGUILayout.Space(5);
+
 
             // Clear Generated Map
 
@@ -455,7 +460,7 @@ namespace Project.Editor.AutoTool
                 "7. Stylized Water 내부 property 이름을 찾을 수 없는 경우 water level source 경고는 남을 수 있음",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "8. Generate Full Scenario Map 한 번으로 Phase 3~14.10-K 전체 생성/검증 완료",
+                "8. Generate Full Scenario Map 한 번으로 Phase 3~14.10-L 전체 생성/검증 완료",
 
 
                 EditorStyles.wordWrappedMiniLabel);
@@ -563,9 +568,41 @@ namespace Project.Editor.AutoTool
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
                 "43. Phase 14.10-K-1: Runtime Spawn Instance Registry - RuntimeSpawnedInstances 기반 runtime instance registry를 생성/검증한다. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
-
                 EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "44. Phase 14.10-K-3: Runtime Spawn Query Service - Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "45. Phase 14.10-K-4: Runtime Spawn Runtime Readiness - Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "46. Phase 14.10-L-1: Runtime Spawn Gameplay Adapters - RuntimeSpawnedInstances를 gameplay 시스템이 사용할 수 있는 얇은 adapter component로 바인딩하는 단계. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "47. Phase 14.10-L-2: Runtime Gameplay Adapter Query - RuntimeSpawnGameplayAdapter를 gameplay 시스템이 안전하게 조회하기 위한 Adapter Registry + QueryService 검증 단계. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "48. Phase 14.10-L-3: Runtime Gameplay Adapter Runtime Readiness - RuntimeSpawnedInstances 하위 runtime instance에 붙은 WorldMapRuntimeSpawnGameplayAdapter 계층이 PlayMode/gameplay 진입 시 자동으로 안정적으로 초기화되는지 검증하는 단계. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "49. Phase 14.10-M-1: Runtime Final Content Contract - Runtime gameplay adapters가 실제 final map content prefab/profile로 교체될 준비가 되었는지 category별 contract와 coverage를 검증한다. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "50. Phase 14.10-M-2: Runtime Final Content Requirement Database - M-1 contract 기준으로 실제 final prefab/profile 연결이 필요한 requirement slot을 SO asset으로 생성/검증한다. finalPrefab/finalProfile null은 현재 단계에서 FAIL이 아니라 WARN이다. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "51. Phase 14.10-M-3: Runtime Final Content Placeholder Binding - M-2 Requirement Database의 각 entry에 대해 finalPrefab/finalProfile이 null인 경우 category/finalContentKind별 placeholder prefab/profile을 Generated 폴더에 생성하고 연결한다. 기존 사용자 연결값은 절대 덮어쓰지 않는다. Collider/상호작용 컴포넌트는 붙이지 않는다. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "52. Phase 14.10-M-4: Runtime Final Content Resolution Plan - M-1 Contract + M-2 Requirement DB + M-3 finalPrefab/finalProfile binding을 사용해서 각 RuntimeSpawnedInstance가 어떤 final content prefab/profile로 교체될 수 있는지 최종 해석 계획을 생성/검증한다. read-only plan build만 수행하며 scene instance를 교체하지 않는다. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "53. Phase 14.10-M-5: Runtime Final Content Scene Replacement (예약) - RuntimeSpawnedInstances를 finalPrefab/finalProfile 기반 실제 final content instance로 교체하는 단계. 이번 작업에서는 구현/통합하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+
+
             EditorGUILayout.EndVertical();
+
 
 
         }
@@ -1017,8 +1054,11 @@ namespace Project.Editor.AutoTool
         /// <summary>
         /// Clear Generated Map 실행 (확인 대화상자 포함)
 
+
+
         /// </summary>
         private void ExecuteClear()
+
 
 
         {
@@ -1056,4 +1096,5 @@ namespace Project.Editor.AutoTool
         }
     }
 }
+
 
