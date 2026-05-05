@@ -1,0 +1,426 @@
+﻿using System.Collections.Generic;
+using UnityEngine;
+
+namespace Project.Gameplay.World.Harvest
+{
+    /// <summary>
+    /// WorldMapRuntimeHarvestInteractionTargetRegistry에 대한 얇은 facade.
+    /// 기존 Harvest 시스템이 Registry를 직접 참조하지 않도록 한다.
+    /// 직접 scene scan하지 않고 Registry cache만 조회한다.
+    /// UnityEditor API를 사용하지 않으므로 runtime/editor 양쪽에서 안전하게 사용 가능.
+    /// </summary>
+    public class WorldMapRuntimeHarvestInteractionTargetQueryService : MonoBehaviour
+    {
+        // ===== Serialized Fields =====
+
+        [SerializeField, Tooltip("Awake에서 자동으로 TryInitializeFromRoot(transform)를 호출할지 여부")]
+        private bool initializeOnAwake = true;
+
+        [SerializeField, Tooltip("OnEnable에서 registry가 비어 있으면 자동으로 TryInitializeFromRoot(transform)를 호출할지 여부")]
+        private bool initializeOnEnableIfEmpty = true;
+
+        [SerializeField, Tooltip("Registry count가 0일 때 RebuildCacheFromRoot를 호출할지 여부")]
+        private bool rebuildRegistryIfEmpty = true;
+
+        [SerializeField, Tooltip("Runtime 초기화 관련 로그를 출력할지 여부")]
+        private bool logRuntimeInitialization = false;
+
+        [SerializeField, Tooltip("참조할 Registry (Inspector에서 수동 할당 가능)")]
+        private WorldMapRuntimeHarvestInteractionTargetRegistry _registry;
+
+        // ===== Internal State =====
+
+        /// <summary>초기화 완료 여부</summary>
+        private bool _isInitialized;
+
+        // ===== Public Properties =====
+
+        /// <summary>Registry가 할당되어 있는지 여부</summary>
+        public bool HasRegistry => _registry != null;
+
+        /// <summary>QueryService가 관리하는 target adapter 총 개수</summary>
+        public int Count => _registry != null ? _registry.Count : 0;
+
+        // ===== Unity Lifecycle =====
+
+        /// <summary>
+        /// Awake: initializeOnAwake가 true이면 TryInitializeFromRoot(transform)를 호출한다.
+        /// </summary>
+        private void Awake()
+        {
+            if (initializeOnAwake && !_isInitialized)
+            {
+                if (logRuntimeInitialization)
+                    UnityEngine.Debug.Log("[WorldMapRuntimeHarvestInteractionTargetQueryService] Awake: initializeOnAwake is true. Initializing from root.");
+
+                TryInitializeFromRoot(transform);
+                _isInitialized = true;
+            }
+        }
+
+        /// <summary>
+        /// OnEnable: initializeOnEnableIfEmpty가 true이고 registry가 없거나 count가 0이면
+        /// TryInitializeFromRoot(transform)를 호출한다.
+        /// </summary>
+        private void OnEnable()
+        {
+            if (initializeOnEnableIfEmpty && (_registry == null || _registry.Count == 0))
+            {
+                if (logRuntimeInitialization)
+                    UnityEngine.Debug.Log("[WorldMapRuntimeHarvestInteractionTargetQueryService] OnEnable: registry is null or empty. Initializing from root.");
+
+                TryInitializeFromRoot(transform);
+                _isInitialized = true;
+            }
+        }
+
+        // ===== Public API =====
+
+        /// <summary>
+        /// 지정한 root Transform 하위에서 Registry를 찾거나 생성하고,
+        /// rebuildRegistryIfEmpty가 true이면 cache를 재구축한다.
+        /// </summary>
+        /// <param name="root">검색 기준 root Transform. null이면 this.transform 사용.</param>
+        /// <returns>초기화 성공 여부</returns>
+        public bool TryInitializeFromRoot(Transform root)
+        {
+            if (root == null)
+                root = transform;
+
+            // Registry가 없으면 root에서 찾아보고 없으면 root.gameObject에 추가
+            if (_registry == null)
+            {
+                _registry = root.GetComponentInChildren<WorldMapRuntimeHarvestInteractionTargetRegistry>(true);
+
+                if (_registry == null)
+                {
+                    // root.gameObject에 Registry 추가
+                    _registry = root.gameObject.AddComponent<WorldMapRuntimeHarvestInteractionTargetRegistry>();
+                    if (logRuntimeInitialization)
+                        UnityEngine.Debug.Log("[WorldMapRuntimeHarvestInteractionTargetQueryService] Added WorldMapRuntimeHarvestInteractionTargetRegistry to root.");
+                }
+            }
+
+            // Registry count가 0이고 rebuildRegistryIfEmpty가 true면 RebuildCacheFromRoot 호출
+            if (_registry.Count == 0 && rebuildRegistryIfEmpty)
+            {
+                _registry.RebuildCacheFromRoot(root);
+            }
+
+            _isInitialized = true;
+            return _registry.Count > 0;
+        }
+
+        /// <summary>
+        /// Registry의 cache를 강제로 재구축한다.
+        /// </summary>
+        public bool Rebuild()
+        {
+            if (_registry != null)
+            {
+                _registry.RebuildCacheFromRoot(_registry.transform);
+                return _registry.Count > 0;
+            }
+            else
+            {
+                UnityEngine.Debug.LogWarning("[WorldMapRuntimeHarvestInteractionTargetQueryService] Rebuild: registry is null. Call TryInitializeFromRoot first.");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 모든 target adapter를 반환한다.
+        /// </summary>
+        public IReadOnlyList<WorldMapRuntimeHarvestInteractionTargetAdapter> GetAll()
+        {
+            if (_registry == null)
+                return System.Array.Empty<WorldMapRuntimeHarvestInteractionTargetAdapter>();
+
+            return _registry.AllTargets;
+        }
+
+        /// <summary>
+        /// 지정한 ZoneId에 속한 target adapter 목록을 반환한다.
+        /// </summary>
+        public IReadOnlyList<WorldMapRuntimeHarvestInteractionTargetAdapter> GetByZoneId(string zoneId)
+        {
+            if (_registry == null || string.IsNullOrEmpty(zoneId))
+                return System.Array.Empty<WorldMapRuntimeHarvestInteractionTargetAdapter>();
+
+            return _registry.GetByZoneId(zoneId);
+        }
+
+        /// <summary>
+        /// 지정한 RuntimeKey에 속한 target adapter 목록을 반환한다.
+        /// </summary>
+        public IReadOnlyList<WorldMapRuntimeHarvestInteractionTargetAdapter> GetByRuntimeKey(string runtimeKey)
+        {
+            if (_registry == null || string.IsNullOrEmpty(runtimeKey))
+                return System.Array.Empty<WorldMapRuntimeHarvestInteractionTargetAdapter>();
+
+            return _registry.GetByRuntimeKey(runtimeKey);
+        }
+
+        /// <summary>
+        /// 지정한 ProfileId에 속한 target adapter 목록을 반환한다.
+        /// </summary>
+        public IReadOnlyList<WorldMapRuntimeHarvestInteractionTargetAdapter> GetByProfileId(string profileId)
+        {
+            if (_registry == null || string.IsNullOrEmpty(profileId))
+                return System.Array.Empty<WorldMapRuntimeHarvestInteractionTargetAdapter>();
+
+            return _registry.GetByProfileId(profileId);
+        }
+
+        /// <summary>
+        /// 지정한 InteractionKind에 속한 target adapter 목록을 반환한다.
+        /// </summary>
+        public IReadOnlyList<WorldMapRuntimeHarvestInteractionTargetAdapter> GetByInteractionKind(WorldMapRuntimeHarvestInteractionCandidateKind kind)
+        {
+            if (_registry == null)
+                return System.Array.Empty<WorldMapRuntimeHarvestInteractionTargetAdapter>();
+
+            return _registry.GetByInteractionKind(kind);
+        }
+
+        /// <summary>
+        /// 지정한 TargetKind에 속한 target adapter 목록을 반환한다.
+        /// </summary>
+        public IReadOnlyList<WorldMapRuntimeHarvestInteractionTargetAdapter> GetByTargetKind(WorldMapRuntimeHarvestInteractionTargetKind kind)
+        {
+            if (_registry == null)
+                return System.Array.Empty<WorldMapRuntimeHarvestInteractionTargetAdapter>();
+
+            return _registry.GetByTargetKind(kind);
+        }
+
+        /// <summary>
+        /// SourceMarkerId로 target adapter를 조회한다.
+        /// </summary>
+        /// <returns>찾은 경우 true, 없으면 false</returns>
+        public bool TryGetBySourceMarkerId(string sourceMarkerId, out WorldMapRuntimeHarvestInteractionTargetAdapter result)
+        {
+            if (_registry == null || string.IsNullOrEmpty(sourceMarkerId))
+            {
+                result = null;
+                return false;
+            }
+
+            return _registry.TryGetBySourceMarkerId(sourceMarkerId, out result);
+        }
+
+        /// <summary>
+        /// 지정한 position에서 가장 가까운 target adapter를 찾는다.
+        /// </summary>
+        /// <param name="position">기준 위치</param>
+        /// <param name="result">가장 가까운 target adapter (없으면 null)</param>
+        /// <returns>찾은 경우 true, 없으면 false</returns>
+        public bool TryGetNearest(Vector3 position, out WorldMapRuntimeHarvestInteractionTargetAdapter result)
+        {
+            result = null;
+
+            if (_registry == null || _registry.Count == 0)
+                return false;
+
+            float minDistSq = float.MaxValue;
+            WorldMapRuntimeHarvestInteractionTargetAdapter nearest = null;
+
+            foreach (var adapter in _registry.AllTargets)
+            {
+                float distSq = (adapter.WorldPosition - position).sqrMagnitude;
+                if (distSq < minDistSq)
+                {
+                    minDistSq = distSq;
+                    nearest = adapter;
+                }
+            }
+
+            result = nearest;
+            return result != null;
+        }
+
+        /// <summary>
+        /// 지정한 position에서 가장 가까운, 지정한 runtimeKey를 가진 target adapter를 찾는다.
+        /// </summary>
+        /// <param name="position">기준 위치</param>
+        /// <param name="runtimeKey">필터링할 RuntimeKey</param>
+        /// <param name="result">가장 가까운 target adapter (없으면 null)</param>
+        /// <returns>찾은 경우 true, 없으면 false</returns>
+        public bool TryGetNearest(Vector3 position, string runtimeKey, out WorldMapRuntimeHarvestInteractionTargetAdapter result)
+        {
+            result = null;
+
+            if (_registry == null || _registry.Count == 0 || string.IsNullOrEmpty(runtimeKey))
+                return false;
+
+            float minDistSq = float.MaxValue;
+            WorldMapRuntimeHarvestInteractionTargetAdapter nearest = null;
+
+            foreach (var adapter in _registry.AllTargets)
+            {
+                if (!adapter.IsRuntimeKey(runtimeKey))
+                    continue;
+
+                float distSq = (adapter.WorldPosition - position).sqrMagnitude;
+                if (distSq < minDistSq)
+                {
+                    minDistSq = distSq;
+                    nearest = adapter;
+                }
+            }
+
+            result = nearest;
+            return result != null;
+        }
+
+        /// <summary>
+        /// 지정한 position에서 가장 가까운, 지정한 TargetKind를 가진 target adapter를 찾는다.
+        /// </summary>
+        /// <param name="position">기준 위치</param>
+        /// <param name="targetKind">필터링할 TargetKind</param>
+        /// <param name="result">가장 가까운 target adapter (없으면 null)</param>
+        /// <returns>찾은 경우 true, 없으면 false</returns>
+        public bool TryGetNearest(Vector3 position, WorldMapRuntimeHarvestInteractionTargetKind targetKind, out WorldMapRuntimeHarvestInteractionTargetAdapter result)
+        {
+            result = null;
+
+            if (_registry == null || _registry.Count == 0)
+                return false;
+
+            float minDistSq = float.MaxValue;
+            WorldMapRuntimeHarvestInteractionTargetAdapter nearest = null;
+
+            foreach (var adapter in _registry.AllTargets)
+            {
+                if (!adapter.IsTargetKind(targetKind))
+                    continue;
+
+                float distSq = (adapter.WorldPosition - position).sqrMagnitude;
+                if (distSq < minDistSq)
+                {
+                    minDistSq = distSq;
+                    nearest = adapter;
+                }
+            }
+
+            result = nearest;
+            return result != null;
+        }
+
+        /// <summary>
+        /// 지정한 ZoneId 내에서 position에 가장 가까운 target adapter를 찾는다.
+        /// </summary>
+        /// <param name="zoneId">필터링할 ZoneId</param>
+        /// <param name="position">기준 위치</param>
+        /// <param name="result">가장 가까운 target adapter (없으면 null)</param>
+        /// <returns>찾은 경우 true, 없으면 false</returns>
+        public bool TryGetNearestInZone(string zoneId, Vector3 position, out WorldMapRuntimeHarvestInteractionTargetAdapter result)
+        {
+            result = null;
+
+            if (_registry == null || _registry.Count == 0 || string.IsNullOrEmpty(zoneId))
+                return false;
+
+            float minDistSq = float.MaxValue;
+            WorldMapRuntimeHarvestInteractionTargetAdapter nearest = null;
+
+            foreach (var adapter in _registry.AllTargets)
+            {
+                if (!adapter.IsZone(zoneId))
+                    continue;
+
+                float distSq = (adapter.WorldPosition - position).sqrMagnitude;
+                if (distSq < minDistSq)
+                {
+                    minDistSq = distSq;
+                    nearest = adapter;
+                }
+            }
+
+            result = nearest;
+            return result != null;
+        }
+
+        /// <summary>
+        /// 지정한 ZoneId 내에서 position에 가장 가까운, 지정한 TargetKind를 가진 target adapter를 찾는다.
+        /// </summary>
+        /// <param name="zoneId">필터링할 ZoneId</param>
+        /// <param name="position">기준 위치</param>
+        /// <param name="targetKind">필터링할 TargetKind</param>
+        /// <param name="result">가장 가까운 target adapter (없으면 null)</param>
+        /// <returns>찾은 경우 true, 없으면 false</returns>
+        public bool TryGetNearestInZone(string zoneId, Vector3 position, WorldMapRuntimeHarvestInteractionTargetKind targetKind, out WorldMapRuntimeHarvestInteractionTargetAdapter result)
+        {
+            result = null;
+
+            if (_registry == null || _registry.Count == 0 || string.IsNullOrEmpty(zoneId))
+                return false;
+
+            float minDistSq = float.MaxValue;
+            WorldMapRuntimeHarvestInteractionTargetAdapter nearest = null;
+
+            foreach (var adapter in _registry.AllTargets)
+            {
+                if (!adapter.IsZone(zoneId))
+                    continue;
+
+                if (!adapter.IsTargetKind(targetKind))
+                    continue;
+
+                float distSq = (adapter.WorldPosition - position).sqrMagnitude;
+                if (distSq < minDistSq)
+                {
+                    minDistSq = distSq;
+                    nearest = adapter;
+                }
+            }
+
+            result = nearest;
+            return result != null;
+        }
+
+        /// <summary>
+        /// 지정한 ZoneId에 속한 target adapter 개수를 반환한다.
+        /// </summary>
+        public int CountByZone(string zoneId)
+        {
+            if (_registry == null || string.IsNullOrEmpty(zoneId))
+                return 0;
+
+            return _registry.CountByZone(zoneId);
+        }
+
+        /// <summary>
+        /// 지정한 RuntimeKey에 속한 target adapter 개수를 반환한다.
+        /// </summary>
+        public int CountByRuntimeKey(string runtimeKey)
+        {
+            if (_registry == null || string.IsNullOrEmpty(runtimeKey))
+                return 0;
+
+            return _registry.CountByRuntimeKey(runtimeKey);
+        }
+
+        /// <summary>
+        /// 지정한 InteractionKind에 속한 target adapter 개수를 반환한다.
+        /// </summary>
+        public int CountByInteractionKind(WorldMapRuntimeHarvestInteractionCandidateKind kind)
+        {
+            if (_registry == null)
+                return 0;
+
+            return _registry.CountByInteractionKind(kind);
+        }
+
+        /// <summary>
+        /// 지정한 TargetKind에 속한 target adapter 개수를 반환한다.
+        /// </summary>
+        public int CountByTargetKind(WorldMapRuntimeHarvestInteractionTargetKind kind)
+        {
+            if (_registry == null)
+                return 0;
+
+            return _registry.CountByTargetKind(kind);
+        }
+    }
+}

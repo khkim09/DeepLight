@@ -6,6 +6,7 @@ using Project.Data.World;
 using Project.Data.World.Design;
 using Project.Gameplay.World;
 using Project.Gameplay.World.Content;
+using Project.Gameplay.World.Harvest;
 
 
 namespace Project.Editor.AutoTool
@@ -826,25 +827,70 @@ namespace Project.Editor.AutoTool
             ValidateRuntimeGameplayConsumerContractQuery(settings, context);
             Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-4: Runtime Gameplay Consumer Contract Query Complete =====");
 
-            // 50. 생성 완료 후 Selection 설정
+            // 50. Phase 14.10-O-1: Runtime Harvest Resource Candidate Bridge
+            // N-4 완료 직후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-1: Runtime Harvest Resource Candidate Bridge =====");
+            RebuildRuntimeHarvestResourceCandidateBridge(settings, context);
+            ValidateRuntimeHarvestResourceCandidateBridge(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-1: Runtime Harvest Resource Candidate Bridge Complete =====");
 
+            // 51. Phase 14.10-O-2: Runtime Harvest Resource Candidate Runtime Readiness
+            // O-1 완료 직후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-2: Runtime Harvest Resource Candidate Runtime Readiness =====");
+            RebuildRuntimeHarvestResourceCandidateRuntimeReadiness(settings, context);
+            ValidateRuntimeHarvestResourceCandidateRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-2: Runtime Harvest Resource Candidate Runtime Readiness Complete =====");
 
+            // 52. Phase 14.10-O-3: Runtime Harvest Interaction Candidate Bridge
+            // O-2 완료 직후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-3: Runtime Harvest Interaction Candidate Bridge =====");
+            RebuildRuntimeHarvestInteractionCandidateBridge(settings, context);
+            ValidateRuntimeHarvestInteractionCandidateBridge(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-3: Runtime Harvest Interaction Candidate Bridge Complete =====");
 
+            // 53. Phase 14.10-O-4: Runtime Harvest Interaction Candidate Runtime Readiness
+            // O-3 완료 직후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-4: Runtime Harvest Interaction Candidate Runtime Readiness =====");
+            RebuildRuntimeHarvestInteractionCandidateRuntimeReadiness(settings, context);
+            ValidateRuntimeHarvestInteractionCandidateRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-4: Runtime Harvest Interaction Candidate Runtime Readiness Complete =====");
 
+            // 54. Phase 14.10-O-5: Runtime Harvest Interaction Target Adapters
+            // O-4 완료 직후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-5: Runtime Harvest Interaction Target Adapters =====");
+            RebuildRuntimeHarvestInteractionTargetAdapters(settings, context);
+            ValidateRuntimeHarvestInteractionTargetAdapters(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-5: Runtime Harvest Interaction Target Adapters Complete =====");
+
+            // 55. Phase 14.10-O-6: Runtime Harvest Interaction Target Runtime Readiness
+            // O-5 완료 직후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-6: Runtime Harvest Interaction Target Runtime Readiness =====");
+            RebuildRuntimeHarvestInteractionTargetRuntimeReadiness(settings, context);
+            ValidateRuntimeHarvestInteractionTargetRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-6: Runtime Harvest Interaction Target Runtime Readiness Complete =====");
+
+            // 56. Phase 14.10-O-7: Runtime Harvest Interaction Target Consumer Hook
+            // O-6 완료 직후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-7: Runtime Harvest Interaction Target Consumer Hook =====");
+            RebuildRuntimeHarvestInteractionTargetConsumerHook(settings, context);
+            ValidateRuntimeHarvestInteractionTargetConsumerHook(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-7: Runtime Harvest Interaction Target Consumer Hook Complete =====");
+
+            // 57. Phase 14.10-O-8: Runtime Harvest Interaction Target Consumer Runtime Readiness
+            // O-7 완료 직후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-8: Runtime Harvest Interaction Target Consumer Runtime Readiness =====");
+            RebuildRuntimeHarvestInteractionTargetConsumerRuntimeReadiness(settings, context);
+            ValidateRuntimeHarvestInteractionTargetConsumerRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-8: Runtime Harvest Interaction Target Consumer Runtime Readiness Complete =====");
+
+            // 58. 생성 완료 후 Selection 설정
             Selection.activeGameObject = generatedRoot;
-
-
             EditorGUIUtility.PingObject(generatedRoot);
 
-            // 51. 최종 데이터 카운트 검증 로그
+            // 53. 최종 데이터 카운트 검증 로그
             LogFinalDataCount(settings);
 
-            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.10-N) COMPLETE =====");
-
-
-
-
-
+            Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.10-O) COMPLETE =====");
 
         }
         // ======================================================================
@@ -3399,6 +3445,618 @@ namespace Project.Editor.AutoTool
             Debug.Log("[MapAutoBuilder] ===== Phase 14.10-N-4: Validate Runtime Gameplay Consumer Contract Query Complete =====");
         }
 
+        // ======================================================================
+        //  Phase 14.10-O-1: Runtime Harvest Resource Candidate Bridge (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        //  RuntimeFinalContentInstances 하위 consumer contract 중 HarvestResourceConsumer만 추출해
+        //  전용 Registry/QueryService bridge 계층을 구축/검증한다.
+        //  실제 Harvest 시스템에 직접 연결하지 않고, candidate data layer만 만든다.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-O-1: GeneratedWorldRoot에 WorldMapRuntimeHarvestResourceCandidateRegistry와
+        /// WorldMapRuntimeHarvestResourceCandidateQueryService를 추가/갱신하고 cache를 재구축한다.
+        /// DeepLightMapRuntimeHarvestResourceCandidateBridgeUtility.RebuildRuntimeHarvestResourceCandidateBridge에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeHarvestResourceCandidateBridge(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-1] Settings is null! Cannot rebuild harvest resource candidate bridge.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-1] Context is null! Cannot rebuild harvest resource candidate bridge.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-1: Rebuild Runtime Harvest Resource Candidate Bridge =====");
+            DeepLightMapRuntimeHarvestResourceCandidateBridgeUtility.RebuildRuntimeHarvestResourceCandidateBridge(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-1: Rebuild Runtime Harvest Resource Candidate Bridge Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-1: WorldMapRuntimeHarvestResourceCandidateRegistry와
+        /// WorldMapRuntimeHarvestResourceCandidateQueryService의 유효성을 검사한다.
+        /// 32개 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeHarvestResourceCandidateBridgeUtility.ValidateRuntimeHarvestResourceCandidateBridge에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void ValidateRuntimeHarvestResourceCandidateBridge(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-1] Settings is null! Cannot validate harvest resource candidate bridge.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-1] Context is null! Cannot validate harvest resource candidate bridge.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-1: Validate Runtime Harvest Resource Candidate Bridge =====");
+            DeepLightMapRuntimeHarvestResourceCandidateBridgeUtility.ValidateRuntimeHarvestResourceCandidateBridge(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-1: Validate Runtime Harvest Resource Candidate Bridge Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-O-2: Runtime Harvest Resource Candidate Runtime Readiness (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        //  HarvestResource candidate bridge의 runtime readiness 검증 단계.
+        //  Registry/QueryService가 PlayMode/gameplay 진입 시 자동 초기화 가능한지 검증한다.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-O-2: GeneratedWorldRoot에 WorldMapRuntimeHarvestResourceCandidateRegistry와
+        /// WorldMapRuntimeHarvestResourceCandidateQueryService를 부착/보강하고 cache를 재구축한다.
+        /// DeepLightMapRuntimeHarvestResourceCandidateRuntimeReadinessUtility.RebuildRuntimeHarvestResourceCandidateRuntimeReadiness에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeHarvestResourceCandidateRuntimeReadiness(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-2] Settings is null! Cannot rebuild harvest resource candidate runtime readiness.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-2] Context is null! Cannot rebuild harvest resource candidate runtime readiness.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-2: Rebuild Runtime Harvest Resource Candidate Runtime Readiness =====");
+            DeepLightMapRuntimeHarvestResourceCandidateRuntimeReadinessUtility.RebuildRuntimeHarvestResourceCandidateRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-2: Rebuild Runtime Harvest Resource Candidate Runtime Readiness Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-2: WorldMapRuntimeHarvestResourceCandidateRegistry와
+        /// WorldMapRuntimeHarvestResourceCandidateQueryService의 runtime readiness를 검증한다.
+        /// 33개 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeHarvestResourceCandidateRuntimeReadinessUtility.ValidateRuntimeHarvestResourceCandidateRuntimeReadiness에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void ValidateRuntimeHarvestResourceCandidateRuntimeReadiness(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-2] Settings is null! Cannot validate harvest resource candidate runtime readiness.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-2] Context is null! Cannot validate harvest resource candidate runtime readiness.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-2: Validate Runtime Harvest Resource Candidate Runtime Readiness =====");
+            DeepLightMapRuntimeHarvestResourceCandidateRuntimeReadinessUtility.ValidateRuntimeHarvestResourceCandidateRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-2: Validate Runtime Harvest Resource Candidate Runtime Readiness Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-O-3: Runtime Harvest Interaction Candidate Bridge (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        //  O-1/O-2에서 구축한 Runtime Harvest Resource Candidate Bridge를
+        //  기존 Harvest 시스템이 사용할 수 있는 "Harvest Interaction Candidate Adapter" 계층으로 변환한다.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-O-3: GeneratedWorldRoot에 WorldMapRuntimeHarvestInteractionCandidateRegistry와
+        /// WorldMapRuntimeHarvestInteractionCandidateQueryService를 추가/갱신하고 cache를 재구축한다.
+        /// DeepLightMapRuntimeHarvestInteractionCandidateBridgeUtility.RebuildRuntimeHarvestInteractionCandidateBridge에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeHarvestInteractionCandidateBridge(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-3] Settings is null! Cannot rebuild harvest interaction candidate bridge.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-3] Context is null! Cannot rebuild harvest interaction candidate bridge.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-3: Rebuild Runtime Harvest Interaction Candidate Bridge =====");
+            DeepLightMapRuntimeHarvestInteractionCandidateBridgeUtility.RebuildRuntimeHarvestInteractionCandidateBridge(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-3: Rebuild Runtime Harvest Interaction Candidate Bridge Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-3: WorldMapRuntimeHarvestInteractionCandidateRegistry와
+        /// WorldMapRuntimeHarvestInteractionCandidateQueryService의 유효성을 검사한다.
+        /// 36개 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeHarvestInteractionCandidateBridgeUtility.ValidateRuntimeHarvestInteractionCandidateBridge에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void ValidateRuntimeHarvestInteractionCandidateBridge(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-3] Settings is null! Cannot validate harvest interaction candidate bridge.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-3] Context is null! Cannot validate harvest interaction candidate bridge.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-3: Validate Runtime Harvest Interaction Candidate Bridge =====");
+            DeepLightMapRuntimeHarvestInteractionCandidateBridgeUtility.ValidateRuntimeHarvestInteractionCandidateBridge(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-3: Validate Runtime Harvest Interaction Candidate Bridge Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-O-4: Runtime Harvest Interaction Candidate Runtime Readiness (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        //  Harvest interaction candidate runtime readiness 검증 단계.
+        //  Registry/QueryService가 PlayMode/gameplay 진입 시 자동 초기화 가능한지 검증한다.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-O-4: GeneratedWorldRoot에 WorldMapRuntimeHarvestInteractionCandidateRegistry와
+        /// WorldMapRuntimeHarvestInteractionCandidateQueryService를 부착/보강하고 cache를 재구축한다.
+        /// DeepLightMapRuntimeHarvestInteractionCandidateRuntimeReadinessUtility.RebuildRuntimeHarvestInteractionCandidateRuntimeReadiness에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeHarvestInteractionCandidateRuntimeReadiness(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-4] Settings is null! Cannot rebuild harvest interaction candidate runtime readiness.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-4] Context is null! Cannot rebuild harvest interaction candidate runtime readiness.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-4: Rebuild Runtime Harvest Interaction Candidate Runtime Readiness =====");
+            DeepLightMapRuntimeHarvestInteractionCandidateRuntimeReadinessUtility.RebuildRuntimeHarvestInteractionCandidateRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-4: Rebuild Runtime Harvest Interaction Candidate Runtime Readiness Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-4: WorldMapRuntimeHarvestInteractionCandidateRegistry와
+        /// WorldMapRuntimeHarvestInteractionCandidateQueryService의 runtime readiness를 검증한다.
+        /// 38개 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeHarvestInteractionCandidateRuntimeReadinessUtility.ValidateRuntimeHarvestInteractionCandidateRuntimeReadiness에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void ValidateRuntimeHarvestInteractionCandidateRuntimeReadiness(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-4] Settings is null! Cannot validate harvest interaction candidate runtime readiness.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-4] Context is null! Cannot validate harvest interaction candidate runtime readiness.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-4: Validate Runtime Harvest Interaction Candidate Runtime Readiness =====");
+            DeepLightMapRuntimeHarvestInteractionCandidateRuntimeReadinessUtility.ValidateRuntimeHarvestInteractionCandidateRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-4: Validate Runtime Harvest Interaction Candidate Runtime Readiness Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-O-5: Runtime Harvest Interaction Target Adapter (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        //  Harvest interaction candidate를 runtime target adapter로 변환하는 독립 단계.
+        //  실제 채집 실행 연결 단계가 아니다.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-O-5: GeneratedWorldRoot에 WorldMapRuntimeHarvestInteractionTargetAdapter를
+        /// RuntimeFinalContentInstances 하위 final content object에 부착/갱신하고
+        /// Registry/QueryService를 추가/보강한다.
+        /// DeepLightMapRuntimeHarvestInteractionTargetAdapterUtility.RebuildRuntimeHarvestInteractionTargetAdapters에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeHarvestInteractionTargetAdapters(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-5] Settings is null! Cannot rebuild harvest interaction target adapters.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-5] Context is null! Cannot rebuild harvest interaction target adapters.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-5: Rebuild Runtime Harvest Interaction Target Adapters =====");
+            DeepLightMapRuntimeHarvestInteractionTargetAdapterUtility.RebuildRuntimeHarvestInteractionTargetAdapters(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-5: Rebuild Runtime Harvest Interaction Target Adapters Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-5: WorldMapRuntimeHarvestInteractionTargetAdapter/Registry/QueryService의 유효성을 검사한다.
+        /// 44개 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeHarvestInteractionTargetAdapterUtility.ValidateRuntimeHarvestInteractionTargetAdapters에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void ValidateRuntimeHarvestInteractionTargetAdapters(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-5] Settings is null! Cannot validate harvest interaction target adapters.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-5] Context is null! Cannot validate harvest interaction target adapters.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-5: Validate Runtime Harvest Interaction Target Adapters =====");
+            DeepLightMapRuntimeHarvestInteractionTargetAdapterUtility.ValidateRuntimeHarvestInteractionTargetAdapters(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-5: Validate Runtime Harvest Interaction Target Adapters Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-O-6: Runtime Harvest Interaction Target Runtime Readiness (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        //  O-5에서 생성된 Runtime Harvest Interaction Target Adapter / Registry / QueryService가
+        //  PlayMode 진입 시에도 안전하게 자동 초기화되는지 검증하는 Runtime Readiness 단계.
+        //  Registry/QueryService readiness만 처리하며, TargetAdapter 자체를 새로 붙이는 단계는 O-5 역할.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-O-6: GeneratedWorldRoot에 WorldMapRuntimeHarvestInteractionTargetRegistry와
+        /// WorldMapRuntimeHarvestInteractionTargetQueryService를 부착/보강하고
+        /// Registry.RebuildCacheFromRoot / QueryService.TryInitializeFromRoot를 호출한다.
+        /// DeepLightMapRuntimeHarvestInteractionTargetRuntimeReadinessUtility.RebuildRuntimeHarvestInteractionTargetRuntimeReadiness에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeHarvestInteractionTargetRuntimeReadiness(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-6] Settings is null! Cannot rebuild harvest interaction target runtime readiness.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-6] Context is null! Cannot rebuild harvest interaction target runtime readiness.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-6: Rebuild Runtime Harvest Interaction Target Runtime Readiness =====");
+            DeepLightMapRuntimeHarvestInteractionTargetRuntimeReadinessUtility.RebuildRuntimeHarvestInteractionTargetRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-6: Rebuild Runtime Harvest Interaction Target Runtime Readiness Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-6: WorldMapRuntimeHarvestInteractionTargetRegistry와
+        /// WorldMapRuntimeHarvestInteractionTargetQueryService의 runtime readiness를 검증한다.
+        /// 최소 38개 이상 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeHarvestInteractionTargetRuntimeReadinessUtility.ValidateRuntimeHarvestInteractionTargetRuntimeReadiness에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void ValidateRuntimeHarvestInteractionTargetRuntimeReadiness(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-6] Settings is null! Cannot validate harvest interaction target runtime readiness.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-6] Context is null! Cannot validate harvest interaction target runtime readiness.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-6: Validate Runtime Harvest Interaction Target Runtime Readiness =====");
+            DeepLightMapRuntimeHarvestInteractionTargetRuntimeReadinessUtility.ValidateRuntimeHarvestInteractionTargetRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-6: Validate Runtime Harvest Interaction Target Runtime Readiness Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-O-7: Runtime Harvest Interaction Target Consumer Hook (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        //  O-5/O-6까지 생성된 Runtime Harvest Interaction Target Adapter / Registry / QueryService를
+        //  기존 Harvest 시스템이 직접 FindObjectsByType 없이 안전하게 소비할 수 있도록
+        //  Consumer Context / Consumer Service 계층을 구축한다.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-O-7: GeneratedWorldRoot에 WorldMapRuntimeHarvestInteractionTargetConsumerService를
+        /// 추가/갱신하고 QueryService를 통해 초기화한다.
+        /// DeepLightMapRuntimeHarvestInteractionTargetConsumerHookUtility.RebuildRuntimeHarvestInteractionTargetConsumerHook에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildRuntimeHarvestInteractionTargetConsumerHook(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-7] Settings is null! Cannot rebuild harvest interaction target consumer hook.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-7] Context is null! Cannot rebuild harvest interaction target consumer hook.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-7: Rebuild Runtime Harvest Interaction Target Consumer Hook =====");
+            DeepLightMapRuntimeHarvestInteractionTargetConsumerHookUtility.RebuildRuntimeHarvestInteractionTargetConsumerHook(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-7: Rebuild Runtime Harvest Interaction Target Consumer Hook Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-7: Consumer Hook의 유효성을 검사한다.
+        /// 최소 34개 이상의 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeHarvestInteractionTargetConsumerHookUtility.ValidateRuntimeHarvestInteractionTargetConsumerHook에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void ValidateRuntimeHarvestInteractionTargetConsumerHook(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-7] Settings is null! Cannot validate harvest interaction target consumer hook.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-7] Context is null! Cannot validate harvest interaction target consumer hook.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-7: Validate Runtime Harvest Interaction Target Consumer Hook =====");
+            DeepLightMapRuntimeHarvestInteractionTargetConsumerHookUtility.ValidateRuntimeHarvestInteractionTargetConsumerHook(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-7: Validate Runtime Harvest Interaction Target Consumer Hook Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-O-8: Runtime Harvest Interaction Target Consumer Runtime Readiness (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        //  O-7에서 생성된 ConsumerService가 PlayMode 진입 시에도 안정적으로 초기화되는지 검증하는 Runtime Readiness 단계.
+        //  Harvest target consumer service runtime readiness를 보강/검증한다.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-O-8: GeneratedWorldRoot에 WorldMapRuntimeHarvestInteractionTargetConsumerService의
+        /// runtime readiness를 보강한다. ConsumerService.TryInitializeFromRoot를 호출하고
+        /// QueryService가 올바르게 연결되었는지 확인한다.
+        /// DeepLightMapRuntimeHarvestInteractionTargetConsumerRuntimeReadinessUtility.RebuildRuntimeHarvestInteractionTargetConsumerRuntimeReadiness에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// Harvest target consumer service runtime readiness를 보강/검증한다.
+        /// </summary>
+        public static void RebuildRuntimeHarvestInteractionTargetConsumerRuntimeReadiness(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-8] Settings is null! Cannot rebuild harvest interaction target consumer runtime readiness.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-8] Context is null! Cannot rebuild harvest interaction target consumer runtime readiness.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-8: Rebuild Runtime Harvest Interaction Target Consumer Runtime Readiness =====");
+            DeepLightMapRuntimeHarvestInteractionTargetConsumerRuntimeReadinessUtility.RebuildRuntimeHarvestInteractionTargetConsumerRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-8: Rebuild Runtime Harvest Interaction Target Consumer Runtime Readiness Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-8: ConsumerService의 runtime readiness를 검증한다.
+        /// 최소 36개 이상의 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// DeepLightMapRuntimeHarvestInteractionTargetConsumerRuntimeReadinessUtility.ValidateRuntimeHarvestInteractionTargetConsumerRuntimeReadiness에 위임한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// Harvest target consumer service runtime readiness를 보강/검증한다.
+        /// </summary>
+        public static void ValidateRuntimeHarvestInteractionTargetConsumerRuntimeReadiness(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-8] Settings is null! Cannot validate harvest interaction target consumer runtime readiness.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-8] Context is null! Cannot validate harvest interaction target consumer runtime readiness.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-8: Validate Runtime Harvest Interaction Target Consumer Runtime Readiness =====");
+            DeepLightMapRuntimeHarvestInteractionTargetConsumerRuntimeReadinessUtility.ValidateRuntimeHarvestInteractionTargetConsumerRuntimeReadiness(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-8: Validate Runtime Harvest Interaction Target Consumer Runtime Readiness Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-O-9: Runtime Harvest System Integration (public wrapper)
+        //  GenerateFullScenarioMap에는 아직 통합하지 않음. O-9 독립 검증 단계.
+        /// <summary>
+        /// Phase 14.10-O-9: GeneratedWorldRoot에 WorldMapHarvestInteractionTargetProvider를 추가하고
+        /// ConsumerService에 초기화/연결한다.
+        /// GenerateFullScenarioMap에는 아직 통합하지 않음. O-9 독립 검증 단계.
+        /// </summary>
+        public static void RebuildRuntimeHarvestSystemIntegration(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-9] Settings is null! Cannot rebuild harvest system integration.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-9] Context is null! Cannot rebuild harvest system integration.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-9: Rebuild Runtime Harvest System Integration =====");
+            DeepLightMapRuntimeHarvestSystemIntegrationUtility.RebuildRuntimeHarvestSystemIntegration(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-9: Rebuild Runtime Harvest System Integration Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-9: Runtime Harvest System Integration의 유효성을 검증한다.
+        /// 최소 25개 이상의 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// GenerateFullScenarioMap에는 아직 통합하지 않음. O-9 독립 검증 단계.
+        /// </summary>
+        public static void ValidateRuntimeHarvestSystemIntegration(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-9] Settings is null! Cannot validate harvest system integration.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-9] Context is null! Cannot validate harvest system integration.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-9: Validate Runtime Harvest System Integration =====");
+            DeepLightMapRuntimeHarvestSystemIntegrationUtility.ValidateRuntimeHarvestSystemIntegration(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-9: Validate Runtime Harvest System Integration Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-O-10: Generated Harvest Target Adapter (public wrapper)
+        //  GenerateFullScenarioMap에는 아직 통합하지 않음. O-10 독립 검증 단계.
+        /// <summary>
+        /// Phase 14.10-O-10: RuntimeFinalContentInstances 하위 final content object에
+        /// WorldMapGeneratedHarvestTarget을 부착/갱신한다.
+        /// 각 ConsumerContext의 SourceMarkerId로 final content object를 찾아 매칭한다.
+        /// GenerateFullScenarioMap에는 아직 통합하지 않음. O-10 독립 검증 단계.
+        /// </summary>
+        public static void RebuildGeneratedHarvestTargetAdapters(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-10] Settings is null! Cannot rebuild generated harvest target adapters.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-10] Context is null! Cannot rebuild generated harvest target adapters.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-10: Rebuild Generated Harvest Target Adapters =====");
+            DeepLightMapGeneratedHarvestTargetAdapterUtility.RebuildGeneratedHarvestTargetAdapters(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-10: Rebuild Generated Harvest Target Adapters Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-10: GeneratedHarvestTargetAdapter의 유효성을 검증한다.
+        /// 최소 35개 이상의 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// GenerateFullScenarioMap에는 아직 통합하지 않음. O-10 독립 검증 단계.
+        /// </summary>
+        public static void ValidateGeneratedHarvestTargetAdapters(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-10] Settings is null! Cannot validate generated harvest target adapters.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-10] Context is null! Cannot validate generated harvest target adapters.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-10: Validate Generated Harvest Target Adapters =====");
+            DeepLightMapGeneratedHarvestTargetAdapterUtility.ValidateGeneratedHarvestTargetAdapters(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-10: Validate Generated Harvest Target Adapters Complete =====");
+        }
+
         /// <summary>
         /// logVerbose가 true일 때만 로그를 출력한다
         /// </summary>
@@ -3411,5 +4069,6 @@ namespace Project.Editor.AutoTool
         }
     }
 }
+
 
 

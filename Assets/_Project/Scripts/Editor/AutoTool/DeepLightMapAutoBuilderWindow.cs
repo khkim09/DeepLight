@@ -96,7 +96,7 @@ namespace Project.Editor.AutoTool
         {
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("DeepLight Map Auto Builder", _titleStyle);
-            EditorGUILayout.LabelField("Phase 3~14.10-N: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField("Phase 3~14.10-O: Full Scenario Map Generation Pipeline", EditorStyles.miniLabel);
 
             EditorGUILayout.Space(5);
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
@@ -358,7 +358,52 @@ namespace Project.Editor.AutoTool
 
             EditorGUILayout.Space(3);
 
+            EditorGUILayout.Space(3);
+
+            // Phase 14.10-O-9: Rebuild Runtime Harvest System Integration Only
+            GUI.color = new Color(0.6f, 0.4f, 0.8f);
+            GUI.enabled = _settings != null;
+            if (GUILayout.Button("Phase 14.10-O-9: Rebuild Runtime Harvest System Integration Only", GUILayout.Height(30)))
+            {
+                ExecuteRebuildRuntimeHarvestSystemIntegration();
+            }
+            GUI.color = Color.white;
+
+            EditorGUILayout.Space(2);
+
+            // Phase 14.10-O-9: Validate Runtime Harvest System Integration Only
+            GUI.enabled = _settings != null;
+            if (GUILayout.Button("Phase 14.10-O-9: Validate Runtime Harvest System Integration Only", GUILayout.Height(30)))
+            {
+                ExecuteValidateRuntimeHarvestSystemIntegration();
+            }
+            GUI.enabled = true;
+
+            EditorGUILayout.Space(3);
+
+            // Phase 14.10-O-10: Rebuild Generated Harvest Target Adapters Only
+            GUI.color = new Color(0.6f, 0.4f, 0.8f);
+            GUI.enabled = _settings != null;
+            if (GUILayout.Button("Phase 14.10-O-10: Rebuild Generated Harvest Target Adapters Only", GUILayout.Height(30)))
+            {
+                ExecuteRebuildGeneratedHarvestTargetAdapters();
+            }
+            GUI.color = Color.white;
+
+            EditorGUILayout.Space(2);
+
+            // Phase 14.10-O-10: Validate Generated Harvest Target Adapters Only
+            GUI.enabled = _settings != null;
+            if (GUILayout.Button("Phase 14.10-O-10: Validate Generated Harvest Target Adapters Only", GUILayout.Height(30)))
+            {
+                ExecuteValidateGeneratedHarvestTargetAdapters();
+            }
+            GUI.enabled = true;
+
+            EditorGUILayout.Space(3);
+
             // Phase 14.8: Rebuild Prototype Regions Only
+
 
             GUI.color = new Color(0.2f, 0.6f, 0.9f);
             GUI.enabled = _settings != null;
@@ -367,6 +412,7 @@ namespace Project.Editor.AutoTool
                 ExecuteRebuildPrototypeRegions();
             }
             GUI.color = Color.white;
+
 
 
 
@@ -380,7 +426,7 @@ namespace Project.Editor.AutoTool
             }
             GUI.enabled = true;
 
-            EditorGUILayout.Space(5);
+            EditorGUILayout.Space(3);
 
 
             // Clear Generated Map
@@ -400,6 +446,10 @@ namespace Project.Editor.AutoTool
             {
                 ExecuteDryRun();
             }
+
+            EditorGUILayout.Space(2);
+
+            // Phase 14.10-O-7/O-8: Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.
 
             EditorGUILayout.Space(2);
 
@@ -610,10 +660,44 @@ namespace Project.Editor.AutoTool
                 "58. Phase 14.10-N-4: RuntimeGameplayConsumerContract를 gameplay system이 직접 검색하지 않도록 Registry/QueryService로 조회하는 검증 단계. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
                 EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.LabelField(
-                "59. Phase 14.10-O: HarvestResource Consumer Bridge - generated consumer contract/query를 기존 Harvest 시스템 후보 지점으로 연결하는 단계. (다음 단계 예약)",
+                "59. Phase 14.10-O-1: Runtime Harvest Resource Candidate Bridge - Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "60. Phase 14.10-O-2: HarvestResource Candidate Runtime Readiness - Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "61. Phase 14.10-O-3: HarvestResource Interaction Candidate Bridge - Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "62. Phase 14.10-O-4: Harvest Interaction Candidate Runtime Readiness - Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "63. Phase 14.10-O-5: Harvest Interaction Runtime Target Adapter - Harvest interaction candidate를 기존 Harvest 시스템 target 후보로 넘길 수 있는 runtime adapter/contract를 구축하는 단계. 실제 채집 실행은 아직 연결하지 않음. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "64. Phase 14.10-O-6: Harvest Interaction Runtime Target Runtime Readiness - O-5에서 생성된 Runtime Harvest Interaction Target Adapter / Registry / QueryService가 PlayMode 진입 시에도 안전하게 자동 초기화되는지 검증하는 Runtime Readiness 단계. Registry/QueryService readiness만 처리하며, TargetAdapter 자체를 새로 붙이는 단계는 O-5 역할. Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "65. Phase 14.10-O-7: Harvest Interaction Runtime Target Consumer Hook - Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "66. Phase 14.10-O-8: Harvest Interaction Runtime Target Consumer Runtime Readiness - Generate Full Scenario Map에서 자동 실행됨. 별도 실행 버튼은 제공하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "67. Phase 14.10-O-9: Harvest Interaction Existing System Probe (다음 단계 예약) - 기존 Harvest 시스템이 어떤 입력 타입/서비스를 요구하는지 분석하고 실제 연결 지점을 찾는 단계. 아직 채집 실행 로직 변경은 하지 않음.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "68. Phase 14.10-O-9: Runtime Harvest System Integration - GeneratedWorldRoot에 WorldMapHarvestInteractionTargetProvider를 추가하고 ConsumerService 64개 context를 기존 Harvest 시스템이 소비할 수 있는 IHarvestInteractionTargetProvider interface로 연결. GenerateFullScenarioMap에는 아직 통합하지 않음. O-9 독립 검증 단계.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "69. Phase 14.10-O-10: Generated Harvest Target Adapter - ConsumerContext를 기존 Harvest 시스템이 이해할 수 있는 WorldMapGeneratedHarvestTarget adapter로 변환하여 RuntimeFinalContentInstances 하위 final content object에 부착/검증한다. 기존 Harvest 시스템에 직접 연결하지 않고 adapter-only layer로 유지. GenerateFullScenarioMap에는 아직 통합하지 않음. O-10 독립 검증 단계.",
+                EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField(
+                "70. Phase 14.10-O-11 (예약): Harvest Prompt/Scan Smoke Test - generated harvest target adapter가 실제 prompt/scan 후보로 잡히는지 PlayMode 검증하는 단계.",
                 EditorStyles.wordWrappedMiniLabel);
 
             EditorGUILayout.EndVertical();
+
 
 
 
@@ -1068,6 +1152,7 @@ namespace Project.Editor.AutoTool
         /// </summary>
 
         private void ExecuteClear()
+
         {
 
             if (_settings == null)
@@ -1102,7 +1187,65 @@ namespace Project.Editor.AutoTool
                 Debug.Log("[MapAutoBuilder] Clear cancelled by user.");
             }
         }
+
+        /// <summary>
+        /// Phase 14.10-O-9: Rebuild Runtime Harvest System Integration Only 실행
+        /// </summary>
+        private void ExecuteRebuildRuntimeHarvestSystemIntegration()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.RebuildRuntimeHarvestSystemIntegration(_settings, _context);
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-9: Validate Runtime Harvest System Integration Only 실행
+        /// </summary>
+        private void ExecuteValidateRuntimeHarvestSystemIntegration()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.ValidateRuntimeHarvestSystemIntegration(_settings, _context);
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-10: Rebuild Generated Harvest Target Adapters Only 실행
+        /// </summary>
+        private void ExecuteRebuildGeneratedHarvestTargetAdapters()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.RebuildGeneratedHarvestTargetAdapters(_settings, _context);
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-10: Validate Generated Harvest Target Adapters Only 실행
+        /// </summary>
+        private void ExecuteValidateGeneratedHarvestTargetAdapters()
+        {
+            if (_settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] SettingsSO is null! Assign a SettingsSO first.");
+                return;
+            }
+
+            DeepLightMapAutoBuilder.ValidateGeneratedHarvestTargetAdapters(_settings, _context);
+        }
+
     }
 }
+
 
 
