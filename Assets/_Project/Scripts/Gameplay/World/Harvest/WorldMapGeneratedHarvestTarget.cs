@@ -11,8 +11,8 @@ namespace Project.Gameplay.World.Harvest
     /// metadata + position + kind + runtimeKey + profileId만 제공.
     /// IHarvestTarget을 구현하여 기존 HarvestPointInteractor/HarvestModeCoordinator가
     /// 이 adapter를 기존 HarvestTargetBehaviour와 동일한 인터페이스로 취급할 수 있게 한다.
-    /// 단, TargetData는 null을 반환하므로 기존 시스템이 TargetData에 의존하는 로직은
-    /// O-11에서 별도 bridge 처리가 필요하다.
+    /// TargetData는 resolver를 통해 resolve된 HarvestTargetSO를 반환하며,
+    /// resolver가 없거나 매핑이 없으면 null을 반환한다.
     /// </summary>
     public class WorldMapGeneratedHarvestTarget : MonoBehaviour, IHarvestTarget
     {
@@ -57,43 +57,105 @@ namespace Project.Gameplay.World.Harvest
         [SerializeField, Tooltip("target 상태에 대한 설명/이유")]
         private string _reason;
 
+        // ===== Resolver Integration =====
+
+        /// <summary>resolver를 통해 resolve된 harvest target data (lazy resolve)</summary>
+        private ResolvedGeneratedHarvestTargetData _resolvedData;
+
+        /// <summary>resolver 참조 (AssignDataResolver 또는 lazy find로 설정)</summary>
+        private WorldMapGeneratedHarvestTargetDataResolver _dataResolver;
+
+        /// <summary>resolver를 찾았는지 여부 (lazy find 1회 시도)</summary>
+        private bool _resolverSearched;
+
+        /// <summary>resolvedData가 이미 resolve되었는지 여부</summary>
+        private bool _resolved;
+
+        /// <summary>이 target이 consume되었는지 여부</summary>
+        private bool _consumed;
+
+        /// <summary>명시적으로 resolver가 할당되었는지 여부</summary>
+        private bool _hasExplicitResolver;
+
         // ===== IHarvestTarget Implementation =====
 
         /// <summary>
-        /// IHarvestTarget.TargetData: generated target은 SO 기반 TargetData가 없으므로 null 반환.
-        /// O-11에서 필요시 HarvestTargetSO bridge를 추가할 수 있다.
+        /// IHarvestTarget.TargetData: resolver를 통해 resolve된 HarvestTargetSO를 반환한다.
+        /// resolver가 없거나 매핑이 없으면 null을 반환한다.
+        /// null 반환 시 기존 HarvestResolver는 base recovery chance를 0으로 처리하므로,
+        /// O-16에서 generated target 전용 resolver bridge가 필요하다.
         /// </summary>
-        public HarvestTargetSO TargetData => null;
-
-        /// <summary>
-        /// IHarvestTarget.IsAvailable: _isReady 상태를 그대로 반환.
-        /// generated target이 준비된 경우에만 available로 간주한다.
-        /// </summary>
-        public bool IsAvailable => _isReady;
-
-        /// <summary>
-        /// IHarvestTarget.Consume: generated target은 아직 실제 소비 로직을 처리하지 않음.
-        /// O-11에서 실제 harvest result 처리 시 구현 예정.
-        /// 현재는 _isReady = false로만 설정하고 로그를 남긴다.
-        /// </summary>
-        public void Consume()
+        public HarvestTargetSO TargetData
         {
-            if (!_isReady)
-                return;
-
-            // 아직 실제 보상/소비 로직은 연결하지 않음 (O-11 예약)
-            _isReady = false;
-            _reason = "Consumed (placeholder - O-11 will implement actual consumption)";
-            UnityEngine.Debug.Log($"[GeneratedHarvestTarget] Consume called on '{_sourceMarkerId}' (placeholder). Actual harvest logic deferred to O-11.", gameObject);
+            get
+            {
+                // lazy resolve
+                EnsureResolved();
+                return _resolvedData?.HarvestTargetSO;
+            }
         }
 
         /// <summary>
-        /// IHarvestTarget.OnClawCollision: generated target은 claw collision을 처리하지 않음.
-        /// O-11에서 필요시 구현 예정.
+        /// IHarvestTarget.IsAvailable: 다음 조건을 모두 만족해야 true:
+        /// - generated target ready (_isReady)
+        /// - sourceMarkerId/profileId/requirementId/runtimeKey 유효
+        /// - resolver 결과가 ready
+        /// - 아직 Consume되지 않음
+        /// </summary>
+        public bool IsAvailable
+        {
+            get
+            {
+                if (_consumed)
+                    return false;
+
+                if (!_isReady)
+                    return false;
+
+                // 필수 ID 유효성 검사
+                if (string.IsNullOrEmpty(_sourceMarkerId))
+                    return false;
+                if (string.IsNullOrEmpty(_profileId))
+                    return false;
+                if (string.IsNullOrEmpty(_runtimeKey))
+                    return false;
+
+                // resolver 결과 ready 검사
+                EnsureResolved();
+                if (_resolvedData == null)
+                    return false;
+                if (!_resolvedData.IsReady)
+                    return false;
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// IHarvestTarget.Consume: 상태만 consumed 처리한다.
+        /// reward 지급/인벤토리 추가/시간 패널티는 O-16에서 실제 HarvestResolver/Reward 시스템에 연결한다.
+        /// </summary>
+        public void Consume()
+        {
+            if (_consumed || !_isReady)
+                return;
+
+            // consumed 상태로만 전환 (O-16에서 실제 보상/소비 로직 연결)
+            _consumed = true;
+            _isReady = false;
+            _reason = "Consumed (placeholder - O-16 will implement actual reward/penalty flow)";
+            UnityEngine.Debug.Log($"[GeneratedHarvestTarget] Consume called on '{_sourceMarkerId}' (runtimeKey={_runtimeKey}). Actual reward/penalty flow deferred to O-16.", gameObject);
+        }
+
+        /// <summary>
+        /// IHarvestTarget.OnClawCollision: 기존 Harvest 흐름과 호환되도록 안전한 no-op.
+        /// interaction attempt flag만 기록한다.
         /// </summary>
         public void OnClawCollision()
         {
-            // generated target은 claw collision을 처리하지 않음 (O-11 예약)
+            // generated target은 claw collision을 직접 처리하지 않음.
+            // O-16에서 필요시 HarvestResolver/Reward 시스템에 연결.
+            // 현재는 no-op으로 유지.
         }
 
         // ===== Public Getters =====
@@ -137,6 +199,29 @@ namespace Project.Gameplay.World.Harvest
         /// <summary>target 상태에 대한 설명/이유</summary>
         public string Reason => _reason;
 
+        /// <summary>이 target이 consume되었는지 여부</summary>
+        public bool IsConsumed => _consumed;
+
+        /// <summary>resolver를 통해 resolve된 data (없으면 null). 호출 시 자동 resolve 시도.</summary>
+        public ResolvedGeneratedHarvestTargetData ResolvedData
+        {
+            get
+            {
+                EnsureResolved();
+                return _resolvedData;
+            }
+        }
+
+        /// <summary>resolved data가 존재하고 IsReady인지 여부</summary>
+        public bool HasResolvedData
+        {
+            get
+            {
+                EnsureResolved();
+                return _resolvedData != null && _resolvedData.IsReady;
+            }
+        }
+
         // ===== Public API =====
 
         /// <summary>
@@ -177,8 +262,80 @@ namespace Project.Gameplay.World.Harvest
             _isGeneratedPlaceholderContent = context.IsGeneratedPlaceholderContent;
             _isUserAssignedFinalContent = context.IsUserAssignedFinalContent;
 
+            // resolver cache 초기화 (다음 IsAvailable/TargetData 호출 시 재resolve)
+            _resolverSearched = false;
+            _dataResolver = null;
+            _resolved = false;
+            _resolvedData = null;
+            _consumed = false;
+            _hasExplicitResolver = false;
+
             // 유효성 검사
             ValidateTarget();
+        }
+
+        /// <summary>
+        /// WorldMapGeneratedHarvestTargetDataResolver 참조를 명시적으로 할당한다.
+        /// null이어도 예외를 내지 않으며, lazy find보다 우선한다.
+        /// </summary>
+        /// <param name="resolver">할당할 resolver 참조 (null 허용)</param>
+        public void AssignDataResolver(WorldMapGeneratedHarvestTargetDataResolver resolver)
+        {
+            _dataResolver = resolver;
+            _hasExplicitResolver = resolver != null;
+            _resolverSearched = true; // 명시적 할당이 lazy find를 대체
+            _resolved = false; // 재resolve 필요
+            _resolvedData = null;
+        }
+
+        /// <summary>
+        /// 현재 할당된 resolver를 통해 resolved data를 갱신한다.
+        /// resolver가 없으면 false를 반환하고 _resolvedData는 null로 유지된다.
+        /// </summary>
+        /// <returns>resolve 성공 여부 (fallback 포함)</returns>
+        public bool RefreshResolvedData()
+        {
+            // resolver 확인
+            if (_dataResolver == null && !_hasExplicitResolver)
+            {
+                // lazy find 시도
+                if (!_resolverSearched)
+                {
+                    _resolverSearched = true;
+                    _dataResolver = GetComponentInParent<WorldMapGeneratedHarvestTargetDataResolver>();
+                }
+            }
+
+            if (_dataResolver == null)
+            {
+                _resolved = true;
+                _resolvedData = null;
+                return false;
+            }
+
+            // resolver를 통해 data resolve
+            bool result = _dataResolver.TryResolve(this, out _resolvedData);
+            _resolved = true;
+
+            // resolve 결과가 true이고 data가 유효하면 _hasResolvedData=true
+            if (result && _resolvedData != null && _resolvedData.IsReady)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// resolved data를 안전하게 가져온다.
+        /// </summary>
+        /// <param name="data">resolve 결과 (out)</param>
+        /// <returns>resolved data가 유효한 상태인지 여부</returns>
+        public bool TryGetResolvedData(out ResolvedGeneratedHarvestTargetData data)
+        {
+            EnsureResolved();
+            data = _resolvedData;
+            return _resolvedData != null && _resolvedData.IsReady;
         }
 
         /// <summary>
@@ -232,15 +389,38 @@ namespace Project.Gameplay.World.Harvest
 
         /// <summary>
         /// 현재 target 상태를 요약한 디버그 문자열을 반환한다.
+        /// resolved 상태를 포함한다 (예: [RESOLVED:Iron Scrap], [FALLBACK:Iron], [NO_DATA]).
         /// </summary>
         /// <returns>요약 문자열</returns>
         public string GetDebugSummary()
         {
             string readyStr = _isReady ? " [READY]" : " [NOT_READY]";
+            string consumedStr = _consumed ? " [CONSUMED]" : "";
             string placeholderStr = _isGeneratedPlaceholderContent ? " [PLACEHOLDER]" : "";
             string userStr = _isUserAssignedFinalContent ? " [USER_ASSET]" : "";
 
-            return $"[{_requirementId}]{readyStr}{placeholderStr}{userStr} | " +
+            string resolvedInfo = string.Empty;
+            if (_resolvedData != null)
+            {
+                if (_resolvedData.IsFallback)
+                {
+                    resolvedInfo = $" [FALLBACK:{_resolvedData.DisplayName}]";
+                }
+                else if (_resolvedData.HarvestTargetSO != null)
+                {
+                    resolvedInfo = $" [RESOLVED:{_resolvedData.HarvestTargetSO.name}]";
+                }
+                else
+                {
+                    resolvedInfo = $" [RESOLVED:{_resolvedData.DisplayName}]";
+                }
+            }
+            else
+            {
+                resolvedInfo = " [NO_DATA]";
+            }
+
+            return $"[{_requirementId}]{readyStr}{consumedStr}{placeholderStr}{userStr}{resolvedInfo} | " +
                 $"Marker={_sourceMarkerId} " +
                 $"Zone={_zoneId} " +
                 $"InteractionKind={_interactionKind} " +
@@ -270,6 +450,12 @@ namespace Project.Gameplay.World.Harvest
             _worldPosition = Vector3.zero;
             _isGeneratedPlaceholderContent = false;
             _isUserAssignedFinalContent = false;
+            _resolvedData = null;
+            _dataResolver = null;
+            _resolverSearched = false;
+            _resolved = false;
+            _consumed = false;
+            _hasExplicitResolver = false;
         }
 
         /// <summary>
@@ -317,6 +503,36 @@ namespace Project.Gameplay.World.Harvest
                 _isReady = false;
                 _reason = string.Join("; ", reasons);
             }
+        }
+
+        /// <summary>
+        /// Resolver를 찾고 data를 resolve한다. (lazy initialization)
+        /// 명시적 할당(_hasExplicitResolver)이 있으면 그것을 우선 사용하고,
+        /// 없으면 parent hierarchy에서 WorldMapGeneratedHarvestTargetDataResolver를 찾는다.
+        /// </summary>
+        private void EnsureResolved()
+        {
+            // 이미 resolve되었으면 skip
+            if (_resolved)
+                return;
+
+            // resolver 찾기 (명시적 할당 우선, 없으면 최초 1회 lazy find)
+            if (_dataResolver == null && !_hasExplicitResolver && !_resolverSearched)
+            {
+                _resolverSearched = true;
+                _dataResolver = GetComponentInParent<WorldMapGeneratedHarvestTargetDataResolver>();
+            }
+
+            // resolver가 없으면 resolve 불가
+            if (_dataResolver == null)
+            {
+                _resolved = true; // 재시도 방지
+                return;
+            }
+
+            // resolver를 통해 data resolve
+            _dataResolver.TryResolve(this, out _resolvedData);
+            _resolved = true;
         }
     }
 }

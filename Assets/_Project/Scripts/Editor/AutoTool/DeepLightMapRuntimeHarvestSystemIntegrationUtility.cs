@@ -14,7 +14,7 @@ namespace Project.Editor.AutoTool
     /// O-8까지 생성된 ConsumerService(Count=64)를 기반으로
     /// IHarvestInteractionTargetProvider + WorldMapHarvestInteractionTargetProvider를 생성하고
     /// 기존 Harvest 시스템에 안전하게 연결할 수 있는 기반을 마련한다.
-    /// GenerateFullScenarioMap에는 아직 통합하지 않음. O-9 독립 검증 단계.
+    /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
     /// Scene final content object는 수정하지 않는다.
     /// RuntimeSpawnedInstances/RuntimeFinalContentInstances target adapter는 수정하지 않는다.
     /// </summary>
@@ -131,7 +131,7 @@ namespace Project.Editor.AutoTool
         /// <summary>
         /// Runtime Harvest System Integration의 유효성을 검증한다.
         /// 최소 25개 이상의 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
-        /// Validate 종료 시 EditorUtility.DisplayDialog로 요약을 보여준다.
+        /// Validate 종료 시 Debug.Log로 요약을 출력한다. (GenerateFullScenarioMap 통합으로 Dialog 제거)
         /// Scene object transform/name 변경 없음. Read-only 검증.
         /// RuntimeSpawnedInstances/RuntimeFinalContentInstances target adapter 수정 금지.
         /// </summary>
@@ -411,25 +411,14 @@ namespace Project.Editor.AutoTool
 
             Debug.Log(log.ToString());
 
-            // Dialog 요약
-            string summaryMessage = $"Phase 14.10-O-9: Runtime Harvest System Integration Validation\n\n" +
-                $"Provider count: {provider.Count}\n" +
-                $"ConsumerService count: {consumerService.Count}\n" +
-                $"Generated placeholder contexts: {placeholderCount}\n" +
-                $"User-assigned final content contexts: {userAssignedCount}\n" +
-                $"Existing harvest hook found: false\n\n" +
-                $"PASS={passCount} FAIL={failCount} WARN={warnCount} INFO={infoCount}\n\n" +
-                $"O-10 will connect ConsumerContext -> IHarvestTarget via adapter layer.";
-
+            // Dialog 제거: GenerateFullScenarioMap 통합으로 Debug.Log 기반 출력으로 충분
             if (failCount == 0)
             {
                 Debug.Log($"{LogPrefix} ===== Phase 14.10-O-9: Validate Runtime Harvest System Integration ALL PASSED =====");
-                EditorUtility.DisplayDialog("O-9 Validation: ALL PASSED", summaryMessage, "OK");
             }
             else
             {
                 Debug.LogWarning($"{LogPrefix} ===== Phase 14.10-O-9: Validate Runtime Harvest System Integration COMPLETED with {failCount} FAIL(s) =====");
-                EditorUtility.DisplayDialog("O-9 Validation: FAILURES DETECTED", summaryMessage, "OK");
             }
         }
     }

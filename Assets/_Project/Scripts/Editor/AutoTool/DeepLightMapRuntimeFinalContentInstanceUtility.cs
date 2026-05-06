@@ -1037,21 +1037,8 @@ namespace Project.Editor.AutoTool
             logBuilder.AppendLine($"{LogPrefix} Generated placeholder content: {generatedPlaceholderCount}");
             logBuilder.AppendLine($"{LogPrefix} User-assigned final content: {userAssignedFinalCount}");
 
-            // Console 출력
-            if (failCount > 0)
-            {
-                logBuilder.AppendLine($"{LogPrefix} [FAIL] Validation completed with {failCount} failure(s).");
-                Debug.LogError(logBuilder.ToString());
-            }
-            else
-            {
-                logBuilder.AppendLine($"{LogPrefix} [PASS] All checks passed.");
-                Debug.Log(logBuilder.ToString());
-            }
-
-            // EditorUtility.DisplayDialog로 요약 표시
-            EditorUtility.DisplayDialog(
-                "Phase 14.10-M-5: Validate Runtime Final Content Instances",
+            // Console 출력 (DisplayDialog 대체 - Console 로그 기반 요약)
+            string summaryMessage =
                 $"Total checks: {totalChecks}\n" +
                 $"[PASS] {passCount}\n" +
                 $"[FAIL] {failCount}\n" +
@@ -1063,8 +1050,26 @@ namespace Project.Editor.AutoTool
                 $"Preview instances: {previewInstanceCount}\n" +
                 $"Duplicate SourceMarkerId: {duplicateSourceMarkerIdCount}\n" +
                 $"Generated placeholder content: {generatedPlaceholderCount}\n" +
-                $"User-assigned final content: {userAssignedFinalCount}",
-                "OK");
+                $"User-assigned final content: {userAssignedFinalCount}";
+
+            if (failCount > 0)
+            {
+                logBuilder.AppendLine($"{LogPrefix} [FAIL] Validation completed with {failCount} failure(s).");
+                Debug.LogError(logBuilder.ToString());
+                Debug.LogError($"[Phase 14.10-M-5] Validation Summary\nPASS={passCount}, FAIL={failCount}, WARN={warnCount}, INFO={infoCount}\n{summaryMessage}");
+            }
+            else if (warnCount > 0)
+            {
+                logBuilder.AppendLine($"{LogPrefix} [WARN] Validation completed with {warnCount} warning(s).");
+                Debug.LogWarning(logBuilder.ToString());
+                Debug.LogWarning($"[Phase 14.10-M-5] Validation Summary\nPASS={passCount}, FAIL={failCount}, WARN={warnCount}, INFO={infoCount}\n{summaryMessage}");
+            }
+            else
+            {
+                logBuilder.AppendLine($"{LogPrefix} [PASS] All checks passed.");
+                Debug.Log(logBuilder.ToString());
+                Debug.Log($"[Phase 14.10-M-5] Validation Summary\nPASS={passCount}, FAIL={failCount}, WARN={warnCount}, INFO={infoCount}\n{summaryMessage}");
+            }
         }
 
         /// <summary>

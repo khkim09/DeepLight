@@ -5,6 +5,7 @@ using Project.Data.Input;
 using Project.Data.UI;
 using Project.Gameplay.GameModes;
 using Project.Gameplay.Harvest;
+using Project.Gameplay.World.Harvest;
 using UnityEngine;
 
 namespace Project.Gameplay.Interaction
@@ -18,6 +19,16 @@ namespace Project.Gameplay.Interaction
         [Header("References")]
         [SerializeField] private HarvestApproachController approachController; // 자연스러운 접근 연출 제어기
 
+        [Header("Generated Harvest Target Hook (O-11)")]
+        [SerializeField, Tooltip("GeneratedWorldRoot 기반 harvest target을 보조 후보로 사용할지 여부")]
+        private bool enableGeneratedWorldHarvestTargets = true;
+
+        [SerializeField, Tooltip("Generated target 탐지 반경")]
+        private float generatedTargetDetectionRadius = 4f;
+
+        [SerializeField, Tooltip("WorldMapGeneratedHarvestTargetRuntimeHook 참조 (Inspector에서 수동 할당 가능, 없으면 자동 탐색)")]
+        private WorldMapGeneratedHarvestTargetRuntimeHook generatedTargetHook;
+
         private HarvestModeCoordinator harvestModeCoordinator; // 채집 모드 조정기
         private readonly List<HarvestInteractionZone> overlappedZones = new(); // 현재 겹친 상호작용 존 목록
 
@@ -29,11 +40,72 @@ namespace Project.Gameplay.Interaction
         private bool isHarvestMode; // Harvest 모드 여부
         private bool currentTargetInteractable; // 현재 대상 실제 상호작용 가능 여부
 
+        /// <summary>GeneratedWorldRoot 기반 harvest target hook이 활성화되었는지 여부</summary>
+        public bool EnableGeneratedWorldHarvestTargets
+        {
+            get => enableGeneratedWorldHarvestTargets;
+            set => enableGeneratedWorldHarvestTargets = value;
+        }
+
+        /// <summary>현재 선택된 generated harvest target (trigger 기반 target이 없을 때 사용)</summary>
+        public IHarvestTarget GeneratedCurrentTarget { get; private set; }
+
         /// <summary>현재 채집 진입 키를 반환한다.</summary>
         public KeyCode InteractKey => inputBindings != null ? inputBindings.InteractHarvestKey : KeyCode.None;
 
         /// <summary>현재 대상 정보를 반환한다.</summary>
         public IHarvestTarget CurrentTarget => currentTarget;
+
+        /// <summary>
+        /// O-13 Smoke Test 전용: generated target fallback resolve가 가능한지 읽기 전용으로 검증한다.
+        /// currentTarget을 강제로 변경하지 않으며, 실제 TryEnterHarvestMode를 호출하지 않는다.
+        /// enableGeneratedWorldHarvestTargets가 false이거나 generatedTargetHook이 null이면 false를 반환한다.
+        /// detectionRadius 기준으로만 검색하며, large radius fallback은 수행하지 않는다.
+        /// </summary>
+        /// <param name="target">찾은 generated IHarvestTarget (없으면 null)</param>
+        /// <returns>generated target resolve 성공 시 true</returns>
+        public bool TryResolveGeneratedTargetForSmokeTest(out IHarvestTarget target)
+        {
+            target = null;
+
+            // enableGeneratedWorldHarvestTargets가 false면 generated target을 사용하지 않음
+            if (!enableGeneratedWorldHarvestTargets)
+                return false;
+
+            // Hook 컴포넌트가 없으면 false
+            if (generatedTargetHook == null)
+                return false;
+
+            // Hook이 초기화되지 않았으면 초기화 시도
+            if (!generatedTargetHook.IsInitialized)
+            {
+                generatedTargetHook.TryInitialize();
+            }
+
+            // 캐시가 비어 있으면 강제 리빌드
+            if (generatedTargetHook.CachedTargetCount == 0)
+            {
+                generatedTargetHook.ForceRebuildCache();
+            }
+
+            if (!generatedTargetHook.IsInitialized)
+                return false;
+
+            // detectionRadius를 hook에 동기화
+            generatedTargetHook.DetectionRadius = generatedTargetDetectionRadius;
+
+            // 가장 가까운 generated target 조회 (detectionRadius 기준)
+            if (generatedTargetHook.TryGetNearestGeneratedTarget(transform.position, generatedTargetHook.DetectionRadius, out IHarvestTarget nearestTarget))
+            {
+                if (nearestTarget != null && nearestTarget.IsAvailable)
+                {
+                    target = nearestTarget;
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         /// <summary>현재 대상이 실제 상호작용 가능한지 반환한다.</summary>
         public bool IsCurrentTargetInteractable => currentTargetInteractable;
@@ -243,7 +315,98 @@ namespace Project.Gameplay.Interaction
                 }
             }
 
-            SetCurrentFocus(bestZone, bestTarget);
+            // 기존 trigger 기반 target이 있으면 그대로 사용 (generated target이 덮어쓰지 않도록)
+            if (bestZone != null && bestTarget != null)
+            {
+                SetCurrentFocus(bestZone, bestTarget);
+                return;
+            }
+
+            // 기존 trigger 기반 target이 없을 때만 generated target hook으로 보조 후보 조회
+            TryFallbackToGeneratedTarget();
+        }
+
+        /// <summary>
+        /// 기존 trigger 기반 target이 없을 때 generated harvest target hook을 통해
+        /// 보조 후보를 찾아 currentTarget으로 설정한다.
+        /// </summary>
+        private void TryFallbackToGeneratedTarget()
+        {
+            GeneratedCurrentTarget = null;
+
+            if (!enableGeneratedWorldHarvestTargets)
+            {
+                // generated target이 비활성화되어 있으면 currentTarget을 null로 유지
+                SetCurrentFocus(null, null);
+                return;
+            }
+
+            // Hook 컴포넌트가 없으면 자동 탐색 시도 (초기화 시 1회)
+            if (generatedTargetHook == null)
+            {
+                generatedTargetHook = GetComponent<WorldMapGeneratedHarvestTargetRuntimeHook>();
+                if (generatedTargetHook == null)
+                {
+                    generatedTargetHook = GetComponentInParent<WorldMapGeneratedHarvestTargetRuntimeHook>();
+                }
+
+                // 그래도 없으면 생성하지 않고 currentTarget을 null로 유지
+                if (generatedTargetHook == null)
+                {
+                    SetCurrentFocus(null, null);
+                    return;
+                }
+            }
+
+            // Hook이 초기화되지 않았으면 초기화 시도
+            if (!generatedTargetHook.IsInitialized)
+            {
+                generatedTargetHook.TryInitialize();
+            }
+
+            // Hook이 준비되지 않았으면 currentTarget을 null로 유지
+            if (!generatedTargetHook.IsInitialized)
+            {
+                SetCurrentFocus(null, null);
+                return;
+            }
+
+            // detectionRadius를 hook에 동기화
+            generatedTargetHook.DetectionRadius = generatedTargetDetectionRadius;
+
+            // 가장 가까운 generated target 조회 (hasExistingTriggerTarget=false: trigger target이 없으므로)
+            if (generatedTargetHook.TryGetNearestGeneratedTarget(transform.position, false, out IHarvestTarget generatedTarget))
+            {
+                GeneratedCurrentTarget = generatedTarget;
+
+                // generated target은 zone이 없으므로 currentZone=null, currentTarget=generatedTarget으로 설정
+                // SetCurrentFocus는 zone이 null이면 target을 무시하므로 직접 설정
+                ClearCurrentHighlightWithoutEvent();
+
+                currentZone = null;
+                currentTarget = generatedTarget;
+                currentTargetInteractable = generatedTarget.IsAvailable;
+
+                if (currentTarget == null || !currentTarget.IsAvailable)
+                {
+                    EventBus.Publish(new HarvestTargetUnfocusedEvent());
+                    ClearInteractionPrompt();
+                    return;
+                }
+
+                // generated target은 highlight controller가 없으므로 highlight는 생략
+                EventBus.Publish(new HarvestTargetFocusedEvent(
+                    GetCurrentTargetDisplayName(),
+                    InteractKey,
+                    currentTargetInteractable));
+
+                PublishInteractionPrompt();
+            }
+            else
+            {
+                // generated target을 찾지 못했으면 currentTarget을 null로 유지
+                SetCurrentFocus(null, null);
+            }
         }
 
         /// <summary>현재 포커스 대상과 하이라이트 및 이벤트 상태를 갱신한다.</summary>

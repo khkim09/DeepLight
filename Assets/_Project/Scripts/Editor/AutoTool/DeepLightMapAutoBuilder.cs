@@ -883,11 +883,15 @@ namespace Project.Editor.AutoTool
             ValidateRuntimeHarvestInteractionTargetConsumerRuntimeReadiness(settings, context);
             Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-8: Runtime Harvest Interaction Target Consumer Runtime Readiness Complete =====");
 
-            // 58. 생성 완료 후 Selection 설정
+            // 58~62. Phase 14.10-O-9~O-13: Pipeline Phase Runner로 위임
+            // O-8 완료 직후, Selection 설정/LogFinalDataCount/최종 완료 로그 이전에 배치한다.
+            DeepLightMapPipelinePhaseO.RunStableOPhase(settings, context);
+
+            // 63. 생성 완료 후 Selection 설정
             Selection.activeGameObject = generatedRoot;
             EditorGUIUtility.PingObject(generatedRoot);
 
-            // 53. 최종 데이터 카운트 검증 로그
+            // 63. 최종 데이터 카운트 검증 로그
             LogFinalDataCount(settings);
 
             Debug.Log("[MapAutoBuilder] ===== Generate Full Scenario Map: ALL PHASES (3~14.10-O) COMPLETE =====");
@@ -3948,11 +3952,11 @@ namespace Project.Editor.AutoTool
 
         // ======================================================================
         //  Phase 14.10-O-9: Runtime Harvest System Integration (public wrapper)
-        //  GenerateFullScenarioMap에는 아직 통합하지 않음. O-9 독립 검증 단계.
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
         /// <summary>
         /// Phase 14.10-O-9: GeneratedWorldRoot에 WorldMapHarvestInteractionTargetProvider를 추가하고
         /// ConsumerService에 초기화/연결한다.
-        /// GenerateFullScenarioMap에는 아직 통합하지 않음. O-9 독립 검증 단계.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
         /// </summary>
         public static void RebuildRuntimeHarvestSystemIntegration(
             DeepLightMapAutoBuilderSettingsSO settings,
@@ -3978,7 +3982,7 @@ namespace Project.Editor.AutoTool
         /// <summary>
         /// Phase 14.10-O-9: Runtime Harvest System Integration의 유효성을 검증한다.
         /// 최소 25개 이상의 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
-        /// GenerateFullScenarioMap에는 아직 통합하지 않음. O-9 독립 검증 단계.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
         /// </summary>
         public static void ValidateRuntimeHarvestSystemIntegration(
             DeepLightMapAutoBuilderSettingsSO settings,
@@ -4003,12 +4007,12 @@ namespace Project.Editor.AutoTool
 
         // ======================================================================
         //  Phase 14.10-O-10: Generated Harvest Target Adapter (public wrapper)
-        //  GenerateFullScenarioMap에는 아직 통합하지 않음. O-10 독립 검증 단계.
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
         /// <summary>
         /// Phase 14.10-O-10: RuntimeFinalContentInstances 하위 final content object에
         /// WorldMapGeneratedHarvestTarget을 부착/갱신한다.
         /// 각 ConsumerContext의 SourceMarkerId로 final content object를 찾아 매칭한다.
-        /// GenerateFullScenarioMap에는 아직 통합하지 않음. O-10 독립 검증 단계.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
         /// </summary>
         public static void RebuildGeneratedHarvestTargetAdapters(
             DeepLightMapAutoBuilderSettingsSO settings,
@@ -4034,7 +4038,7 @@ namespace Project.Editor.AutoTool
         /// <summary>
         /// Phase 14.10-O-10: GeneratedHarvestTargetAdapter의 유효성을 검증한다.
         /// 최소 35개 이상의 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
-        /// GenerateFullScenarioMap에는 아직 통합하지 않음. O-10 독립 검증 단계.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
         /// </summary>
         public static void ValidateGeneratedHarvestTargetAdapters(
             DeepLightMapAutoBuilderSettingsSO settings,
@@ -4057,6 +4061,231 @@ namespace Project.Editor.AutoTool
             Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-10: Validate Generated Harvest Target Adapters Complete =====");
         }
 
+        // ======================================================================
+        //  Phase 14.10-O-11: Generated Harvest Runtime Hook (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// <summary>
+        /// Phase 14.10-O-11. GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// Generated harvest target을 기존 Harvest 진입 흐름에 최소 침습형으로 연결하는 독립 검증 단계.
+        /// GeneratedWorldRoot의 WorldMapHarvestInteractionTargetProvider를 찾고,
+        /// 기존 HarvestPointInteractor에 WorldMapGeneratedHarvestTargetRuntimeHook을 연결한다.
+        /// </summary>
+        public static void RebuildGeneratedHarvestRuntimeHook(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-11] Settings is null! Cannot rebuild generated harvest runtime hook.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-11] Context is null! Cannot rebuild generated harvest runtime hook.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-11: Rebuild Generated Harvest Runtime Hook =====");
+            DeepLightMapGeneratedHarvestRuntimeHookUtility.RebuildGeneratedHarvestRuntimeHook(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-11: Rebuild Generated Harvest Runtime Hook Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-11: Generated harvest runtime hook의 유효성을 검증한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// 최소 30개 이상의 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// </summary>
+        public static void ValidateGeneratedHarvestRuntimeHook(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-11] Settings is null! Cannot validate generated harvest runtime hook.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-11] Context is null! Cannot validate generated harvest runtime hook.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-11: Validate Generated Harvest Runtime Hook =====");
+            DeepLightMapGeneratedHarvestRuntimeHookUtility.ValidateGeneratedHarvestRuntimeHook(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-11: Validate Generated Harvest Runtime Hook Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-O-12: Generated Harvest Interactor Hook (public wrapper)
+        //  GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// <summary>
+        /// Phase 14.10-O-12: Generated harvest target hook을 기존 HarvestPointInteractor에 연결한다.
+        /// O-11에서 생성/검증된 WorldMapGeneratedHarvestTargetRuntimeHook과
+        /// WorldMapHarvestInteractionTargetProvider를 기존 HarvestPointInteractor 실제 플레이 흐름에 연결한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildGeneratedHarvestInteractorHooks(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-12] Settings is null! Cannot rebuild generated harvest interactor hooks.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-12] Context is null! Cannot rebuild generated harvest interactor hooks.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-12: Rebuild Generated Harvest Interactor Hooks =====");
+            DeepLightMapGeneratedHarvestInteractorHookUtility.RebuildGeneratedHarvestInteractorHooks(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-12: Rebuild Generated Harvest Interactor Hooks Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-12: Generated harvest interactor hook의 유효성을 검증한다.
+        /// 최소 25개 이상의 검사 항목을 수행하고 Console에 [PASS]/[FAIL]/[WARN]/[INFO] summary를 출력한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void ValidateGeneratedHarvestInteractorHooks(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-12] Settings is null! Cannot validate generated harvest interactor hooks.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-12] Context is null! Cannot validate generated harvest interactor hooks.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-12: Validate Generated Harvest Interactor Hooks =====");
+            DeepLightMapGeneratedHarvestInteractorHookUtility.ValidateGeneratedHarvestInteractorHooks(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-12: Validate Generated Harvest Interactor Hooks Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-13: Generated harvest target hook이 PlayMode 진입 전 실제 interactor fallback resolve까지
+        /// 가능한지 smoke test한다. GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void RebuildGeneratedHarvestPlayModeSmokeTest(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-13] Settings is null! Cannot rebuild smoke test.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-13] Context is null! Cannot rebuild smoke test.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-13: Rebuild Generated Harvest PlayMode Smoke Test =====");
+            DeepLightMapGeneratedHarvestPlayModeSmokeTestUtility.RebuildGeneratedHarvestPlayModeSmokeTest(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-13: Rebuild Generated Harvest PlayMode Smoke Test Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-13: Generated harvest target hook이 PlayMode 진입 전 실제 interactor fallback resolve까지
+        /// 가능한지 검증한다. 최소 30개 이상의 검사 항목을 수행한다.
+        /// GenerateFullScenarioMap에 통합 완료. 필요 시 독립 호출 가능.
+        /// </summary>
+        public static void ValidateGeneratedHarvestPlayModeSmokeTest(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-13] Settings is null! Cannot validate smoke test.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-13] Context is null! Cannot validate smoke test.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-13: Validate Generated Harvest PlayMode Smoke Test =====");
+            DeepLightMapGeneratedHarvestPlayModeSmokeTestUtility.ValidateGeneratedHarvestPlayModeSmokeTest(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-13: Validate Generated Harvest PlayMode Smoke Test Complete =====");
+        }
+
+        // ======================================================================
+        //  Phase 14.10-O-15: Generated Harvest Target Data Binding (public wrapper)
+        //  GenerateFullScenarioMap에는 아직 통합하지 않음.
+        //  Generated harvest target의 runtime harvest data/profile binding을 구축하는 독립 검증 단계.
+        // ======================================================================
+
+        /// <summary>
+        /// Phase 14.10-O-15: GeneratedWorldRoot 하위의 WorldMapGeneratedHarvestTarget 64개를 수집하고,
+        /// WorldMapGeneratedHarvestTargetDataResolver를 부착/갱신하며,
+        /// 각 target에 resolver binding을 적용한다.
+        /// GenerateFullScenarioMap에는 아직 통합하지 않음.
+        /// DeepLightMapGeneratedHarvestTargetDataBindingUtility.RebuildGeneratedHarvestTargetDataBindings에 위임한다.
+        /// </summary>
+        public static void RebuildGeneratedHarvestTargetDataBindings(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-15] Settings is null! Cannot rebuild generated harvest target data bindings.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-15] Context is null! Cannot rebuild generated harvest target data bindings.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-15: Rebuild Generated Harvest Target Data Bindings =====");
+            DeepLightMapGeneratedHarvestTargetDataBindingUtility.RebuildGeneratedHarvestTargetDataBindings(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-15: Rebuild Generated Harvest Target Data Bindings Complete =====");
+        }
+
+        /// <summary>
+        /// Phase 14.10-O-15: GeneratedWorldRoot 하위의 WorldMapGeneratedHarvestTarget 64개와
+        /// WorldMapGeneratedHarvestTargetDataResolver의 유효성을 검사한다.
+        /// 모든 검사는 Debug.Log/Debug.LogWarning/Debug.LogError로만 출력한다.
+        /// GenerateFullScenarioMap에는 아직 통합하지 않음.
+        /// DeepLightMapGeneratedHarvestTargetDataBindingUtility.ValidateGeneratedHarvestTargetDataBindings에 위임한다.
+        /// </summary>
+        public static void ValidateGeneratedHarvestTargetDataBindings(
+            DeepLightMapAutoBuilderSettingsSO settings,
+            DeepLightMapAutoBuilderSceneContext context)
+        {
+            if (settings == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-15] Settings is null! Cannot validate generated harvest target data bindings.");
+                return;
+            }
+
+            if (context == null)
+            {
+                Debug.LogError("[MapAutoBuilder] [O-15] Context is null! Cannot validate generated harvest target data bindings.");
+                return;
+            }
+
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-15: Validate Generated Harvest Target Data Bindings =====");
+            DeepLightMapGeneratedHarvestTargetDataBindingUtility.ValidateGeneratedHarvestTargetDataBindings(settings, context);
+            Debug.Log("[MapAutoBuilder] ===== Phase 14.10-O-15: Validate Generated Harvest Target Data Bindings Complete =====");
+        }
+
         /// <summary>
         /// logVerbose가 true일 때만 로그를 출력한다
         /// </summary>
@@ -4069,6 +4298,7 @@ namespace Project.Editor.AutoTool
         }
     }
 }
+
 
 
 

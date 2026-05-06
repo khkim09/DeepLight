@@ -1117,9 +1117,8 @@ namespace Project.Editor.AutoTool
                 Debug.Log(log.ToString());
             }
 
-            // Dialog summary
-            EditorUtility.DisplayDialog(
-                "Phase 14.10-N-4: Validate Runtime Gameplay Consumer Contract Query",
+            // Console 로그 기반 요약 출력 (DisplayDialog 대체)
+            string summaryMessage =
                 $"Total checks: {totalChecks}\n" +
                 $"[PASS] {passCount}\n" +
                 $"[FAIL] {failCount}\n" +
@@ -1130,8 +1129,20 @@ namespace Project.Editor.AutoTool
                 $"QueryService count: {queryServiceCount}\n" +
                 $"Duplicate SourceMarkerIds: {duplicateSourceMarkerIdCount}\n" +
                 $"Generated placeholder content: {generatedPlaceholderCount}\n" +
-                $"User-assigned final content: {userAssignedFinalCount}",
-                "OK");
+                $"User-assigned final content: {userAssignedFinalCount}";
+
+            if (failCount > 0)
+            {
+                Debug.LogError($"[Phase 14.10-N-4] Validation Summary\nPASS={passCount}, FAIL={failCount}, WARN={warnCount}, INFO={infoCount}\n{summaryMessage}");
+            }
+            else if (warnCount > 0)
+            {
+                Debug.LogWarning($"[Phase 14.10-N-4] Validation Summary\nPASS={passCount}, FAIL={failCount}, WARN={warnCount}, INFO={infoCount}\n{summaryMessage}");
+            }
+            else
+            {
+                Debug.Log($"[Phase 14.10-N-4] Validation Summary\nPASS={passCount}, FAIL={failCount}, WARN={warnCount}, INFO={infoCount}\n{summaryMessage}");
+            }
         }
 
         // ===== Helper Methods =====

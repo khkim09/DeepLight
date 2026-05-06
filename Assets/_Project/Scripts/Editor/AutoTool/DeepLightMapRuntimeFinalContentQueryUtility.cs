@@ -870,9 +870,8 @@ namespace Project.Editor.AutoTool
             log.AppendLine($"{LogPrefix} Generated placeholder final content: {generatedPlaceholderCount}");
             log.AppendLine($"{LogPrefix} User-assigned final content: {userAssignedFinalCount}");
 
-            // DisplayDialog summary
-            string dialogMessage = $"M-6 Validation Complete\n" +
-                $"PASS: {passCount} / FAIL: {failCount} / WARN: {warnCount} / INFO: {infoCount}\n" +
+            // Console 로그 기반 요약 출력 (DisplayDialog 대체)
+            string summaryMessage =
                 $"Scene final content instances: {sceneFinalContentInstanceCount}\n" +
                 $"Registry count: {registryCount}\n" +
                 $"QueryService count: {queryServiceCount}\n" +
@@ -880,10 +879,18 @@ namespace Project.Editor.AutoTool
                 $"Generated placeholder final content: {generatedPlaceholderCount}\n" +
                 $"User-assigned final content: {userAssignedFinalCount}";
 
-            EditorUtility.DisplayDialog(
-                "Phase 14.10-M-6: Validate Runtime Final Content Query",
-                dialogMessage,
-                "OK");
+            if (failCount > 0)
+            {
+                Debug.LogError($"[Phase 14.10-M-6] Validation Summary\nPASS={passCount}, FAIL={failCount}, WARN={warnCount}, INFO={infoCount}\n{summaryMessage}");
+            }
+            else if (warnCount > 0)
+            {
+                Debug.LogWarning($"[Phase 14.10-M-6] Validation Summary\nPASS={passCount}, FAIL={failCount}, WARN={warnCount}, INFO={infoCount}\n{summaryMessage}");
+            }
+            else
+            {
+                Debug.Log($"[Phase 14.10-M-6] Validation Summary\nPASS={passCount}, FAIL={failCount}, WARN={warnCount}, INFO={infoCount}\n{summaryMessage}");
+            }
 
             log.AppendLine($"{LogPrefix} ===== Phase 14.10-M-6: Validate Runtime Final Content Query Complete =====");
             Debug.Log(log.ToString());

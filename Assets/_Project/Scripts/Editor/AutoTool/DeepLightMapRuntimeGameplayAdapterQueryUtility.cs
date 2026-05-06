@@ -592,16 +592,14 @@ namespace Project.Editor.AutoTool
             log.AppendLine($"===== Validate Summary: PASS={passCount}, FAIL={failCount}, WARN={warnCount}, INFO={infoCount} =====");
             Debug.Log(log.ToString());
 
-            // EditorUtility.DisplayDialog로 요약 표시
-            EditorUtility.DisplayDialog(
+            // Console 로그 기반 요약 출력 (DisplayDialog 대체)
+            LogValidationSummary(
                 "Phase 14.10-L-2: Validate Runtime Gameplay Adapter Query",
-                $"PASS={passCount}, FAIL={failCount}, WARN={warnCount}, INFO={infoCount}\n\n" +
+                passCount, failCount, warnCount, infoCount,
                 $"Scene Adapters: {sceneAdapterCount}\n" +
                 $"Registry Count: {registryCount}\n" +
                 $"QueryService Count: {queryCount}\n" +
-                $"Duplicate MarkerIds: {registry.DuplicateMarkerIds.Count}\n\n" +
-                $"자세한 내용은 Console 창을 확인하세요.",
-                "OK");
+                $"Duplicate MarkerIds: {registry.DuplicateMarkerIds.Count}");
         }
 
         // ===== Internal Helpers =====
@@ -756,5 +754,38 @@ namespace Project.Editor.AutoTool
                 CaptureTransformSnapshots(root.GetChild(i), snapshots);
             }
         }
+
+        /// <summary>
+        /// Validation 결과 요약을 Console 로그로 출력한다.
+        /// FAIL이 1개 이상이면 Debug.LogError, WARN이 1개 이상이면 Debug.LogWarning, 그 외는 Debug.Log.
+        /// </summary>
+        private static void LogValidationSummary(
+            string phaseName,
+            int passCount,
+            int failCount,
+            int warnCount,
+            int infoCount,
+            string summary)
+        {
+            string message =
+                $"[{phaseName}] Validation Summary\n" +
+                $"PASS={passCount}, FAIL={failCount}, WARN={warnCount}, INFO={infoCount}\n" +
+                summary;
+
+            if (failCount > 0)
+            {
+                Debug.LogError(message);
+                return;
+            }
+
+            if (warnCount > 0)
+            {
+                Debug.LogWarning(message);
+                return;
+            }
+
+            Debug.Log(message);
+        }
     }
 }
+

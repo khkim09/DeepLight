@@ -489,10 +489,10 @@ namespace Project.Editor.AutoTool
             log.AppendLine($"===== Validate Summary: PASS={passCount}, FAIL={failCount}, WARN={warnCount}, INFO={infoCount} =====");
             Debug.Log(log.ToString());
 
-            // EditorUtility.DisplayDialog로 요약 표시
-            EditorUtility.DisplayDialog(
+            // Console 로그 기반 요약 출력 (DisplayDialog 대체)
+            LogValidationSummary(
                 "Phase 14.10-M-2: Validate Runtime Final Content Requirement Database",
-                $"PASS={passCount}, FAIL={failCount}, WARN={warnCount}, INFO={infoCount}\n\n" +
+                passCount, failCount, warnCount, infoCount,
                 $"Database Entries: {entryCount}\n" +
                 $"M-1 Contracts: {contractCount}\n" +
                 $"Matched: {matchedCount}\n" +
@@ -502,12 +502,42 @@ namespace Project.Editor.AutoTool
                 $"Missing Prefab/Profile: {missingPrefabProfileCount}\n" +
                 $"Fallback Usage: {fallbackUsageCount}\n" +
                 $"Exact Usage: {exactUsageCount}\n" +
-                $"Unknown Kind: {unknownKindCount}\n\n" +
-                $"자세한 내용은 Console 창을 확인하세요.",
-                "OK");
+                $"Unknown Kind: {unknownKindCount}");
         }
 
         // ===== Internal Helpers =====
+
+        /// <summary>
+        /// Validation 결과 요약을 Console 로그로 출력한다.
+        /// FAIL이 1개 이상이면 Debug.LogError, WARN이 1개 이상이면 Debug.LogWarning, 그 외는 Debug.Log.
+        /// </summary>
+        private static void LogValidationSummary(
+            string phaseName,
+            int passCount,
+            int failCount,
+            int warnCount,
+            int infoCount,
+            string summary)
+        {
+            string message =
+                $"[{phaseName}] Validation Summary\n" +
+                $"PASS={passCount}, FAIL={failCount}, WARN={warnCount}, INFO={infoCount}\n" +
+                summary;
+
+            if (failCount > 0)
+            {
+                Debug.LogError(message);
+                return;
+            }
+
+            if (warnCount > 0)
+            {
+                Debug.LogWarning(message);
+                return;
+            }
+
+            Debug.Log(message);
+        }
 
         /// <summary>
         /// Database asset을 로드한다. 없으면 null 반환.
